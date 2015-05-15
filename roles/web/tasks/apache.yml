@@ -1,0 +1,10 @@
+---
+# file: tasks/apache.yml
+
+- include: apache_CentOS.yml
+  when: ansible_distribution == 'CentOS'
+
+- include: apache_Ubuntu.yml
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '14.04'
+
+# vim: set sw=2 ts=2:

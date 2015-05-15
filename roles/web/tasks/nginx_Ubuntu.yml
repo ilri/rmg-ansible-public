@@ -1,0 +1,16 @@
+---
+# file: tasks/nginx_Ubuntu.yml
+
+- name: Add nginx repo file
+  template: src=nginx/nginx_packages_ubuntu.list.j2 dest=/etc/apt/sources.list.d/nginx_packages.list owner=root group=root mode=0644
+
+- name: Add nginx apt signing key
+  apt_key: url={{ nginx_signing_key }} state=present
+
+- name: Install nginx
+  apt: name=nginx update_cache=yes state=latest
+
+- name: Start & enable nginx service
+  service: name=nginx state=started enabled=yes
+
+# vim: sw=2 ts=2:

@@ -1,0 +1,9 @@
+[nginx]
+name=nginx repo
+{% if nginx_branch == 'stable' %}
+baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
+{% elif nginx_branch == 'mainline' %}
+baseurl=http://nginx.org/packages/mainline/centos/$releasever/$basearch/
+{% endif %}
+gpgcheck=1
+enabled=1

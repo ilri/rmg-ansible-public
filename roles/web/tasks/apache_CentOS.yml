@@ -1,0 +1,21 @@
+---
+# file: tasks/apache_CentOS.yml
+
+- name: Install httpd
+  yum: name={{ item }} state=latest
+  with_items:
+    - httpd
+    - mod_ssl
+
+- name: Configure mod_ssl
+  template: src=apache/ssl.conf.j2 dest=/etc/httpd/conf.d/ssl.conf owner=root group=root mode=0644
+  notify: reload apache
+
+- name: Configure httpd
+  copy: src=apache/httpd.conf dest=/etc/httpd/conf/httpd.conf owner=root group=root mode=0644
+  notify: reload apache
+
+- name: Start & enable httpd service
+  service: name=httpd state=started enabled=yes
+
+# vim: set sw=2 ts=2:

@@ -12,5 +12,6 @@
   roles:
     - common
     - munin
+    - web
 
 # vim: set sw=2 ts=2:

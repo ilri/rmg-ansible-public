@@ -1,0 +1,18 @@
+---
+# file: tasks/nginx_CentOS.yml
+
+- name: Add nginx yum repo file
+  template: src=nginx/nginx_packages_rhel.repo.j2 dest=/etc/yum.repos.d/nginx.repo owner=root group=root mode=0644
+
+- name: Import nginx signing key
+  rpm_key: key={{ nginx_signing_key }} state=present
+
+- name: Install nginx
+  yum: name={{ item }} disablerepo=* enablerepo=nginx state=latest
+  with_items:
+    - nginx
+
+- name: Start & enable nginx service
+  service: name=nginx state=started enabled=yes
+
+# vim: set sw=2 ts=2:

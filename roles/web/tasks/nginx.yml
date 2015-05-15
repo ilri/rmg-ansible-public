@@ -1,0 +1,19 @@
+---
+# file: tasks/nginx.yml
+
+- include: nginx_CentOS.yml
+  when: ansible_distribution == 'CentOS'
+
+- include: nginx_Ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Add nginx configs
+  copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
+  with_items:
+    - { src: 'nginx/nginx.conf', dest: '/etc/nginx/nginx.conf', mode: '0644', owner: 'root', group: 'root' }
+    - { src: 'nginx/proxy_params', dest: '/etc/nginx/proxy_params', mode: '0644', owner: 'root', group: 'root' }
+    - { src: 'nginx/munin.conf', dest: '/etc/nginx/conf.d/munin.conf', mode: '0644', owner: 'root', group: 'root' }
+  when: nginx_vhosts is not defined
+  notify: reload nginx
+
+# vim: set sw=2 ts=2:

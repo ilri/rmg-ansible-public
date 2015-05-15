@@ -1,0 +1,16 @@
+---
+# file: tasks/apache_Ubuntu.yml
+
+- name: Install apache
+  apt: name={{ item }} state=latest
+  with_items:
+    - apache2
+
+- name: Configure mod_ssl
+  template: src=apache/ssl.conf.j2 dest=/etc/apache2/mods-available/ssl.conf owner=root group=root mode=0644
+  notify: reload apache
+
+- name: Start & enable apache2 service
+  service: name=apache2 state=started enabled=yes
+
+# vim: set sw=2 ts=2:

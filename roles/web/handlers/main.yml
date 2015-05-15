@@ -1,0 +1,10 @@
+---
+# file: handlers/main.yml
+
+- name: reload nginx
+  service: name=nginx state=reloaded
+
+- name: reload apache
+  command: /usr/sbin/apachectl graceful
+
+# vim: set sw=2 ts=2:

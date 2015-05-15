@@ -1,0 +1,12 @@
+---
+# file: tasks/main.yml
+
+- include: nginx.yml
+  when: webserver_family is defined and webserver_family == 'nginx'
+  tags: nginx
+
+- include: apache.yml
+  when: webserver_family is defined and webserver_family == 'apache'
+  tags: apache
+
+# vim: set sw=2 ts=2:

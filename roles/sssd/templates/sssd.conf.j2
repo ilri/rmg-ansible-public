@@ -1,0 +1,31 @@
+[domain/default]
+
+ldap_id_use_start_tls = False
+cache_credentials = True
+ldap_search_base = dc=ilri,dc=cgiar,dc=org
+krb5_realm = EXAMPLE.COM
+krb5_server = kerberos.example.com
+id_provider = ldap
+auth_provider = ldap
+chpass_provider = ldap
+ldap_uri = ldaps://hpc.ilri.cgiar.org
+# Ubuntu 14.04 doesn't seem to like cacertdir, so use cacert directly
+#ldap_tls_cacertdir = {{ ldap_conf_dir }}/cacerts
+ldap_tls_cacert = {{ ldap_conf_dir }}/cacerts/hpc-ca.asc
+[sssd]
+services = nss, pam
+config_file_version = 2
+
+domains = default
+[nss]
+
+[pam]
+
+[sudo]
+
+[autofs]
+
+[ssh]
+
+[pac]
+

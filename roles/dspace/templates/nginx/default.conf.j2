@@ -1,0 +1,234 @@
+# Handle old DSpace domains (redirect to ILRI community)
+#
+server {
+    listen 80;
+    server_name mahider.cgiar.org;
+
+    location / {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/1;
+    }
+
+    include extra-security.conf;
+}
+
+# Handle old Mahider URLs
+# ... check Google for "inurl:mahider.ilri.org -inurl:https"
+# ... check Google for "inurl:dspace.ilri.org -inurl:https"
+#
+server {
+    listen 80;
+
+    server_name mahider.ilri.org dspace.ilri.org;
+
+    # links with /jspui/blah/blah should be -> /blah/blah
+    location ~ ^/jspui/(.*)$ {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/$1;
+    }
+
+    # links with /jspui should go to ILRI's community
+    location ~ ^/jspui$ {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/1;
+    }
+
+    # translate mahider communities / collections / handles to cgspace
+    location ~ ^/handle/(.*)$ {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/$1;
+    }
+
+    # make old bitstream links work
+    location ~ ^/bitstream {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+    }
+
+    # make old mahider.ilri.org RSS links work (ie FeedBurner)
+    location ~ ^/feed/(.*)$ {
+        # redirect to cgspace on non-HTTPS, because FeedBurner doesn't support HTTPS
+        return {{ nginx_redirect_type }} http://{{ nginx_server_name }}/feed/$1;
+    }
+
+    location / {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/1;
+    }
+
+    include extra-security.conf;
+}
+
+# Handle CPWF vanity domain
+#
+server {
+    listen 80;
+    server_name results.waterandfood.org;
+
+    return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/2983;
+    include extra-security.conf;
+}
+
+{% if nginx_tls_cert is defined %}
+# Handle cgspace.cgiar.org http -> https
+#
+server {
+    listen 80;
+    server_name {{ nginx_server_name }};
+
+    # feedburner doesn't support https :(
+    location ~ /(feed|open-search/discover) {
+        # Send requests to Tomcat
+        proxy_pass http://127.0.0.1:8443;
+    }
+
+    # redirect http -> https
+    location / {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+    }
+
+    include extra-security.conf;
+}
+{% endif %} {# end: nginx_tls_cert #}
+
+{# this vhost only really needs to run in one place, so only run it if the current host has the certs #}
+{% if ngnix_ilri_tls_cert is defined %}
+# Handle HTTPS links for non-authoritative domains from Google Scholar, ie
+# dspace.ilri.org or mahider.ilri.org
+# ... check Google for "inurl:mahider.ilri.org inurl:https"
+# ... check Google for "inurl:dspace.ilri.org inurl:https"
+server {
+    listen 443 ssl spdy;
+    server_name dspace.ilri.org mahider.ilri.org;
+
+    ssl_certificate {{ ngnix_ilri_tls_cert }};
+    ssl_certificate_key {{ ngnix_ilri_tls_key }};
+
+    ssl_session_timeout {{ nginx_ssl_session_timeout }};
+    ssl_session_cache {{ nginx_ssl_session_cache }};
+    ssl_buffer_size {{ nginx_ssl_buffer_size }};
+    ssl_dhparam {{ nginx_ssl_dhparam }};
+    ssl_protocols {{ nginx_ssl_protocols }};
+    ssl_ciphers "{{ tls_cipher_suite }}";
+    ssl_prefer_server_ciphers on;
+
+    # nginx does not auto-rotate session ticket keys: only a HUP / restart will do so and
+    # when a restart is performed the previous key is lost, which resets all previous
+    # sessions. The fix for this is to setup a manual rotation mechanism:
+    # http://trac.nginx.org/nginx/changeset/1356a3b9692441e163b4e78be4e9f5a46c7479e9/nginx
+    #
+    # Note that you'll have to define and rotate the keys securely by yourself. In absence
+    # of such infrastructure, consider turning off session tickets:
+    ssl_session_tickets off;
+
+    # enable SPDY header compression
+    spdy_headers_comp {{ nginx_spdy_headers_comp }};
+
+    # redirect to {{ nginx_server_name }}
+    location / {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+    }
+}
+{% endif %} {# end: ngnix_ilri_tls_cert #}
+
+
+# HTTPS server (only for domains we have a cert for)
+#
+server {
+    {% if nginx_tls_cert is defined %}
+    listen 443 ssl spdy default_server;
+    {% else %}
+    listen 80 default_server;
+    {% endif %} {# end: nginx_tls_cert #}
+
+    server_name {{ nginx_server_name }};
+
+    root {{ nginx_root }};
+
+    {% if nginx_forbid_robots == True %}
+    # Add header to forbid robots to index
+    # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+    add_header X-Robots-Tag "none";
+    {% endif %}
+
+    {% if nginx_tls_cert is defined %}
+    ssl_certificate {{ nginx_tls_cert }};
+    ssl_certificate_key {{ nginx_tls_key }};
+
+    ssl_session_timeout {{ nginx_ssl_session_timeout }};
+    ssl_session_cache {{ nginx_ssl_session_cache }};
+    ssl_buffer_size {{ nginx_ssl_buffer_size }};
+    ssl_dhparam {{ nginx_ssl_dhparam }};
+    ssl_protocols {{ nginx_ssl_protocols }};
+    ssl_ciphers "{{ tls_cipher_suite }}";
+    ssl_prefer_server_ciphers on;
+
+    # nginx does not auto-rotate session ticket keys: only a HUP / restart will do so and
+    # when a restart is performed the previous key is lost, which resets all previous
+    # sessions. The fix for this is to setup a manual rotation mechanism:
+    # http://trac.nginx.org/nginx/changeset/1356a3b9692441e163b4e78be4e9f5a46c7479e9/nginx
+    #
+    # Note that you'll have to define and rotate the keys securely by yourself. In absence
+    # of such infrastructure, consider turning off session tickets:
+    ssl_session_tickets off;
+
+    # enable SPDY header compression
+    spdy_headers_comp 6;
+
+    {% if nginx_enable_hsts == True %}
+    # Enable this if you want HSTS (recommended, but be careful)
+    add_header Strict-Transport-Security max-age=15768000;
+    {% endif %} {# end: nginx_enable_hsts #}
+    {% endif %} {# end: nginx_tls_cert #}
+
+    # static assets we can load from the file system directly with nginx
+    location ~ /(themes|static|aspects/ReportingSuite) {
+        try_files $uri @tomcat;
+
+        location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+            add_header Cache-Control "public, max-age=604800";
+        }
+    }
+
+    location / {
+        # Send requests to Tomcat
+        {% if nginx_tls_cert is defined %}
+        proxy_pass http://127.0.0.1:8443;
+        {% else %}
+        proxy_pass http://127.0.0.1:8081;
+        {% endif %}
+    }
+
+    # Only allow Solr access from localhost
+    location /solr {
+        allow 127.0.0.1;
+        deny all;
+    }
+
+    # Only allow jspui access for atmire modules
+    location /jspui {
+        location ~ ^/jspui/(export|listings-and-reports) {
+            allow all;
+            {% if nginx_tls_cert is defined %}
+            proxy_pass http://127.0.0.1:8443;
+            {% else %}
+            proxy_pass http://127.0.0.1:8081;
+            {% endif %}
+        }
+
+        deny all;
+    }
+
+    # named location for above try_files
+    location @tomcat {
+        {% if nginx_tls_cert is defined %}
+        proxy_pass http://127.0.0.1:8443;
+        {% else %}
+        proxy_pass http://127.0.0.1:8081;
+        {% endif %}
+    }
+
+    include extra-security.conf;
+}
+
+# vim: set ts=4 sw=4:

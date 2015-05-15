@@ -1,0 +1,51 @@
+---
+# Harden SSH configuration by removing support for weak signature algorithms
+# like DSA and ECDSA in sshd_config as well as purging any keys using these
+# algorithms from disk. Run with:
+#
+#   $ ansible-playbook misc_plays/ssh-hardening.yml -l ilrinrb01 -K
+#
+# See: http://blog.cr.yp.to/20140323-ecdsa.html
+
+- hosts: all
+  sudo: yes
+  user: provisioning
+  vars_files:
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../private/vars/{{ ansible_os_family }}.yml"
+  tasks:
+    - name: Remove DSA and ECDSA host keys
+      file: name=/etc/ssh/{{ item }} state=absent
+      with_items:
+        - ssh_host_dsa_key
+        - ssh_host_dsa_key.pub
+        - ssh_host_ecdsa_key
+        - ssh_host_ecdsa_key.pub
+      notify:
+        - reload ssh
+
+    - name: Reconfigure /etc/ssh/sshd_config
+      template: src=roles/common/templates/sshd_config_{{ansible_distribution}}-{{ansible_distribution_major_version}}.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0600
+      when: (ansible_distribution == 'Debian' or ansible_distribution == 'CentOS')
+      notify:
+        - reload ssh
+
+    - name: Reconfigure /etc/ssh/sshd_config
+      template: src=roles/common/templates/sshd_config_{{ansible_distribution}}-{{ansible_distribution_version}}.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0600
+      when: ansible_distribution == 'Ubuntu'
+      notify:
+        - reload ssh
+
+    - name: Zero .ssh/authorized_keys for provisioning user
+      file: dest={{ provisioning_user.home }}/.ssh/authorized_keys state=absent
+
+    - name: Add public keys to authorized_keys
+      authorized_key: { user: '{{ provisioning_user.name }}', key: "{{ lookup('file',item) }}" }
+      with_fileglob:
+        - roles/common/files/ssh-pub-keys/*.pub
+
+  handlers:
+    - name: reload ssh
+      service: name={{ sshd_service_name }} state=reloaded
+
+# vim: set sw=2 ts=2:

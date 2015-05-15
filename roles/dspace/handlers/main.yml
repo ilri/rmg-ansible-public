@@ -1,0 +1,14 @@
+---
+# file: roles/dspace/handlers/main.yml
+
+- name: restart nginx
+  service: name=nginx state=restarted
+
+- name: reload nginx
+  service: name=nginx state=reloaded
+
+- name: restart tomcat7
+  service: name=tomcat7 state=restarted
+
+- name: reload postgresql
+  service: name=postgresql state=reloaded

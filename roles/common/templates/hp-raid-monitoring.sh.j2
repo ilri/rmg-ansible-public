@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# hp-raid-monitoring.sh: Checks phsyical devices in all slots to look for drives
+# which aren't "OK" and sends an email to the storage admins if it finds any.
+#
+# Inspired by:
+#   - http://www.adminsehow.com/2014/07/send-email-alerts-when-hp-proliant-raid-fails-in-linux/
+#   - https://calomel.org/megacli_lsi_commands.html
+
+# exit on error
+set -e
+
+{% if ansible_distribution == 'CentOS' %}
+HP_CLI_BIN=/usr/sbin/hpacucli
+{% endif %}
+{% if ansible_os_family == 'Debian' %}
+HP_CLI_BIN=/usr/sbin/hpssacli
+{% endif %}
+
+EMAIL="{% for email in raid_admins %}{{ email }} {% endfor %}"
+
+# get slots on this machine's HP storage
+SLOTS=$($HP_CLI_BIN controller all show | grep -E 'Slot [0-9]{0,2}' | awk '{print $6}')
+
+function checkPhysicalDisks () {
+    # check for physical disk status (ignoring lines beginning with error, like
+    # when the slot has no disks)
+    result=$($HP_CLI_BIN ctrl slot=$slot pd all show | grep -v '^Error: ' | grep physicaldrive | grep -v OK | wc -l)
+
+    if [[ $result > 0 ]]; then
+        $HP_CLI_BIN ctrl slot=$slot pd all show | mail -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
+    fi
+}
+
+for slot in $SLOTS; do
+    checkPhysicalDisks $slot
+done
+
+# vim: set ts=4 sw=4:

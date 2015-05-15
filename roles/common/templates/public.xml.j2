@@ -1,0 +1,130 @@
+<zone>
+    <short>Public</short>
+    <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+    <interface name="{{ ansible_default_ipv4.alias }}"/>
+
+    {# ssh rules #}
+    {% for network in ssh_access %}
+    <rule family="ipv4">
+        <source address="{{ ghetto_ipsets[network].src }}"/>
+        <port protocol="tcp" port="22"/>
+        <accept/>
+    </rule>
+    {% endfor %}
+
+    {# web rules #}
+    {% if 'web' in group_names or 'dspace' in group_names %}
+    {% for network in web_access %}
+    <rule family="ipv4">
+        <source address="{{ ghetto_ipsets[network].src }}"/>
+        <port protocol="tcp" port="80"/>
+        <accept/>
+    </rule>
+    {% endfor %}
+    {% endif %}
+
+    {# storage rules #}
+    {% if 'storage' in group_names %}
+    {% if ganglia_master_host is defined %}
+     <rule family="ipv4">
+        <source address="{{ ganglia_master_host }}"/>
+        <port protocol="tcp" port="{{ ganglia_gmond_port }}" />
+        <accept/>
+    </rule>
+   <rule family="ipv4">
+        <source address="{{ ganglia_master_host }}"/>
+        <port protocol="udp" port="{{ ganglia_gmond_port }}" />
+        <accept/>
+    </rule>
+    {% endif %}
+    <rule family="ipv4">
+        <destination address="239.2.11.71/32"/>
+        <port protocol="udp" port="{{ ganglia_gmond_port }}"/>
+        <accept/>
+    </rule>
+
+    {% for host in groups['storage'] %}
+    {% if host != inventory_hostname %}
+    <rule family="ipv4">
+        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <accept/>
+    </rule>
+    {% endif %}
+    {% endfor %}
+
+    {% for host in groups['compute'] %}
+    {% if host == 'hpc' %}
+    <rule family="ipv4">
+        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <port protocol="tcp" port="{{ glusterfs_brick_ports }}"/>
+        <accept/>
+    </rule>
+    <rule family="ipv4">
+        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <port protocol="tcp" port="{{ glusterd_mgmt_port }}"/>
+        <accept/>
+    </rule>
+    {% else %}
+    <rule family="ipv4">
+        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <accept/>
+    </rule>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    {# compute/slurm rules #}
+    {% if 'compute' in group_names %}
+    <rule family="ipv4">
+        <source address="{{ slurm_head_node }}"/>
+        <port protocol="tcp" port="{{ slurm_slurmd_port }}"/>
+        <accept/>
+    </rule>
+    {% if ganglia_master_host is defined %}
+    <rule family="ipv4">
+        <source address="{{ ganglia_master_host }}"/>
+        <port protocol="tcp" port="{{ ganglia_gmond_port }}"/>
+        <accept/>
+    </rule>
+    <rule family="ipv4">
+        <source address="{{ ganglia_master_host }}"/>
+        <port protocol="udp" port="{{ ganglia_gmond_port }}"/>
+        <accept/>
+    </rule>
+    {% endif %}
+    <rule family="ipv4">
+        <destination address="239.2.11.71/32"/>
+        <port protocol="udp" port="{{ ganglia_gmond_port }}"/>
+        <accept/>
+    </rule>
+
+    {% for host in groups['compute'] %}
+    {% if host != inventory_hostname and host != 'hpc' %}
+    <rule family="ipv4">
+        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <accept/>
+    </rule>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    {# munin rules #}
+    {% if munin_master_host is defined %}
+    <rule family="ipv4">
+        <source address="{{ ghetto_ipsets[munin_master_host].src }}"/>
+        <port protocol="tcp" port="{{ munin_node_port }}"/>
+        <accept/>
+    </rule>
+    {% endif %}
+
+    {# extra rules #}
+    {% if extra_iptables_rules is defined %}
+    {% for rule in extra_iptables_rules %}
+    <rule family="ipv4">
+        <source address="{{ ghetto_ipsets[rule.acl].src }}"/>
+        <port protocol="{{ rule.protocol }}" port="{{ rule.port }}"/>
+        <accept/>
+    </rule>
+    {% endfor %}
+    {% endif %}
+</zone>

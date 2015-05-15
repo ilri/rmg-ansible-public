@@ -1,0 +1,36 @@
+---
+# Prepare DSpace servers for maintenance, ie to show an "under construction" page
+# to users who aren't at ILRI or @mire.  Run with something like:
+#
+#   $ ansible-playbook misc_plays/cgspace-maintenance.yml -K --limit=linode01
+#
+# Assumes the vhosts have been modified to redirect to this page properly.  When
+# the maintenance is over, just revert the vhost changes in git and re-run the
+# playbook.
+
+- hosts: dspace
+  sudo: yes
+  user: provisioning
+  vars:
+    # IPs for Alan at ILRI and @atmire in Belgium
+    allowed_ips:
+      - 41.204.190.40
+      - 86.39.200.115
+      - 85.234.195.109
+      - 74.87.47.118
+      - 86.39.200.120
+  tasks:
+    # Maintenance page lives in /tmp, and will disappear after reboot
+    - name: Copy maintenance html
+      copy: src=roles/dspace/files/nginx/maintenance.html dest=/tmp/maintenance.html owner=nginx mode=0644
+
+    - name: Configure nginx vhosts
+      template: src={{ item }} dest=/etc/nginx/conf.d/default.conf mode=0644 owner=root group=root
+      with_first_found:
+        - "roles/dspace/templates/nginx/{{ inventory_hostname }}.conf.j2"
+        - "roles/dspace/templates/nginx/default.conf"
+
+    - name: Reload nginx
+      service: name=nginx state=reloaded
+
+# vim: set sw=2 ts=2:

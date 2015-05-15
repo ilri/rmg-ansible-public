@@ -1,0 +1,23 @@
+---
+# file: sssd.yml
+#
+# one-off playbook to bind a host to HPC's LDAP, in case that
+# host belongs to a group which doesn't (or can't) run the sssd
+# role. Should work on CentOS 6 and Ubuntu {12,14}.04 hosts.
+#
+# After a host has been initially provisioned, run with:
+#
+#   ansible-playbook misc_plays/sssd.yml -K --limit=ilrinrb10
+#
+
+- hosts: all
+  sudo: yes
+  user: provisioning
+  vars_files:
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../private/vars/{{ ansible_os_family }}.yml"
+    - "../private/vars/ipsets.yml"
+  roles:
+    - sssd
+
+# vim: set sw=2 ts=2:

@@ -1,0 +1,9 @@
+---
+- include: gmetad.yml
+  when: inventory_hostname == 'hpc'
+  tags: gmetad
+
+- include: gmond.yml
+  tags: gmond
+
+# vim: set sw=2 ts=2:

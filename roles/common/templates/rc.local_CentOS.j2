@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+
+touch /var/lock/subsys/local
+
+{% if ansible_virtualization_role == "NA" %}
+# bind Intel 10GbE interrupts to CPUs manually (irqbalance service
+# should be disabled)
+/usr/local/bin/set_irq_affinity.sh {{ ansible_default_ipv4.interface }} > /dev/null 2> /dev/null
+{% endif %}

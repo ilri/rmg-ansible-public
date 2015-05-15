@@ -1,0 +1,15 @@
+---
+- name: Install ganglia-gmetad package
+  yum: name={{ item }} state=present
+  with_items:
+   - ganglia-gmetad
+
+- name: Create gmetad configuration file
+  copy: src=gmetad.conf dest=/etc/ganglia/gmetad.conf
+  notify: 
+  - restart gmetad
+
+- name: Start gmetad service
+  service: name=gmetad state=started enabled=true
+
+# vim: set sw=2 ts=2:

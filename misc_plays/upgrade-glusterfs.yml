@@ -1,0 +1,43 @@
+---
+# Perform upgrades on cluster:
+# - GlusterFS 3.5.2 -> 3.5.3
+# - CentOS 6.5 -> 6.6
+#
+# Reference for Gluster upgrade: http://vbellur.wordpress.com/2013/07/15/upgrading-to-glusterfs-3-4/
+
+- hosts: storage
+  sudo: yes
+  user: provisioning
+  tasks:
+    - name: Stop glusterd
+      service: name=glusterd state=stopped
+
+    - name: Set gluster repos to 3.5.x branch
+      copy: src=roles/glusterfs/files/glusterfs-epel.repo dest=/etc/yum.repos.d/glusterfs-epel.repo owner=root mode=0644
+
+    - name: Upgrade glusterfs
+      yum: name=glusterfs* state=latest disablerepo=* enablerepo=gluster*
+
+    - name: Start glusterd
+      service: name=glusterd state=started
+
+- hosts: compute
+  sudo: yes
+  user: provisioning
+  tasks:
+    - name: Set gluster repos to 3.5.x branch
+      copy: src=roles/glusterfs/files/glusterfs-epel.repo dest=/etc/yum.repos.d/glusterfs-epel.repo owner=root mode=0644
+
+    - name: Upgrade glusterfs
+      command: yum --disablerepo=* --enablerepo=gluster* -y update "glusterfs*"
+
+# then reboot all storage nodes...
+# then reboot all compute nodes...
+
+#- hosts: compute:storage
+#  sudo: yes
+#  tasks:
+#    - name: Upgrade to CentOS 6.6
+#      command: yum update -y -x "glusterfs*"
+
+# vim: set sw=2 ts=2:

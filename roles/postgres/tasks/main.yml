@@ -1,0 +1,8 @@
+---
+# file: tasks/main.yml
+
+- include: ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
+  tags: postgres
+
+# vim: set ts=2 sw=2:

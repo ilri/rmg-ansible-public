@@ -1,0 +1,38 @@
+---
+# file: group_vars/compute
+
+#ganglia vars
+ganglia_master_host: hpc
+ganglia_gmond_name: compute
+ganglia_gmond_port: 8649
+
+munin_master_host: hpc
+munin_node_port: 4949
+
+glusterfs_role: client
+
+local_scratch: /var/scratch
+
+# a list of networks to allow SSH access
+# (network names come from above)
+# can be overridden in host_vars
+#
+# default: ilri_nbo_corp
+ssh_access:
+  - ilri_nbo_corp
+  - ilri_nbo_dmz
+
+# the CPU/IO profile to activate with tuned-adm
+tuned_profile: latency-performance
+
+#slurm vars
+slurm_head_node: hpc
+slurm_slurmd_port: 6818
+
+#glusterfs-client mount vars
+glusterfs_mounts:
+  - { mount_point: '/export/data', mount_src: 'wingu3:data', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,noatime,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+  - { mount_point: '/export/apps', mount_src: 'wingu3:apps', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,noatime,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+  - { mount_point: '/home', mount_src: 'wingu3:homes', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,noatime,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+
+# vim: set ts=2 sw=2:

@@ -1,0 +1,8 @@
+{{ solr_log_dir }}/solr.log {
+    copytruncate
+    daily
+    rotate 5
+    compress
+    missingok
+    create 640 tomcat7 tomcat7
+}

@@ -1,0 +1,10 @@
+---
+- include: client.yml
+  when: glusterfs_role == 'client'
+  tags: glusterfs-client
+
+- include: server.yml
+  when: glusterfs_role == 'server'
+  tags: glusterfs-server
+
+# vim: set sw=2 ts=2:

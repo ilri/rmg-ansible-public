@@ -1,0 +1,6 @@
+# Configuration for cron-apt. For further information about the possible
+# configuration settings see the README file.
+
+MAILTO="{% for email in cron_apt_admins %}{{ email }} {% endfor %}"
+MAILON="error"
+OPTIONS="-o quiet=1 -o Dir::Etc::SourceList=/etc/apt/security.sources.list -o Dir::Etc::SourceParts=\"/dev/null\""

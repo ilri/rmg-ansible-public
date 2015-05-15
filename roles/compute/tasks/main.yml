@@ -1,0 +1,34 @@
+---
+
+- include: slurm.yml
+  tags: slurm
+
+- include: packages_CentOS.yml
+  when: ansible_distribution == 'CentOS'
+  tags: packages
+
+- name: Clone environment modules
+  git: repo=https://github.com/ilri/hpc-environment-modules.git dest=/etc/modulefiles/ilri version=master
+  tags: modules
+
+- name: Copy ilri profile script
+  template: src=ilri.sh.j2 dest=/etc/profile.d/ilri.sh owner=root group=root mode=0644
+  tags: profile
+
+- name: Copy limits configuration
+  template: src=90-ilri.conf.j2 dest=/etc/security/limits.d/90-ilri.conf owner=root group=root mode=0644
+  tags: limits
+
+- name: Set sticky bit in local_scratch
+  when: inventory_hostname != "hpc"
+  file: path={{ local_scratch }} group=root owner=root mode=1777 state=directory
+  tags: scratch
+
+- name: Remove irqbalance
+  yum: name=irqbalance state=absent
+  tags: irqbalance
+
+- name: Configure global ssh_config on compute nodes
+  template: src=ssh_config.j2 dest=/etc/ssh/ssh_config owner=root group=root mode=0644
+
+# vim: set sw=2 ts=2:

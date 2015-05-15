@@ -1,0 +1,30 @@
+---
+# file: group_vars/storage
+
+#ganglia vars
+ganglia_master_host: hpc
+ganglia_gmond_name: storage
+ganglia_gmond_port: 8650
+
+glusterfs_role: server
+glusterd_mgmt_port: 24007
+glusterfs_brick_ports: "49152:49154"
+
+munin_master_host: hpc
+munin_node_port: 4949
+
+ssh_allowed_users: aorth root joguya
+
+# a list of networks to allow SSH access
+# (network names come from above)
+# can be overridden in host_vars
+#
+# default: ilri_nbo_corp
+ssh_access:
+  - ilri_nbo_corp
+  - ilri_nbo_dmz
+
+# the CPU/IO profile to activate with tuned-adm
+tuned_profile: throughput-performance
+
+# vim: set ts=2 sw=2:

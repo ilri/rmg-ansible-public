@@ -1,0 +1,12 @@
+---
+# file: group_vars/nomads
+
+# a list of networks to allow SSH access
+# (network names come from above)
+# can be overridden in host_vars
+#
+# default: ilri_nbo_corp
+ssh_access:
+  - public
+
+# vim: set ts=2 sw=2:

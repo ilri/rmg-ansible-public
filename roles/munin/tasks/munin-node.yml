@@ -1,0 +1,49 @@
+---
+- name: Install munin-node
+  when: ansible_os_family == "Debian"
+  apt: name={{ item }} state=latest update_cache=true
+  with_items:
+    - munin-node
+
+- name: Install munin-node
+  when: ansible_os_family == "RedHat"
+  yum: name={{ item }} state=latest
+  with_items:
+    - munin-node
+
+# some nice things to have for munin-node on Ubuntu (12.04 and 14.04 right now)
+- name: Install munin-node deps
+  when: ansible_distribution == "Ubuntu"
+  apt: name={{ item }} state=present
+  with_items:
+    - libwww-perl #for munin's nginx_status check
+
+# some nice things to have on Ubuntu Tomcat servers
+- name: Install munin-node Tomcat deps
+  when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names))
+  apt: name={{ item }} state=present
+  with_items:
+    - ruby # for munin's tomcat checks
+    - libxml-simple-perl # for munin's tomcat checks
+    - libdbd-pg-perl # for munin's postgres check
+
+- name: Configure munin Tomcat plugin
+  when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names))
+  template: src=tomcat.conf.j2 dest=/etc/munin/plugin-conf.d/tomcat owner=root group=root mode=0640
+  notify:
+    - restart munin-node
+
+- name: Create munin-node.conf
+  template: src=munin-node.conf.j2 dest=/etc/munin/munin-node.conf
+  notify: 
+    - restart munin-node
+
+- name: Configure munin-node
+  shell: munin-node-configure --shell --families=contrib,auto | sh -x
+  notify:
+    - restart munin-node
+
+- name: Start munin-node
+  service: name=munin-node state=started enabled=true
+
+# vim: set sw=2 ts=2:

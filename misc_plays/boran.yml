@@ -1,0 +1,27 @@
+---
+# file: boran.yml
+
+# one-off playbook to provision boran (database server). boran doesn't belong to
+# a proper group (so we couldn't run roles on it), but this allows us to specify
+# roles should be set up on it. Also, we have some variables which are normally
+# set in group_vars, so we have to compensate by adding them here.
+
+
+- hosts: boran
+  sudo: yes
+  user: provisioning
+  vars:
+    apt_mirror: ubuntu.mirror.ac.ke
+    munin_master_host: hpc
+    munin_node_port: 4949 
+  vars_files:
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../private/vars/{{ ansible_os_family }}.yml"
+    - "../private/vars/ipsets.yml"
+  roles:
+    - common
+    - postgres
+    - munin
+    - sssd
+
+# vim: set sw=2 ts=2:

@@ -1,0 +1,23 @@
+# users do funny things, make sure we don't penalize the system when they do!
+
+# Default process priority (-20 highest, 19 lowest)
+*       -   priority    19
+root    -   priority    0
+
+{% if inventory_hostname == 'hpc' %}
+# CPU time in minutes
+*       -   cpu         30
+@rmglinuxadm    -   cpu unlimited
+root    -   cpu         unlimited
+
+# number of processes
+*       -   nproc       512
+@rmglinuxadm    -   nproc 4096
+root    -   nproc       unlimited
+
+# limit users to 4GB anon (swappable) memory
+*       soft    as      3906250
+# allow admins more
+@rmglinuxadm    -   as  unlimited
+root    -   as          unlimited
+{% endif %}

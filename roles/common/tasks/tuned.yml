@@ -1,0 +1,25 @@
+---
+# tuned prefers to control CPU freq/governor with cpuspeed service
+# see: /etc/tune-profiles/functions
+- name: Install tuned & cpuspeed
+  yum: name={{ item }} state=installed
+  with_items:
+    - tuned
+    - cpuspeed
+  notify:
+    - start tuned
+    - start cpuspeed
+
+# ignore_errors: at times fails on some compute nodes
+- name: Start & enable tuned & cpuspeed services
+  ignore_errors: yes
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - tuned
+    - cpuspeed
+
+- name: Set default tuned profile
+  when: tuned_profile is defined
+  shell: tuned-adm profile {{ tuned_profile }}
+
+# vim: set sw=2 ts=2:

@@ -1,0 +1,6 @@
+---
+# file: roles/ganglia/handlers/main.yml
+- name: restart gmond
+  service: name=gmond state=restarted
+
+# vim: set sw=2 ts=2:

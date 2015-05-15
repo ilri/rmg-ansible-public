@@ -1,0 +1,29 @@
+---
+# file: roles/common/handlers/main.yml
+
+- name: restart iptables
+  service: name=iptables state=restarted
+
+- name: restart iptables-persistent
+  service: name=iptables-persistent state=restarted
+
+- name: reload sshd
+  service: name={{ sshd_service_name }} state=reloaded
+
+- name: reload sysctl
+  command: sysctl -p /etc/sysctl.conf
+
+- name: restart firewalld
+  service: name=firewalld state=restarted
+
+# ignore_errors: at times fails on some compute nodes
+- name: start tuned
+  ignore_errors: yes
+  service: name=tuned state=started
+
+# ignore_errors: at times fails on some compute nodes
+- name: start cpuspeed
+  ignore_errors: yes
+  service: name=cpuspeed state=started
+
+# vim: set sw=2 ts=2:

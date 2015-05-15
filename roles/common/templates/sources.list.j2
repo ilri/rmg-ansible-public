@@ -1,0 +1,25 @@
+{% if ansible_distribution == "Ubuntu" %}
+#############################################################
+################### OFFICIAL UBUNTU REPOS ###################
+#############################################################
+
+###### Ubuntu Main Repos
+deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }} main restricted universe multiverse
+
+###### Ubuntu Update Repos
+deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security main restricted universe multiverse
+deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates main restricted universe multiverse
+
+###### Ubuntu Partner Repo
+deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
+
+###### Ubuntu Extras Repo
+deb http://extras.ubuntu.com/ubuntu {{ ansible_distribution_release }} main
+
+{% elif ansible_distribution == "Debian" %}
+deb http://{{ apt_mirror }}/debian {{ ansible_lsb.codename }} main contrib non-free
+
+deb http://{{ apt_mirror }}/debian {{ ansible_lsb.codename }}-updates main contrib non-free
+
+deb http://security.debian.org {{ ansible_lsb.codename }}/updates main contrib non-free
+{% endif %}

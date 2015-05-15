@@ -1,0 +1,12 @@
+---
+# file: site.yml
+
+- include: arcgis.yml
+- include: compute.yml
+- include: dspace.yml
+- include: nomads.yml
+- include: solr.yml
+- include: storage.yml
+- include: web.yml
+
+# vim: set sw=2 ts=2:

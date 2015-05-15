@@ -1,0 +1,10 @@
+---
+- name: Install munin package
+  action: "{{ ansible_pkg_mgr }} name={{ item }} state=latest"
+  with_items:
+    - munin
+
+- name: Create munin configuration file
+  copy: src=munin.conf dest=/etc/munin/munin.conf mode=0644 owner=root group=root
+
+# vim: set sw=2 ts=2:

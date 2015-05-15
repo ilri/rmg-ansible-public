@@ -1,0 +1,75 @@
+---
+# One-off playbook to create the provisioning user for use by ansible
+# In the future, all machines will get this user via kickstart / preseed
+# and we will manage keys via an "ssh_keys" task in the common role
+
+# tested on:
+# - Ubuntu 14.04
+# - CentOS 6.5
+
+# questions
+# - if create_home=yes, what happens if the home dir already exists?
+
+- hosts: all
+  sudo: yes
+  vars_files:
+    - "../vars/{{ ansible_os_family }}.yml"
+    - "../private/vars/{{ ansible_os_family }}.yml"
+  tasks:
+    - name: Create parent dir for provisioning user's home dir
+      when: ansible_os_family == 'RedHat'
+      file: path={{ provisioning_user.home | dirname }} mode=0755 owner=root group=root state=directory
+
+    - name: Create provisioning user
+      user: name={{ provisioning_user.name }} password={{ provisioning_user.password }} createhome={{ provisioning_user.create_home }} home={{ provisioning_user.home }} shell={{ provisioning_user.shell }} state={{ provisioning_user.state }}
+      when: ansible_os_family == 'RedHat'
+
+    # Debian/Ubuntu's sudoers allows users in the `sudo` group by default
+    - name: Create provisioning user belonging to sudo group
+      user: name={{ provisioning_user.name }} password={{ provisioning_user.password }} createhome={{ provisioning_user.create_home }} home={{ provisioning_user.home }} shell={{ provisioning_user.shell }} state={{ provisioning_user.state }} groups=sudo append=yes
+      when: ansible_os_family == 'Debian'
+
+    # Only required on RedHat-family, where sudoers is stricter
+    - name: Add provisioning user to sudoers
+      copy: content="provisioning   ALL=(ALL)  ALL" dest=/etc/sudoers.d/provisioning owner=root group=root mode=600 validate='visudo -cf %s'
+      when: ansible_os_family == 'RedHat'
+
+    - name: Make sure we have semanage
+      yum: name=policycoreutils-python state=installed
+      when: ansible_os_family == 'RedHat' and linode_id is not defined
+
+    - name: Adjust SELinux context to allow user_home_t on provisioning home
+      command: /usr/sbin/semanage fcontext -a -t user_home_t "{{ provisioning_user.home }}(/.*)?"
+      when: ansible_os_family == 'RedHat' and linode_id is not defined
+
+    - name: Reset SELinux contexts on provisioning home
+      command: /sbin/restorecon -Rv "{{ provisioning_user.home }}"
+      when: ansible_os_family == 'RedHat' and linode_id is not defined
+
+    - name: Zero the authorized_keys
+      file: dest={{ provisioning_user.home }}/.ssh/authorized_keys state=absent
+
+    - name: Add public keys to authorized_keys
+      authorized_key: { user: '{{ provisioning_user.name }}', key: "{{ lookup('file',item) }}" }
+      with_fileglob:
+        - ../roles/common/files/ssh-pub-keys/*.pub
+
+    # SSH configs don't change in Debian / CentOS minor versions
+    # Debian-7, CentOS-6, etc...
+    - name: Reconfigure /etc/ssh/sshd_config
+      template: src=../roles/common/templates/sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0600
+      when: (ansible_distribution == 'Debian' or ansible_distribution == 'CentOS')
+      notify: restart sshd
+
+    # Ubuntu is the only distro we have where SSH version is very different from 14.04 -> 14.10,
+    # ie with new ciphers supported etc.
+    - name: Reconfigure /etc/ssh/sshd_config
+      template: src=../roles/common/templates/sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0600
+      when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version != 10
+      notify: restart sshd
+
+  handlers:
+    - name: restart sshd
+      service: name={{ sshd_service_name }} state=restarted enabled=yes
+
+# vim: set ts=2 sw=2:

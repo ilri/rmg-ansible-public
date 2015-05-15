@@ -1,0 +1,10 @@
+SHELL=/bin/bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+{% for vendor in hw_raid_vendor %}
+{% if vendor == 'lsi' %}
+00 */2 * * * root /root/lsi-raid-monitoring.sh checkNemail
+{% endif %}
+{% if vendor == 'hp' %}
+01 */2 * * * root /root/hp-raid-monitoring.sh
+{% endif %}
+{% endfor %}

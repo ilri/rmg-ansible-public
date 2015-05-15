@@ -1,0 +1,134 @@
+---
+- name: Install DSpace deps
+  apt: pkg={{ item }} state=present install_recommends=no update_cache=yes
+  with_items:
+    - tomcat7
+    - tomcat7-admin
+    - ant
+    - maven
+    - xpdf
+    - libtcnative-1
+    - lrzip
+    - poppler-utils # for media filter
+    - python-psycopg2 # for ansible postgres modules
+    - postgresql-contrib # for DSpace functions
+  tags: packages
+
+- name: Add Oracle Java PPA
+  apt_repository: repo='ppa:webupd8team/java' state=present
+  tags: java
+
+- name: Accept Oracle license
+  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections
+  tags: java
+
+- name: Install Oracle Java
+  apt: pkg=oracle-java7-installer state=present
+  tags: java
+
+- name: Add nginx.org apt signing key
+  apt_key: url=http://nginx.org/keys/nginx_signing.key state=present
+  tags: nginx
+
+- name: Add nginx.org repo
+  template: src=nginx_org_packages_ubuntu.list.j2 dest=/etc/apt/sources.list.d/nginx_org_packages_ubuntu.list mode=0644 owner=root group=root
+  tags: nginx
+
+- name: Install nginx
+  apt: pkg=nginx update_cache=yes state=latest
+  tags: nginx
+
+- name: Copy nginx configs
+  copy: src=nginx/{{ item }} dest=/etc/nginx/{{ item }} mode=0644 owner=root group=root
+  with_items:
+    - extra-security.conf
+    - nginx.conf
+    - proxy_params
+  notify:
+    - reload nginx
+  tags: nginx
+
+- name: Configure nginx vhosts
+  template: src=nginx/default.conf.j2 dest=/etc/nginx/conf.d/default.conf mode=0644 owner=root group=root
+  notify:
+    - reload nginx
+  tags: nginx
+
+- name: Configure munin vhost
+  copy: src=nginx/munin.conf dest=/etc/nginx/conf.d/munin.conf mode=0644 owner=root group=root
+  when: munin_role is defined and munin_role == "standalone"
+  notify:
+    - reload nginx
+  tags: nginx
+
+- name: Generate 2048-bit dhparam
+  command: openssl dhparam -out dhparam.pem 2048 chdir=/etc/ssl/certs creates=dhparam.pem
+  tags: nginx
+
+- name: Start & enable nginx service
+  service: name=nginx state=started enabled=yes
+  tags: nginx
+
+- name: Set Tomcat user's shell
+  user: name=tomcat7 shell=/bin/bash
+  tags: tomcat
+
+- name: Set tomcat7 defaults
+  template: src=tomcat/tomcat7.j2 dest=/etc/default/tomcat7 owner=root group=root mode=0644
+  notify:
+    - restart tomcat7
+  tags: tomcat
+
+- name: Copy Tomcat config(s)
+  template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
+  with_items:
+    - { src: 'tomcat/server.xml.j2', dest: '/etc/tomcat7/server.xml', owner: 'root', group: 'root', mode: '0644' }
+    - { src: 'tomcat/tomcat-users.xml.j2', dest: '/etc/tomcat7/tomcat-users.xml', owner: 'root', group: 'tomcat7', mode: '0640' }
+  notify:
+    - restart tomcat7
+  tags: tomcat
+
+- name: Prepare Tomcat web application contexts
+  template: src=tomcat/context.xml.j2 dest={{ item.context_path }}
+  with_items: dspace_webapps
+  when: dspace_webapps is defined
+  notify:
+    - restart tomcat7
+  tags: tomcat
+
+- name: Enable Tomcat
+  service: name=tomcat7 enabled=yes
+  tags: tomcat
+
+- name: Prepare tomcat7 home folder
+  file: dest={{ item.dest }} state={{ item.state }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }}
+  with_items:
+    - { dest: '/usr/share/tomcat7/.m2', state: 'directory', owner: 'tomcat7', group: 'tomcat7', mode: '750' }
+    - { dest: '/usr/share/tomcat7/src/git/DSpace', state: 'directory', owner: 'tomcat7', group: 'tomcat7', mode: '755' }
+  tags: tomcat
+
+- name: Enable Xpdf mediafilter
+  script: enable_xpdf.sh creates=/usr/share/tomcat7/.m2/xpdf_configured
+  sudo_user: tomcat7
+
+- name: Copy maven settings
+  template: src=m2/settings.xml.j2 dest=/usr/share/tomcat7/.m2/settings.xml owner=tomcat7 group=tomcat7 mode=640
+
+- name: Clone DSpace repository
+  git: repo={{ dspace_git_repo }} dest=/usr/share/tomcat7/src/git/DSpace version={{ dspace_git_branch }}
+  sudo_user: tomcat7
+
+- name: Create DSpace postgres user
+  postgresql_user: name={{ dspace_db_user }} password={{ dspace_db_password }}
+  sudo_user: postgres
+  tags: postgres
+
+- name: Create DSpace postgres database
+  postgresql_db: name={{ dspace_db_name }} encoding='UTF-8' template='template0' owner={{ dspace_db_user }}
+  sudo_user: postgres
+  tags: postgres
+
+- name: Set up cron job for Handle server
+  template: src=dspace-handle-server.j2 dest=/etc/cron.d/dspace-handle-server owner=root group=root mode=644
+
+# vim: set sw=2 ts=2:

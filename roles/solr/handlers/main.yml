@@ -1,0 +1,7 @@
+---
+# file: roles/dspace/handlers/main.yml
+
+- name: restart tomcat7
+  service: name=tomcat7 state=restarted
+
+# vim: set sw=2 ts=2:

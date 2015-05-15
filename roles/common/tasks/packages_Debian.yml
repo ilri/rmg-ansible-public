@@ -1,0 +1,26 @@
+---
+- name: Configure apt mirror
+  template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
+
+- name: Install base packages
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - ntp
+    - git
+    - tmux
+    - iotop
+    - htop
+    - strace
+    - s3cmd
+    - cron-apt
+    - safe-rm
+    - debian-goodies
+    - lzop
+    - vim
+    - sysv-rc-conf
+    - acpid
+
+- include: cron-apt.yml
+  tags: cron-apt
+
+# vim: set ts=2 sw=2:

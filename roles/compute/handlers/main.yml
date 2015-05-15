@@ -1,0 +1,10 @@
+---
+# file: roles/slurm/handlers/main.yml
+
+- name: restart slurm
+  service: name=slurm state=restarted
+
+- name: restart munge
+  service: name=munge state=restarted
+
+# vim: set sw=2 ts=2:

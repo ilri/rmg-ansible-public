@@ -1,0 +1,40 @@
+---
+
+- name: Install extra packages
+  yum: name={{ item }} state=present
+  with_items:
+    - environment-modules
+    - xauth # or else X11 forwarding doesn't work
+    - xeyes # to test x11 :)
+    - libgomp # for R
+    - libgfortran # for R
+    - libicu # for R
+    - libXtst # for some X apps like CLC Genomics
+    - compat-readline5 # for some programs like mothur
+    - gsl # for fastSTRUCTURE
+    - emacs
+    - perl-parent # for some BioPerl scripts
+    - java-1.7.0-openjdk # for lots of stuff
+    - perl-String-Approx.x86_64 # for NGSQCToolkit
+    - libtool-ltdl.x86_64 # for pandaseq/2.7
+    - tmux #terminal window manager
+    - screen #terminal window manager
+
+- name: Install extra packages for Circos
+  yum: name={{ item }} state=present
+  with_items:
+    - perl-Clone.x86_64
+    - perl-Config-General.noarch
+    - perl-Font-TTF.noarch
+    - perl-Readonly.noarch
+    - perl-Regexp-Common.noarch
+    - perl-Text-Format.noarch
+    - perl-GD.x86_64
+    - perl-Params-Validate.x86_64
+
+- name: Install extra packages for wise (dep of Cegma)
+  yum: name={{ item }} state=present
+  with_items:
+    - glib.x86_64
+
+# vim: set sw=2 ts=2:

@@ -1,0 +1,15 @@
+---
+- name: Copy ldap.conf
+  template: src=ldap.conf.j2 dest={{ ldap_conf_dir}}/ldap.conf owner=root group=root mode=0644
+
+- name: Create cacerts dir
+  file: dest={{ ldap_conf_dir }}/cacerts state=directory owner=root group=root mode=0755
+
+- name: Copy hpc-ca.asc
+  copy: src=hpc-ca.asc dest={{ ldap_conf_dir }}/cacerts/hpc-ca.asc owner=root group=root mode=0644
+
+- name: Install OpenLDAP utils
+  yum: name=openldap-clients state=latest
+  when: ansible_distribution == 'CentOS'
+
+# vim: set ts=2 sw=2:

@@ -1,0 +1,9 @@
+---
+- name: Install packages
+  yum: name={{ item }} state=present
+  with_items:
+    - git
+    - mosh
+    - acpid
+
+# vim: set ts=2 sw=2:

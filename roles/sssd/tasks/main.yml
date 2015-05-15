@@ -1,0 +1,11 @@
+---
+- include: ldap.yml
+  tags: ldap
+
+- include: sssd.yml
+  tags: sssd
+
+- include: sudoersd.yml
+  tags: sudoers
+
+# vim: set ts=2 sw=2:

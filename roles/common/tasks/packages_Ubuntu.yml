@@ -1,0 +1,47 @@
+---
+- name: Configure apt mirror
+  template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
+
+- name: Add GPG key for Extras repo
+  apt_key: id=0x3E5C1192 url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x16126D3A3E5C1192 state=present
+
+- name: Upgrade base OS
+  apt: upgrade=dist update_cache=yes
+
+- name: Install base packages
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - ntp
+    - git
+    - tmux
+    - iotop
+    - htop
+    - strace
+    - s3cmd
+    - cron-apt
+    - safe-rm
+    - debian-goodies
+    - mosh
+    - python-pycurl # for ansible's apt_repository
+    - sysv-rc-conf
+    - lzop
+    - vim
+    - acpid
+
+- name: Security hardening (CIS Benchmark 1.0)
+  apt: name={{ item }} state=absent purge=yes
+  with_items:
+    - whoopsie # CIS 4.1
+    - apport   # CIS 4.1
+
+- name: Remove annoying packages
+  apt: name={{ item }} state=absent purge=yes
+  with_items:
+    - command-not-found
+    - command-not-found-data
+    - python3-commandnotfound
+
+- include: cron-apt.yml
+  tags: cron-apt
+
+# vim: set ts=2 sw=2:

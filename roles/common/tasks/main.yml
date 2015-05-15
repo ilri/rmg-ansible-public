@@ -1,0 +1,66 @@
+---
+
+- include: packages_Ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
+  tags: packages
+
+- include: packages_Debian.yml
+  when: ansible_distribution == 'Debian'
+  tags: packages
+
+- include: packages_CentOS.yml
+  when: ansible_distribution == 'CentOS'
+  tags: packages
+
+- include: iptables_Debian.yml
+  when: ansible_os_family == 'Debian'
+  tags: firewall
+
+- include: iptables_CentOS.yml
+  when: ansible_distribution == 'CentOS'
+  tags: firewall
+
+- include: sshd.yml
+  tags: sshd
+
+- name: Reconfigure /etc/sysctl.conf
+  template: src=sysctl_{{ ansible_distribution }}.j2 dest=/etc/sysctl.conf owner=root group=root mode=0644
+  notify:
+    - reload sysctl
+  tags: sysctl
+
+- name: Reconfigure /etc/rc.local
+  when: ansible_distribution == 'CentOS'
+  template: src=rc.local_{{ ansible_distribution }}.j2 dest=/etc/rc.d/rc.local owner=root group=root mode=0755
+  tags: rclocal
+
+- name: Reconfigure /etc/rc.local
+  when: ansible_os_family == 'Debian'
+  template: src=rc.local_{{ ansible_distribution }}.j2 dest=/etc/rc.local owner=root group=root mode=0755
+  tags: rclocal
+
+- name: Set I/O scheduler
+  template: src=etc/udev/rules.d/60-scheduler.rules.j2 dest=/etc/udev/rules.d/60-scheduler.rules owner=root group=root mode=0644
+  tags: udev
+
+# should really be part of compute/storage roles... but not sure the best way right now
+- name: Copy IRQ affinity script
+  when: ansible_distribution == 'CentOS'
+  copy: src=set_irq_affinity.sh dest=/usr/local/bin/set_irq_affinity.sh owner=root mode=0755
+
+- include: tuned.yml
+  when: "'compute' in group_names or 'storage' in group_names"
+  tags: tuned
+
+- include: ssh-keys.yml
+  when: provisioning_user is defined
+  tags: ssh-keys
+
+- include: sudoersd.yml
+  tags: sudoers
+
+- include: raid-monitoring.yml
+  when: hw_raid_vendor is defined
+  tags: raid-monitoring
+
+# vim: set sw=2 ts=2:

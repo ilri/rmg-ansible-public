@@ -1,0 +1,18 @@
+---
+# file: dspace.yml
+
+- hosts: dspace
+  sudo: yes
+  user: provisioning
+  vars_files:
+    - "vars/{{ ansible_os_family }}.yml"
+    - private/vars/common.yml
+    - "private/vars/{{ ansible_os_family }}.yml"
+    - private/vars/ipsets.yml
+  roles:
+    - common
+    - postgres
+    - dspace
+    - munin
+
+# vim: set sw=2 ts=2:

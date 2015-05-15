@@ -1,0 +1,26 @@
+---
+# file: defaults/main.yml
+
+# Forbid search bots via the "X-Robots-Tag" HTTP header?
+# False on production, True on development!
+nginx_forbid_robots: False
+
+# 1 hour timeout
+nginx_ssl_session_timeout: 1h
+# 10MB -> 40,000 sessions
+nginx_ssl_session_cache: shared:SSL:10m
+# 1400 bytes to fit in one MTU (default is 16k!)
+nginx_ssl_buffer_size: 1400
+nginx_ssl_dhparam: /etc/ssl/certs/dhparam.pem
+nginx_ssl_protocols: 'TLSv1 TLSv1.1 TLSv1.2'
+nginx_spdy_headers_comp: 6
+
+# Use 301 (permanent) or 302 (temporary) redirects?
+# 301 on production, 302 on development!
+nginx_redirect_type: 301
+
+# Enable HTTP Strict Transport Security?
+# True on production, False on development!
+nginx_enable_hsts: True
+
+# vim: set sw=2 ts=2:

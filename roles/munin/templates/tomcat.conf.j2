@@ -1,0 +1,7 @@
+{% if munin_tomcat_port is defined and munin_tomcat_user is defined and munin_tomcat_password is defined %}
+[tomcat_*]
+    env.host 127.0.0.1
+    env.port {{ munin_tomcat_port }}
+    env.user {{ munin_tomcat_user }}
+    env.password {{ munin_tomcat_password }}
+{% endif %}

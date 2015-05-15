@@ -1,0 +1,24 @@
+---
+- name: Copy /etc/sysconfig/iptables
+  when: inventory_hostname != 'hpc'
+  template: src=iptables.j2 dest=/etc/sysconfig/iptables owner=root mode=0600
+  notify:
+    - restart iptables
+
+- name: Install tidy
+  when: ansible_distribution_major_version == '7'
+  yum: name={{ item }} state=present
+  with_items:
+    - tidy
+
+- name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
+  when: inventory_hostname != 'hpc' and ansible_distribution_major_version == '7'
+  template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600
+
+- name: Format public.xml firewalld zone file
+  when: inventory_hostname != 'hpc' and ansible_distribution_major_version == '7'
+  shell: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
+  notify:
+    - restart firewalld
+
+# vim: set sw=2 ts=2:

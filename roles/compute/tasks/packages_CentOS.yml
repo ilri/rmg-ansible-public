@@ -1,5 +1,7 @@
 ---
 
+#NOTE: WIP! missing packages in EPEL-7 are commented out!
+
 - name: Install extra packages
   yum: name={{ item }} state=present
   with_items:
@@ -10,12 +12,12 @@
     - libgfortran # for R
     - libicu # for R
     - libXtst # for some X apps like CLC Genomics
-    - compat-readline5 # for some programs like mothur
+    #- compat-readline5 # for some programs like mothur
     - gsl # for fastSTRUCTURE
     - emacs
     - perl-parent # for some BioPerl scripts
     - java-1.7.0-openjdk # for lots of stuff
-    - perl-String-Approx.x86_64 # for NGSQCToolkit
+    #- perl-String-Approx.x86_64 # for NGSQCToolkit
     - libtool-ltdl.x86_64 # for pandaseq/2.7
     - tmux #terminal window manager
     - screen #terminal window manager

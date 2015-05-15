@@ -9,9 +9,9 @@ id_provider = ldap
 auth_provider = ldap
 chpass_provider = ldap
 ldap_uri = ldaps://hpc.ilri.cgiar.org
-# Ubuntu 14.04 doesn't seem to like cacertdir, so use cacert directly
+# ca cert works on both GNUTLS(Ubuntu) & OpenSSL(CentOS)
 #ldap_tls_cacertdir = {{ ldap_conf_dir }}/cacerts
-ldap_tls_cacert = {{ ldap_conf_dir }}/cacerts/hpc-ca.asc
+ldap_tls_cacert = {{ local_ca_certs_dir }}/hpc-ca.crt
 [sssd]
 services = nss, pam
 config_file_version = 2

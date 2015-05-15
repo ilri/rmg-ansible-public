@@ -12,9 +12,9 @@
 #TIMELIMIT	15
 #DEREF		never
 
-# Ubuntu 14.04 doesn't seem to like cacertdir, so use cacert directly
-#TLS_CACERTDIR {{ ldap_conf_dir}}/cacerts
-TLS_CACERT {{ ldap_conf_dir}}/cacerts/hpc-ca.asc
+# use trusted ca certs bundle - contains hpc's ca cert
+# using the ca certs bundle works on both GNUTLS & OpenSSL
+TLS_CACERT {{ ca_certs_bundle }}
 TLS_REQCERT     demand
 
 URI ldaps://hpc.ilri.cgiar.org

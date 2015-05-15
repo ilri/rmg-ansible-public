@@ -7,4 +7,8 @@ sshd_service_name: sshd
 # LDAP config directory
 ldap_conf_dir: /etc/openldap
 
+# trusted ca certs bundle
+ca_certs_bundle: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+local_ca_certs_dir: /etc/pki/ca-trust/source/anchors
+
 # vim: set ts=2 sw=2:

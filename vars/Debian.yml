@@ -7,4 +7,8 @@ sshd_service_name: ssh
 # LDAP config directory
 ldap_conf_dir: /etc/ldap
 
+# trusted ca certs bundle
+ca_certs_bundle: /etc/ssl/certs/ca-certificates.crt
+local_ca_certs_dir: /usr/local/share/ca-certificates
+
 # vim: set ts=2 sw=2:

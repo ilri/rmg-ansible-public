@@ -22,6 +22,12 @@
   when: "ansible_distribution == 'CentOS' and 'compute' not in group_names"
   command: authconfig --enablesssd --enablesssdauth --enableldap --enableldapauth --enablemkhomedir --ldapserver=ldaps://hpc.ilri.cgiar.org --ldapbasedn=dc=ilri,dc=cgiar,dc=org --disablerfc2307bis --disableldaptls --disablekrb5 --disablekrb5kdcdns --disablekrb5realmdns --updateall
 
+# authconfig updates ldap.conf & adds TLS_CACERTDIR which overrides TLS_CACERT
+# so we'll need to remove it from ldap.conf
+- name: remove TLS_CACERTDIR in ldap.conf
+  when: ansible_distribution == 'CentOS'
+  lineinfile: dest={{ ldap_conf_dir }}/ldap.conf regexp="^TLS_CACERTDIR" state=absent
+
 - name: Configure sssd
   template: src=sssd.conf.j2 dest=/etc/sssd/sssd.conf owner=root group=root mode=0600
   notify: restart sssd

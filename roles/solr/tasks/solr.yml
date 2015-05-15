@@ -1,46 +1,46 @@
 ---
 
+- name: Create system user account to run solr daemon
+  user: name={{ solr_user }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
+
 - name: Get Solr tarball
   get_url: url={{ solr_mirror_url }} dest={{ solr_prefix_dir }}/{{ solr_tarball }} sha256sum={{ solr_sha256sum }}
   register: get_url_result
 
 - name: Unpack Solr tarball
-  unarchive: src={{ solr_prefix_dir }}/{{ solr_tarball }} dest={{ solr_prefix_dir }} creates={{ solr_prefix_dir }}/solr-{{ solr_version }} copy=no
+  unarchive: src={{ solr_prefix_dir }}/{{ solr_tarball }} dest={{ solr_prefix_dir }} creates={{ solr_prefix_dir }}/solr-{{ solr_version }} owner={{ solr_user }} group={{ solr_user }} copy=no
   when: get_url_result|changed
 
-# Not sure if we need all the libs
-# See: http://duntuk.com/how-install-apache-solr-46-apache-tomcat-7-use-drupal
-# See: https://cwiki.apache.org/confluence/display/solr/Running+Solr+on+Tomcat
-- name: Copy Solr stuff to Tomcat classpath
-  shell: cp {{ item }} /usr/share/tomcat7/lib
+# /opt/solr -> /opt/solr-$SOLR_VERSION
+- name: Create a symlink to solr installation dir
+  file: src="{{solr_prefix_dir}}/solr-{{solr_version}}" dest="{{solr_prefix_dir}}/solr" owner={{ solr_user }} group={{ solr_user }} state=link
+
+- name: Create solr data & log dirs
+  file: path={{ item }} owner={{ solr_user }} group={{ solr_user }} state=directory
   with_items:
-    - "{{ solr_prefix_dir }}/solr-{{ solr_version }}/example/lib/ext/*.jar"
-    - "{{ solr_prefix_dir }}/solr-{{ solr_version }}/dist/solrj-lib/*.jar"
-    - "{{ solr_prefix_dir }}/solr-{{ solr_version }}/example/resources/log4j.properties"
+    - "{{solr_var_dir}}/data"
+    - "{{solr_var_dir}}/logs"
 
-- name: Create Solr home
-  command: cp -r {{ solr_prefix_dir }}/solr-{{ solr_version }}/example/solr {{ solr_home }} creates={{ solr_home }}
+- name: Copy solr init.d service file
+  template: src=init.d-solr.j2 dest=/etc/init.d/solr owner=root group=root mode=0755
 
-# create more Solr cores?
-# See: https://wiki.apache.org/solr/Core%20Discovery%20%284.4%20and%20beyond%29
+- name: Copy solr.xml config. files
+  command: /usr/bin/rsync -a "{{solr_install_dir}}/server/solr/solr.xml" "{{solr_var_dir}}/data/" creates="{{solr_var_dir}}/data/solr.xml"
+
+- name: Copy solr env files
+  template: src=solr.in.sh.j2 dest={{ solr_var_dir }}/solr.in.sh owner={{ solr_user }} group={{ solr_user }} mode=0755
+  notify: restart solr
+
+- name: Reconfigure solr logging
+  copy: src=log4j.properties dest="{{ solr_var_dir }}/log4j.properties" owner={{ solr_user }} group={{ solr_user }} mode=0644
+  notify: restart solr
+
+- name: Start & enable service
+  service: name=solr state=started enabled=yes
+
 - include: solr-cores.yml
+  become_user: "{{solr_user}}"
   when: solr_cores is defined
-
-- name: Fix permissions on Solr home
-  file: dest={{ solr_home }} state=directory owner=tomcat7 group=tomcat7 recurse=yes
-
-# Single Solr context, but could do more in the future (instances are more isolated than cores)
-# See: https://cwiki.apache.org/confluence/display/solr/Running+Solr+on+Tomcat
-- name: Create Solr Tomcat context
-  template: src=tomcat/context.xml.j2 dest=/etc/tomcat7/Catalina/localhost/solr.xml owner=tomcat7 group=tomcat7
-
-- name: Create Solr log directory
-  file: dest={{ solr_log_dir }} state=directory owner=tomcat7 group=tomcat7 mode=0755
-
-- name: Re-configure Solr logging
-  lineinfile: dest=/usr/share/tomcat7/lib/log4j.properties regexp="^solr.log=logs/" line=solr.log={{ solr_log_dir }}
-
-- name: Configure logrotate
-  template: src=solr.j2 dest=/etc/logrotate.d/solr owner=root group=root mode=0644
+  tags: solr-cores
 
 # vim: set ts=2 sw=2:

@@ -18,14 +18,6 @@ web_access:
 
 apt_mirror: ubuntu.mirror.ac.ke
 
-solr_version: 4.10.3
-solr_tarball: solr-{{ solr_version }}.tgz
-solr_mirror_url: http://www.eng.lsu.edu/mirrors/apache/lucene/solr/{{ solr_version }}/{{ solr_tarball }}
-solr_sha256sum: ac7024a0a759c6c53cc3a66b3a84757d599d350f491eb221160613356532e2b6
-solr_prefix_dir: /opt
-solr_log_dir: /var/log/solr
-solr_home: /var/lib/tomcat7/solr-home
-
 munin_master_host: hpc
 munin_node_port: 4949
 # plain http connector for munin to query Tomcat status

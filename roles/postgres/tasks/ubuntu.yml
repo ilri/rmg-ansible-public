@@ -15,7 +15,6 @@
     - { src: 'postgresql-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/postgresql.conf', mode: '0644', owner: 'postgres', group: 'postgres' }
     - { src: 'pg_hba-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/pg_hba.conf', mode: '0640', owner: 'postgres', group: 'postgres' }
   notify: restart postgres
-  tags: postgres
 
 - name: start & enable postgres
   service: name=postgresql state=started enabled=true

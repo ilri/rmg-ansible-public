@@ -122,6 +122,12 @@ server {
     # enable SPDY header compression
     spdy_headers_comp {{ nginx_spdy_headers_comp }};
 
+    # Add header to forbid robots to index
+    # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+    # May, 2015 we submitted a "Change of Address" -> cgspace.cgiar.org in Google Webmaster tools
+    # but I don't see any reason to let ANY bots try to index this site.
+    add_header X-Robots-Tag "none";
+
     # redirect to {{ nginx_server_name }}
     location / {
         # ? in rewrite makes sure nginx doesn't append query string again

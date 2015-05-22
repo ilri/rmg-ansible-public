@@ -70,6 +70,7 @@ server {
 #
 server {
     listen 80;
+    listen [::]:80;
     server_name {{ nginx_server_name }};
 
     # feedburner doesn't support https :(
@@ -143,8 +144,10 @@ server {
 server {
     {% if nginx_tls_cert is defined %}
     listen 443 ssl spdy default_server;
+    listen [::]:443 ssl spdy;
     {% else %}
     listen 80 default_server;
+    listen [::]:80;
     {% endif %} {# end: nginx_tls_cert #}
 
     server_name {{ nginx_server_name }};

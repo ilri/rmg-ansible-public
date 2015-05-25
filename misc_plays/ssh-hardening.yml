@@ -12,7 +12,9 @@
   user: provisioning
   vars_files:
     - "../vars/{{ ansible_os_family }}.yml"
+    - ../private/vars/common.yml
     - "../private/vars/{{ ansible_os_family }}.yml"
+    - ../private/vars/ipsets.yml
   tasks:
     - name: Remove DSA and ECDSA host keys
       file: name=/etc/ssh/{{ item }} state=absent

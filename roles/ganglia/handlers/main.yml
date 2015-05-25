@@ -3,4 +3,7 @@
 - name: restart gmond
   service: name=gmond state=restarted
 
+- name: restart gmetad
+  service: name=gmetad state=restarted
+
 # vim: set sw=2 ts=2:

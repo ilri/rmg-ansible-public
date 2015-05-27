@@ -15,6 +15,9 @@ MegaCli="/opt/MegaRAID/MegaCli/MegaCli64"
 MegaCli="/usr/sbin/megacli"
 {% endif %}
 
+# extra mail options -> mailrc
+MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }}'
+
 # The identifying number of the enclosure. Default for our systems is "8". Use
 # "MegaCli64 -PDlist -a0 | grep "Enclosure Device"" to see what your number
 # is and set this variable.
@@ -178,7 +181,7 @@ if [ $1 = "checkNemail" ]
 
       # On bad raid status send email with basic drive information
       if [ "$STATUS" ]; then
-         $MegaCli -PDlist -aALL -NoLog | egrep 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | mail -s `hostname`' - RAID Notification' $EMAIL
+         $MegaCli -PDlist -aALL -NoLog | egrep 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | mail ${MAIL_ARGS} -s `hostname`' - RAID Notification' $EMAIL
       fi
 fi
 

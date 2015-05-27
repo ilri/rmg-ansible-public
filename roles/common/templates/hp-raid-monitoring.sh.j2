@@ -20,6 +20,9 @@ HP_CLI_BIN=/usr/sbin/hpssacli
 # admin email(s)
 EMAIL="{{ raid_admins|join(" ") }}"
 
+# extra mail options -> mailrc
+MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }}'
+
 # get slots on this machine's HP storage
 SLOTS=$($HP_CLI_BIN controller all show | grep -E 'Slot [0-9]{0,2}' | awk '{print $6}')
 
@@ -30,7 +33,7 @@ function checkPhysicalDisks () {
     result=$($HP_CLI_BIN ctrl slot=$slot pd all show | grep -v '^Error: ' | grep physicaldrive | grep -v OK | wc -l)
 
     if [[ $result > 0 ]]; then
-        $HP_CLI_BIN ctrl slot=$slot pd all show | mail -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
+        $HP_CLI_BIN ctrl slot=$slot pd all show | mail ${MAIL_ARGS} -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
     fi
 }
 

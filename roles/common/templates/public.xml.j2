@@ -76,18 +76,18 @@
     {# compute/slurm rules #}
     {% if 'compute' in group_names %}
     <rule family="ipv4">
-        <source address="{{ slurm_head_node }}"/>
+        <source address="{{ ghetto_ipsets[slurm_head_node].src }}"/>
         <port protocol="tcp" port="{{ slurm_slurmd_port }}"/>
         <accept/>
     </rule>
     {% if ganglia_master_host is defined %}
     <rule family="ipv4">
-        <source address="{{ ganglia_master_host }}"/>
+        <source address="{{ ghetto_ipsets[ganglia_master_host].src }}"/>
         <port protocol="tcp" port="{{ ganglia_gmond_port }}"/>
         <accept/>
     </rule>
     <rule family="ipv4">
-        <source address="{{ ganglia_master_host }}"/>
+        <source address="{{ ghetto_ipsets[ganglia_master_host].src }}"/>
         <port protocol="udp" port="{{ ganglia_gmond_port }}"/>
         <accept/>
     </rule>

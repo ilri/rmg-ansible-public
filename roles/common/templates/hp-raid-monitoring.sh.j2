@@ -17,7 +17,8 @@ HP_CLI_BIN=/usr/sbin/hpacucli
 HP_CLI_BIN=/usr/sbin/hpssacli
 {% endif %}
 
-EMAIL="{% for email in raid_admins %}{{ email }} {% endfor %}"
+# admin email(s)
+EMAIL="{{ raid_admins|join(" ") }}"
 
 # get slots on this machine's HP storage
 SLOTS=$($HP_CLI_BIN controller all show | grep -E 'Slot [0-9]{0,2}' | awk '{print $6}')
@@ -25,6 +26,7 @@ SLOTS=$($HP_CLI_BIN controller all show | grep -E 'Slot [0-9]{0,2}' | awk '{prin
 function checkPhysicalDisks () {
     # check for physical disk status (ignoring lines beginning with error, like
     # when the slot has no disks)
+    slot=$1
     result=$($HP_CLI_BIN ctrl slot=$slot pd all show | grep -v '^Error: ' | grep physicaldrive | grep -v OK | wc -l)
 
     if [[ $result > 0 ]]; then

@@ -31,6 +31,8 @@
 
 - name: Generate 2048-bit dhparam
   command: openssl dhparam -out dhparam.pem 2048 chdir=/etc/ssl/certs creates=dhparam.pem
+  notify:
+    - reload nginx
 
 - name: Start & enable nginx service
   service: name=nginx state=started enabled=yes

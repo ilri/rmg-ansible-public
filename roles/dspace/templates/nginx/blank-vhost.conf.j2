@@ -19,5 +19,14 @@ server {
     ssl_ciphers "{{ tls_cipher_suite }}";
     ssl_prefer_server_ciphers on;
 
+    # nginx does not auto-rotate session ticket keys: only a HUP / restart will do so and
+    # when a restart is performed the previous key is lost, which resets all previous
+    # sessions. The fix for this is to setup a manual rotation mechanism:
+    # http://trac.nginx.org/nginx/changeset/1356a3b9692441e163b4e78be4e9f5a46c7479e9/nginx
+    #
+    # Note that you'll have to define and rotate the keys securely by yourself. In absence
+    # of such infrastructure, consider turning off session tickets:
+    ssl_session_tickets off;
+
     return 403;
 }

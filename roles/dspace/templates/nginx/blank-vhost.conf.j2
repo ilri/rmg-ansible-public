@@ -1,0 +1,23 @@
+# default blank SSL server for invalid requests and clients without SNI
+#
+# clients asking for "example.com" should only get a response if we have
+# a vhost serving that domain.
+server {
+    listen 80 default;
+    listen 443 ssl spdy default;
+    server_name _;
+
+    # "snakeoil" certificate (self signed!)
+    ssl_certificate /etc/ssl/certs/nginx-snakeoil.crt;
+    ssl_certificate_key /etc/ssl/private/nginx-snakeoil.key;
+
+    ssl_session_timeout {{ nginx_ssl_session_timeout }};
+    ssl_session_cache {{ nginx_ssl_session_cache }};
+    ssl_buffer_size {{ nginx_ssl_buffer_size }};
+    ssl_dhparam {{ nginx_ssl_dhparam }};
+    ssl_protocols {{ nginx_ssl_protocols }};
+    ssl_ciphers "{{ tls_cipher_suite }}";
+    ssl_prefer_server_ciphers on;
+
+    return 403;
+}

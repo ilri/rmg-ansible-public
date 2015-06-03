@@ -45,7 +45,4 @@
 - name: Configure RAID monitoring cron job
   template: src=raid-monitoring-cron.j2 dest=/etc/cron.d/1raid-monitoring owner=root group=root mode=0644
 
-- name: Configure .mailrc
-  template: src=mailrc.j2 dest=/root/.mailrc owner=root group=root mode=0640
-
 # vim: set sw=2 ts=2:

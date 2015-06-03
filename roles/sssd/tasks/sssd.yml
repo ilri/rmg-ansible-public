@@ -8,7 +8,7 @@
    - pam_ldap
 
 - name: Install sssd package
-  apt: name={{ item }} state=present update_cache=yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
   when: ansible_distribution == 'Ubuntu'
   with_items:
    - sssd

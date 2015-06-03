@@ -1,6 +1,6 @@
 ---
 - name: Install DSpace deps
-  apt: pkg={{ item }} state=present install_recommends=no update_cache=yes
+  apt: pkg={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=86400
   with_items:
     - tomcat7
     - tomcat7-admin

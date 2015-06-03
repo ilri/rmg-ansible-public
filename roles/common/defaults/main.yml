@@ -11,6 +11,8 @@ raid_admins:
 # use the RAID monitoring scripts
 mailrc_smtp_server: smtp.example.co.ke
 mailrc_from_email: mwangi@example.co.ke
+mailrc_auth_user: mwangi@example.co.ke
+mailrc_auth_pass: A2YtYma2i1D1
 
 # list of email addresses to send cron-apt
 # error mails to

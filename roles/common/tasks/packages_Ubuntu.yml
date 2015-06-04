@@ -6,10 +6,10 @@
   apt_key: id=0x3E5C1192 url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x16126D3A3E5C1192 state=present
 
 - name: Upgrade base OS
-  apt: upgrade=dist update_cache=yes cache_valid_time=86400
+  apt: upgrade=dist update_cache=yes cache_valid_time=3600
 
 - name: Install base packages
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time=86400
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time=3600
   with_items:
     - ntp
     - git

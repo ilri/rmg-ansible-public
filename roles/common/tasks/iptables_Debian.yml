@@ -1,6 +1,6 @@
 ---
 - name: Install iptables-persistent
-  apt: name=iptables-persistent state=present update_cache=yes cache_valid_time=86400
+  apt: name=iptables-persistent state=present update_cache=yes cache_valid_time=3600
 
 - name: Copy /etc/iptables/rules
   when: ansible_distribution == 'Debian' and ansible_distribution_major_version == '6'

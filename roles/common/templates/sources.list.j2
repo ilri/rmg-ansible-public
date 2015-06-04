@@ -1,4 +1,5 @@
 {% if ansible_distribution == "Ubuntu" %}
+{% set apt_mirror    = apt_mirror | default("ubuntu.mirror.ac.ke") %}
 #############################################################
 ################### OFFICIAL UBUNTU REPOS ###################
 #############################################################
@@ -17,6 +18,7 @@ deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partn
 deb http://extras.ubuntu.com/ubuntu {{ ansible_distribution_release }} main
 
 {% elif ansible_distribution == "Debian" %}
+{% set apt_mirror    = apt_mirror | default("debian.mirror.ac.ke") %}
 deb http://{{ apt_mirror }}/debian {{ ansible_lsb.codename }} main contrib non-free
 
 deb http://{{ apt_mirror }}/debian {{ ansible_lsb.codename }}-updates main contrib non-free

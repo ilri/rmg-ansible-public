@@ -29,7 +29,6 @@
 
 - name: Start & enable slurm
   service: name=slurm state=started enabled=yes
-  tags: slurm
 
 - name: Copy spank x11 config
   copy: src={{ item }} dest=/etc/slurm/{{ item }} mode=0644

@@ -12,6 +12,15 @@
         <accept/>
     </rule>
     {% endif %}
+
+    {# ipv6 ssh rules #}
+    {% if ghetto_ipsets[network].ipv6src is defined %}
+    <rule family="ipv6">
+        <source address="{{ ghetto_ipsets[network].ipv6src }}"/>
+        <port protocol="tcp" port="22"/>
+        <accept/>
+    </rule>
+    {% endif %}
     {% endfor %}
 
     {# web rules #}
@@ -20,6 +29,15 @@
     {% if ghetto_ipsets[network].src is defined %}
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[network].src }}"/>
+        <port protocol="tcp" port="80"/>
+        <accept/>
+    </rule>
+    {% endif %}
+
+    {# ipv6 web rules #}
+    {% if ghetto_ipsets[network].ipv6src is defined %}
+    <rule family="ipv6">
+        <source address="{{ ghetto_ipsets[network].ipv6src }}"/>
         <port protocol="tcp" port="80"/>
         <accept/>
     </rule>
@@ -133,6 +151,15 @@
     {% if ghetto_ipsets[rule.acl].src is defined %}
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[rule.acl].src }}"/>
+        <port protocol="{{ rule.protocol }}" port="{{ rule.port }}"/>
+        <accept/>
+    </rule>
+    {% endif %}
+
+    {# ipv6 extras rules #}
+    {% if ghetto_ipsets[rule.acl].ipv6src is defined %}
+    <rule family="ipv6">
+        <source address="{{ ghetto_ipsets[rule.acl].ipv6src }}"/>
         <port protocol="{{ rule.protocol }}" port="{{ rule.port }}"/>
         <accept/>
     </rule>

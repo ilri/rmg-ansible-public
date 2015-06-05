@@ -5,27 +5,32 @@
 
     {# ssh rules #}
     {% for network in ssh_access %}
+    {% if ghetto_ipsets[network].src is defined %}
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[network].src }}"/>
         <port protocol="tcp" port="22"/>
         <accept/>
     </rule>
+    {% endif %}
     {% endfor %}
 
     {# web rules #}
     {% if 'web' in group_names or 'dspace' in group_names %}
     {% for network in web_access %}
+    {% if ghetto_ipsets[network].src is defined %}
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[network].src }}"/>
         <port protocol="tcp" port="80"/>
         <accept/>
     </rule>
+    {% endif %}
     {% endfor %}
     {% endif %}
 
     {# storage rules #}
     {% if 'storage' in group_names %}
     {% if ganglia_master_host is defined %}
+    {% if ghetto_ipsets[ganglia_master_host].src is defined %}
      <rule family="ipv4">
         <source address="{{ ganglia_master_host }}"/>
         <port protocol="tcp" port="{{ ganglia_gmond_port }}" />
@@ -36,6 +41,7 @@
         <port protocol="udp" port="{{ ganglia_gmond_port }}" />
         <accept/>
     </rule>
+    {% endif %}
     {% endif %}
     <rule family="ipv4">
         <destination address="239.2.11.71/32"/>
@@ -75,6 +81,7 @@
 
     {# compute/slurm rules #}
     {% if 'compute' in group_names %}
+    {% if ghetto_ipsets[slurm_head_node].src is defined %}
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[slurm_head_node].src }}"/>
         <port protocol="tcp" port="{{ slurm_slurmd_port }}"/>
@@ -91,6 +98,7 @@
         <port protocol="udp" port="{{ ganglia_gmond_port }}"/>
         <accept/>
     </rule>
+    {% endif %}
     {% endif %}
     <rule family="ipv4">
         <destination address="239.2.11.71/32"/>
@@ -110,21 +118,25 @@
 
     {# munin rules #}
     {% if munin_master_host is defined %}
+    {% if ghetto_ipsets[munin_master_host].src is defined %}
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[munin_master_host].src }}"/>
         <port protocol="tcp" port="{{ munin_node_port }}"/>
         <accept/>
     </rule>
     {% endif %}
+    {% endif %}
 
     {# extra rules #}
     {% if extra_iptables_rules is defined %}
     {% for rule in extra_iptables_rules %}
+    {% if ghetto_ipsets[rule.acl].src is defined %}
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[rule.acl].src }}"/>
         <port protocol="{{ rule.protocol }}" port="{{ rule.port }}"/>
         <accept/>
     </rule>
+    {% endif %}
     {% endfor %}
     {% endif %}
 </zone>

@@ -10,52 +10,78 @@
   sudo: yes
   user: provisioning
   vars:
-    debian_openssl_packages: ["openssl","libssl1.0.0"]
-    debian_openssl_impacted_service:
-      - nginx
-      - apache2
+    debian_openssl_packages:
+      - openssl
+      - libssl1.0.0
+    centos_openssl_packages:
+      - openssl
+    centos_openssl_updated: {changed: False}
+    debian_openssl_updated: {changed: False}
   tasks:
     - name: update on Debian-based distros
       apt: pkg={{item}} state=latest update_cache=yes
       with_items: debian_openssl_packages
       when: ansible_os_family == "Debian"
-      register: openssl_updated
-      tags: debian
+      register: debian_openssl_updated
+      tags:
+        - debian
 
     - name: update on RedHat-based distros
-      yum: name=openssl state=latest
+      yum: name={{item}} state=latest
+      with_items: centos_openssl_packages
       when: ansible_os_family == "RedHat"
-      tags: redhat
+      register: centos_openssl_updated
+      tags:
+        - redhat
 
-    - name: check if service need to be restarted
-      shell: "lsof -n | grep 'DEL.*libssl.so'"
-      register: result_check
-      failed_when: result_check.stdout.find('unrecognized') != -1 and result_check.rc != 0
-      changed_when: result_check.stdout.find('unrecognized') == -1 or result_check.rc == 0
-      always_run: yes
-      tags: debian,redhat
+    # NOTE: service checks works on current hosts because of upstart.
+    # Need to re-evaluate when systemd is more widespread
+    - name: Check if nginx is installed
+      shell: service --status-all | grep nginx
+      when: centos_openssl_updated|changed or debian_openssl_updated|changed
+      register: reload_nginx
+      failed_when: reload_nginx.stdout.find("command not found") != -1
+      ignore_errors: yes
+      changed_when: reload_nginx.rc == 0
+      tags:
+        - debian
+        - redhat
 
-    - name: test running services  
-      command: "service {{item}} status | grep -i running"
-      register: services_status
-      with_items: openssl_impacted_service
-      when: result_check.rc == 0 or openssl_updated.changed
-      ignore_errors: true
-      always_run: yes
-      tags: debian,redhat
+    - name: Check if httpd is installed on RedHat-based distros
+      shell: service --status-all | grep httpd
+      when: ansible_os_family == "RedHat" and centos_openssl_updated is defined and centos_openssl_updated|changed
+      failed_when: reload_httpd.stdout.find("command not found") != -1
+      changed_when: reload_httpd.rc == 0
+      register: reload_httpd
+      tags:
+        - redhat
 
-    - name: restart running service
-      service: name={{item.item}} state=restarted
-      with_items: services_status.results
-      when: (result_check.rc == 0 or openssl_updated.changed ) and item.rc == 0
-      tags: debian,redhat
+    - name: Check if apache2 is installed on Debian-based distros
+      shell: service --status-all | grep apache2
+      when: ansible_os_family == "Debian" and debian_openssl_updated is defined and debian_openssl_updated|changed
+      failed_when: reload_apache2.stdout.find("command not found") != -1
+      changed_when: reload_apache2.rc == 0
+      register: reload_apache2
+      tags:
+        - redhat
 
-    - name: ensure no more service need to be restarted
-      shell: "lsof -n | grep 'DEL.*libssl.so'"
-      register: result
-      failed_when: result.rc == 0
-      changed_when: result.rc != 1
-      always_run: yes
-      tags: debian,redhat
+    - name: Reload nginx
+      service: name=nginx state=reloaded
+      when: reload_nginx is defined and reload_nginx.rc == 0
+      tags:
+        - redhat
+        - debian
+
+    - name: Reload httpd on RedHat-based distros
+      service: name=httpd state=reloaded
+      when: reload_httpd is defined and reload_httpd.rc == 0
+      tags:
+        - redhat
+
+    - name: Reload apache2 on Debian-based distros
+      service: name=apache2 state=reloaded
+      when: reload_apache2 is defined and reload_apache2.rc == 0
+      tags:
+        - debian
 
 # vim: set sw=2 ts=2:

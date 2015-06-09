@@ -1,0 +1,61 @@
+---
+# To mitigate openssl vulnerabilities[0] from January, 2015
+#
+# Relies on the output of `lsof' to find processes in memory which are
+# using an old version of OpenSSL.
+
+# [0] http://marc.info/?l=openssl-announce&m=142074329121775&w=2
+
+- hosts: all
+  sudo: yes
+  user: provisioning
+  vars:
+    debian_openssl_packages: ["openssl","libssl1.0.0"]
+    debian_openssl_impacted_service:
+      - nginx
+      - apache2
+  tasks:
+    - name: update on Debian-based distros
+      apt: pkg={{item}} state=latest update_cache=yes
+      with_items: debian_openssl_packages
+      when: ansible_os_family == "Debian"
+      register: openssl_updated
+      tags: debian
+
+    - name: update on RedHat-based distros
+      yum: name=openssl state=latest
+      when: ansible_os_family == "RedHat"
+      tags: redhat
+
+    - name: check if service need to be restarted
+      shell: "lsof -n | grep 'DEL.*libssl.so'"
+      register: result_check
+      failed_when: result_check.stdout.find('unrecognized') != -1 and result_check.rc != 0
+      changed_when: result_check.stdout.find('unrecognized') == -1 or result_check.rc == 0
+      always_run: yes
+      tags: debian,redhat
+
+    - name: test running services  
+      command: "service {{item}} status | grep -i running"
+      register: services_status
+      with_items: openssl_impacted_service
+      when: result_check.rc == 0 or openssl_updated.changed
+      ignore_errors: true
+      always_run: yes
+      tags: debian,redhat
+
+    - name: restart running service
+      service: name={{item.item}} state=restarted
+      with_items: services_status.results
+      when: (result_check.rc == 0 or openssl_updated.changed ) and item.rc == 0
+      tags: debian,redhat
+
+    - name: ensure no more service need to be restarted
+      shell: "lsof -n | grep 'DEL.*libssl.so'"
+      register: result
+      failed_when: result.rc == 0
+      changed_when: result.rc != 1
+      always_run: yes
+      tags: debian,redhat
+
+# vim: set sw=2 ts=2:

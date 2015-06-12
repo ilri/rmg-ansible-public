@@ -4,6 +4,9 @@
 - name: restart slurm
   service: name=slurm state=restarted
 
+- name: restart slurmdbd
+  service: name=slurmdbd state=restarted
+
 - name: restart munge
   service: name=munge state=restarted
 

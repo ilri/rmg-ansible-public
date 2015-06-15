@@ -5,4 +5,8 @@
   when: ansible_distribution == 'Ubuntu' and preferred_dbms == 'postgresql'
   tags: postgres
 
+- include: mariadb-ubuntu.yml
+  when: ansible_distribution == 'Ubuntu' and preferred_dbms == 'mariadb'
+  tags: mariadb
+
 # vim: set ts=2 sw=2:

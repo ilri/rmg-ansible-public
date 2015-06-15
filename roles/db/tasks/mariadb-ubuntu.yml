@@ -1,0 +1,24 @@
+---
+# file: tasks/mariadb-ubuntu.yml
+
+- name: Add GPG key for MariaDB repo
+  apt_key: id=0xcbcb082a1bb943db url=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xcbcb082a1bb943db
+
+- name: Add MariaDB 10.1 repo
+  apt_repository: repo="deb http://sgp1.mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu {{ ansible_distribution_release }} main" state=present
+
+- name: Install mariadb-server
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - mariadb-server
+
+- name: Start and enable MariaDB Service
+  service: name=mysql state=started enabled=true
+
+# TODO: add mariadb minimal configs.
+- name: Add MariaDB config file(s)
+  copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
+  with_items:
+    - { src: 'mariadb/98-percona-recommendations.cnf', dest: '/etc/mysql/conf.d/98-percona-recommendations.cnf', mode: '0644', owner: 'root', group: 'root' }
+
+# vim: set sw=2 ts=2:

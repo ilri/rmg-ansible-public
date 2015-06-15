@@ -37,7 +37,7 @@
     - slurm-slurmdbd
 
 - name: Copy slurmdb config file
-  when: inventory_hostname == "{{slurm_head_node}}"
+  when: inventory_hostname == "{{slurm_head_node}}" and slurmdb_info is defined
   template: src=slurmdbd.conf.j2 dest=/etc/slurm/slurmdbd.conf owner=root group=root mode=0600
   notify: restart slurmdbd
 

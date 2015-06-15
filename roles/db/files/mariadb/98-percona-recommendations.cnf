@@ -1,0 +1,31 @@
+########
+# Percona recommendations November 12, 2014
+# Further modifications in 99-ilri-customizations.cnf
+# https://tools.percona.com/wizard
+# BINARY LOGGING #
+[mysqld]
+log-bin                        = /var/lib/mysql/mysql-bin
+expire-logs-days               = 14
+sync-binlog                    = 1
+
+# INNODB #
+innodb-flush-method            = O_DIRECT
+innodb-log-file-size           = 256M
+# slow shutdown innodb: http://dev.mysql.com/doc/refman/5.5/en/innodb-parameters.html#sysvar_innodb_fast_shutdown
+innodb_fast_shutdown		   = 0
+
+# November 12, 2014
+# CACHES AND LIMITS #
+tmp-table-size                 = 32M
+max-heap-table-size            = 32M
+# 2015-05-20: 500 -> 250 (500?! uh...)
+max-connections                = 250
+thread-cache-size              = 50
+open-files-limit               = 65535
+table-definition-cache         = 4096
+table-open-cache               = 8096
+
+# LOGGING #
+log-queries-not-using-indexes  = 1
+slow-query-log                 = 1
+slow-query-log-file            = /var/lib/mysql/mysql-slow.log

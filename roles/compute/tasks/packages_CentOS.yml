@@ -19,6 +19,7 @@
     - libtool-ltdl.x86_64 # for pandaseq/2.7
     - tmux #terminal window manager
     - screen #terminal window manager
+    - openblas.x86_64 #for scipy
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

@@ -1,0 +1,14 @@
+---
+# file: tasks/mysql-ubuntu.yml
+
+- name: Install mysql-server
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - mysql-server-5.6
+
+- name: Start and enable mysql service
+  service: name=mysql state=started enabled=true
+
+# TODO: add mysql minimal configs.
+
+# vim: set sw=2 ts=2:

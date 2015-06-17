@@ -20,6 +20,7 @@
     - tmux #terminal window manager
     - screen #terminal window manager
     - openblas.x86_64 #for scipy
+    - compat-libstdc++-33.x86_64 #for libstdc++.so.5
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

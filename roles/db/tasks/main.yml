@@ -9,4 +9,8 @@
   when: ansible_distribution == 'Ubuntu' and preferred_dbms == 'mariadb'
   tags: mariadb
 
+- include: mysql-ubuntu.yml
+  when: ansible_distribution == 'Ubuntu' and preferred_dbms == 'mysql'
+  tags: mysql
+
 # vim: set ts=2 sw=2:

@@ -91,7 +91,7 @@ server {
 {% endif %} {# end: nginx_tls_cert #}
 
 {# this vhost only really needs to run in one place, so only run it if the current host has the certs #}
-{% if ngnix_ilri_tls_cert is defined %}
+{% if nginx_ilri_tls_cert is defined %}
 # Handle HTTPS links for non-authoritative domains from Google Scholar, ie
 # dspace.ilri.org or mahider.ilri.org
 # ... check Google for "inurl:mahider.ilri.org inurl:https"
@@ -100,8 +100,8 @@ server {
     listen 443 ssl spdy;
     server_name dspace.ilri.org mahider.ilri.org;
 
-    ssl_certificate {{ ngnix_ilri_tls_cert }};
-    ssl_certificate_key {{ ngnix_ilri_tls_key }};
+    ssl_certificate {{ nginx_ilri_tls_cert }};
+    ssl_certificate_key {{ nginx_ilri_tls_key }};
 
     ssl_session_timeout {{ nginx_ssl_session_timeout }};
     ssl_session_cache {{ nginx_ssl_session_cache }};
@@ -136,7 +136,7 @@ server {
         rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
     }
 }
-{% endif %} {# end: ngnix_ilri_tls_cert #}
+{% endif %} {# end: nginx_ilri_tls_cert #}
 
 
 # HTTPS server (only for domains we have a cert for)

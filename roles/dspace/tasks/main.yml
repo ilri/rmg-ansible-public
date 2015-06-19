@@ -73,6 +73,7 @@
 
 - name: Copy maven settings
   template: src=m2/settings.xml.j2 dest=/usr/share/tomcat7/.m2/settings.xml owner=tomcat7 group=tomcat7 mode=640
+  when: maven_username is defined and maven_password is defined
 
 - name: Clone DSpace repository
   git: repo={{ dspace_git_repo }} dest=/usr/share/tomcat7/src/git/DSpace version={{ dspace_git_branch }}

@@ -26,4 +26,21 @@ nginx_enable_hsts: True
 # where to install DSpace
 dspace_root: /home/dspace
 
+# default server name & document root
+nginx_server_name: localhost
+nginx_root: /home/{{ nginx_server_name }}/webapps/xmlui
+
+# default dspace webapps
+dspace_webapps:
+  - { name: 'ROOT', app_path: '/home/{{ nginx_server_name }}/webapps/xmlui', context_path: '/etc/tomcat7/Catalina/localhost/ROOT.xml' }
+  - { name: 'jspui', app_path: '/home/{{ nginx_server_name }}/webapps/jspui', context_path: '/etc/tomcat7/Catalina/localhost/jspui.xml' }
+  - { name: 'oai', app_path: '/home/{{ nginx_server_name }}/webapps/oai', context_path: '/etc/tomcat7/Catalina/localhost/oai.xml' }
+  - { name: 'solr', app_path: '/home/{{ nginx_server_name }}/webapps/solr', context_path: '/etc/tomcat7/Catalina/localhost/solr.xml' }
+  - { name: 'rest', app_path: '/home/{{ nginx_server_name }}/webapps/rest', context_path: '/etc/tomcat7/Catalina/localhost/rest.xml' }
+
+# default postgresql dspace db credentials
+dspace_db_name: dspace
+dspace_db_user: dspace
+dspace_db_password: Mz97%tU64J
+
 # vim: set sw=2 ts=2:

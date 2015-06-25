@@ -7,6 +7,8 @@ ACTION=="add|change", KERNEL=="xvd[a-z]|[sv]d[a-z]", ATTR{queue/rotational}=="0"
 # 
 # newer KVM guests (Ubuntu 14.04 at least, so Linux >=3.13) using virtio vda don't
 # allow it to be set, but it's non fatal so let's just set it for now
+#
+# NOTE: Linode KVM guests use sd* and report '1' for rotational. We need to figure out how this affects us
 ACTION=="add|change", KERNEL=="xvd[a-z]|[sv]d[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="deadline"
 
 {% if 'storage' in group_names %}

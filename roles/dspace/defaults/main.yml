@@ -23,4 +23,7 @@ nginx_redirect_type: 301
 # True on production, False on development!
 nginx_enable_hsts: True
 
+# where to install DSpace
+dspace_root: /home/dspace
+
 # vim: set sw=2 ts=2:

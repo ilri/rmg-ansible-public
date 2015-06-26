@@ -2,7 +2,7 @@
 
 solr_version: 5.1.0
 solr_tarball: solr-{{ solr_version }}.tgz
-solr_mirror_url: http://mirrors.sonic.net/apache/lucene/solr/{{ solr_version }}/{{ solr_tarball }}
+solr_mirror_url: https://archive.apache.org/dist/lucene/solr/{{ solr_version }}/{{ solr_tarball }}
 solr_sha256sum: 8718cbfb789a170d210b0b4adbe4fd8187ecdc67c5348ed9d551578087d8a628
 solr_prefix_dir: /opt
 solr_install_dir: /opt/solr

@@ -39,4 +39,25 @@
   with_items:
     - glib.x86_64
 
+- name: Add devtoolset-2 yum repo
+  when: inventory_hostname == "{{slurm_head_node}}"
+  get_url: url=http://people.centos.org/tru/devtools-2/devtools-2.repo dest=/etc/yum.repos.d/devtools-2.repo owner=root group=root mode=0644
+
+- name: Install devel(compilers, libs, toolsets) packages on slurm head node
+  when: inventory_hostname == "{{slurm_head_node}}"
+  yum: name={{ item }} state=present
+  with_items:
+    - gcc
+    - cmake
+    - clang
+    - glibc
+    - gcc-c++
+    - automake
+    - autoconf
+    - glibc-common
+    - glibc-devel
+    - devtoolset-2-gcc
+    - devtoolset-2-binutils
+    - devtoolset-2-gcc-gfortran
+
 # vim: set sw=2 ts=2:

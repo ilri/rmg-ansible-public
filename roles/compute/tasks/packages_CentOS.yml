@@ -21,6 +21,8 @@
     - screen #terminal window manager
     - openblas.x86_64 #for scipy
     - compat-libstdc++-33.x86_64 #for libstdc++.so.5
+    - proj.x86_64 #for libproj.so.0
+    - gdal.x86_64 #for libgdal.so.1
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

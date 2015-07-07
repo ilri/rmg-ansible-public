@@ -6,6 +6,7 @@
   with_items:
     - postgresql-{{ pg_version }}
     - postgresql-client-{{ pg_version }}
+    - postgresql-contrib-{{ pg_version }}
   notify:
     - restart postgres
 

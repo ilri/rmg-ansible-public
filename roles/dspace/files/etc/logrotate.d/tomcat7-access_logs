@@ -1,0 +1,15 @@
+# Rotate the Tomcat localhost access logs, keeping 30 days.
+#
+# These are the raw requests to the application, like GET,
+# POST, etc, and could be useful for security or something,
+# but Tomcat errors are in catalina.out, and dspace logs are
+# in DSpace's own dspace.*.log.
+/var/log/tomcat7/localhost_access_log.txt {
+  copytruncate
+  daily
+  rotate 30
+  compress
+  missingok
+  create 640 tomcat7 adm
+  dateext
+}

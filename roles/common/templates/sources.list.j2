@@ -21,7 +21,11 @@ deb http://extras.ubuntu.com/ubuntu {{ ansible_distribution_release }} main
 {% set apt_mirror    = apt_mirror | default("debian.mirror.ac.ke") %}
 deb http://{{ apt_mirror }}/debian {{ ansible_lsb.codename }} main contrib non-free
 
+{% if ansible_lsb.codename == "squeeze" %}
+deb http://{{ apt_mirror }}/debian {{ ansible_lsb.codename }}-lts main contrib non-free
+{% else %}
 deb http://{{ apt_mirror }}/debian {{ ansible_lsb.codename }}-updates main contrib non-free
 
 deb http://security.debian.org {{ ansible_lsb.codename }}/updates main contrib non-free
-{% endif %}
+{% endif %} {# squeeze #}
+{% endif %} {# Debian #}

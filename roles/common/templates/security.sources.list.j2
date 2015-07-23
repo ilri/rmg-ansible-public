@@ -1,6 +1,5 @@
 {% if ansible_distribution == 'Ubuntu' %}
 deb http://security.ubuntu.com/ubuntu {{ ansible_distribution_release }}-security main universe
 {% elif ansible_distribution == 'Debian' %}
-{# Debian 6 doesn't report ansible_distribution_release, so use ansible_lsb.codename for now #}
-deb http://security.debian.org/ {{ ansible_lsb.codename }}/updates main
+deb http://security.debian.org/ {{ ansible_distribution_release }}/updates main
 {% endif %}

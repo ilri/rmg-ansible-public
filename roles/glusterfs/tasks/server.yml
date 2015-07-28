@@ -6,6 +6,12 @@
     - gdisk
     - xfsprogs
 
+- name: Install glusterfs-server dependencies
+  yum: name={{ item }} state=present
+  with_items:
+    - rpcbind
+    - nfs-utils
+
 - name: Copy glusterfs-epel.repo
   when: ansible_distribution == 'CentOS'
   copy: src=glusterfs-epel.repo dest=/etc/yum.repos.d/glusterfs-epel.repo owner=root group=root mode=0644

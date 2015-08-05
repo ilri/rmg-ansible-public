@@ -23,6 +23,7 @@
     - compat-libstdc++-33.x86_64 #for libstdc++.so.5
     - proj.x86_64 #for libproj.so.0
     - gdal.x86_64 #for libgdal.so.1
+    - libstdc++.i686 # for 32-bit binaries
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

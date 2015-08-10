@@ -97,6 +97,6 @@
   template: src=dspace-handle-server.j2 dest=/etc/cron.d/dspace-handle-server owner=root group=root mode=644
 
 - name: Create DSpace install directory
-  file: path={{ dspace_root }} owner=tomcat7 group=tomcat7 mode=0755
+  file: path={{ dspace_root }} owner=tomcat7 group=tomcat7 mode=0755 state=directory
 
 # vim: set sw=2 ts=2:

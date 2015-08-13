@@ -25,6 +25,7 @@
     - gdal.x86_64 #for libgdal.so.1
     - libstdc++.i686 # for 32-bit binaries
     - gnuplot.x86_64
+    - mailx.x86_64
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

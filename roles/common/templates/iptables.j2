@@ -72,8 +72,11 @@
 
 {% if extra_iptables_rules is defined %}
 {% for rule in extra_iptables_rules %}
-{% if ghetto_ipsets[rule.acl].src is defined %}
+{% if ghetto_ipsets[rule.acl] is defined and ghetto_ipsets[rule.acl].src is defined %}
 -A INPUT -p {{ rule.protocol }} -m state --state NEW -m {{ rule.protocol }} --dport {{ rule.port }} -s {{ ghetto_ipsets[rule.acl].src }} -j ACCEPT
+{% endif %}
+{% if extra_ghetto_ipsets[rule.acl] is defined and extra_ghetto_ipsets[rule.acl].src is defined %}
+-A INPUT -p {{ rule.protocol }} -m state --state NEW -m {{ rule.protocol }} --dport {{ rule.port }} -s {{ extra_ghetto_ipsets[rule.acl].src }} -j ACCEPT
 {% endif %}
 {% endfor %}
 {% endif %}

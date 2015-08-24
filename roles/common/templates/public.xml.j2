@@ -1,7 +1,7 @@
 <zone>
     <short>Public</short>
     <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
-    <interface name="{{ ansible_default_ipv4.alias }}"/>
+    <interface name="{{ ansible_default_ipv4.interface }}"/>
 
     {# ssh rules #}
     {% for network in ssh_access %}

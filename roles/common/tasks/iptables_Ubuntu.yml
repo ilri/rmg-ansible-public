@@ -18,10 +18,11 @@
   notify:
     - restart iptables-persistent
 
-- name: Install tidy
+- name: Install firewalld
   when: ansible_distribution_major_version == '15'
   apt: name={{ item }} state=present
   with_items:
+    - firewalld
     - tidy
 
 - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml

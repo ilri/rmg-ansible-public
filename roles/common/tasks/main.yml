@@ -12,15 +12,15 @@
   when: ansible_distribution == 'CentOS'
   tags: packages
 
-- include: iptables_Ubuntu.yml
+- include: firewall_Ubuntu.yml
   when: ansible_distribution == 'Ubuntu'
   tags: firewall
 
-- include: iptables_Debian.yml
+- include: firewall_Debian.yml
   when: ansible_distribution == 'Debian'
   tags: firewall
 
-- include: iptables_CentOS.yml
+- include: firewall_CentOS.yml
   when: ansible_distribution == 'CentOS'
   tags: firewall
 

@@ -12,16 +12,7 @@
   when: ansible_distribution == 'CentOS'
   tags: packages
 
-- include: firewall_Ubuntu.yml
-  when: ansible_distribution == 'Ubuntu'
-  tags: firewall
-
-- include: firewall_Debian.yml
-  when: ansible_distribution == 'Debian'
-  tags: firewall
-
-- include: firewall_CentOS.yml
-  when: ansible_distribution == 'CentOS'
+- include: firewall.yml
   tags: firewall
 
 - include: sshd.yml

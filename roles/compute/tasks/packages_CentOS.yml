@@ -26,6 +26,9 @@
     - libstdc++.i686 # for 32-bit binaries
     - gnuplot.x86_64
     - mailx.x86_64
+    - pandoc.x86_64
+    - texlive.x86_64 # for pandoc
+    - texlive-texmf-xetex.noarch # for pandoc
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

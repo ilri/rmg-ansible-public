@@ -3,17 +3,17 @@
 # Use firewalld on Ubuntu 15
 
 - name: Install iptables-persistent
-  when: ansible_distribution_major_version < '14'
+  when: ansible_distribution_major_version < '15'
   apt: name=iptables-persistent state=present update_cache=yes cache_valid_time=3600
 
 - name: Copy /etc/iptables/rules.v4
-  when: ansible_distribution_major_version < '14'
+  when: ansible_distribution_major_version < '15'
   template: src=iptables.j2 dest=/etc/iptables/rules.v4 owner=root group=root mode=0600
   notify:
     - restart iptables-persistent
 
 - name: Copy /etc/iptables/rules.v6
-  when: ansible_distribution_major_version < '14'
+  when: ansible_distribution_major_version < '15'
   template: src=ip6tables.j2 dest=/etc/iptables/rules.v6 owner=root group=root mode=0600
   notify:
     - restart iptables-persistent

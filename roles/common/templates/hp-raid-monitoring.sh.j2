@@ -18,7 +18,7 @@ HP_CLI_BIN=/usr/sbin/hpssacli
 {% endif %}
 
 # admin email(s)
-EMAIL="{{ raid_admins|join(" ") }}"
+EMAIL="{{ sysadmin_emails|join(" ") }}"
 
 # extra mail options -> mailrc
 MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-auth-user=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'

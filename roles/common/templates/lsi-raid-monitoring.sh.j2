@@ -174,7 +174,7 @@ fi
 if [ $1 = "checkNemail" ]
    then
       # admin email(s)
-      EMAIL="{{ raid_admins|join(" ") }}"
+      EMAIL="{{ sysadmin_emails|join(" ") }}"
 
       # Check if raid is in good condition
       STATUS=`$MegaCli -LDInfo -Lall -aALL -NoLog | egrep -i 'fail|degrad|error'`

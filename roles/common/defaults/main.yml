@@ -1,10 +1,10 @@
 ---
 #file - roles/common/defaults/main.yml
 
-# list of email addresses for RAID admins used
-# by lsi and hp RAID monitoring scripts to alert
-# on errors
-raid_admins:
+
+# list of sysadmin(s) email addresses used by lsi & hp RAID monitoring scripts,
+# cron-apt & backup scripts to alert on errors
+sysadmin_emails:
   - mwangi@example.co.ke
 
 # settings for root's .mailrc on hosts that
@@ -13,10 +13,5 @@ mailrc_smtp_server: smtp.example.co.ke
 mailrc_from_email: mwangi@example.co.ke
 mailrc_auth_user: mwangi@example.co.ke
 mailrc_auth_pass: A2YtYma2i1D1
-
-# list of email addresses to send cron-apt
-# error mails to
-cron_apt_admins:
-  - mwangi@example.co.ke
 
 # vim: set ts=2 sw=2:

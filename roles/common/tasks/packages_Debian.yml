@@ -19,6 +19,7 @@
     - vim
     - sysv-rc-conf
     - acpid
+    - schedtool
 
 - include: cron-apt.yml
   tags: cron-apt

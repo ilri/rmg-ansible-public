@@ -58,4 +58,7 @@
   when: hw_raid_vendor is defined
   tags: raid-monitoring
 
+- include: backups.yml
+  tags: backups
+
 # vim: set sw=2 ts=2:

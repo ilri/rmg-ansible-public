@@ -42,7 +42,7 @@ MAILRC_AUTH_PASS = "{{ mailrc_auth_pass }}"
 # Paths to binaries
 BIN_MYSQL = "/usr/bin/mysql"
 BIN_MYSQLDUMP = "/usr/bin/mysqldump"
-BIN_GZIP = "/usr/bin/gzip"
+BIN_GZIP = "/bin/gzip"
 BIN_MAILX = "/usr/bin/mailx"
 
 
@@ -98,7 +98,7 @@ def backup_databases(database, mysql_user, mysql_pass, mysql_host, mysql_backups
     cmd_dump_db = "%s --events --skip-add-locks -u %s -p'%s' -h %s -e --opt -c %s > %s" % (BIN_MYSQLDUMP, mysql_user, mysql_pass, mysql_host, database, dump_filename)
     output, err, returncode = run_cmd(cmd_dump_db)
     if returncode != 0:
-        job_status = "Failed to backup %s db.\nOutput: %s\nError: %s\nReturn Code: %d" % (database, output, err, returncode)
+        job_status = "Failed to backup '%s' db.\nOutput: %s\nError: %s\nReturn Code: %d" % (database, output, err, returncode)
         print job_status
         #send mail notification
         if notify: sendmail_notification(job_status)
@@ -188,7 +188,7 @@ def main():
         if db == "information_schema" or db == "performance_schema":
             pass
         else:
-            print "backing up %s db" % db
+            print "backing up '%s' db" % db
             backup_databases(db, mysql_user, mysql_pass, mysql_host, mysql_backups_dir, notify_mail)
     print "Peace out !!"
 

@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # Purpose:
 #   - Cleanup backups dir. by removing backup files older than 2 weeks

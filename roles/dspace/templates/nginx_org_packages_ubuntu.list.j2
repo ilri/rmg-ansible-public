@@ -7,10 +7,10 @@ deb http://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }
 {% endif %}
 
 {% if ansible_distribution_version == '15.04' %}
-# There are no nginx.org builds for Ubuntu 15.04 (vivid) yet, so use 14.10 (utopic)
+# There are no "stable" nginx.org builds for Ubuntu 15.04 (vivid) yet, so use 14.10 (utopic)
 {% if nginx_branch == "stable" %}
 deb http://nginx.org/packages/ubuntu/ utopic nginx
 {% elif nginx_branch == "mainline" %}
-deb http://nginx.org/packages/mainline/ubuntu/ utopic nginx
+deb http://nginx.org/packages/mainline/ubuntu/ vivid nginx
 {% endif %}
 {% endif %}

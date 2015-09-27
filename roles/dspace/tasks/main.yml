@@ -12,6 +12,8 @@
     - poppler-utils # for media filter
     - python-psycopg2 # for ansible postgres modules
     - postgresql-contrib # for DSpace functions
+    - imagemagick # for DSpace 5 thumbnails
+    - ghostscript # for DSpace 5 PDF thumbnails
   tags: packages
 
 - name: Add Oracle Java PPA

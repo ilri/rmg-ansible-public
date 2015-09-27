@@ -16,6 +16,21 @@
     - ghostscript # for DSpace 5 PDF thumbnails
   tags: packages
 
+- name: Install DSpace 5 Mirage2 build deps
+  apt: pkg={{ item }} state=present install_recommends=no
+  with_items:
+    - libyaml-dev
+    - sqlite3
+    - autoconf
+    - libgdbm-dev
+    - libncurses5-dev
+    - automake
+    - libtool
+    - bison
+    - pkg-config
+    - libffi-dev
+  tags: packages
+
 - name: Add Oracle Java PPA
   apt_repository: repo='ppa:webupd8team/java' state=present
   tags: java
@@ -33,6 +48,14 @@
 
 - name: Set Tomcat user's shell
   user: name=tomcat7 shell=/bin/bash
+  tags: tomcat
+
+- name: Allow Tomcat user to write to ~tomcat7
+  file: path=/usr/share/tomcat7 owner=tomcat7 group=tomcat7
+  tags: tomcat
+
+- name: Touch Tomcat user's .profile
+  file: path=/usr/share/tomcat7/.profile owner=tomcat7 group=tomcat7 mode=0644
   tags: tomcat
 
 - name: Set tomcat7 defaults

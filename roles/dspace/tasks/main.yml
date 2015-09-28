@@ -16,7 +16,7 @@
     - ghostscript # for DSpace 5 PDF thumbnails
   tags: packages
 
-- name: Install DSpace 5 Mirage2 build deps
+- name: Install DSpace 5 Mirage 2 build deps
   apt: pkg={{ item }} state=present install_recommends=no
   with_items:
     - libyaml-dev

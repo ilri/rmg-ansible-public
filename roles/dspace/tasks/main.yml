@@ -55,7 +55,7 @@
   tags: tomcat
 
 - name: Touch Tomcat user's .profile
-  file: path=/usr/share/tomcat7/.profile owner=tomcat7 group=tomcat7 mode=0644
+  file: path=/usr/share/tomcat7/.profile state=touch owner=tomcat7 group=tomcat7 mode=0644
   tags: tomcat
 
 - name: Set tomcat7 defaults

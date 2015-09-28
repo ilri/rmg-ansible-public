@@ -29,6 +29,12 @@
     - bison
     - pkg-config
     - libffi-dev
+    - gawk
+    - g++
+    - libreadline6-dev
+    - zlib1g-dev
+    - libssl-dev
+    - libsqlite3-dev
   tags: packages
 
 - name: Add Oracle Java PPA

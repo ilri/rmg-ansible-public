@@ -18,7 +18,7 @@
 
 - name: Install glusterfs-server
   when: ansible_distribution == 'CentOS'
-  command: /usr/bin/yum --disablerepo=* --enablerepo=glusterfs-epel -y install glusterfs-server
+  yum: name=glusterfs-server-3.5.6 state=present
 
 - name: Start & enable glusterd service
   service: name=glusterd state=started enabled=true

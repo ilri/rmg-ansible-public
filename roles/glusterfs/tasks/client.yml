@@ -5,7 +5,7 @@
 
 - name: Install glusterfs-fuse
   when: ansible_distribution == 'CentOS'
-  command: /usr/bin/yum --disablerepo=* --enablerepo=glusterfs-epel -y install glusterfs-fuse
+  yum: name=glusterfs-fuse-3.5.6 state=present
 
 - name: Create mount points
   when: glusterfs_mounts is defined

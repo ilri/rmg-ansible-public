@@ -197,6 +197,14 @@ server {
     spdy_headers_comp 6;
     {% endif %}
 
+    {% if nginx_ocsp_stapling_trusted_cert is defined %}
+    # Cache OCSP responses and send them to the client, saves 30% overhead in SSL handshake
+    # See: https://blog.cloudflare.com/ocsp-stapling-how-cloudflare-just-made-ssl-30/
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ssl_trusted_certificate {{ nginx_ocsp_stapling_trusted_cert }};
+    {% endif %}
+
     {% if nginx_enable_hsts == True %}
     # Enable this if you want HSTS (recommended, but be careful)
     add_header Strict-Transport-Security max-age=15768000;

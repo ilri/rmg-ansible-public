@@ -25,6 +25,7 @@
     - libgdbm-dev
     - libncurses5-dev
     - automake
+    - make
     - libtool
     - bison
     - pkg-config

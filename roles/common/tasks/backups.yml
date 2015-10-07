@@ -1,0 +1,26 @@
+---
+
+- name: Install mailx on CentOS hosts
+  yum: name=mailx state=present
+  when: ansible_distribution == 'CentOS'
+
+- name: Install heirloom-mailx on Debian-based hosts
+  apt: name=heirloom-mailx state=present
+  when: ansible_os_family == 'Debian'
+
+- name: Create backup scripts directory
+  file: path={{ item }} owner=root group=root mode=0755 state=directory
+  with_items:
+    - /opt/ilri/scripts
+
+- name: Copy backup scripts
+  copy: src={{ item }} dest=/opt/ilri/scripts/ owner=root group=root mode=0755
+  with_fileglob:
+    - scripts/*.sh
+
+- name: Copy MySQL backup script
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
+  with_items:
+    - { src: "scripts/backup_mysql.py.j2", dest: "/opt/ilri/scripts/backup_mysql.py" }
+
+# vim: set sw=2 ts=2:

@@ -103,10 +103,6 @@
   copy: src=etc/logrotate.d/tomcat7-access_logs dest=/etc/logrotate.d/tomcat7-access_logs owner=root group=root mode=0644
   tags: tomcat
 
-- name: Enable Xpdf mediafilter
-  script: enable_xpdf.sh creates=/usr/share/tomcat7/.m2/xpdf_configured
-  sudo_user: tomcat7
-
 - name: Copy maven settings
   template: src=m2/settings.xml.j2 dest=/usr/share/tomcat7/.m2/settings.xml owner=tomcat7 group=tomcat7 mode=640
   when: maven_username is defined and maven_password is defined

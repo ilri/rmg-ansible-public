@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Calomel.org 
+# Calomel.org
 #     https://calomel.org/megacli_lsi_commands.html
-#     LSI MegaRaid CLI 
+#     LSI MegaRaid CLI
 #     lsi.sh @ Version 0.05
 #
 # description: MegaCLI script to configure and monitor LSI raid cards.
@@ -93,7 +93,7 @@ fi
 # will print out. If a drive(s) has an error you will see the number of errors
 # under the slot number. At this point you can decided to replace the flaky
 # drive. Bad drives might not fail right away and will slow down your raid with
-# read/write retries or corrupt data. 
+# read/write retries or corrupt data.
 if [ $1 = "errors" ]
    then
       echo "Slot Number: 0"; $MegaCli -PDlist -aALL -NoLog | egrep -i 'error|fail|slot' | egrep -v '0'
@@ -197,7 +197,7 @@ fi
 
 # Update the LSI card's time with the current operating system time. You may
 # want to setup a cron job to call this method once a day or whenever you
-# think the raid card's time might drift too much. 
+# think the raid card's time might drift too much.
 if [ $1 = "settime" ]
    then
       $MegaCli -AdpGetTime -aALL -NoLog
@@ -213,7 +213,7 @@ fi
 # method and the raid is configured. You can use this on live raids too.
 if [ $1 = "setdefaults" ]
    then
-      # Read Cache enabled specifies that all reads are buffered in cache memory. 
+      # Read Cache enabled specifies that all reads are buffered in cache memory.
        $MegaCli -LDSetProp -Cached -LAll -aAll -NoLog
       # Adaptive Read-Ahead if the controller receives several requests to sequential sectors
        $MegaCli -LDSetProp ADRA -LALL -aALL -NoLog

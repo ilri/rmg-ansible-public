@@ -32,17 +32,17 @@
   apt: name=heirloom-mailx state=present
   when: ansible_os_family == 'Debian'
 
-# Copy RAID script to /root, because that's always available!
+# Copy LSI RAID script to scripts dir /opt/ilri/scripts/
 - name: Copy LSI RAID monitoring script
-  template: src=lsi-raid-monitoring.sh.j2 dest=/root/lsi-raid-monitoring.sh owner=root group=root mode=0750
+  template: src=scripts/lsi-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/lsi-raid-monitoring.sh owner=root group=root mode=0750
   when: "'lsi' in hw_raid_vendor"
 
-# Copy RAID script to /root, because that's always available!
+# Copy HP RAID script to scripts dir /opt/ilri/scripts/
 - name: Copy HP RAID monitoring script
-  template: src=hp-raid-monitoring.sh.j2 dest=/root/hp-raid-monitoring.sh owner=root group=root mode=0750
+  template: src=scripts/hp-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/hp-raid-monitoring.sh owner=root group=root mode=0750
   when: "'hp' in hw_raid_vendor"
 
 - name: Configure RAID monitoring cron job
-  template: src=raid-monitoring-cron.j2 dest=/etc/cron.d/1raid-monitoring owner=root group=root mode=0644
+  template: src=cron/raid-monitoring.j2 dest=/etc/cron.d/1raid-monitoring owner=root group=root mode=0644
 
 # vim: set sw=2 ts=2:

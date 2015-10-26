@@ -54,6 +54,15 @@
 - include: sudoersd.yml
   tags: sudoers
 
+# All scripts—backups & raid mon—will be copied to /opt/ilri/scripts
+- name: Create scripts directory
+  file: path={{ item }} owner=root group=root mode=0755 state=directory
+  with_items:
+    - /opt/ilri/scripts
+  tags:
+    - raid-monitoring
+    - backups
+
 - include: raid-monitoring.yml
   when: hw_raid_vendor is defined
   tags: raid-monitoring

@@ -8,11 +8,6 @@
   apt: name=heirloom-mailx state=present
   when: ansible_os_family == 'Debian'
 
-- name: Create backup scripts directory
-  file: path={{ item }} owner=root group=root mode=0755 state=directory
-  with_items:
-    - /opt/ilri/scripts
-
 - name: Copy backup scripts
   copy: src={{ item }} dest=/opt/ilri/scripts/ owner=root group=root mode=0755
   with_fileglob:

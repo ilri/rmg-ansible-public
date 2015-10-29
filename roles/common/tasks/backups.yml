@@ -14,7 +14,7 @@
     - scripts/*.sh
 
 - name: Copy MySQL backup script
-  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0750
   with_items:
     - { src: "scripts/backup_mysql.py.j2", dest: "/opt/ilri/scripts/backup_mysql.py" }
 

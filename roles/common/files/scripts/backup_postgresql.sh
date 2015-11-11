@@ -9,8 +9,8 @@ set -e
 
 readonly DATE=$(date +%Y-%m-%d)
 readonly BACKUP_DIR="/home/backup/postgresql"
-readonly DB_NAMES=$(psql -t -c "${SHOW_DBS}");
 readonly SHOW_DBS="select datname from pg_database where datname != 'template0' and datname != 'template1' and datname != 'postgres';"
+readonly DB_NAMES=$(psql -t -c "${SHOW_DBS}");
 
 # run as postgres user
 if [[ $USER != "postgres" ]]; then

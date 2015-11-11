@@ -20,6 +20,8 @@
     - sysv-rc-conf
     - acpid
     - schedtool
+    - debconf
+    - debconf-utils
 
 - include: cron-apt.yml
   tags: cron-apt

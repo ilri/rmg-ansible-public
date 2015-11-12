@@ -3,7 +3,7 @@
 #
 
 log_level 4
-{% if ansible_distribution == "Ubuntu" %}
+{% if ansible_os_family == "Debian" %}
 log_file /var/log/munin/munin-node.log
 {% else %}
 log_file /var/log/munin-node/munin-node.log

@@ -1,7 +1,6 @@
 ---
 # file: site.yml
 
-- include: arcgis.yml
 - include: compute.yml
 - include: dspace.yml
 - include: nomads.yml

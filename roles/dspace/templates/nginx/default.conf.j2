@@ -206,22 +206,25 @@ server {
     {% endif %} {# end: nginx_enable_hsts #}
     {% endif %} {# end: nginx_tls_cert #}
 
-    # static assets we can load from the file system directly with nginx
-    location ~ /(themes|static|aspects/ReportingSuite) {
-        try_files $uri @tomcat;
-
-        location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
-            add_header Cache-Control "public, max-age=604800";
-        }
-    }
-
     location / {
-        # Send requests to Tomcat
+        if ($denied != 0) {
+            # HTTP 503: service unavailable
+            return 503;
+         }
+
+         # Send requests to Tomcat
         {% if nginx_tls_cert is defined %}
-        proxy_pass http://127.0.0.1:8443;
+         proxy_pass http://127.0.0.1:8443;
         {% else %}
         proxy_pass http://127.0.0.1:8081;
         {% endif %}
+    }
+
+    error_page 503 @maintenance;
+
+    location @maintenance {
+        root /tmp;
+        rewrite ^(.*)$ /maintenance.html break;
     }
 
     # Only allow Solr access from localhost
@@ -230,30 +233,14 @@ server {
         deny all;
     }
 
-    # Only allow jspui access for atmire modules
-    location /jspui {
-        location ~ ^/jspui/(export|listings-and-reports) {
-            allow all;
-            {% if nginx_tls_cert is defined %}
-            proxy_pass http://127.0.0.1:8443;
-            {% else %}
-            proxy_pass http://127.0.0.1:8081;
-            {% endif %}
-        }
-
-        deny all;
-    }
-
-    # named location for above try_files
-    location @tomcat {
-        {% if nginx_tls_cert is defined %}
-        proxy_pass http://127.0.0.1:8443;
-        {% else %}
-        proxy_pass http://127.0.0.1:8081;
-        {% endif %}
-    }
-
     include extra-security.conf;
+}
+
+map $remote_addr $denied {
+    default 1;
+    {% for ip in allowed_ips %}
+    {{ ip }} 0;
+    {% endfor %}
 }
 
 # vim: set ts=4 sw=4:

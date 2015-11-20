@@ -17,8 +17,6 @@
       - 41.204.190.40
       - 86.39.200.115
       - 85.234.195.109
-      - 74.87.47.118
-      - 86.39.200.120
   tasks:
     # Maintenance page lives in /tmp, and will disappear after reboot
     - name: Copy maintenance html

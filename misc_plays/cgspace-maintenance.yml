@@ -11,9 +11,12 @@
 - hosts: dspace
   sudo: yes
   user: provisioning
+  vars_files:
+    - roles/dspace/defaults/main.yml
   vars:
     # IPs for Alan at ILRI and @atmire in Belgium
     allowed_ips:
+      - 213.55.99.121
       - 41.204.190.40
       - 86.39.200.115
       - 85.234.195.109

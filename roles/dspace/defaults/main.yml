@@ -26,8 +26,7 @@ nginx_enable_hsts: True
 # where to install DSpace
 dspace_root: /home/dspace
 
-# default server name & document root
-nginx_server_name: localhost
+# document root
 nginx_root: '{{ dspace_root }}/webapps/xmlui'
 
 # default dspace webapps

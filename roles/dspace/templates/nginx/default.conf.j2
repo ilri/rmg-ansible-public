@@ -1,3 +1,6 @@
+{# just in case the host doesn't have this defined, can't go in role defaults because it messes up inheritance for some playbooks #}
+{% set nginx_server_name    = nginx_server_name | default("localhost") %}
+
 # Handle old DSpace domains (redirect to ILRI community)
 #
 server {

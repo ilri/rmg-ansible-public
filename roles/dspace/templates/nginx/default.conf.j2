@@ -207,10 +207,10 @@ server {
     {% endif %} {# end: nginx_tls_cert #}
 
     # static assets we can load from the file system directly with nginx
-    location ~ /(themes|static|aspects/ReportingSuite) {
+    location ~ /(themes|aspects/ReportingSuite|aspects/Statistics) {
         try_files $uri @tomcat;
 
-        location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+        location ~* \.(?:ico|css|js|gif|jpe?g|png|woff)$ {
             add_header Cache-Control "public, max-age=604800";
         }
     }

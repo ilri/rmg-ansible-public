@@ -206,6 +206,15 @@ server {
     {% endif %} {# end: nginx_enable_hsts #}
     {% endif %} {# end: nginx_tls_cert #}
 
+    # static assets we can load from the file system directly with nginx
+    location ~ /(themes|static|aspects/ReportingSuite) {
+        try_files $uri @tomcat;
+
+        location ~* \.(?:ico|css|js|gif|jpe?g|png)$ {
+            add_header Cache-Control "public, max-age=604800";
+        }
+    }
+
     location / {
         # Send requests to Tomcat
         {% if nginx_tls_cert is defined %}

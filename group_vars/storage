@@ -13,7 +13,8 @@ glusterfs_brick_ports: "49152:49154"
 munin_master_host: hpc
 munin_node_port: 4949
 
-ssh_allowed_users: aorth root joguya
+ssh_allowed_users:
+  - root
 
 # a list of networks to allow SSH access
 # (network names come from above)

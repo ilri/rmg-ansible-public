@@ -31,8 +31,8 @@ slurm_slurmd_port: 6818
 
 #glusterfs-client mount vars
 glusterfs_mounts:
-  - { mount_point: '/export/data', mount_src: 'wingu3:data', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,noatime,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
-  - { mount_point: '/export/apps', mount_src: 'wingu3:apps', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,noatime,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
-  - { mount_point: '/home', mount_src: 'wingu3:homes', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,noatime,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+  - { mount_point: '/export/data', mount_src: 'wingu3:data', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+  - { mount_point: '/export/apps', mount_src: 'wingu3:apps', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+  - { mount_point: '/home', mount_src: 'wingu3:homes', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
 
 # vim: set ts=2 sw=2:

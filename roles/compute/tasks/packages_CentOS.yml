@@ -29,6 +29,7 @@
     - pandoc.x86_64
     - texlive.x86_64 # for pandoc
     - texlive-texmf-xetex.noarch # for pandoc
+    - argtable.x86_64 # for clustalo
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

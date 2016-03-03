@@ -1,11 +1,4 @@
 ---
-# Ubuntu 12.04's Munin version is very old, but 14.04's is ok.
-- name: Add munin 2.x PPA
-  when: ansible_distribution_release == 'precise'
-  apt_repository: repo='ppa:tuxpoldo/munin' state=present
-  tags:
-    - munin
-    - munin-node
 
 - include: munin.yml
   when: munin_role is defined and munin_role == "standalone"

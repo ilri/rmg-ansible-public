@@ -134,17 +134,6 @@
     {% endfor %}
     {% endif %}
 
-    {# munin rules #}
-    {% if munin_master_host is defined %}
-    {% if ghetto_ipsets[munin_master_host].src is defined %}
-    <rule family="ipv4">
-        <source address="{{ ghetto_ipsets[munin_master_host].src }}"/>
-        <port protocol="tcp" port="{{ munin_node_port }}"/>
-        <accept/>
-    </rule>
-    {% endif %}
-    {% endif %}
-
     {# extra rules #}
     {% if extra_iptables_rules is defined %}
     {% for rule in extra_iptables_rules %}

@@ -64,12 +64,6 @@
 {% endfor %}
 {% endif %}
 
-{% if munin_master_host is defined %}
-{% if ghetto_ipsets[munin_master_host].src is defined %}
--A INPUT -s {{ ghetto_ipsets[munin_master_host].src }} -p tcp -m state --state NEW -m tcp --dport {{ munin_node_port }} -j ACCEPT
-{% endif %}
-{% endif %}
-
 {% if extra_iptables_rules is defined %}
 {% for rule in extra_iptables_rules %}
 {% if ghetto_ipsets[rule.acl].src is defined %}

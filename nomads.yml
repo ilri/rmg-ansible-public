@@ -11,5 +11,6 @@
     - private/vars/ipsets.yml
   roles:
     - common
+    - munin
 
 # vim: set sw=2 ts=2:

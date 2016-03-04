@@ -1,7 +1,6 @@
 ---
 
 - include: munin.yml
-  when: munin_role is defined and munin_role == "standalone"
   tags: munin
 
 - include: munin-node.yml

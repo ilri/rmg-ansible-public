@@ -29,7 +29,6 @@ dspace_git_branch: 5_x-prod
 nginx_branch: stable
 
 munin_tomcat_user: ilri-munin
-munin_role: standalone
 # plain http connector for munin to query Tomcat status
 munin_tomcat_port: 8080
 

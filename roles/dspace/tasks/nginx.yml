@@ -28,7 +28,6 @@
 
 - name: Configure munin vhost
   copy: src=nginx/munin.conf dest=/etc/nginx/conf.d/munin.conf mode=0644 owner=root group=root
-  when: munin_role is defined and munin_role == "standalone"
   notify:
     - reload nginx
 

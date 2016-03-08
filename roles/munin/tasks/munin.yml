@@ -1,8 +1,11 @@
 ---
-- name: Install munin package
-  action: "{{ ansible_pkg_mgr }} name={{ item }} state=latest"
-  with_items:
-    - munin
+- name: Install munin on Debian-based distros
+  when: ansible_os_family == "Debian"
+  apt: name=munin update_cache=yes state=latest
+
+- name: Install munin on RedHat-based distros
+  when: ansible_os_family == "RedHat"
+  yum: name=munin state=latest
 
 - name: Create munin configuration file
   copy: src=munin.conf dest=/etc/munin/munin.conf mode=0644 owner=root group=root

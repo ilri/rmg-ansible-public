@@ -6,7 +6,6 @@
     - tomcat7-admin
     - ant
     - maven
-    - xpdf
     - libtcnative-1
     - lrzip
     - poppler-utils # for media filter

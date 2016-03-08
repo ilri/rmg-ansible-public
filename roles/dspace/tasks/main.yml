@@ -82,7 +82,7 @@
 
 - name: Prepare Tomcat web application contexts
   template: src=tomcat/context.xml.j2 dest={{ item.context_path }}
-  with_items: dspace_webapps
+  with_items: "{{ dspace_webapps }}"
   when: dspace_webapps is defined
   notify:
     - restart tomcat7

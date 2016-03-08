@@ -7,7 +7,6 @@
     - ant
     - maven
     - libtcnative-1
-    - lrzip
     - poppler-utils # for media filter
     - python-psycopg2 # for ansible postgres modules
     - postgresql-contrib # for DSpace functions

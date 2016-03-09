@@ -2,7 +2,7 @@
 # file: handlers/main.yml
 
 - name: restart postgres
-  service: name=postgresql state=reloaded
+  service: name=postgresql state=restarted
   when: ansible_distribution == 'Ubuntu'
 
 # vim: set sw=2 ts=2:

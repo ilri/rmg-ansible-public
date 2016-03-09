@@ -6,7 +6,7 @@
 # Reference for Gluster upgrade: http://vbellur.wordpress.com/2013/07/15/upgrading-to-glusterfs-3-4/
 
 - hosts: storage
-  sudo: yes
+  become: yes
   user: provisioning
   tasks:
     - name: Stop glusterd
@@ -22,7 +22,7 @@
       service: name=glusterd state=started
 
 - hosts: compute
-  sudo: yes
+  become: yes
   user: provisioning
   tasks:
     - name: Set gluster repos to 3.5.x branch

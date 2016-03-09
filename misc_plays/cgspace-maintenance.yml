@@ -9,7 +9,7 @@
 # playbook.
 
 - hosts: dspace
-  sudo: yes
+  become: yes
   user: provisioning
   vars_files:
     - roles/dspace/defaults/main.yml

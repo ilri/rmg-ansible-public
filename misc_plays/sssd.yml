@@ -11,7 +11,7 @@
 #
 
 - hosts: all
-  sudo: yes
+  become: yes
   user: provisioning
   vars_files:
     - "../vars/{{ ansible_os_family }}.yml"

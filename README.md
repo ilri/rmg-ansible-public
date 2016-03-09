@@ -1,4 +1,4 @@
-## Ansible scripts for ILRI research-computing infrastructure
+# Ansible scripts for ILRI research-computing infrastructure
 In order for these playbooks to work, your host must:
 
 - have finished installation, have working networking, and an SSH daemon running
@@ -8,7 +8,7 @@ In order for these playbooks to work, your host must:
 
 Assuming the above are true, you should be able to run these playbooks successfully.
 
-### Post-install Ansible invocation
+## Post-install Ansible invocation
 Take note that the first-ever invocation after the clean installation of a machine is different than subsequent invocations due to the way SSH public keys are copied to the host.
 
 On the first run, you need to use `-k --ask-become-pass` to prompt for the SSH/sudo password of the provisioning user:
@@ -19,7 +19,7 @@ On subsequent runs, after SSH keys have been deployed, you only need `--ask-beco
 
     ansible-playbook site.yml --limit=ilrinrb10 --ask-become-pass
 
-### License
+## License
 Copyright (C) 2015 International Livestock Research Institute (ILRI)
 
 The contents of this repository are free software: you can redistribute

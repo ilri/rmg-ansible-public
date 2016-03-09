@@ -20,7 +20,7 @@ On subsequent runs, after SSH keys have been deployed, you only need `--ask-beco
     ansible-playbook site.yml --limit=ilrinrb10 --ask-become-pass
 
 ## License
-Copyright (C) 2015 International Livestock Research Institute (ILRI)
+Copyright (C) 2015–2016 International Livestock Research Institute (ILRI)
 
 The contents of this repository are free software: you can redistribute
 it and/or modify it under the terms of the GNU General Public License

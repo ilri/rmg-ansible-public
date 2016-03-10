@@ -6,19 +6,19 @@
 
 - name: Create Solr core data dir
   file: dest={{ solr_home }}/cores/{{ item }}/data/index state=directory mode=0755
-  with_items: solr_cores
+  with_items: "{{ solr_cores }}"
 
 - name: Create Solr core conf dir
   file: dest={{ solr_home }}/cores/{{ item }}/conf state=directory mode=0755
-  with_items: solr_cores
+  with_items: "{{ solr_cores }}"
 
 - name: Populate Solr core conf
   command: rsync -a {{ solr_prefix_dir }}/solr-{{ solr_version }}/example/solr/collection1/conf/ {{ solr_home }}/cores/{{ item }}/conf creates={{ solr_home }}/cores/{{ item }}/conf/solrconfig.xml
-  with_items: solr_cores
+  with_items: "{{ solr_cores }}"
 
 # Has to exist, even if empty
 - name: Create core.properties placeholder
   file: dest={{ solr_home }}/cores/{{ item }}/core.properties state=touch mode=0644
-  with_items: solr_cores
+  with_items: "{{ solr_cores }}"
 
 # vim: set ts=2 sw=2:

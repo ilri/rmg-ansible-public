@@ -80,7 +80,7 @@
 
 - name: Prepare Tomcat web application contexts
   template: src=tomcat/context.xml.j2 dest={{ item.context_path }}
-  with_items: dspace_webapps
+  with_items: "{{ dspace_webapps }}"
   when: dspace_webapps is defined
   notify:
     - restart tomcat7
@@ -107,16 +107,16 @@
 
 - name: Clone DSpace repository
   git: repo={{ dspace_git_repo }} dest=/usr/share/tomcat7/src/git/DSpace version={{ dspace_git_branch }}
-  sudo_user: tomcat7
+  become_user: tomcat7
 
 - name: Create DSpace postgres user
   postgresql_user: name={{ dspace_db_user }} password={{ dspace_db_password }}
-  sudo_user: postgres
+  become_user: postgres
   tags: postgres
 
 - name: Create DSpace postgres database
   postgresql_db: name={{ dspace_db_name }} encoding='UTF-8' template='template0' owner={{ dspace_db_user }}
-  sudo_user: postgres
+  become_user: postgres
   tags: postgres
 
 - name: Set up cron job for Handle server

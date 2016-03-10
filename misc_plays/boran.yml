@@ -8,7 +8,7 @@
 
 
 - hosts: boran
-  sudo: yes
+  become: yes
   user: provisioning
   vars:
     apt_mirror: ubuntu.mirror.ac.ke

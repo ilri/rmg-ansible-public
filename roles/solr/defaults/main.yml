@@ -1,0 +1,14 @@
+---
+
+solr_version: 5.2.1
+solr_tarball: solr-{{ solr_version }}.tgz
+solr_mirror_url: https://archive.apache.org/dist/lucene/solr/{{ solr_version }}/{{ solr_tarball }}
+solr_sha256sum: 3f54cec862da1376857f96f4a6f2044a5addcebc4df159b8797fd71f7ba8df86
+solr_prefix_dir: /opt
+solr_install_dir: /opt/solr
+solr_var_dir: /var/solr
+solr_port: 8983
+solr_user: solr
+solr_user_homedir: /home/{{ solr_user }}
+
+solr_java_mem: "-Xms1024m -Xmx1024m"

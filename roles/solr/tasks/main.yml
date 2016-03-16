@@ -2,9 +2,8 @@
 - name: Install Solr deps
   apt: name={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
   with_items:
-    - tomcat7
-    - tomcat7-admin
-    - libtcnative-1
+    - unzip
+    - tar
   tags: packages
 
 - name: Add Oracle Java PPA
@@ -15,28 +14,9 @@
   debconf: name='oracle-java7-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
   tags: java
 
-- name: Install Oracle Java
-  apt: name=oracle-java7-installer state=present update_cache=yes
+- name: Install Oracle Java 8
+  apt: name=oracle-java8-installer state=present update_cache=yes
   tags: java
-
-- name: Set tomcat7 defaults
-  template: src=tomcat/tomcat7.j2 dest=/etc/default/tomcat7 owner=root group=root mode=0644
-  notify:
-    - restart tomcat7
-  tags: tomcat
-
-- name: Copy Tomcat config(s)
-  template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
-  with_items:
-    - { src: 'tomcat/server.xml.j2', dest: '/etc/tomcat7/server.xml', owner: 'root', group: 'root', mode: '0644' }
-    - { src: 'tomcat/tomcat-users.xml.j2', dest: '/etc/tomcat7/tomcat-users.xml', owner: 'root', group: 'tomcat7', mode: '0640' }
-  notify:
-    - restart tomcat7
-  tags: tomcat
-
-- name: Start & enable tomcat7 service
-  service: name=tomcat7 state=started enabled=yes
-  tags: tomcat
 
 - include: solr.yml
   tags: solr

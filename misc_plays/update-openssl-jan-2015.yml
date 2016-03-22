@@ -7,7 +7,7 @@
 # [0] http://marc.info/?l=openssl-announce&m=142074329121775&w=2
 
 - hosts: all
-  sudo: yes
+  become: yes
   user: provisioning
   vars:
     debian_openssl_packages:
@@ -15,73 +15,52 @@
       - libssl1.0.0
     centos_openssl_packages:
       - openssl
-    centos_openssl_updated: {changed: False}
-    debian_openssl_updated: {changed: False}
   tasks:
-    - name: update on Debian-based distros
-      apt: pkg={{item}} state=latest update_cache=yes
-      with_items: debian_openssl_packages
+    - name: Update OpenSSL on Debian-based distros
+      apt: name={{item}} state=latest update_cache=yes
+      with_items: "{{ debian_openssl_packages }}"
       when: ansible_os_family == "Debian"
       register: debian_openssl_updated
-      tags:
-        - debian
+      tags: debian
 
-    - name: update on RedHat-based distros
+    - name: Update OpenSSL on RedHat-based distros
       yum: name={{item}} state=latest
-      with_items: centos_openssl_packages
+      with_items: "{{ centos_openssl_packages }}"
       when: ansible_os_family == "RedHat"
       register: centos_openssl_updated
-      tags:
-        - redhat
+      tags: redhat
 
-    # NOTE: service checks works on current hosts because of upstart.
-    # Need to re-evaluate when systemd is more widespread
-    - name: Check if nginx is installed
-      shell: service --status-all | grep nginx
-      when: centos_openssl_updated|changed or debian_openssl_updated|changed
-      register: reload_nginx
-      failed_when: reload_nginx.stdout.find("command not found") != -1
-      ignore_errors: yes
-      changed_when: reload_nginx.rc == 0
-      tags:
-        - debian
-        - redhat
+    - name: Check if nginx is installed on Debian-based distros.
+      shell: service --status-all 2>&1 | grep nginx
+      when: ansible_os_family == "Debian" and debian_openssl_updated|changed
+      register: restart_nginx
+      tags: debian
 
-    - name: Check if httpd is installed on RedHat-based distros
-      shell: service --status-all | grep httpd
-      when: ansible_os_family == "RedHat" and centos_openssl_updated is defined and centos_openssl_updated|changed
-      failed_when: reload_httpd.stdout.find("command not found") != -1
-      changed_when: reload_httpd.rc == 0
-      register: reload_httpd
-      tags:
-        - redhat
+    - name: Check if apache2 is installed on Debian-based distros.
+      shell: service --status-all 2>&1 | grep apache2
+      when: ansible_os_family == "Debian" and debian_openssl_updated|changed
+      register: restart_apache2
+      tags: debian
 
-    - name: Check if apache2 is installed on Debian-based distros
-      shell: service --status-all | grep apache2
-      when: ansible_os_family == "Debian" and debian_openssl_updated is defined and debian_openssl_updated|changed
-      failed_when: reload_apache2.stdout.find("command not found") != -1
-      changed_when: reload_apache2.rc == 0
-      register: reload_apache2
-      tags:
-        - redhat
+    - name: Check if httpd is installed on RedHat-based distros.
+      shell: service --status-all 2>&1 | grep httpd
+      when: ansible_os_family == "RedHat" and centos_openssl_updated|changed
+      register: restart_httpd
+      tags: redhat
 
-    - name: Reload nginx
-      service: name=nginx state=reloaded
-      when: reload_nginx is defined and reload_nginx.rc == 0
-      tags:
-        - redhat
-        - debian
+    - name: Restart httpd on RedHat-based distros
+      service: name=httpd state=restarted
+      when: ansible_os_family == "RedHat" and restart_httpd|changed
+      tags: redhat
 
-    - name: Reload httpd on RedHat-based distros
-      service: name=httpd state=reloaded
-      when: reload_httpd is defined and reload_httpd.rc == 0
-      tags:
-        - redhat
+    - name: Restart nginx on Debian-based distros
+      service: name=nginx state=restarted
+      when: ansible_os_family == "Debian" and restart_nginx|changed
+      tags: debian
 
-    - name: Reload apache2 on Debian-based distros
-      service: name=apache2 state=reloaded
-      when: reload_apache2 is defined and reload_apache2.rc == 0
-      tags:
-        - debian
+    - name: Restart apache2 on Debian-based distros
+      service: name=apache2 state=restarted
+      when: ansible_os_family == "Debian" and restart_apache2|changed
+      tags: debian
 
 # vim: set sw=2 ts=2:

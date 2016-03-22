@@ -1,10 +1,9 @@
 ---
-# To mitigate openssl vulnerabilities[0] from January, 2015
+# NOTE: On Debian-based distros, openssl updates are applied by cron-apt, so we only need to restart services
+# that are using the old/deleted version of libssl's libssl.so.
 #
-# Relies on the output of `lsof' to find processes in memory which are
-# using an old version of OpenSSL.
-
-# [0] http://marc.info/?l=openssl-announce&m=142074329121775&w=2
+# We don't use yum-cron to apply security updates on RHEL-based distros, therefore we'll have to manually
+# update openssl & restart services that are using libssl.so.
 
 - hosts: all
   become: yes

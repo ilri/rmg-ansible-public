@@ -1,0 +1,65 @@
+---
+# NOTE: On Debian-based distros, openssl updates are applied by cron-apt, so we only need to restart services
+# that are using the old/deleted version of libssl's libssl.so.
+#
+# We don't use yum-cron to apply security updates on RHEL-based distros, therefore we'll have to manually
+# update openssl & restart services that are using libssl.so.
+
+- hosts: all
+  become: yes
+  user: provisioning
+  vars:
+    debian_openssl_packages:
+      - openssl
+      - libssl1.0.0
+    centos_openssl_packages:
+      - openssl
+  tasks:
+    - name: Update OpenSSL on Debian-based distros
+      apt: name={{item}} state=latest update_cache=yes
+      with_items: "{{ debian_openssl_packages }}"
+      when: ansible_os_family == "Debian"
+      register: debian_openssl_updated
+      tags: debian
+
+    - name: Update OpenSSL on RedHat-based distros
+      yum: name={{item}} state=latest
+      with_items: "{{ centos_openssl_packages }}"
+      when: ansible_os_family == "RedHat"
+      register: centos_openssl_updated
+      tags: redhat
+
+    - name: Check if nginx is installed on Debian-based distros.
+      shell: service --status-all 2>&1 | grep nginx
+      when: ansible_os_family == "Debian" and debian_openssl_updated|changed
+      register: restart_nginx
+      tags: debian
+
+    - name: Check if apache2 is installed on Debian-based distros.
+      shell: service --status-all 2>&1 | grep apache2
+      when: ansible_os_family == "Debian" and debian_openssl_updated|changed
+      register: restart_apache2
+      tags: debian
+
+    - name: Check if httpd is installed on RedHat-based distros.
+      shell: service --status-all 2>&1 | grep httpd
+      when: ansible_os_family == "RedHat" and centos_openssl_updated|changed
+      register: restart_httpd
+      tags: redhat
+
+    - name: Restart httpd on RedHat-based distros
+      service: name=httpd state=restarted
+      when: ansible_os_family == "RedHat" and restart_httpd|changed
+      tags: redhat
+
+    - name: Restart nginx on Debian-based distros
+      service: name=nginx state=restarted
+      when: ansible_os_family == "Debian" and restart_nginx|changed
+      tags: debian
+
+    - name: Restart apache2 on Debian-based distros
+      service: name=apache2 state=restarted
+      when: ansible_os_family == "Debian" and restart_apache2|changed
+      tags: debian
+
+# vim: set sw=2 ts=2:

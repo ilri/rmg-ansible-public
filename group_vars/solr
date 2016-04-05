@@ -18,8 +18,6 @@ web_access:
 
 apt_mirror: ubuntu.mirror.ac.ke
 
-munin_master_host: hpc
-munin_node_port: 4949
 # plain http connector for munin to query Tomcat status
 munin_tomcat_port: 8080
 

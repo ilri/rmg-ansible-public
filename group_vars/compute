@@ -6,9 +6,6 @@ ganglia_master_host: hpc
 ganglia_gmond_name: compute
 ganglia_gmond_port: 8649
 
-munin_master_host: hpc
-munin_node_port: 4949
-
 glusterfs_role: client
 
 local_scratch: /var/scratch

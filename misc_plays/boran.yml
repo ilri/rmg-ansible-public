@@ -12,8 +12,6 @@
   user: provisioning
   vars:
     apt_mirror: ubuntu.mirror.ac.ke
-    munin_master_host: hpc
-    munin_node_port: 4949 
   vars_files:
     - "../vars/{{ ansible_os_family }}.yml"
     - ../private/vars/common.yml

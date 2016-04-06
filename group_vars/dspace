@@ -32,4 +32,7 @@ munin_tomcat_user: ilri-munin
 # plain http connector for munin to query Tomcat status
 munin_tomcat_port: 8080
 
+# postgresql version to deploy
+pg_version: 9.3
+
 # vim: set ts=2 sw=2:

@@ -4,6 +4,13 @@
 # a vhost serving that domain.
 server {
     listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+
+    return 444;
+}
+
+server {
     listen 443 ssl http2 default_server;
     # specify an invalid hostname that will never match
     # see: http://nginx.org/en/docs/http/server_names.html

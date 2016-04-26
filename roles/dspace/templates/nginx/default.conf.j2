@@ -215,6 +215,18 @@ server {
         }
     }
 
+    # block robots from crawling dynamic URLs (because we can't use * in robots.txt!)
+    # see: https://jira.duraspace.org/browse/DS-2962
+    location ~ /handle/10568/[0-9]+/(browse|discover|search-filter) {
+        add_header X-Robots-Tag "none";
+
+        {% if nginx_tls_cert is defined %}
+        proxy_pass http://127.0.0.1:8443;
+        {% else %}
+        proxy_pass http://127.0.0.1:8081;
+        {% endif %}
+    }
+
     location / {
         # Send requests to Tomcat
         {% if nginx_tls_cert is defined %}

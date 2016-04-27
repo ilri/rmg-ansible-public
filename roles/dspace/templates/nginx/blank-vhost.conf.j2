@@ -4,11 +4,7 @@
 # a vhost serving that domain.
 server {
     listen 80 default;
-    {% if nginx_branch == "stable" %}
-    listen 443 ssl spdy default;
-    {% elif nginx_branch == "mainline" %}
     listen 443 ssl http2 default;
-    {% endif %}
     server_name _;
 
     # "snakeoil" certificate (self signed!)

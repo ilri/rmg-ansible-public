@@ -25,7 +25,7 @@ dspace_git_repo: https://github.com/ilri/DSpace.git
 dspace_git_branch: 5_x-prod
 
 # stable is 1.10.x
-# mainline is 1.9.x
+# mainline is 1.11.x
 nginx_branch: stable
 
 munin_tomcat_user: ilri-munin

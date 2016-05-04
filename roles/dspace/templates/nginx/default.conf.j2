@@ -100,11 +100,7 @@ server {
 # ... check Google for "inurl:mahider.ilri.org inurl:https"
 # ... check Google for "inurl:dspace.ilri.org inurl:https"
 server {
-    {% if nginx_branch == "stable" %}
-    listen 443 ssl spdy;
-    {% elif nginx_branch == "mainline" %}
     listen 443 ssl http2;
-    {% endif %}
     server_name dspace.ilri.org mahider.ilri.org;
 
     ssl_certificate {{ nginx_ilri_tls_cert }};
@@ -127,11 +123,6 @@ server {
     # of such infrastructure, consider turning off session tickets:
     ssl_session_tickets off;
 
-    {% if nginx_branch == "stable" %}
-    # enable SPDY header compression
-    spdy_headers_comp {{ nginx_spdy_headers_comp }};
-    {% endif %}
-
     # Add header to forbid robots to index
     # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
     # May, 2015 we submitted a "Change of Address" -> cgspace.cgiar.org in Google Webmaster tools
@@ -152,13 +143,8 @@ server {
 #
 server {
     {% if nginx_tls_cert is defined %}
-    {% if nginx_branch == "stable" %}
-    listen 443 ssl spdy;
-    listen [::]:443 ssl spdy;
-    {% elif nginx_branch == "mainline" %}
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
-    {% endif %} {# end: nginx_branch #}
     {% else %}
     listen 80;
     listen [::]:80;
@@ -194,11 +180,6 @@ server {
     # Note that you'll have to define and rotate the keys securely by yourself. In absence
     # of such infrastructure, consider turning off session tickets:
     ssl_session_tickets off;
-
-    {% if nginx_branch == "stable" %}
-    # enable SPDY header compression
-    spdy_headers_comp 6;
-    {% endif %}
 
     {% if nginx_enable_hsts == True %}
     # Enable this if you want HSTS (recommended, but be careful)

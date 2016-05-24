@@ -22,6 +22,7 @@
     - schedtool
     - debconf
     - debconf-utils
+    - sysstat
 
 - include: cron-apt.yml
   tags: cron-apt

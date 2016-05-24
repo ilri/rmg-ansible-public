@@ -31,6 +31,7 @@
     - texlive-texmf-xetex.noarch # for pandoc
     - argtable.x86_64 # for clustalo
     - boost-iostreams.x86_64 # for augustus
+    - tbb-devel.x86_64 # for flexbar
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

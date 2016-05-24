@@ -16,6 +16,9 @@
   notify:
     - restart postgres
 
+- name: Create additional postgresql configs. directory
+  file: path={{ pg_conf_dir }}/conf.d mode=0755 owner=postgres group=postgres state=directory
+
 - name: Copy postgres configs
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   with_items:

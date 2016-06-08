@@ -17,7 +17,13 @@
 # http://downloads.linux.hp.com/SDR/project/mcp/
 - name: Add Debian-based HP MCP repo
   apt_repository: repo='deb http://downloads.linux.hpe.com/SDR/repo/mcp {{ ansible_distribution_release }}/current non-free' state=present
-  when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
+  when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor and ansible_distribution_major_version < '15'"
+
+# no xenial builds at the moment, so we'll use trusty's
+# http://downloads.linux.hpe.com/SDR/repo/mcp/dists/
+- name: Add Debian-based HP MCP repo on xenial and wily hosts
+  apt_repository: repo='deb http://downloads.linux.hpe.com/SDR/repo/mcp trusty/current non-free' state=present
+  when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor and ansible_distribution_major_version >= '15'"
 
 - name: Import HP MCP repo's signing key
   apt_key: url=http://downloads.linux.hpe.com/SDR/hpPublicKey2048_key1.pub state=present

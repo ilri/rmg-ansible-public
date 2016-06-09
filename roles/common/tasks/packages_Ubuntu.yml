@@ -30,6 +30,7 @@
     - schedtool
     - debconf
     - debconf-utils
+    - software-properties-common
 
 - name: Security hardening (CIS Benchmark 1.0)
   apt: name={{ item }} state=absent purge=yes

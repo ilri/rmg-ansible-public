@@ -23,6 +23,7 @@
     - debconf
     - debconf-utils
     - sysstat
+    - software-properties-common
 
 - include: cron-apt.yml
   tags: cron-apt

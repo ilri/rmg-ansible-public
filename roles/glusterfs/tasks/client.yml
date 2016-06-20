@@ -5,7 +5,7 @@
 
 - name: Install glusterfs-fuse
   when: ansible_distribution == 'CentOS'
-  yum: name=glusterfs-fuse-3.5.6 state=present
+  yum: name=glusterfs-fuse-{{ glusterfs_version }} state=present
 
 - name: Create mount points
   when: glusterfs_mounts is defined

@@ -1,0 +1,6 @@
+---
+
+# default glusterfs version to install
+glusterfs_version: 3.7.6
+
+# vim: set sw=2 ts=2:

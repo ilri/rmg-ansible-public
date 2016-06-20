@@ -28,9 +28,17 @@
 - name: Start & enable munge
   service: name=munge state=started enabled=yes
 
-- name: Start & enable slurm
-  when: ansible_distribution_major_version | version_compare('7', '<')
+- name: Start & enable slurm on CentOS 6 hosts
+  when: ansible_distribution_major_version | version_compare('6', '==')
   service: name=slurm state=started enabled=yes
+
+- name: Start & enable slurmctld on CentOS 7 head node
+  when: inventory_hostname == slurm_head_node and ansible_distribution_major_version == '7'
+  service: name=slurmctld state=started enabled=yes
+
+- name: Start & enable slurmd on CentOS 7 compute nodes
+  when: ansible_distribution_major_version == '7'
+  service: name=slurmd state=started enabled=yes
 
 - name: Copy spank x11 config
   copy: src={{ item }} dest=/etc/slurm/{{ item }} mode=0644

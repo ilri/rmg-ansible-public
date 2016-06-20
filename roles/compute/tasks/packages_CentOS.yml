@@ -12,12 +12,10 @@
     - libgfortran # for R
     - libicu # for R
     - libXtst # for some X apps like CLC Genomics
-    #- compat-readline5 # for some programs like mothur
     - gsl # for fastSTRUCTURE
     - emacs
     - perl-parent # for some BioPerl scripts
     - java-1.7.0-openjdk # for lots of stuff
-    #- perl-String-Approx.x86_64 # for NGSQCToolkit
     - libtool-ltdl.x86_64 # for pandaseq/2.7
     - tmux #terminal window manager
     - screen #terminal window manager
@@ -29,12 +27,19 @@
     - gnuplot.x86_64
     - mailx.x86_64
     - pandoc.x86_64
-    - texlive.x86_64 # for pandoc
-    - texlive-texmf-xetex.noarch # for pandoc
     - argtable.x86_64 # for clustalo
     - boost-iostreams.x86_64 # for augustus
     - tbb-devel.x86_64 # for flexbar
     - lapack.x86_64 # for presto
+
+- name: Install non-CentOS 7 extra packages on CentOS 6
+  yum: name={{ item }} state=present
+  when: ansible_distribution_major_version == '6'
+  with_items:
+    - compat-readline5 # for some programs like mothur
+    - perl-String-Approx.x86_64 # for NGSQCToolkit
+    - texlive.x86_64 # for pandoc
+    - texlive-texmf-xetex.noarch # for pandoc
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

@@ -11,7 +11,7 @@
   roles:
     - common
     - sssd
-    - solr
     - munin
+    - { role: solr, when: ansible_distribution == 'Ubuntu', tags: solr }
 
 # vim: set sw=2 ts=2:

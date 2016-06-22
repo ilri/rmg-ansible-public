@@ -11,10 +11,10 @@
     - private/vars/ipsets.yml
   roles:
     - common
-    - ganglia
     - sssd
-    - glusterfs
-    - compute
     - munin
+    - { role: ganglia, when: ansible_distribution == 'CentOS', tags: ganglia }
+    - { role: glusterfs, when: ansible_distribution == 'CentOS', tags: glusterfs }
+    - { role: compute, when: ansible_distribution == 'CentOS', tags: compute }
 
 # vim: set sw=2 ts=2:

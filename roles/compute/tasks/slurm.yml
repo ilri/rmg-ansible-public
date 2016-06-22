@@ -17,9 +17,15 @@
     - munge
   tags: packages
 
-- name: Copy slurm config
+- name: Copy slurm config to CentOS 6 hosts
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
-  notify: restart slurm
+  when: ansible_distribution_major_version == '6'
+  notify: restart slurm on CentOS 6 hosts
+
+- name: Copy slurm config to CentOS 7 hosts
+  template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
+  when: ansible_distribution_major_version == '7'
+  notify: restart slurm on CentOS 7 hosts
 
 - name: Copy munge key
   copy: src=munge.key dest=/etc/munge/munge.key mode=0600 owner=munge group=munge

@@ -13,7 +13,7 @@
   roles:
     - common
     - postgres
-    - dspace
     - munin
+    - { role: dspace, when: ansible_os_family == 'Debian', tags: dspace }
 
 # vim: set sw=2 ts=2:

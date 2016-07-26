@@ -32,6 +32,7 @@
     - argtable.x86_64 # for clustalo
     - boost-iostreams.x86_64 # for augustus
     - tbb-devel.x86_64 # for flexbar
+    - lapack.x86_64 # for presto
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

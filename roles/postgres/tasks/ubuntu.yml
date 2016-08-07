@@ -3,9 +3,11 @@
 
 - name: Add PGDG apt list file
   template: src=pgdg.list.j2 dest=/etc/apt/sources.list.d/pgdg.list owner=root group=root mode=0644
+  tags: packages
 
 - name: Import PGDG repo keys
   apt_key: url="https://www.postgresql.org/media/keys/ACCC4CF8.asc" state=present
+  tags: packages
 
 - name: Install postgresql
   apt: name={{ item }} update_cache=yes state=present
@@ -15,6 +17,7 @@
     - postgresql-contrib-{{ pg_version }}
   notify:
     - restart postgres
+  tags: packages
 
 - name: Create additional postgresql configs. directory
   file: path={{ pg_conf_dir }}/conf.d mode=0755 owner=postgres group=postgres state=directory

@@ -31,15 +31,23 @@ nginx_root: '{{ dspace_root }}/webapps/xmlui'
 
 # default dspace webapps
 dspace_webapps:
-  - { name: 'ROOT', app_path: '{{ dspace_root }}/webapps/xmlui', context_path: '/etc/tomcat7/Catalina/localhost/ROOT.xml' }
-  - { name: 'jspui', app_path: '{{ dspace_root }}/webapps/jspui', context_path: '/etc/tomcat7/Catalina/localhost/jspui.xml' }
-  - { name: 'oai', app_path: '{{ dspace_root }}/webapps/oai', context_path: '/etc/tomcat7/Catalina/localhost/oai.xml' }
-  - { name: 'solr', app_path: '{{ dspace_root }}/webapps/solr', context_path: '/etc/tomcat7/Catalina/localhost/solr.xml' }
-  - { name: 'rest', app_path: '{{ dspace_root }}/webapps/rest', context_path: '/etc/tomcat7/Catalina/localhost/rest.xml' }
+  - { name: 'ROOT', app_path: '{{ dspace_root }}/webapps/xmlui', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/ROOT.xml' }
+  - { name: 'jspui', app_path: '{{ dspace_root }}/webapps/jspui', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/jspui.xml' }
+  - { name: 'oai', app_path: '{{ dspace_root }}/webapps/oai', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/oai.xml' }
+  - { name: 'solr', app_path: '{{ dspace_root }}/webapps/solr', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/solr.xml' }
+  - { name: 'rest', app_path: '{{ dspace_root }}/webapps/rest', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/rest.xml' }
 
 # default postgresql dspace db credentials
 dspace_db_name: dspace
 dspace_db_user: dspace
 dspace_db_password: Mz97%tU64J
+
+# default Oracle JDK version
+java_version_major: 7
+
+tomcat_user: tomcat7
+tomcat_group: tomcat7
+tomcat_user_home: /usr/share/tomcat7
+tomcat_version_major: 7
 
 # vim: set sw=2 ts=2:

@@ -109,8 +109,16 @@
     - /etc/logrotate.d/tomcat8-access_logs
   tags: tomcat
 
-- name: Set open file limits for tomcat7 user
-  copy: src=etc/security/limits.d/90-tomcat7.conf dest=/etc/security/limits.d/90-tomcat7.conf owner=root group=root mode=0644
+- name: Set open file limits for tomcat user
+  template: src=tomcat/limits.conf.j2 dest=/etc/security/limits.d/90-tomcat.conf owner=root group=root mode=0644
+  tags: tomcat
+
+# Idempotency: remove old versions of the config (delete this task after all hosts have run it)
+- name: Delete old limits config(s)
+  file: dest={{ item }} state=absent
+  with_items:
+    - /etc/security/limits.d/90-tomcat7.conf
+    - /etc/security/limits.d/90-tomcat8.conf
   tags: tomcat
 
 - name: Copy maven settings

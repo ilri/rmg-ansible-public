@@ -98,7 +98,15 @@
   tags: tomcat
 
 - name: Configure rotation for Tomcat access logs
-  copy: src=etc/logrotate.d/tomcat7-access_logs dest=/etc/logrotate.d/tomcat7-access_logs owner=root group=root mode=0644
+  template: src=tomcat/logrotate-access_logs.j2 dest=/etc/logrotate.d/tomcat-access_logs owner=root group=root mode=0644
+  tags: tomcat
+
+# Idempotency: remove old versions of the script (delete this task after all hosts have run it)
+- name: Delete old log rotate script(s)
+  file: dest={{ item }} state=absent
+  with_items:
+    - /etc/logrotate.d/tomcat7-access_logs
+    - /etc/logrotate.d/tomcat8-access_logs
   tags: tomcat
 
 - name: Set open file limits for tomcat7 user

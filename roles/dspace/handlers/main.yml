@@ -10,5 +10,8 @@
 - name: restart tomcat7
   service: name=tomcat7 state=restarted
 
+- name: restart tomcat8
+  service: name=tomcat8 state=restarted
+
 - name: reload postgresql
   service: name=postgresql state=reloaded

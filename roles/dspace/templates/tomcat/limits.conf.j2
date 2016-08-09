@@ -1,0 +1,5 @@
+# Allow {{ tomcat_user }} user to open more files (ie, in cron jobs). We have also set
+# this limit in /etc/default/tomcat{{ tomcat_version_major }} for the Tomcat application itself. I'm
+# not sure if pam_limits applies there (it doesn't apply for su shells,
+# for example), so we should leave them both.
+{{ tomcat_user }}          -       nofile          16384

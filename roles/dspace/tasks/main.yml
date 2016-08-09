@@ -63,10 +63,10 @@
   file: path=/usr/share/tomcat7/.profile state=touch owner=tomcat7 group=tomcat7 mode=0644
   tags: tomcat
 
-- name: Set tomcat7 defaults
-  template: src=tomcat/tomcat7.j2 dest=/etc/default/tomcat7 owner=root group=root mode=0644
+- name: Set Tomcat defaults
+  template: src=tomcat/defaults-tomcat{{ tomcat_version_major }}.j2 dest=/etc/default/tomcat{{ tomcat_version_major }} owner=root group=root mode=0644
   notify:
-    - restart tomcat7
+    - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
 - name: Copy Tomcat config(s)

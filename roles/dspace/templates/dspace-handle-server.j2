@@ -2,4 +2,4 @@
 # Start the DSpace handle server
 #
 
-@reboot tomcat7 /home/{{ nginx_server_name }}/bin/start-handle-server
+@reboot {{ tomcat_user }} /home/{{ nginx_server_name }}/bin/start-handle-server

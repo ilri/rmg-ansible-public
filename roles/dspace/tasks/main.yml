@@ -87,6 +87,12 @@
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
+- name: Remove Tomcat's default ROOT context
+  file: path=/var/lib/tomcat{{ tomcat_version_major }}/webapps/ROOT state=absent
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
+  tags: tomcat
+
 - name: Enable Tomcat
   service: name=tomcat{{ tomcat_version_major }} enabled=yes
   tags: tomcat

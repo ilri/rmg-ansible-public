@@ -52,15 +52,15 @@
   tags: nginx
 
 - name: Set Tomcat user's shell
-  user: name=tomcat7 shell=/bin/bash
+  user: name={{ tomcat_user }} shell=/bin/bash
   tags: tomcat
 
 - name: Allow Tomcat user to write to ~tomcat7
-  file: path=/usr/share/tomcat7 owner=tomcat7 group=tomcat7
+  file: path={{ tomcat_user_home }} owner={{ tomcat_user }} group={{ tomcat_group }}
   tags: tomcat
 
 - name: Touch Tomcat user's .profile
-  file: path=/usr/share/tomcat7/.profile state=touch owner=tomcat7 group=tomcat7 mode=0644
+  file: path={{ tomcat_user_home }}/.profile state=touch owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
   tags: tomcat
 
 - name: Set Tomcat defaults
@@ -83,18 +83,18 @@
   with_items: "{{ dspace_webapps }}"
   when: dspace_webapps is defined
   notify:
-    - restart tomcat7
+    - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
 - name: Enable Tomcat
-  service: name=tomcat7 enabled=yes
+  service: name=tomcat{{ tomcat_version_major }} enabled=yes
   tags: tomcat
 
 - name: Prepare tomcat7 home folder
   file: dest={{ item.dest }} state={{ item.state }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }}
   with_items:
-    - { dest: '/usr/share/tomcat7/.m2', state: 'directory', owner: 'tomcat7', group: 'tomcat7', mode: '750' }
-    - { dest: '/usr/share/tomcat7/src/git/DSpace', state: 'directory', owner: 'tomcat7', group: 'tomcat7', mode: '755' }
+    - { dest: '{{ tomcat_user_home }}/.m2', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '750' }
+    - { dest: '{{ tomcat_user_home }}/src/git/DSpace', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '755' }
   tags: tomcat
 
 - name: Configure rotation for Tomcat access logs
@@ -122,12 +122,12 @@
   tags: tomcat
 
 - name: Copy maven settings
-  template: src=m2/settings.xml.j2 dest=/usr/share/tomcat7/.m2/settings.xml owner=tomcat7 group=tomcat7 mode=640
+  template: src=m2/settings.xml.j2 dest={{ tomcat_user_home }}/.m2/settings.xml owner=tomcat8 group=tomcat8 mode=640
   when: maven_username is defined and maven_password is defined
 
 - name: Clone DSpace repository
-  git: repo={{ dspace_git_repo }} dest=/usr/share/tomcat7/src/git/DSpace version={{ dspace_git_branch }}
-  become_user: tomcat7
+  git: repo={{ dspace_git_repo }} dest={{ tomcat_user_home }}/src/git/DSpace version={{ dspace_git_branch }}
+  become_user: '{{ tomcat_user }}'
 
 - name: Create DSpace postgres user
   postgresql_user: name={{ dspace_db_user }} password={{ dspace_db_password }}
@@ -143,6 +143,6 @@
   template: src=dspace-handle-server.j2 dest=/etc/cron.d/dspace-handle-server owner=root group=root mode=644
 
 - name: Create DSpace install directory
-  file: path={{ dspace_root }} owner=tomcat7 group=tomcat7 mode=0755 state=directory
+  file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory
 
 # vim: set sw=2 ts=2:

@@ -1,5 +1,5 @@
 ---
-- name: Install DSpace deps
+- name: Install DSpace dependencies
   apt: pkg={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
   with_items:
     - tomcat{{ tomcat_version_major }}
@@ -14,7 +14,7 @@
     - ghostscript # for DSpace 5 PDF thumbnails
   tags: packages
 
-- name: Install DSpace 5 Mirage 2 build deps
+- name: Install DSpace 5 Mirage 2 build dependencies
   apt: pkg={{ item }} state=present install_recommends=no
   with_items:
     - libyaml-dev
@@ -55,7 +55,7 @@
   user: name={{ tomcat_user }} shell=/bin/bash
   tags: tomcat
 
-- name: Allow Tomcat user to write to ~tomcat7
+- name: Allow Tomcat user to write to its home directory
   file: path={{ tomcat_user_home }} owner={{ tomcat_user }} group={{ tomcat_group }}
   tags: tomcat
 
@@ -63,13 +63,13 @@
   file: path={{ tomcat_user_home }}/.profile state=touch owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
   tags: tomcat
 
-- name: Set Tomcat defaults
+- name: Set Tomcat server defaults
   template: src=tomcat/defaults-tomcat{{ tomcat_version_major }}.j2 dest=/etc/default/tomcat{{ tomcat_version_major }} owner=root group=root mode=0644
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
-- name: Copy Tomcat config(s)
+- name: Copy Tomcat server configs
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   with_items:
     - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/server.xml', owner: 'root', group: 'root', mode: '0644' }
@@ -90,19 +90,19 @@
   service: name=tomcat{{ tomcat_version_major }} enabled=yes
   tags: tomcat
 
-- name: Prepare tomcat7 home folder
+- name: Prepare tomcat user's home folder
   file: dest={{ item.dest }} state={{ item.state }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }}
   with_items:
     - { dest: '{{ tomcat_user_home }}/.m2', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '750' }
     - { dest: '{{ tomcat_user_home }}/src/git/DSpace', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '755' }
   tags: tomcat
 
-- name: Configure rotation for Tomcat access logs
+- name: Configure rotation for Tomcat server's access logs
   template: src=tomcat/logrotate-access_logs.j2 dest=/etc/logrotate.d/tomcat-access_logs owner=root group=root mode=0644
   tags: tomcat
 
 # Idempotency: remove old versions of the script (delete this task after all hosts have run it)
-- name: Delete old log rotate script(s)
+- name: Delete old Tomcat server logrotate script(s)
   file: dest={{ item }} state=absent
   with_items:
     - /etc/logrotate.d/tomcat7-access_logs
@@ -114,7 +114,7 @@
   tags: tomcat
 
 # Idempotency: remove old versions of the config (delete this task after all hosts have run it)
-- name: Delete old limits config(s)
+- name: Delete old limits config(s) for tomcat user
   file: dest={{ item }} state=absent
   with_items:
     - /etc/security/limits.d/90-tomcat7.conf

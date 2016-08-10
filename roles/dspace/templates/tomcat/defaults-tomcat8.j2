@@ -10,7 +10,11 @@ TOMCAT8_GROUP=tomcat8
 # JDK version 7. If JAVA_HOME is not set, some common directories for
 # OpenJDK and the Oracle JDK are tried.
 #JAVA_HOME=/usr/lib/jvm/java-7-openjdk
+{% if java_version_major == 7 %}
+JAVA_HOME=/usr/lib/jvm/java-7-oracle
+{% elif java_version_major == 8 %}
 JAVA_HOME=/usr/lib/jvm/java-8-oracle
+{% endif %}
 
 # You may pass JVM startup parameters to Java here. If unset, the default
 # options will be: -Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC

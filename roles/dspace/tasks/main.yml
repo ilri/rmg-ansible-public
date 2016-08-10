@@ -72,10 +72,10 @@
 - name: Copy Tomcat config(s)
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   with_items:
-    - { src: 'tomcat/server.xml.j2', dest: '/etc/tomcat7/server.xml', owner: 'root', group: 'root', mode: '0644' }
-    - { src: 'tomcat/tomcat-users.xml.j2', dest: '/etc/tomcat7/tomcat-users.xml', owner: 'root', group: 'tomcat7', mode: '0640' }
+    - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/server.xml', owner: 'root', group: 'root', mode: '0644' }
+    - { src: 'tomcat/tomcat-users.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/tomcat-users.xml', owner: 'root', group: '{{ tomcat_user }}', mode: '0640' }
   notify:
-    - restart tomcat7
+    - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
 - name: Prepare Tomcat web application contexts

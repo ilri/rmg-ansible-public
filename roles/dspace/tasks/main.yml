@@ -1,9 +1,9 @@
 ---
-- name: Install DSpace deps
+- name: Install DSpace dependencies
   apt: pkg={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
   with_items:
-    - tomcat7
-    - tomcat7-admin
+    - tomcat{{ tomcat_version_major }}
+    - tomcat{{ tomcat_version_major }}-admin
     - ant
     - maven
     - libtcnative-1
@@ -14,7 +14,7 @@
     - ghostscript # for DSpace 5 PDF thumbnails
   tags: packages
 
-- name: Install DSpace 5 Mirage 2 build deps
+- name: Install DSpace 5 Mirage 2 build dependencies
   apt: pkg={{ item }} state=present install_recommends=no
   with_items:
     - libyaml-dev
@@ -34,6 +34,7 @@
     - zlib1g-dev
     - libssl-dev
     - libsqlite3-dev
+    - libgmp-dev
   tags: packages
 
 - name: Add Oracle Java PPA
@@ -41,41 +42,41 @@
   tags: java
 
 - name: Accept Oracle license
-  debconf: name='oracle-java7-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+  debconf: name='oracle-java{{ java_version_major }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
   tags: java
 
 - name: Install Oracle Java
-  apt: pkg=oracle-java7-installer state=present
+  apt: pkg=oracle-java{{ java_version_major }}-installer state=present
   tags: java
 
 - include: nginx.yml
   tags: nginx
 
 - name: Set Tomcat user's shell
-  user: name=tomcat7 shell=/bin/bash
+  user: name={{ tomcat_user }} shell=/bin/bash
   tags: tomcat
 
-- name: Allow Tomcat user to write to ~tomcat7
-  file: path=/usr/share/tomcat7 owner=tomcat7 group=tomcat7
+- name: Allow Tomcat user to write to its home directory
+  file: path={{ tomcat_user_home }} owner={{ tomcat_user }} group={{ tomcat_group }}
   tags: tomcat
 
 - name: Touch Tomcat user's .profile
-  file: path=/usr/share/tomcat7/.profile state=touch owner=tomcat7 group=tomcat7 mode=0644
+  file: path={{ tomcat_user_home }}/.profile state=touch owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
   tags: tomcat
 
-- name: Set tomcat7 defaults
-  template: src=tomcat/tomcat7.j2 dest=/etc/default/tomcat7 owner=root group=root mode=0644
+- name: Set Tomcat server defaults
+  template: src=tomcat/defaults-tomcat{{ tomcat_version_major }}.j2 dest=/etc/default/tomcat{{ tomcat_version_major }} owner=root group=root mode=0644
   notify:
-    - restart tomcat7
+    - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
-- name: Copy Tomcat config(s)
+- name: Copy Tomcat server configs
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   with_items:
-    - { src: 'tomcat/server.xml.j2', dest: '/etc/tomcat7/server.xml', owner: 'root', group: 'root', mode: '0644' }
-    - { src: 'tomcat/tomcat-users.xml.j2', dest: '/etc/tomcat7/tomcat-users.xml', owner: 'root', group: 'tomcat7', mode: '0640' }
+    - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/server.xml', owner: 'root', group: 'root', mode: '0644' }
+    - { src: 'tomcat/tomcat-users.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/tomcat-users.xml', owner: 'root', group: '{{ tomcat_user }}', mode: '0640' }
   notify:
-    - restart tomcat7
+    - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
 - name: Prepare Tomcat web application contexts
@@ -83,35 +84,57 @@
   with_items: "{{ dspace_webapps }}"
   when: dspace_webapps is defined
   notify:
-    - restart tomcat7
+    - restart tomcat{{ tomcat_version_major }}
+  tags: tomcat
+
+- name: Remove Tomcat's default ROOT context
+  file: path=/var/lib/tomcat{{ tomcat_version_major }}/webapps/ROOT state=absent
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
 - name: Enable Tomcat
-  service: name=tomcat7 enabled=yes
+  service: name=tomcat{{ tomcat_version_major }} enabled=yes
   tags: tomcat
 
-- name: Prepare tomcat7 home folder
+- name: Prepare tomcat user's home folder
   file: dest={{ item.dest }} state={{ item.state }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }}
   with_items:
-    - { dest: '/usr/share/tomcat7/.m2', state: 'directory', owner: 'tomcat7', group: 'tomcat7', mode: '750' }
-    - { dest: '/usr/share/tomcat7/src/git/DSpace', state: 'directory', owner: 'tomcat7', group: 'tomcat7', mode: '755' }
+    - { dest: '{{ tomcat_user_home }}/.m2', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '750' }
+    - { dest: '{{ tomcat_user_home }}/src/git/DSpace', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '755' }
   tags: tomcat
 
-- name: Configure rotation for Tomcat access logs
-  copy: src=etc/logrotate.d/tomcat7-access_logs dest=/etc/logrotate.d/tomcat7-access_logs owner=root group=root mode=0644
+- name: Configure rotation for Tomcat server's access logs
+  template: src=tomcat/logrotate-access_logs.j2 dest=/etc/logrotate.d/tomcat-access_logs owner=root group=root mode=0644
   tags: tomcat
 
-- name: Set open file limits for tomcat7 user
-  copy: src=etc/security/limits.d/90-tomcat7.conf dest=/etc/security/limits.d/90-tomcat7.conf owner=root group=root mode=0644
+# Idempotency: remove old versions of the script (delete this task after all hosts have run it)
+- name: Delete old Tomcat server logrotate script(s)
+  file: dest={{ item }} state=absent
+  with_items:
+    - /etc/logrotate.d/tomcat7-access_logs
+    - /etc/logrotate.d/tomcat8-access_logs
+  tags: tomcat
+
+- name: Set open file limits for tomcat user
+  template: src=tomcat/limits.conf.j2 dest=/etc/security/limits.d/90-tomcat.conf owner=root group=root mode=0644
+  tags: tomcat
+
+# Idempotency: remove old versions of the config (delete this task after all hosts have run it)
+- name: Delete old limits config(s) for tomcat user
+  file: dest={{ item }} state=absent
+  with_items:
+    - /etc/security/limits.d/90-tomcat7.conf
+    - /etc/security/limits.d/90-tomcat8.conf
   tags: tomcat
 
 - name: Copy maven settings
-  template: src=m2/settings.xml.j2 dest=/usr/share/tomcat7/.m2/settings.xml owner=tomcat7 group=tomcat7 mode=640
+  template: src=m2/settings.xml.j2 dest={{ tomcat_user_home }}/.m2/settings.xml owner={{ tomcat_user }} group={{ tomcat_group }} mode=640
   when: maven_username is defined and maven_password is defined
 
 - name: Clone DSpace repository
-  git: repo={{ dspace_git_repo }} dest=/usr/share/tomcat7/src/git/DSpace version={{ dspace_git_branch }}
-  become_user: tomcat7
+  git: repo={{ dspace_git_repo }} dest={{ tomcat_user_home }}/src/git/DSpace version={{ dspace_git_branch }}
+  become_user: '{{ tomcat_user }}'
 
 - name: Create DSpace postgres user
   postgresql_user: name={{ dspace_db_user }} password={{ dspace_db_password }}
@@ -127,6 +150,6 @@
   template: src=dspace-handle-server.j2 dest=/etc/cron.d/dspace-handle-server owner=root group=root mode=644
 
 - name: Create DSpace install directory
-  file: path={{ dspace_root }} owner=tomcat7 group=tomcat7 mode=0755 state=directory
+  file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory
 
 # vim: set sw=2 ts=2:

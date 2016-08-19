@@ -18,6 +18,9 @@
 - include: sshd.yml
   tags: sshd
 
+- include: ntp.yml
+  tags: ntp
+
 - name: Reconfigure /etc/sysctl.conf
   template: src=sysctl_{{ ansible_distribution }}.j2 dest=/etc/sysctl.conf owner=root group=root mode=0644
   notify:

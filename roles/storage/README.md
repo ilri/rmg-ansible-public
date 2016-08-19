@@ -1,4 +1,4 @@
-## Glusterfs Role
+## Storage Role
 - This role configures a host as either a storage client or a storage
 server depending on the value of `glusterfs_role` variable.
 

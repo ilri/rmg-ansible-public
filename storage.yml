@@ -14,6 +14,6 @@
     - sssd
     - munin
     - { role: ganglia, when: ansible_distribution == 'CentOS', tags: glusterfs }
-    - { role: glusterfs, when: ansible_distribution == 'CentOS', tags: glusterfs }
+    - { role: storage, when: ansible_distribution == 'CentOS', tags: storage }
 
 # vim: set sw=2 ts=2:

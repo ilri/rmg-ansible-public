@@ -15,6 +15,7 @@
     - slurm-munge
     - slurm-spank-x11 # for X11 support in slurm
     - munge
+  tags: packages
 
 - name: Copy slurm config
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644

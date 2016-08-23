@@ -4,12 +4,14 @@
   apt: name={{ item }} state=latest update_cache=true cache_valid_time=3600
   with_items:
     - munin-node
+  tags: packages
 
 - name: Install munin-node
   when: ansible_os_family == "RedHat"
   yum: name={{ item }} state=latest
   with_items:
     - munin-node
+  tags: packages
 
 # some nice things to have for munin-node on Ubuntu (12.04 and 14.04 right now)
 - name: Install munin-node deps
@@ -17,6 +19,7 @@
   apt: name={{ item }} state=present
   with_items:
     - libwww-perl #for munin's nginx_status check
+  tags: packages
 
 # some nice things to have on Ubuntu Tomcat servers
 - name: Install munin-node Tomcat deps
@@ -26,6 +29,7 @@
     - ruby # for munin's tomcat checks
     - libxml-simple-perl # for munin's tomcat checks
     - libdbd-pg-perl # for munin's postgres check
+  tags: packages
 
 - name: Configure munin Tomcat plugin
   when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names))

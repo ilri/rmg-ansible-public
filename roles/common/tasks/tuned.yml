@@ -9,6 +9,7 @@
   notify:
     - start tuned
     - start cpuspeed
+  tags: packages
 
 # ignore_errors: at times fails on some compute nodes
 - name: Start & enable tuned & cpuspeed services

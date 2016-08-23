@@ -7,6 +7,7 @@
 - name: Install heirloom-mailx on Debian-based hosts
   apt: name=heirloom-mailx state=present
   when: ansible_os_family == 'Debian'
+  tags: packages
 
 - name: Copy backup scripts
   copy: src={{ item }} dest=/opt/ilri/scripts/ owner=root group=root mode=0755

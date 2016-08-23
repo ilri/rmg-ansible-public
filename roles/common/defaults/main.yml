@@ -14,4 +14,7 @@ mailrc_from_email: mwangi@example.co.ke
 mailrc_auth_user: mwangi@example.co.ke
 mailrc_auth_pass: A2YtYma2i1D1
 
+## use UTC as the default timezone
+timezone: Etc/UTC
+
 # vim: set ts=2 sw=2:

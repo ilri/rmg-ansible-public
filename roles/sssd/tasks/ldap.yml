@@ -26,5 +26,6 @@
 - name: Install OpenLDAP utils
   yum: name=openldap-clients state=latest
   when: ansible_distribution == 'CentOS'
+  tags: packages
 
 # vim: set ts=2 sw=2:

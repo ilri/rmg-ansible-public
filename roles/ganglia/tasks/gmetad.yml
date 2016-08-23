@@ -3,6 +3,7 @@
   yum: name={{ item }} state=present
   with_items:
    - ganglia-gmetad
+  tags: packages
 
 - name: Create gmetad configuration file
   copy: src=gmetad.conf dest=/etc/ganglia/gmetad.conf

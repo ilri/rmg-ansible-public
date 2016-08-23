@@ -3,6 +3,7 @@
   yum: name={{ item }} state=present
   with_items:
    - ganglia-gmond
+  tags: packages
 
 - name: Create gmond.conf
   template: src=gmond.conf.j2 dest=/etc/ganglia/gmond.conf

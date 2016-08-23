@@ -39,15 +39,21 @@
 
 - name: Add Oracle Java PPA
   apt_repository: repo='ppa:webupd8team/java' state=present
-  tags: java
+  tags:
+    - java
+    - packages
 
 - name: Accept Oracle license
   debconf: name='oracle-java{{ java_version_major }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
-  tags: java
+  tags:
+    - java
+    - packages
 
 - name: Install Oracle Java
   apt: pkg=oracle-java{{ java_version_major }}-installer state=present
-  tags: java
+  tags:
+    - java
+    - packages
 
 - include: nginx.yml
   tags: nginx

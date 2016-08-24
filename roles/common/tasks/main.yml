@@ -1,15 +1,6 @@
 ---
 
-- include: packages_Ubuntu.yml
-  when: ansible_distribution == 'Ubuntu'
-  tags: packages
-
-- include: packages_Debian.yml
-  when: ansible_distribution == 'Debian'
-  tags: packages
-
-- include: packages_CentOS.yml
-  when: ansible_distribution == 'CentOS'
+- include: packages_{{ ansible_distribution }}.yml
   tags: packages
 
 - include: firewall.yml

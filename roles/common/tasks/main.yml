@@ -20,7 +20,7 @@
 
 - name: Reconfigure /etc/rc.local
   when: ansible_distribution == 'CentOS'
-  template: src=rc.local_{{ ansible_distribution }}.j2 dest=/etc/rc.d/rc.local owner=root group=root mode=0755
+  template: src=rc.local_CentOS.j2 dest=/etc/rc.d/rc.local owner=root group=root mode=0755
   tags: rclocal
 
 - name: Reconfigure /etc/rc.local

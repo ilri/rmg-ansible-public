@@ -32,4 +32,6 @@ glusterfs_mounts:
   - { mount_point: '/export/apps', mount_src: 'wingu3:apps', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
   - { mount_point: '/home', mount_src: 'wingu3:homes', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,_netdev,backupvolfile-server=wingu4', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
 
+timezone: 'Africa/Nairobi'
+
 # vim: set ts=2 sw=2:

@@ -1,24 +1,22 @@
 ---
 - name: Copy glusterfs-epel.repo
-  when: ansible_distribution == 'CentOS'
-  copy: src=glusterfs-epel.repo dest=/etc/yum.repos.d/glusterfs-epel.repo
+  template: src=glusterfs-epel.repo.j2 dest=/etc/yum.repos.d/glusterfs-epel.repo
 
-- name: Install glusterfs-fuse
-  when: ansible_distribution == 'CentOS'
-  yum: name=glusterfs-fuse-{{ glusterfs_version }} state=present
+- name: Install glusterfs-fuse on CentOS hosts
+  yum: name=glusterfs-fuse-{{ glusterfs_minor_version }} state=present
 
 - name: Create mount points
   when: glusterfs_mounts is defined
   file: dest={{ item.mount_point }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }} state={{ item.state }}
   with_items: "{{ glusterfs_mounts }}"
 
+- name: Set SELinux boolean
+  when: glusterfs_mounts is defined
+  seboolean: name=use_fusefs_home_dirs state=true persistent=true
+
 - name: Mount glusterfs volumes
   when: glusterfs_mounts is defined
   mount: name={{ item.mount_point }} src={{ item.mount_src }} fstype={{ item.mount_fs }} opts={{ item.mount_opts }} state={{ item.mount_state }}
   with_items: "{{ glusterfs_mounts }}"
-
-- name: Set SELinux boolean
-  when: ansible_distribution == 'CentOS' and glusterfs_role == 'client'
-  seboolean: name=use_fusefs_home_dirs state=true persistent=true
 
 # vim: set ts=2 sw=2:

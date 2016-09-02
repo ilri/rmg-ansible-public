@@ -12,6 +12,12 @@
   when: ansible_distribution == 'CentOS'
   tags: packages
 
+- include: unattended-upgrades.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - unattended-upgrades
+    - packages
+
 - include: firewall.yml
   tags: firewall
 

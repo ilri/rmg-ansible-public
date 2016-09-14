@@ -30,7 +30,7 @@ nginx_branch: stable
 
 munin_tomcat_user: ilri-munin
 # plain http connector for munin to query Tomcat status
-munin_tomcat_port: 8080
+munin_tomcat_port: 8081
 
 # postgresql version to deploy
 pg_version: 9.3

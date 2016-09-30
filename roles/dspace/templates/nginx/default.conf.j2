@@ -246,6 +246,11 @@ server {
         {% endif %}
     }
 
+     # deny access until we can patch for DS-3250
+     location /rest/items/find-by-metadata-field {
+         deny all;
+     }
+
     include extra-security.conf;
 }
 

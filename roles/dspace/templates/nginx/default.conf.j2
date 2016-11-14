@@ -98,7 +98,7 @@ server {
         try_files $uri @tomcat;
 
         location ~* \.(?:ico|css|js|gif|jpe?g|png|woff)$ {
-            add_header Cache-Control "public, max-age=604800";
+            add_header Cache-Control "max-age=604800";
         }
     }
 

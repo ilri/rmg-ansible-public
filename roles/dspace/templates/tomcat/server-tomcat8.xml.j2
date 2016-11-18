@@ -154,6 +154,10 @@
                pattern="%h %l %u %t &quot;%r&quot; %s %b"
                rotatable="false" />
 
+        <!-- Crawler Session Manager Valve helps mitigate damage done by web crawlers -->
+        <Valve className="org.apache.catalina.valves.CrawlerSessionManagerValve"
+               crawlerUserAgents=".*[bB]ot.*|.*Yahoo! Slurp.*|.*Feedfetcher-Google.*|.*Baiduspider.*" />
+
       </Host>
     </Engine>
   </Service>

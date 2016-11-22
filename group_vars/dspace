@@ -33,6 +33,6 @@ munin_tomcat_user: ilri-munin
 munin_tomcat_port: 8081
 
 # postgresql version to deploy
-pg_version: 9.3
+pg_version: 9.5
 
 # vim: set ts=2 sw=2:

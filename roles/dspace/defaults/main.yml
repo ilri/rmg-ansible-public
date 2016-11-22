@@ -43,7 +43,7 @@ dspace_db_user: dspace
 dspace_db_password: Mz97%tU64J
 
 # default Oracle JDK version
-java_version_major: 7
+java_version_major: 8
 
 tomcat_user: tomcat7
 tomcat_group: tomcat7

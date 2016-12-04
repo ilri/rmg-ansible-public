@@ -72,7 +72,8 @@
     <Connector port="8081" protocol="HTTP/1.1"
                connectionTimeout="20000"
                address="127.0.0.1"
-               URIEncoding="UTF-8" />
+               URIEncoding="UTF-8"
+               maxHttpHeaderSize="16384" />
 
    <!-- tell tomcat it's being proxied via 443 / scheme https -->
     <Connector port="8443" protocol="HTTP/1.1"

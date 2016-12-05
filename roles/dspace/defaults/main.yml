@@ -13,6 +13,7 @@ nginx_ssl_session_cache: shared:SSL:10m
 nginx_ssl_buffer_size: 1400
 nginx_ssl_dhparam: /etc/ssl/certs/dhparam.pem
 nginx_ssl_protocols: 'TLSv1 TLSv1.1 TLSv1.2'
+nginx_ssl_port: 443
 nginx_spdy_headers_comp: 6
 
 # Use 301 (permanent) or 302 (temporary) redirects?

@@ -76,12 +76,12 @@
                URIEncoding="UTF-8"
                maxHttpHeaderSize="16384" />
 
-   <!-- tell tomcat it's being proxied via 443 / scheme https -->
+   <!-- tell tomcat it's being proxied via {{ nginx_ssl_port }} / scheme https -->
     <Connector port="8443" protocol="HTTP/1.1"
                connectionTimeout="20000"
                address="127.0.0.1"
                URIEncoding="UTF-8"
-               proxyPort="443"
+               proxyPort="{{ nginx_ssl_port }}"
                scheme="https"
                secure="true" />
     <!-- A "Connector" using the shared thread pool-->

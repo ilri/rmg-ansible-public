@@ -35,4 +35,9 @@ munin_tomcat_port: 8081
 # postgresql version to deploy
 pg_version: 9.5
 
+# Use 10% of system RAM for PostgreSQL buffers (docs say 25% for dedicated SQL
+# boxes, but we also run Tomcat and rely on some OS cache for Solr, etc)
+# See: https://www.postgresql.org/docs/current/static/runtime-config-resource.html
+pg_shared_buffers: "{{ (ansible_memtotal_mb*0.1)|int|abs }}MB"
+
 # vim: set ts=2 sw=2:

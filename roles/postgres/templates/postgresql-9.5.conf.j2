@@ -114,7 +114,7 @@ ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'		# (change requires rest
 
 # - Memory -
 
-shared_buffers = 128MB			# min 128kB
+shared_buffers = {{ pg_shared_buffers }}			# min 128kB
 					# (change requires restart)
 #huge_pages = try			# on, off, or try
 					# (change requires restart)

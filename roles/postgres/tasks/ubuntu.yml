@@ -22,6 +22,11 @@
 - name: Create additional postgresql configs. directory
   file: path={{ pg_conf_dir }}/conf.d mode=0755 owner=postgres group=postgres state=directory
 
+- name: Set custom postgresql variables
+  template: src=pg_confd_vars.conf.j2 dest={{ pg_conf_dir }}/conf.d/custom_vars.conf mode=0644 owner=postgres group=postgres
+  when: pg_confd_vars is defined
+  notify: restart postgres
+
 - name: Copy postgres configs
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   with_items:

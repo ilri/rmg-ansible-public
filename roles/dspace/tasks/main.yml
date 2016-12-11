@@ -99,15 +99,6 @@
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
-- name: Remove Tomcat mangement contexts
-  file: path=/var/lib/tomcat{{ tomcat_version_major }}/conf/Catalina/localhost/{{ item }} state=absent
-  with_items:
-    - host-manager.xml
-    - manager.xml
-  notify:
-    - restart tomcat{{ tomcat_version_major }}
-  tags: tomcat
-
 - name: Enable Tomcat
   service: name=tomcat{{ tomcat_version_major }} enabled=yes
   tags: tomcat

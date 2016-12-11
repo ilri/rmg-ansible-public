@@ -229,6 +229,12 @@ server {
         deny all;
     }
 
+    # Only allow access to management contexts from localhost (for Munin tomcat)
+    location ~ /(host-manager|manager) {
+        allow 127.0.0.1;
+        deny all;
+    }
+
     # Only allow jspui access for atmire modules
     location /jspui {
         location ~ ^/jspui/(export|listings-and-reports) {

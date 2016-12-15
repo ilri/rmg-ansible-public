@@ -152,8 +152,11 @@
   become_user: postgres
   tags: postgres
 
-- name: Set up cron job for Handle server
-  template: src=dspace-handle-server.j2 dest=/etc/cron.d/dspace-handle-server owner=root group=root mode=644
+- name: Set up cron jobs
+  template: src={{ item }} dest=/etc/cron.d/{{ item | replace(".j2", "") }} owner=root group=root mode=644
+  with_items:
+    - dspace-handle-server.j2
+    - dspace-maintenance-tasks.j2
 
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory

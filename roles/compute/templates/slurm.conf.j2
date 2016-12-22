@@ -173,5 +173,5 @@ NodeName=compute2 CPUs=64 State=UNKNOWN Weight=10
 NodeName=compute03 CPUs=8 State=UNKNOWN Weight=05
 
 PartitionName=debug Nodes=hpc Default=YES MaxTime=5:00 State=UP
-PartitionName=highmem Nodes=mammoth Default=NO MaxTime=UNLIMITED State=UP
-PartitionName=batch Nodes=taurus,compute2,mammoth Default=NO MaxTime=UNLIMITED State=UP
+PartitionName=highmem Nodes=mammoth,compute03 Default=NO MaxTime=UNLIMITED State=UP
+PartitionName=batch Nodes=taurus,compute2,mammoth,compute03 Default=NO MaxTime=UNLIMITED State=UP

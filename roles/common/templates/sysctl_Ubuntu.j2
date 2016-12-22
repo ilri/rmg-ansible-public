@@ -100,8 +100,13 @@ net.core.netdev_max_backlog = 30000
 # recommended default congestion control is htcp 
 net.ipv4.tcp_congestion_control=htcp
 {% endif %}
-# recommended for hosts with jumbo frames enabled
-#net.ipv4.tcp_mtu_probing=1
+{% if ansible_default_ipv4.mtu > 1500 %}
+# enable TCP MTU probing on hosts with jumbo frames enabled
+net.ipv4.tcp_mtu_probing = 1
+{% else %}
+# disable TCP MTU probing on hosts with <= 1500 MTU
+net.ipv4.tcp_mtu_probing = 0
+{% endif %}
 
 {% if 'web' in group_names or 'dspace' in group_names %}
 # increase quadruplets (src ip, src port, dest ip, dest port)

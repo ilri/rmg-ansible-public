@@ -1,6 +1,6 @@
 ---
 
 glusterfs_major_version: 3.7
-glusterfs_minor_version: 3.7.6
+glusterfs_minor_version: 3.7.18
 
 # vim: set sw=2 ts=2:

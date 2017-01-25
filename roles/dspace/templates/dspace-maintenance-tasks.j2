@@ -37,8 +37,6 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # Clean and Update the Discovery indexes at midnight every day
 # (This ensures that any deleted documents are cleaned from the Discovery search/browse index)
 0 0 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace index-discovery > /dev/null
-0 6 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace dsrun com.atmire.statistics.util.UpdateSolrStorageReports > /dev/null
-0 6 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace dsrun com.atmire.utils.ReportSender > /dev/null
 # Re-Optimize the Discovery indexes at 12:30 every day
 # (This ensures that the Discovery Solr Index is re-optimized for better performance)
 # Disabled 2016-09, see: https://issues.apache.org/jira/browse/SOLR-3141

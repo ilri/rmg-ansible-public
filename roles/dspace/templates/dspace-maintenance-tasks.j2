@@ -72,7 +72,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # Run the checksum checker at 04:00 every Sunday
 # By default it runs through every file (-l) and also prunes old results (-p)
 # (This re-verifies the checksums of all files stored in DSpace. If any files have been changed/corrupted, checksums will differ.)
-# 0 4 * * * $DSPACE/bin/dspace checker -l -p
+# 0 4 * * 0 $DSPACE/bin/dspace checker -l -p
 # NOTE: LARGER SITES MAY WISH TO USE DIFFERENT OPTIONS. The above "-l" option tells DSpace to check *everything*.
 # If your site is very large, you may need to only check a portion of your content per week. The below commented-out task
 # would instead check all the content it can within *one hour*. The next week it would start again where it left off.

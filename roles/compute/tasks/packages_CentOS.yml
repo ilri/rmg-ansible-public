@@ -51,4 +51,10 @@
   with_items:
     - glib.x86_64
 
+- name: Install extra packages on CentOS 7
+  yum: name={{ item }} state=present
+  when: ansible_distribution_major_version | version_compare('7', '==')
+  with_items:
+    - libpng12.x86_64 # for pre-compiled blat binary
+
 # vim: set sw=2 ts=2:

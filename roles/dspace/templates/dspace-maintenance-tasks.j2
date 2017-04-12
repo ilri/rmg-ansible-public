@@ -33,6 +33,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # NOTE: ONLY NECESSARY IF YOU ARE RUNNING OAI-PMH
 # (This ensures new content is available via OAI-PMH and ensures the OAI-PMH index is optimized for better performance)
 0 0 * * * {{ tomcat_user }} $DSPACE/bin/dspace oai import -o > /dev/null
+# remove cached OAI responses in [dspace]/var/oai after index refresh
 0 1 * * * {{ tomcat_user }} $DSPACE/bin/dspace oai clean-cache > /dev/null
 # Clean and Update the Discovery indexes at midnight every day
 # (This ensures that any deleted documents are cleaned from the Discovery search/browse index)

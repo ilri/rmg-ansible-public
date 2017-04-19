@@ -1,0 +1,26 @@
+[Unit]
+Description=DSpace REST API
+After=network.target
+
+[Service]
+# Foreground process (do not use --daemon in ExecStart or config.rb)
+Type=simple
+
+# Preferably configure a non-privileged user
+User={{ tomcat_user }}
+
+# Environment variables to be read by the app using ENV.fetch()
+Environment=RAILS_DB_NAME={{ dspace_db_name }}
+Environment=RAILS_DB_USER={{ rest_api_db_user }}
+Environment=RAILS_DB_PASS={{ rest_api_db_password }}
+
+# Specify the path to your puma application root
+WorkingDirectory={{ rest_api_install_path }}
+
+# start bash as a login shell so it enables RVM, then start rails
+ExecStart=/bin/bash -lc 'bundle exec rails server'
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

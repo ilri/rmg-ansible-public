@@ -161,4 +161,6 @@
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory
 
+- include: rest-api.yml
+
 # vim: set sw=2 ts=2:

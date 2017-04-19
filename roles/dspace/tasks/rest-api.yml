@@ -1,0 +1,32 @@
+---
+# Tasks for managing the ILRI custom DSpace REST API
+
+- name: Prepare directory for DSpace REST API repo
+  file: dest={{ rest_api_install_path }} state=directory owner={{ tomcat_user }} group={{ tomcat_group }} mode=755
+
+- name: Clone DSpace REST API repository
+  git: repo={{ rest_api_git_repo }} dest={{ rest_api_install_path }}
+  become_user: '{{ tomcat_user }}'
+
+- name: Create DSpace REST API postgres user
+  postgresql_user:
+    db: '{{ dspace_db_name }}'
+    name: '{{ rest_api_db_user }}'
+    password: '{{ rest_api_db_password }}'
+    priv: CONNECT/item:SELECT/metadatavalue:SELECT/metadatafieldregistry:SELECT/metadataschemaregistry:SELECT/collection:SELECT/handle:SELECT/bundle2bitstream:SELECT/bitstream:SELECT/bundle:SELECT/item2bundle:SELECT
+  become_user: postgres
+  tags: postgres
+
+- name: Copy systemd service to manage DSpace REST API
+  template: src=dspace-rest-api.service.j2 dest=/etc/systemd/system/dspace-rest-api.service mode=0644 owner=root group=root
+  register: rest_api_service
+
+# need to reload to pick up service/timer changes
+- name: Reload systemd daemon
+  command: /bin/systemctl daemon-reload
+  when: rest_api_service|changed
+
+- name: Start and enable systemd timer to manage DSpace REST API
+  service: name=dspace-rest-api.service state=started enabled=yes
+
+# vim: set sw=2 ts=2:

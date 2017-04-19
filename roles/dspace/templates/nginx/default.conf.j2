@@ -238,6 +238,13 @@ server {
         deny all;
     }
 
+    # CKM's DSpace REST API
+    location /api {
+        # trailing slash tells nginx to pass everything relative to root (/)
+        # rather than to pass /api/.*
+        proxy_pass http://dspace_rest_api/;
+    }
+
     # named location for above try_files
     location @tomcat {
         proxy_pass http://tomcat_http;
@@ -252,6 +259,15 @@ upstream tomcat_http {
     {% else %}
     server 127.0.0.1:8001;
     {% endif %}
+
+    # The keepalive parameter sets the maximum number of idle keepalive connections
+    # to upstream servers that are preserved in the cache of each worker process. When
+    # this number is exceeded, the least recently used connections are closed.
+    keepalive 60;
+}
+
+upstream dspace_rest_api {
+    server 127.0.0.1:3000;
 
     # The keepalive parameter sets the maximum number of idle keepalive connections
     # to upstream servers that are preserved in the cache of each worker process. When

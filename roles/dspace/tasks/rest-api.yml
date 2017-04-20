@@ -5,7 +5,7 @@
   file: dest={{ rest_api_install_path }} state=directory owner={{ tomcat_user }} group={{ tomcat_group }} mode=755
 
 - name: Clone DSpace REST API repository
-  git: repo={{ rest_api_git_repo }} dest={{ rest_api_install_path }}
+  git: repo={{ rest_api_git_repo }} dest={{ rest_api_install_path }} depth=1 force=yes
   become_user: '{{ tomcat_user }}'
 
 - name: Create DSpace REST API postgres user

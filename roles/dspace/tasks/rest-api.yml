@@ -13,7 +13,7 @@
     db: '{{ dspace_db_name }}'
     name: '{{ rest_api_db_user }}'
     password: '{{ rest_api_db_password }}'
-    priv: CONNECT/item:SELECT/metadatavalue:SELECT/metadatafieldregistry:SELECT/metadataschemaregistry:SELECT/collection:SELECT/handle:SELECT/bundle2bitstream:SELECT/bitstream:SELECT/bundle:SELECT/item2bundle:SELECT
+    priv: CONNECT/item:SELECT/metadatavalue:SELECT/metadatafieldregistry:SELECT/metadataschemaregistry:SELECT/collection:SELECT/handle:SELECT/bundle2bitstream:SELECT/bitstream:SELECT/bundle:SELECT/item2bundle:SELECT/community:SELECT/community2collection:SELECT/community2community:SELECT/collection2item:SELECT
   become_user: postgres
   tags: postgres
 

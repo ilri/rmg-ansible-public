@@ -91,7 +91,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # Permanently delete any bitstreams flagged as "deleted" in DSpace, on the first of every month at 01:00
 # (This ensures that any files which were deleted from DSpace are actually removed from your local filesystem.
 # By default they are just marked as deleted, but are not removed from the filesystem.)
-0 1 1 * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace cleanup > /dev/null
+0 1 1 * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace cleanup >> $DSPACE/log/cleanup.log.$(date --iso-8601) 2>&1
 
 #----------------
 # YEARLY TASKS (Recommended to be run once per year)

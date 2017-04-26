@@ -240,11 +240,6 @@ server {
 
     # CKM's DSpace REST API
     location /api {
-        location ~ ^/api/*$ {
-            # Disallow Rails welcome page at /api, /api/, /api//, etc.
-            deny all;
-        }
-
         # Pass requests to the REST API app (note the trailing slash, which
         # passes requests relative to /, rather than /api/.*
         proxy_pass http://dspace_rest_api/;

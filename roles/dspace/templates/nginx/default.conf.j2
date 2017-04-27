@@ -241,9 +241,6 @@ server {
     # CKM's DSpace REST API
     # See: https://github.com/ilri/ckm-cgspace-rest-api
     location /api {
-        # Make sure requests have a trailing slash, ie /api/
-        rewrite ^([^.\?]*[^/])$ $1/ permanent;
-
         access_log /var/log/nginx/ckm-cgspace-rest-api.log;
 
         # Pass requests to the REST API app (note the trailing slash, which

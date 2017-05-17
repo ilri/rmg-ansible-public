@@ -16,7 +16,7 @@ ssh_access:
 web_access:
   - ilri_nbo_corp
 
-apt_mirror: ubuntu.mirror.ac.ke
+apt_mirror: ubuntu-archive.mirror.liquidtelecom.com
 
 # plain http connector for munin to query Tomcat status
 munin_tomcat_port: 8080

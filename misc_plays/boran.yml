@@ -11,7 +11,7 @@
   become: yes
   user: provisioning
   vars:
-    apt_mirror: ubuntu.mirror.ac.ke
+    apt_mirror: ubuntu-archive.mirror.liquidtelecom.com
   vars_files:
     - "../vars/{{ ansible_os_family }}.yml"
     - ../private/vars/common.yml

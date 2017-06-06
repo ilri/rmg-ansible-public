@@ -14,6 +14,91 @@ server {
     include extra-security.conf;
 }
 
+# Handle old CGIAR Library URLs
+# ... check Google for "inurl:library.cgiar.org"
+#
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name library.cgiar.org;
+
+    # translate community / collection / item handles from library.cgiar.org to {{ nginx_server_name }}
+    # test: http://library.cgiar.org/handle/10947/4258
+    location ~ ^/handle/(.*)$ {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/$1;
+    }
+
+    # translate bitstream links from library.cgiar.org to {{ nginx_server_name }}
+    # test: http://library.cgiar.org/bitstream/handle/10947/2699/CGIAR_Branding_Guidelines_and_Toolkit.pdf
+    location ~ ^/bitstream {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+    }
+
+    # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
+    # test: http://library.cgiar.org
+    location / {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/80923;
+    }
+
+    include extra-security.conf;
+}
+
+{% if nginx_library_tls_cert is defined %}
+# HTTPS vhost for CGIAR Library, needs to handle the same redirects
+# as the non-HTTPS vhost above, but on HTTPS.
+server {
+    listen {{ nginx_ssl_port }} ssl http2;
+    listen [::]:{{ nginx_ssl_port }} ssl http2;
+
+    server_name library.cgiar.org;
+
+    ssl_certificate {{ nginx_library_tls_cert }};
+    ssl_certificate_key {{ nginx_library_tls_key }};
+
+    ssl_session_timeout {{ nginx_ssl_session_timeout }};
+    ssl_session_cache {{ nginx_ssl_session_cache }};
+    ssl_buffer_size {{ nginx_ssl_buffer_size }};
+    ssl_dhparam {{ nginx_ssl_dhparam }};
+    ssl_protocols {{ nginx_ssl_protocols }};
+    ssl_ciphers "{{ tls_cipher_suite }}";
+    ssl_prefer_server_ciphers on;
+
+    # nginx does not auto-rotate session ticket keys: only a HUP / restart will do so and
+    # when a restart is performed the previous key is lost, which resets all previous
+    # sessions. The fix for this is to setup a manual rotation mechanism:
+    # http://trac.nginx.org/nginx/changeset/1356a3b9692441e163b4e78be4e9f5a46c7479e9/nginx
+    #
+    # Note that you'll have to define and rotate the keys securely by yourself. In absence
+    # of such infrastructure, consider turning off session tickets:
+    ssl_session_tickets off;
+
+    # translate community / collection / item handles from library.cgiar.org to {{ nginx_server_name }}
+    # test: https://library.cgiar.org/handle/10947/4258
+    location ~ ^/handle/(.*)$ {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/$1;
+    }
+
+    # translate bitstream links from library.cgiar.org to {{ nginx_server_name }}
+    # test: https://library.cgiar.org/bitstream/handle/10947/2699/CGIAR_Branding_Guidelines_and_Toolkit.pdf
+    location ~ ^/bitstream {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+    }
+
+    # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
+    # test: https://library.cgiar.org
+    location / {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/80923;
+    }
+
+    include extra-security.conf;
+}
+{% endif %} {# end: nginx_library_tls_cert #}
+
 # Handle old Mahider URLs
 # ... check Google for "inurl:mahider.ilri.org -inurl:https"
 # ... check Google for "inurl:dspace.ilri.org -inurl:https"
@@ -194,7 +279,7 @@ server {
 
     # block robots from crawling dynamic URLs (because we can't use * in robots.txt!)
     # see: https://jira.duraspace.org/browse/DS-2962
-    location ~ /handle/10568/[0-9]+/(browse|discover|search-filter) {
+    location ~ /handle/[0-9]+/[0-9]+/(browse|discover|search-filter) {
         add_header X-Robots-Tag "none";
         proxy_pass http://tomcat_http;
     }

@@ -58,16 +58,6 @@ server {
     include extra-security.conf;
 }
 
-# Handle CPWF vanity domain
-#
-server {
-    listen 80;
-    server_name results.waterandfood.org;
-
-    return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/2983;
-    include extra-security.conf;
-}
-
 {% if nginx_tls_cert is defined %}
 # Handle cgspace.cgiar.org http -> https
 #

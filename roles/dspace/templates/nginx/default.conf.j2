@@ -210,6 +210,12 @@ server {
         proxy_pass http://tomcat_http;
     }
 
+    # log oai requests
+    location /oai {
+        access_log /var/log/nginx/oai.log;
+        proxy_pass http://tomcat_http;
+    }
+
     # Only allow Solr access from localhost
     location /solr {
         allow 127.0.0.1;

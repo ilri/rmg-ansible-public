@@ -6,5 +6,6 @@ pg_tls_cipher_suite: "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:
 pg_version: 9.3
 pg_conf_dir: "/etc/postgresql/{{ pg_version }}/main"
 pg_listen_addresses: "localhost"
+pg_max_connections: 100
 
 # vim: set sw=2 ts=2:

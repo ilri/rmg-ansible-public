@@ -42,7 +42,7 @@ server {
     location ~ ^/bitstream {
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
     # make old mahider.ilri.org RSS links work (ie FeedBurner)
@@ -76,7 +76,7 @@ server {
     location / {
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
     include extra-security.conf;
@@ -123,7 +123,7 @@ server {
     location / {
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 }
 {% endif %} {# end: nginx_ilri_tls_cert #}

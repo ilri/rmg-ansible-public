@@ -40,7 +40,7 @@ server {
     # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
     # test: http://library.cgiar.org
     location / {
-        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/80923;
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
     }
 
     include extra-security.conf;
@@ -92,7 +92,7 @@ server {
     # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
     # test: https://library.cgiar.org
     location / {
-        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/80923;
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
     }
 
     include extra-security.conf;

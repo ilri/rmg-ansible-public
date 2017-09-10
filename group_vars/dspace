@@ -38,7 +38,7 @@ pg_version: 9.5
 # Use formula for rough estimate:
 # db.maxconnections * webapps + 3
 # Where db.maxconnections is from dspace.cfg and webapps are XMLUI, OAI, REST, and 3 is reserved connections for postgres superuser
-pg_max_connections: 123
+pg_max_connections: 183
 
 # Use 10% of system RAM for PostgreSQL buffers (docs say 25% for dedicated SQL
 # boxes, but we also run Tomcat and rely on some OS cache for Solr, etc)

@@ -3,6 +3,12 @@
 - include: packages_{{ ansible_distribution }}.yml
   tags: packages
 
+- include: unattended-upgrades.yml
+  when: ansible_os_family == 'Debian'
+  tags:
+    - unattended-upgrades
+    - packages
+
 - include: firewall.yml
   tags: firewall
 

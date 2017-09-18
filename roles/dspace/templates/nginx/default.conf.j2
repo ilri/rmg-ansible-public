@@ -46,7 +46,6 @@ server {
     include extra-security.conf;
 }
 
-{% if nginx_library_tls_cert is defined %}
 # HTTPS vhost for CGIAR Library, needs to handle the same redirects
 # as the non-HTTPS vhost above, but on HTTPS.
 server {
@@ -55,8 +54,8 @@ server {
 
     server_name library.cgiar.org;
 
-    ssl_certificate {{ nginx_library_tls_cert }};
-    ssl_certificate_key {{ nginx_library_tls_key }};
+    ssl_certificate /etc/ssl/certs/library.cgiar.org-chained.pem;
+    ssl_certificate_key /etc/ssl/private/library.cgiar.org.key.pem;
 
     ssl_session_timeout {{ nginx_ssl_session_timeout }};
     ssl_session_cache {{ nginx_ssl_session_cache }};
@@ -97,7 +96,6 @@ server {
 
     include extra-security.conf;
 }
-{% endif %} {# end: nginx_library_tls_cert #}
 
 # Handle old Mahider URLs
 # ... check Google for "inurl:mahider.ilri.org -inurl:https"

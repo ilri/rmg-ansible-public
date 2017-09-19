@@ -85,7 +85,7 @@ server {
     location ~ ^/bitstream {
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? permanent;
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
     # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}

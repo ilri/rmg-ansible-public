@@ -1,7 +1,7 @@
 ---
 # file: nomads.yml
 
-- hosts: nomads:odk:grafana
+- hosts: nomads:grafana
   become: yes
   user: provisioning
   vars_files:

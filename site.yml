@@ -1,11 +1,11 @@
 ---
 # file: site.yml
 
-- include: compute.yml
-- include: dspace.yml
-- include: nomads.yml
-- include: solr.yml
-- include: storage.yml
-- include: web.yml
+- import_playbook: compute.yml
+- import_playbook: dspace.yml
+- import_playbook: nomads.yml
+- import_playbook: solr.yml
+- import_playbook: storage.yml
+- import_playbook: web.yml
 
 # vim: set sw=2 ts=2:

@@ -1,9 +1,9 @@
 ---
 
-- include: slurm.yml
+- import_tasks: slurm.yml
   tags: slurm
 
-- include: packages_CentOS.yml
+- import_tasks: packages_CentOS.yml
   when: ansible_distribution == 'CentOS'
   tags: packages
 

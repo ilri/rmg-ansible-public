@@ -1,9 +1,9 @@
 ---
-- include: gmetad.yml
+- import_tasks: gmetad.yml
   when: inventory_hostname == 'hpc'
   tags: gmetad
 
-- include: gmond.yml
+- import_tasks: gmond.yml
   tags: gmond
 
 # vim: set sw=2 ts=2:

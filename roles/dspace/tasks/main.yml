@@ -55,7 +55,7 @@
     - java
     - packages
 
-- include: nginx.yml
+- import_tasks: nginx.yml
   tags: nginx
 
 - name: Set Tomcat user's shell

@@ -1,9 +1,9 @@
 ---
-- include: client.yml
+- import_tasks: client.yml
   when: glusterfs_role == 'client'
   tags: glusterfs-client
 
-- include: server.yml
+- import_tasks: server.yml
   when: glusterfs_role == 'server'
   tags: glusterfs-server
 

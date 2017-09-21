@@ -1,15 +1,15 @@
 ---
 
-- include: packages_{{ ansible_distribution }}.yml
+- include_tasks: packages_{{ ansible_distribution }}.yml
   tags: packages
 
-- include: firewall.yml
+- import_tasks: firewall.yml
   tags: firewall
 
-- include: sshd.yml
+- import_tasks: sshd.yml
   tags: sshd
 
-- include: ntp.yml
+- import_tasks: ntp.yml
   tags: ntp
 
 - name: Reconfigure /etc/sysctl.conf
@@ -45,15 +45,15 @@
   when: ansible_distribution == 'CentOS'
   copy: src=set_irq_affinity.sh dest=/usr/local/bin/set_irq_affinity.sh owner=root mode=0755
 
-- include: tuned.yml
+- import_tasks: tuned.yml
   when: "'compute' in group_names or 'storage' in group_names"
   tags: tuned
 
-- include: ssh-keys.yml
+- import_tasks: ssh-keys.yml
   when: provisioning_user is defined
   tags: ssh-keys
 
-- include: sudoersd.yml
+- import_tasks: sudoersd.yml
   tags: sudoers
 
 # All scripts—backups & raid mon—will be copied to /opt/ilri/scripts
@@ -65,11 +65,11 @@
     - raid-monitoring
     - backups
 
-- include: raid-monitoring.yml
+- import_tasks: raid-monitoring.yml
   when: hw_raid_vendor is defined
   tags: raid-monitoring
 
-- include: backups.yml
+- import_tasks: backups.yml
   tags: backups
 
 # vim: set sw=2 ts=2:

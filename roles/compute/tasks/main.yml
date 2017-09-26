@@ -12,7 +12,7 @@
   tags: modules
 
 - name: Copy ilri profile script
-  template: src=ilri.sh.j2 dest=/etc/profile.d/ilri.sh owner=root group=root mode=0644
+  template: src=z-ilri.sh.j2 dest=/etc/profile.d/z-ilri.sh owner=root group=root mode=0644
   tags: profile
 
 - name: Copy limits configuration

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Location of ILRI module files
 export MODULEPATH=/etc/modulefiles/ilri
@@ -9,7 +9,7 @@ TTY=$(tty -s)
 
 # Generate SSH keys for keyless logins! (ripped from Rocks 5.4)
 # If we are interactive and don't have a public key, send prompt.
-if [[ $INTERACTIVE != "false" ]] && [ ! -f $HOME/.ssh/id_rsa.pub ]
+if [[ $INTERACTIVE != "false" ]] && [[ ! -f $HOME/.ssh/id_rsa.pub ]]
 then
     echo
     echo "It doesn't appear that you have set up your ssh key."

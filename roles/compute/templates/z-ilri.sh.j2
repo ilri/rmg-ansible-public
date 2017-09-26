@@ -3,6 +3,11 @@
 # Location of ILRI module files
 export MODULEPATH=/etc/modulefiles/ilri
 
+# 2017-09-26 Add custom R_LIBS for BecA training users. This library contains a
+# pre-compiled version of the DESeq2 package. Can probably be removed after the
+# training is completed to simplify things.
+[[ $USER =~ ^user[0-9]+$ ]] && export R_LIBS=/export/apps/R/3.3-DESeq2-libpath
+
 {% if inventory_hostname == 'hpc' %}
 # only run on interactive sessions
 TTY=$(tty -s)

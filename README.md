@@ -4,7 +4,7 @@ In order for these playbooks to work, your host must:
 - have finished installation, have working networking, and an SSH daemon running
 - have added a `provisioning` user via kickstart / preseed
 - have an entry in the `private/hosts`
-- have a var file in `host_vars/` which defines _at least_ an `ansible_ssh_host` variable
+- have a var file in `host_vars/` which defines _at least_ an `ansible_host` variable
 
 Assuming the above are true, you should be able to run these playbooks successfully.
 

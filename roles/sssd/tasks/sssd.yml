@@ -51,7 +51,7 @@
 
 - name: Add hpc ip & hostname in /etc/hosts
   when: ansible_distribution == 'Ubuntu'
-  lineinfile: dest=/etc/hosts insertafter=EOF line='{{ hostvars['hpc'].ansible_ssh_host }}     hpc.ilri.cgiar.org hpc' state=present
+  lineinfile: dest=/etc/hosts insertafter=EOF line='{{ hostvars['hpc'].ansible_host }}     hpc.ilri.cgiar.org hpc' state=present
   tags: hosts
 
 - name: Start sssd service

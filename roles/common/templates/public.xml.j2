@@ -70,7 +70,7 @@
     {% for host in groups['storage'] %}
     {% if host != inventory_hostname %}
     <rule family="ipv4">
-        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <source address="{{ hostvars[host]['ansible_host'] }}"/>
         <accept/>
     </rule>
     {% endif %}
@@ -79,18 +79,18 @@
     {% for host in groups['compute'] %}
     {% if host == 'hpc' %}
     <rule family="ipv4">
-        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <source address="{{ hostvars[host]['ansible_host'] }}"/>
         <port protocol="tcp" port="{{ glusterfs_brick_ports }}"/>
         <accept/>
     </rule>
     <rule family="ipv4">
-        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <source address="{{ hostvars[host]['ansible_host'] }}"/>
         <port protocol="tcp" port="{{ glusterd_mgmt_port }}"/>
         <accept/>
     </rule>
     {% else %}
     <rule family="ipv4">
-        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <source address="{{ hostvars[host]['ansible_host'] }}"/>
         <accept/>
     </rule>
     {% endif %}
@@ -127,7 +127,7 @@
     {% for host in groups['compute'] %}
     {% if host != inventory_hostname and host != 'hpc' %}
     <rule family="ipv4">
-        <source address="{{ hostvars[host]['ansible_ssh_host'] }}"/>
+        <source address="{{ hostvars[host]['ansible_host'] }}"/>
         <accept/>
     </rule>
     {% endif %}

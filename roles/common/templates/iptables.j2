@@ -31,16 +31,16 @@
 
 {% for host in groups['storage'] %}
 {% if host != inventory_hostname %}
--A INPUT -s {{ hostvars[host]['ansible_ssh_host'] }} -p tcp -m state --state NEW -m tcp -j ACCEPT
+-A INPUT -s {{ hostvars[host]['ansible_host'] }} -p tcp -m state --state NEW -m tcp -j ACCEPT
 {% endif %}
 {% endfor %}
 
 {% for host in groups['compute'] %}
 {% if host == 'hpc' %}
--A INPUT -s {{ hostvars[host]['ansible_ssh_host'] }} -p tcp -m state --state NEW -m tcp --dport {{ glusterfs_brick_ports }} -j ACCEPT
--A INPUT -s {{ hostvars[host]['ansible_ssh_host'] }} -p tcp -m state --state NEW -m tcp --dport {{ glusterd_mgmt_port }} -j ACCEPT
+-A INPUT -s {{ hostvars[host]['ansible_host'] }} -p tcp -m state --state NEW -m tcp --dport {{ glusterfs_brick_ports }} -j ACCEPT
+-A INPUT -s {{ hostvars[host]['ansible_host'] }} -p tcp -m state --state NEW -m tcp --dport {{ glusterd_mgmt_port }} -j ACCEPT
 {% else %}
--A INPUT -s {{ hostvars[host]['ansible_ssh_host'] }} -p tcp -m state --state NEW -m tcp -j ACCEPT
+-A INPUT -s {{ hostvars[host]['ansible_host'] }} -p tcp -m state --state NEW -m tcp -j ACCEPT
 {% endif %}
 {% endfor %}
 {% endif %}
@@ -59,7 +59,7 @@
 
 {% for host in groups['compute'] %}
 {% if host != inventory_hostname and host != 'hpc' %}
--A INPUT -s {{ hostvars[host]['ansible_ssh_host'] }} -p tcp -m state --state NEW -m tcp -j ACCEPT
+-A INPUT -s {{ hostvars[host]['ansible_host'] }} -p tcp -m state --state NEW -m tcp -j ACCEPT
 {% endif %}
 {% endfor %}
 {% endif %}

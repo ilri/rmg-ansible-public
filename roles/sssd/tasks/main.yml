@@ -1,11 +1,14 @@
 ---
-- import_tasks: ldap.yml
+- name: Configure LDAP client
+  import_tasks: ldap.yml
   tags: ldap
 
-- import_tasks: sssd.yml
+- name: Configure SSSD
+  import_tasks: sssd.yml
   tags: sssd
 
-- import_tasks: sudoersd.yml
+- name: Configure sudoers
+  import_tasks: sudoersd.yml
   tags: sudoers
 
 # vim: set ts=2 sw=2:

@@ -1,9 +1,11 @@
 ---
-- import_tasks: gmetad.yml
+- name: Configure Ganglia scraper
+  import_tasks: gmetad.yml
   when: inventory_hostname == 'hpc'
   tags: gmetad
 
-- import_tasks: gmond.yml
+- name: Configure Ganglia listener
+  import_tasks: gmond.yml
   tags: gmond
 
 # vim: set sw=2 ts=2:

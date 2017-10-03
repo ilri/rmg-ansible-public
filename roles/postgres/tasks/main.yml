@@ -1,7 +1,8 @@
 ---
 # file: tasks/main.yml
 
-- import_tasks: ubuntu.yml
+- name: Configure PostgreSQL
+  import_tasks: ubuntu.yml
   when: ansible_distribution == 'Ubuntu'
   tags: postgres
 

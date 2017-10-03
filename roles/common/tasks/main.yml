@@ -1,15 +1,19 @@
 ---
 
-- include_tasks: packages_{{ ansible_distribution }}.yml
+- name: Install common packages
+  include_tasks: packages_{{ ansible_distribution }}.yml
   tags: packages
 
-- import_tasks: firewall.yml
+- name: Configure firewall
+  import_tasks: firewall.yml
   tags: firewall
 
-- import_tasks: sshd.yml
+- name: Configure secure shell daemon
+  import_tasks: sshd.yml
   tags: sshd
 
-- import_tasks: ntp.yml
+- name: Configure network time
+  import_tasks: ntp.yml
   tags: ntp
 
 - name: Reconfigure /etc/sysctl.conf
@@ -45,15 +49,18 @@
   when: ansible_distribution == 'CentOS'
   copy: src=set_irq_affinity.sh dest=/usr/local/bin/set_irq_affinity.sh owner=root mode=0755
 
-- import_tasks: tuned.yml
+- name: Configure tuned
+  import_tasks: tuned.yml
   when: "'compute' in group_names or 'storage' in group_names"
   tags: tuned
 
-- import_tasks: ssh-keys.yml
+- name: Copy admin SSH keys
+  import_tasks: ssh-keys.yml
   when: provisioning_user is defined
   tags: ssh-keys
 
-- import_tasks: sudoersd.yml
+- name: Configure sudoers
+  import_tasks: sudoersd.yml
   tags: sudoers
 
 # All scripts—backups & raid mon—will be copied to /opt/ilri/scripts
@@ -65,11 +72,13 @@
     - raid-monitoring
     - backups
 
-- import_tasks: raid-monitoring.yml
+- name: Configure RAID monitoring
+  import_tasks: raid-monitoring.yml
   when: hw_raid_vendor is defined
   tags: raid-monitoring
 
-- import_tasks: backups.yml
+- name: Configure backup scripts
+  import_tasks: backups.yml
   tags: backups
 
 # vim: set sw=2 ts=2:

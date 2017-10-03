@@ -1,9 +1,11 @@
 ---
 
-- import_tasks: munin.yml
+- name: Configure munin scraper
+  import_tasks: munin.yml
   tags: munin
 
-- import_tasks: munin-node.yml
+- name: Configure munin listener
+  import_tasks: munin-node.yml
   tags: munin-node
 
 # vim: set sw=2 ts=2:

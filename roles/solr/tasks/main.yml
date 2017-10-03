@@ -24,7 +24,8 @@
     - java
     - packages
 
-- import_tasks: solr.yml
+- name: Configure Solr
+  import_tasks: solr.yml
   tags: solr
 
 # vim: set ts=2 sw=2:

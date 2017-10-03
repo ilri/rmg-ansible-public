@@ -45,7 +45,7 @@
     - command-not-found-data
     - python3-commandnotfound
 
-- include: cron-apt.yml
+- include_tasks: cron-apt.yml
   tags: cron-apt
 
 # vim: set ts=2 sw=2:

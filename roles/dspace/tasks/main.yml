@@ -135,7 +135,7 @@
   tags: tomcat
 
 - name: Copy maven settings
-  template: src=m2/settings.xml.j2 dest={{ tomcat_user_home }}/.m2/settings.xml owner={{ tomcat_user }} group={{ tomcat_group }} mode=640
+  template: src=m2/settings.xml.j2 dest={{ tomcat_user_home }}/.m2/settings.xml owner={{ tomcat_user }} group={{ tomcat_group }} mode=0640
   when: maven_username is defined and maven_password is defined
 
 - name: Clone DSpace repository
@@ -153,7 +153,7 @@
   tags: postgres
 
 - name: Set up cron jobs
-  template: src={{ item }} dest=/etc/cron.d/{{ item | replace(".j2", "") }} owner=root group=root mode=644
+  template: src={{ item }} dest=/etc/cron.d/{{ item | replace(".j2", "") }} owner=root group=root mode=0644
   with_items:
     - dspace-handle-server.j2
     - dspace-maintenance-tasks.j2

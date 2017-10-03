@@ -21,7 +21,7 @@
 
 - name: Set sticky bit in local_scratch
   when: inventory_hostname != "hpc"
-  file: path={{ local_scratch }} group=root owner=root mode=1777 state=directory
+  file: path={{ local_scratch }} group=root owner=root mode=01777 state=directory
   tags: scratch
 
 - name: Remove irqbalance

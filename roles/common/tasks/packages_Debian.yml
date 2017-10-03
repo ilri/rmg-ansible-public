@@ -24,7 +24,8 @@
     - sysstat
     - software-properties-common
 
-- include_tasks: cron-apt.yml
+- name: Configure cron-apt
+  include_tasks: cron-apt.yml
   tags: cron-apt
 
 # vim: set ts=2 sw=2:

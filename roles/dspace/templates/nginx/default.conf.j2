@@ -54,6 +54,32 @@ server {
         return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
     }
 
+    # catch all other variants of http://library.cgiar.org/*
+    # test: http://library.cgiar.org/sitemap
+    location / {
+        # The CGIAR System Organization has many links on their corporate website that depend on browsing by
+        # type=subject, but when we migrated their CGIAR Library content into CGSpace we moved their subject
+        # terms to a new metadata field (cg.system.subject) and index (systemsubject). Furthermore, we catch
+        # their top-level browse requests and send them to their new community hierarchy because that is the
+        # scope expected.
+        #
+        # test: http://library.cgiar.org/browse?value=Intellectual%20Assets%20Reports&type=subject
+        location = /browse {
+            # make sure
+            if ($arg_type = subject) {
+                set $arg_type "systemsubject";
+                # ? in rewrite makes sure nginx doesn't append query string again
+                # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+            }
+
+            rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse?value=$arg_value&type=$type? redirect;
+        }
+
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? redirect;
+    }
+
     include extra-security.conf;
 }
 
@@ -111,6 +137,15 @@ server {
     # test: https://library.cgiar.org
     location / {
         return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
+    }
+
+    # catch all other variants of http://library.cgiar.org/*
+    # test: http://library.cgiar.org/sitemap
+    # test: http://library.cgiar.org/browse?type=subject
+    location / {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? redirect;
     }
 
     include extra-security.conf;

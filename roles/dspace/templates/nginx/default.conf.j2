@@ -37,7 +37,7 @@ server {
         rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
-    # use CGSpace's sitemap
+    # use CGSpace's sitemap (important for Google Search Console)
     location = /sitemap {
         return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/sitemap;
     }

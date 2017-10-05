@@ -37,6 +37,11 @@ server {
         rewrite ^ https://{{ nginx_server_name }}$request_uri? redirect;
     }
 
+    # use CGSpace's sitemap
+    location = /sitemap {
+        return 302 https://{{ nginx_server_name }}/sitemap;
+    }
+
     # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
     # test: http://library.cgiar.org
     location / {
@@ -83,6 +88,11 @@ server {
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
         rewrite ^ https://{{ nginx_server_name }}$request_uri? redirect;
+    }
+
+    # use CGSpace's sitemap
+    location = /sitemap {
+        return 302 https://{{ nginx_server_name }}/sitemap;
     }
 
     # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}

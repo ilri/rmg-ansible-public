@@ -26,7 +26,7 @@ server {
     # translate community / collection / item handles from library.cgiar.org to {{ nginx_server_name }}
     # test: http://library.cgiar.org/handle/10947/4258
     location ~ ^/handle/(.*)$ {
-        return 302 https://{{ nginx_server_name }}/handle/$1;
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/$1;
     }
 
     # translate bitstream links from library.cgiar.org to {{ nginx_server_name }}
@@ -34,18 +34,18 @@ server {
     location ~ ^/bitstream {
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? redirect;
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
     # use CGSpace's sitemap
     location = /sitemap {
-        return 302 https://{{ nginx_server_name }}/sitemap;
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/sitemap;
     }
 
     # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
     # test: http://library.cgiar.org
     location / {
-        return 302 https://{{ nginx_server_name }}/handle/10568/83389;
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
     }
 
     include extra-security.conf;
@@ -79,7 +79,7 @@ server {
     # translate community / collection / item handles from library.cgiar.org to {{ nginx_server_name }}
     # test: https://library.cgiar.org/handle/10947/4258
     location ~ ^/handle/(.*)$ {
-        return 302 https://{{ nginx_server_name }}/handle/$1;
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/$1;
     }
 
     # translate bitstream links from library.cgiar.org to {{ nginx_server_name }}
@@ -87,18 +87,18 @@ server {
     location ~ ^/bitstream {
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? redirect;
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
     # use CGSpace's sitemap
     location = /sitemap {
-        return 302 https://{{ nginx_server_name }}/sitemap;
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/sitemap;
     }
 
     # translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
     # test: https://library.cgiar.org
     location / {
-        return 302 https://{{ nginx_server_name }}/handle/10568/83389;
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
     }
 
     include extra-security.conf;

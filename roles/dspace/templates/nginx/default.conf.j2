@@ -37,6 +37,12 @@ server {
         rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
+    # Hardcode an alias for the Google Search Console's verification file
+    # test: http://library.cgiar.org/google31ea257b2e1fdfeb.html
+    location = /google31ea257b2e1fdfeb.html {
+        alias {{ nginx_root }}/themes/CGIARSystem/google31ea257b2e1fdfeb.html;
+    }
+
     # use CGSpace's sitemap (important for Google Search Console)
     location = /sitemap {
         return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/sitemap;
@@ -88,6 +94,12 @@ server {
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
         rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    # Hardcode an alias for the Google Search Console's verification file
+    # test: https://library.cgiar.org/google31ea257b2e1fdfeb.html
+    location = /google31ea257b2e1fdfeb.html {
+        alias {{ nginx_root }}/themes/CGIARSystem/google31ea257b2e1fdfeb.html;
     }
 
     # use CGSpace's sitemap

@@ -372,6 +372,9 @@ server {
     }
 
     location / {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/access.log;
+
         # Send requests to Tomcat
         proxy_pass http://tomcat_http;
     }

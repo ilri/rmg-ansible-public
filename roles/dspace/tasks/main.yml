@@ -37,6 +37,19 @@
     - libgmp-dev
   tags: packages
 
+# For quickly analyzing nginx logs, see: https://goaccess.io/download
+- name: Add GPG key for GoAccess repo
+  apt_key: id=0xB222C443 url=https://deb.goaccess.io/gnugpg.key state=present
+  tags: packages
+
+- name: Add GoAccess repository
+  apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess
+  tags: packages
+
+- name: Install GoAccess
+  apt: pkg=goaccess state=present
+  tags: packages
+
 - name: Add Oracle Java PPA
   apt_repository: repo='ppa:webupd8team/java' state=present
   tags:

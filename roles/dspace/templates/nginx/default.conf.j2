@@ -377,6 +377,8 @@ server {
 
         # Send requests to Tomcat
         proxy_pass http://tomcat_http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
     }
 
     # log rest requests
@@ -432,6 +434,18 @@ upstream tomcat_http {
     # to upstream servers that are preserved in the cache of each worker process. When
     # this number is exceeded, the least recently used connections are closed.
     keepalive 60;
+}
+
+# Assign a custom user agent to certain client IPs who are sending hundreds or
+# thousands of requests like a bot, but don't declare a proper user agent. We
+# can then rely on Tomcat's Crawler Session Manager Valve to assign one single
+# session to all these users in order to reduce resource usage.
+map $remote_addr $ua {
+    # 2017-11-08 ciat.cgiar.org scraper
+    104.196.152.243  'CIATBot';
+    # 2017-11-08 Random Chinese host grabbing 20,000 PDFs
+    124.17.34.59     'ChineseBot';
+    default          $http_user_agent;
 }
 
 # vim: set ts=4 sw=4:

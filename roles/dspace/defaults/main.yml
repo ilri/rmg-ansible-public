@@ -20,6 +20,11 @@ nginx_spdy_headers_comp: 6
 # See: https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling
 nginx_ssl_stapling_resolver: '8.8.8.8 8.8.4.4 [2001:4860:4860::8888] [2001:4860:4860::8844]'
 
+# default assumes letsencrypt on primary domain, override in hostvars if using
+# self-signed certificates, etc.
+nginx_tls_cert: /etc/letsencrypt/live/{{ nginx_server_name }}/fullchain.pem
+nginx_tls_key: /etc/letsencrypt/live/{{ nginx_server_name }}/privkey.pem
+
 # Use 301 (permanent) or 302 (temporary) redirects?
 # 301 on production, 302 on development!
 nginx_redirect_type: 301

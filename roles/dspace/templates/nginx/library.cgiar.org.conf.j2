@@ -1,0 +1,171 @@
+# Handle old CGIAR Library URLs
+# ... check Google for "inurl:library.cgiar.org"
+#
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name library.cgiar.org;
+
+    # Hardcode an alias for the Google Search Console's verification file
+    # test: http://library.cgiar.org/google31ea257b2e1fdfeb.html
+    location = /google31ea257b2e1fdfeb.html {
+        alias {{ nginx_root }}/themes/CGIARSystem/google31ea257b2e1fdfeb.html;
+    }
+
+    # Translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
+    # test: http://library.cgiar.org
+    location = / {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
+    }
+
+    # Translate legacy browse requests at root level
+    # test: http://library.cgiar.org/browse?type=author
+    # test: http://library.cgiar.org/browse?value=Intellectual%20Assets%20Reports&type=subject
+    location = /browse {
+        if ($arg_type = "subject") {
+            set $arg_type "systemsubject";
+            # adjust "type" query parameter to account for us moving subject→systemsubject
+            # when we imported all the CGIAR Library's records. Note: it's possible that
+            # $arg_value is not set, but DSpace doesn't care and I don't want to have to
+            # handle yet another corner case just to process these legacy requests.
+            rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse?value=$arg_value&type=$arg_type? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+        }
+
+        # rewrite to new URI with existing query parameters
+        rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    # Translate legacy browse requests on Library's handle prefix (10947)
+    # test: http://library.cgiar.org/handle/10947/2527/browse?type=author
+    # test: http://library.cgiar.org/handle/10947/2527/browse?value=Intellectual%20Assets%20Reports&type=subject
+    location ~ ^/handle/10947/[0-9]+/browse$ {
+        if ($arg_type = "subject") {
+            set $arg_type "systemsubject";
+            # adjust "type" query parameter to account for us moving subject→systemsubject
+            # when we imported all the CGIAR Library's records. Note: it's possible that
+            # $arg_value is not set, but DSpace doesn't care and I don't want to have to
+            # handle yet another corner case just to process these legacy requests.
+            rewrite ^ https://{{ nginx_server_name }}$uri?value=$arg_value&type=$arg_type? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+        }
+
+        # forward browse request to new domain with existing query parameters
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    # Translate bitstream links from library.cgiar.org to {{ nginx_server_name }}
+    # test: http://library.cgiar.org/bitstream/handle/10947/2699/CGIAR_Branding_Guidelines_and_Toolkit.pdf
+    location ~ ^/bitstream {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    # Handle all other legacy variants of http://library.cgiar.org/*
+    # test: http://library.cgiar.org/sitemap
+    # test: http://library.cgiar.org/password-login
+    # test: http://library.cgiar.org/handle/10947/4258
+    location / {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    include extra-security.conf;
+}
+
+# HTTPS vhost for CGIAR Library, needs to handle the same redirects
+# as the non-HTTPS vhost above, but on HTTPS.
+server {
+    listen {{ nginx_ssl_port }} ssl http2;
+    listen [::]:{{ nginx_ssl_port }} ssl http2;
+
+    server_name library.cgiar.org;
+
+    ssl_certificate /etc/letsencrypt/live/library.cgiar.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/library.cgiar.org/privkey.pem;
+
+    ssl_session_timeout {{ nginx_ssl_session_timeout }};
+    ssl_session_cache {{ nginx_ssl_session_cache }};
+    ssl_buffer_size {{ nginx_ssl_buffer_size }};
+    ssl_dhparam {{ nginx_ssl_dhparam }};
+    ssl_protocols {{ nginx_ssl_protocols }};
+    ssl_ciphers "{{ tls_cipher_suite }}";
+    ssl_prefer_server_ciphers on;
+
+    {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('16.04', '>=') %}
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver {{ nginx_ssl_stapling_resolver }};
+    {% endif %}
+
+    # Hardcode an alias for the Google Search Console's verification file
+    # test: https://library.cgiar.org/google31ea257b2e1fdfeb.html
+    location = /google31ea257b2e1fdfeb.html {
+        alias {{ nginx_root }}/themes/CGIARSystem/google31ea257b2e1fdfeb.html;
+    }
+
+    # Translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
+    # test: https://library.cgiar.org
+    location = / {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
+    }
+
+    # Translate legacy browse requests at root level
+    # test: https://library.cgiar.org/browse?type=author
+    # test: https://library.cgiar.org/browse?value=Intellectual%20Assets%20Reports&type=subject
+    location = /browse {
+        if ($arg_type = "subject") {
+            set $arg_type "systemsubject";
+            # adjust "type" query parameter to account for us moving subject→systemsubject
+            # when we imported all the CGIAR Library's records. Note: it's possible that
+            # $arg_value is not set, but DSpace doesn't care and I don't want to have to
+            # handle yet another corner case just to process these legacy requests.
+            rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse?value=$arg_value&type=$arg_type? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+        }
+
+        # rewrite to new URI with existing query parameters
+        rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    # Translate legacy browse requests on Library's handle prefix (10947)
+    # test: https://library.cgiar.org/handle/10947/2527/browse?type=author
+    # test: https://library.cgiar.org/handle/10947/2527/browse?value=Intellectual%20Assets%20Reports&type=subject
+    location ~ ^/handle/10947/[0-9]+/browse$ {
+        if ($arg_type = "subject") {
+            set $arg_type "systemsubject";
+            # adjust "type" query parameter to account for us moving subject→systemsubject
+            # when we imported all the CGIAR Library's records. Note: it's possible that
+            # $arg_value is not set, but DSpace doesn't care and I don't want to have to
+            # handle yet another corner case just to process these legacy requests.
+            rewrite ^ https://{{ nginx_server_name }}$uri?value=$arg_value&type=$arg_type? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+        }
+
+        # forward browse request to new domain with existing query parameters
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    # Translate bitstream links from library.cgiar.org to {{ nginx_server_name }}
+    # test: https://library.cgiar.org/bitstream/handle/10947/2699/CGIAR_Branding_Guidelines_and_Toolkit.pdf
+    location ~ ^/bitstream {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    # Handle all other legacy variants of http://library.cgiar.org/*
+    # test: https://library.cgiar.org/sitemap
+    # test: https://library.cgiar.org/password-login
+    # test: https://library.cgiar.org/handle/10947/4258
+    location / {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    include extra-security.conf;
+}

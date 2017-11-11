@@ -1,0 +1,12 @@
+# Handle old DSpace domains (redirect to ILRI community)
+#
+server {
+    listen 80;
+    server_name mahider.cgiar.org;
+
+    location / {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/1;
+    }
+
+    include extra-security.conf;
+}

@@ -1,0 +1,87 @@
+# Handle old Mahider URLs
+# ... check Google for "inurl:mahider.ilri.org -inurl:https"
+# ... check Google for "inurl:dspace.ilri.org -inurl:https"
+#
+server {
+    listen 80;
+
+    server_name mahider.ilri.org dspace.ilri.org;
+
+    # links with /jspui/blah/blah should be -> /blah/blah
+    location ~ ^/jspui/(.*)$ {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/$1;
+    }
+
+    # links with /jspui should go to ILRI's community
+    location ~ ^/jspui$ {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/1;
+    }
+
+    # translate mahider communities / collections / handles to cgspace
+    location ~ ^/handle/(.*)$ {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/$1;
+    }
+
+    # make old bitstream links work
+    location ~ ^/bitstream {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    # make old mahider.ilri.org RSS links work (ie FeedBurner)
+    location ~ ^/feed/(.*)$ {
+        # redirect to cgspace on non-HTTPS, because FeedBurner doesn't support HTTPS
+        return {{ nginx_redirect_type }} http://{{ nginx_server_name }}/feed/$1;
+    }
+
+    location / {
+        return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/1;
+    }
+
+    include extra-security.conf;
+}
+
+{% if nginx_ilri_tls_cert is defined %}
+# Handle HTTPS links for non-authoritative domains from Google Scholar, ie
+# dspace.ilri.org or mahider.ilri.org
+# ... check Google for "inurl:mahider.ilri.org inurl:https"
+# ... check Google for "inurl:dspace.ilri.org inurl:https"
+server {
+    listen 443 ssl http2;
+    server_name dspace.ilri.org mahider.ilri.org;
+
+    ssl_certificate {{ nginx_ilri_tls_cert }};
+    ssl_certificate_key {{ nginx_ilri_tls_key }};
+
+    ssl_session_timeout {{ nginx_ssl_session_timeout }};
+    ssl_session_cache {{ nginx_ssl_session_cache }};
+    ssl_buffer_size {{ nginx_ssl_buffer_size }};
+    ssl_dhparam {{ nginx_ssl_dhparam }};
+    ssl_protocols {{ nginx_ssl_protocols }};
+    ssl_ciphers "{{ tls_cipher_suite }}";
+    ssl_prefer_server_ciphers on;
+
+    # nginx does not auto-rotate session ticket keys: only a HUP / restart will do so and
+    # when a restart is performed the previous key is lost, which resets all previous
+    # sessions. The fix for this is to setup a manual rotation mechanism:
+    # http://trac.nginx.org/nginx/changeset/1356a3b9692441e163b4e78be4e9f5a46c7479e9/nginx
+    #
+    # Note that you'll have to define and rotate the keys securely by yourself. In absence
+    # of such infrastructure, consider turning off session tickets:
+    ssl_session_tickets off;
+
+    # Add header to forbid robots to index
+    # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+    # May, 2015 we submitted a "Change of Address" -> cgspace.cgiar.org in Google Webmaster tools
+    # but I don't see any reason to let ANY bots try to index this site.
+    add_header X-Robots-Tag "none";
+
+    # redirect to {{ nginx_server_name }}
+    location / {
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+}
+{% endif %} {# end: nginx_ilri_tls_cert #}

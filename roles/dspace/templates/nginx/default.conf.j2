@@ -110,6 +110,9 @@ server {
     }
 
     location / {
+        # rate limit for poorly behaved bots, see limit_req_zone below
+        limit_req zone=badbots;
+
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
 
@@ -189,5 +192,33 @@ map $remote_addr $ua {
     124.17.34.59     'ChineseBot';
     default          $http_user_agent;
 }
+
+# Use a mapping to identify certain search bots with many IP addresses and force
+# them to obey a global request rate limit. For example, Baidu actually has over
+# 160 IP addresses and often crawls the site with fifty or so concurrently! This
+# maps all Baidu requests to the same $limit_bots value, allowing us to force it
+# to abide by a total rate limit for all client instances regardless of the IP.
+#
+# $limit_bots will be used as the key for the limit_req_zone.
+map $http_user_agent $limit_bots {
+    ~Baiduspider 'baidu';
+
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+}
+
+# Zone for limiting "bad bot" requests with a hard limit of 1 per minute. Uses
+# the variable $limit_bots as a key, which is controlled by the mapping above.
+# I am using 1 requests per minute because Baidu currently does about 20 or 30,
+# but I don't feel like prioritizing their requests because they don't respect
+# the instructions in robots.txt. This is probably overkill for just punishing
+# Baidu, but I wanted to explore a solution that could work for other bad user
+# agents in the future with little adjustments.
+#
+# A zone key size of 1 megabyte should be able to store around 16,000 sessions,
+# which should be about 15,999 sessions too many for now as I'm currently only
+# worried about Baidu (see mapping above).
+limit_req_zone $limit_bots zone=badbots:1m rate=1r/m;
 
 # vim: set ts=4 sw=4:

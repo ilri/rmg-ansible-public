@@ -1,7 +1,7 @@
 ---
 
 - name: Install common packages
-  include_tasks: packages_{{ ansible_distribution }}.yml
+  import_tasks: packages.yml
   tags: packages
 
 - name: Configure firewall

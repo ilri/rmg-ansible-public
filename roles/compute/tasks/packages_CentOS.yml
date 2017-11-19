@@ -32,6 +32,7 @@
     - tbb-devel.x86_64 # for flexbar
     - lapack.x86_64 # for presto
     - tmpwatch.x86_64
+    - htop
 
 - name: Install non-CentOS 7 extra packages on CentOS 6
   yum: name={{ item }} state=present

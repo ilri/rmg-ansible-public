@@ -9,7 +9,6 @@
   with_items:
     - git
     - acpid
-    - htop
     - lsof
     - sysstat
     - tmux

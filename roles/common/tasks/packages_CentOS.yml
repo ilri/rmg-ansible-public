@@ -1,4 +1,9 @@
 ---
+# Add the CentOS package signing key just in case, as it seems to be missing on
+# some installs (like from ISO).
+- name: Add CentOS package signing key
+  rpm_key: state=present key=/etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+
 - name: Install packages
   yum: name={{ item }} state=present
   with_items:

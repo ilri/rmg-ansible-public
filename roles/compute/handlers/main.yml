@@ -3,11 +3,9 @@
 
 - name: restart slurm on CentOS 6 hosts
   service: name=slurm state=restarted
-  when: ansible_distribution_major_version == '6'
 
 - name: restart slurm on CentOS 7 hosts
   service: name=slurmd state=restarted
-  when: ansible_distribution_major_version == '7'
 
 - name: restart munge
   service: name=munge state=restarted

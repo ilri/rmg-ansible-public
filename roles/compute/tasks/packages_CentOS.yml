@@ -35,7 +35,7 @@
 
 - name: Install non-CentOS 7 extra packages on CentOS 6
   yum: name={{ item }} state=present
-  when: ansible_distribution_major_version == '6'
+  when: ansible_distribution_major_version | version_compare('6', '==')
   with_items:
     - compat-readline5 # for some programs like mothur
     - perl-String-Approx.x86_64 # for NGSQCToolkit

@@ -1,6 +1,6 @@
 ---
 - name: Install glusterfs-fuse on CentOS hosts
-  yum: name=glusterfs-fuse-{{ glusterfs_minor_version }} state=present
+  yum: name=glusterfs-fuse state=present
 
 - name: Create mount points
   when: glusterfs_mounts is defined

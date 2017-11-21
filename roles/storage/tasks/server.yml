@@ -13,7 +13,7 @@
     - nfs-utils
 
 - name: Install glusterfs-server
-  yum: name=glusterfs-server-{{ glusterfs_minor_version }} state=present
+  yum: name=glusterfs-server state=present
 
 - name: Start & enable glusterd service
   service: name=glusterd state=started enabled=true

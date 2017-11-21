@@ -1,6 +1,9 @@
 ---
-- name: Install glusterfs-fuse on CentOS hosts
-  yum: name=glusterfs-fuse state=present
+- name: Install GlusterFS and dependencies
+  yum: name={{ item }} state=present
+  with_items:
+    - glusterfs-fuse
+    - libsemanage-python
 
 - name: Create mount points
   when: glusterfs_mounts is defined

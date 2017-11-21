@@ -1,5 +1,5 @@
 ---
-- name: Conifgure GlusterFS client
+- name: Configure GlusterFS client
   import_tasks: client.yml
   when: glusterfs_role == 'client'
   tags: glusterfs-client

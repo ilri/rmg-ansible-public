@@ -12,9 +12,6 @@
     - rpcbind
     - nfs-utils
 
-- name: Add glusterfs EPEL repo
-  template: src=glusterfs-epel.repo.j2 dest=/etc/yum.repos.d/glusterfs-epel.repo owner=root group=root mode=0644
-
 - name: Install glusterfs-server
   yum: name=glusterfs-server-{{ glusterfs_minor_version }} state=present
 

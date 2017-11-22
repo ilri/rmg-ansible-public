@@ -12,7 +12,7 @@ The following tasks are carried out on storage clients:
 
 To create mount points and mount volumes, you need to define the `glusterfs_mounts` variable, which is a list of one or more dictionaries containing mount points and volume details.
 
-- You can define the `glusterfs_mounts` variable in your `host_vars` or `group_vars` For example:
+You can define the `glusterfs_mounts` variable in your `host_vars` or `group_vars` For example:
 
 ```jinja
     glusterfs_mounts:
@@ -20,11 +20,7 @@ To create mount points and mount volumes, you need to define the `glusterfs_moun
 ```
 
 ## GlusterFS Server
-To specify a host as a storage server, you need to assign the value `server` to `glusterfs_role` in `host_vars/$hostname` or in `group_vars/$groupname`.
-
-The following tasks are carried out on storage servers:
-  - Add glusterfs-epel yum repo
-  - Install glusterfs-server package
+To specify a host as a storage server, you need to assign the value `server` to `glusterfs_role` in `host_vars/$hostname` or in `group_vars/$groupname`. This will install the glusterfs-server package along with its dependencies and a few other disk utilities. It does not configure GlusterFS — you will need to go to the server(s) and do this manually!
 
 # OS Family Supported
 - CentOS 6, CentOS 7

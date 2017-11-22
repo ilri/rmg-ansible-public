@@ -1,19 +1,12 @@
 ---
 
-- name: Install disk utilities
+- name: Install disk utilities and glusterfs-server
   yum: name={{ item }} state=installed
   with_items:
     - gdisk
     - xfsprogs
-
-- name: Install glusterfs-server dependencies
-  yum: name={{ item }} state=present
-  with_items:
-    - rpcbind
     - nfs-utils
-
-- name: Install glusterfs-server
-  yum: name=glusterfs-server state=present
+    - glusterfs-server
 
 - name: Start & enable glusterd service
   service: name=glusterd state=started enabled=true

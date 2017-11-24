@@ -7,6 +7,10 @@ server {
 
     server_name library.cgiar.org;
 
+    # log access requests to this legacy domain, even though all should be
+    # redirected to cgspace.cgiar.org with HTTP 301.
+    access_log /var/log/nginx/library-access.log;
+
     # Hardcode an alias for the Google Search Console's verification file
     # test: http://library.cgiar.org/google31ea257b2e1fdfeb.html
     location = /google31ea257b2e1fdfeb.html {
@@ -83,6 +87,10 @@ server {
     listen [::]:{{ nginx_ssl_port }} ssl http2;
 
     server_name library.cgiar.org;
+
+    # log access requests to this legacy domain, even though all should be
+    # redirected to cgspace.cgiar.org with HTTP 301.
+    access_log /var/log/nginx/library-access.log;
 
     ssl_certificate /etc/letsencrypt/live/library.cgiar.org/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/library.cgiar.org/privkey.pem;

@@ -34,15 +34,15 @@
   import_tasks: ntp.yml
   tags: ntp
 
-- name: Reconfigure /etc/sysctl.conf
-  when: ansible_distribution != "CentOS" or ansible_distribution_major_version | version_compare('7', '!=')
+- name: Reconfigure /etc/sysctl.conf on Debian and Ubuntu
+  when: ansible_distribution != "CentOS"
   template: src=sysctl_{{ ansible_distribution }}.j2 dest=/etc/sysctl.conf owner=root group=root mode=0644
   notify:
     - reload sysctl
   tags: sysctl
 
-- name: Reconfigure /etc/sysctl.conf for CentOS 7
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version | version_compare('7', '==')
+- name: Reconfigure /etc/sysctl.conf on CentOS
+  when: ansible_distribution == "CentOS"
   template: src=sysctl_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2 dest=/etc/sysctl.conf owner=root group=root mode=0644
   notify:
     - reload sysctl

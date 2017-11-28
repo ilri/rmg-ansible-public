@@ -32,4 +32,8 @@
   when: ansible_distribution == 'CentOS'
   tags: packages
 
+- name: Enable ntp on CentOS
+  service: name=ntpd state=started enabled=yes
+  when: ansible_distribution == 'CentOS'
+
 # vim: set ts=2 sw=2:

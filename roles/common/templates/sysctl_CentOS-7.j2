@@ -74,7 +74,6 @@ net.ipv4.conf.default.rp_filter = 1
 # CIS 4.2.8 Enable TCP SYN Cookies
 net.ipv4.tcp_syncookies = 1
 
-{% if 'storage' in group_names or 'compute' in group_names or 'web' in group_names %}
 # 10GbE tuning
 # For a host with a 10G NIC, optimized for network paths up to 100ms RTT
 # See: http://dak1n1.com/blog/7-performance-tuning-intel-10gbe
@@ -123,7 +122,6 @@ net.ipv4.tcp_sack = 1
 net.ipv4.tcp_timestamps = 0
 # low-latency TCP
 net.ipv4.tcp_low_latency=1
-{% endif %}
 {% endif %}
 
 {% if 'web' in group_names %}

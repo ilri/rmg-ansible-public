@@ -104,7 +104,7 @@ net.ipv4.tcp_fin_timeout = 30
 vm.swappiness = 10
 {% endif %}
 
-# bic and cubic (default) have problems in kernels < 2.6.33 (aka CentOS 6)
+# recommended default congestion control is htcp
 net.ipv4.tcp_congestion_control = htcp
 {% if ansible_virtualization_role == "NA" %}
 # Recommended for hosts using jumbo frames

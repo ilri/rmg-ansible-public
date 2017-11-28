@@ -105,15 +105,12 @@ vm.swappiness = 10
 
 # recommended default congestion control is htcp
 net.ipv4.tcp_congestion_control = htcp
-{% if ansible_virtualization_role == "NA" %}
 # Recommended for hosts using jumbo frames
 net.ipv4.tcp_mtu_probing = 1
-{% endif %}
 
 # recommended for CentOS7/Debian8 hosts
 net.core.default_qdisc = fq
 
-{% if ansible_virtualization_role == "NA" %}
 # From Mellanox tuning guide
 # See: http://www.mellanox.com/related-docs/prod_software/Performance_Tuning_Guide_for_Mellanox_Network_Adapters.pdf
 # Enable the TCP selective acks option for better throughput
@@ -122,7 +119,6 @@ net.ipv4.tcp_sack = 1
 net.ipv4.tcp_timestamps = 0
 # low-latency TCP
 net.ipv4.tcp_low_latency=1
-{% endif %}
 
 {% if 'web' in group_names %}
 # increase quadruplets (src ip, src port, dest ip, dest port)

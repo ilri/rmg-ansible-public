@@ -1,8 +1,5 @@
 ---
 
-- name: Configure ILRI CentOS mirror
-  copy: src=ilri.repo dest=/etc/yum.repos.d/ilri.repo owner=root group=root mode=0644
-
 - name: Install extra packages
   yum: name={{ item }} state=present
   with_items:

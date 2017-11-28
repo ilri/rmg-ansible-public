@@ -27,7 +27,7 @@
   when: ansible_os_family == 'Debian' and ansible_service_mgr != 'systemd'
   tags: packages
 
-- name: Install ntp on old CentOS
+- name: Install ntp on CentOS
   yum: name=ntp state=present update_cache=yes
   when: ansible_distribution == 'CentOS'
   tags: packages

@@ -88,10 +88,6 @@ net.ipv4.tcp_wmem = 4096 65536 33554432
 net.core.rmem_max = 67108864
 net.core.wmem_max = 67108864
 
-# number of packets queued on input if they are received before the kernel
-# can process them (after which they are dropped)
-net.core.netdev_max_backlog = 30000
-
 # TCP connection finished timeout (default is 60)
 # frees up sockets earlier.
 net.ipv4.tcp_fin_timeout = 30

@@ -6,6 +6,18 @@
     - "private/vars/{{ ansible_os_family }}.yml"
   tags: always
 
+# storage and compute nodes need to know each other's IP addresses and hostnames
+# for yum mirrors, SLURM, LDAP, etc, so just do that first.
+- name: Add compute and storage nodes to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '{{ hostvars[item].ansible_host }}.*{{ item }}.*{{ item }}\.ilri\.cgiar\.org$'
+    line: "{{ hostvars[item].ansible_host }} {{ item }} {{item}}.ilri.cgiar.org"
+    state: present
+  with_items: "{{ groups['compute'] | union(groups['storage']) }}"
+  when: inventory_hostname != 'hpc' and ('compute' in group_names or 'storage' in group_names)
+  tags: hosts
+
 - name: Install common packages
   import_tasks: packages.yml
   tags: packages

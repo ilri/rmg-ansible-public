@@ -15,7 +15,7 @@
 
 - name: Enable systemd's NTP client
   when: ansible_service_mgr == 'systemd' and ansible_distribution != 'CentOS'
-  service: name=systemd-timesyncd enabled=yes
+  systemd: name=systemd-timesyncd state=started enabled=yes
 
 - name: Uninstall ntp on modern Ubuntu/Debian
   apt: name=ntp state=absent update_cache=yes

@@ -33,12 +33,14 @@
   apt: name=hpssacli state=present update_cache=yes
   when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
 
+# In ILRI CentOS repo, from:
+# http://sarepos.cpanel.net/centos
 - name: Install LSI MegaCLI tools
   yum: name=MegaCli state=present
   when: "ansible_distribution == 'CentOS' and 'lsi' in hw_raid_vendor"
 
 # In ILRI CentOS repo, from:
-# http://downloads.linux.hp.com/SDR/project/mcp/
+# http://downloads.linux.hpe.com/SDR/repo/mcp
 - name: Install HP Array tools
   yum: name=hpacucli state=present
   when: "ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor"

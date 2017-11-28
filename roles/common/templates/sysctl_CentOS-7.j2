@@ -111,6 +111,9 @@ net.ipv4.tcp_congestion_control = htcp
 net.ipv4.tcp_mtu_probing = 1
 {% endif %}
 
+# recommended for CentOS7/Debian8 hosts
+net.core.default_qdisc = fq
+
 {% if ansible_virtualization_role == "NA" %}
 # From Mellanox tuning guide
 # See: http://www.mellanox.com/related-docs/prod_software/Performance_Tuning_Guide_for_Mellanox_Network_Adapters.pdf

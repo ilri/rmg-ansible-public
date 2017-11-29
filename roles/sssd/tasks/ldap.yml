@@ -9,8 +9,8 @@
     - "{{ ldap_conf_dir }}/cacerts/hpc-ca.asc"
     - "{{ ldap_conf_dir }}/cacerts/252fd4a1.0"
 
-- name: Copy hpc CA cert. file
-  copy: src=hpc-ca.asc dest={{ local_ca_certs_dir }}/hpc-ca.crt owner=root group=root mode=0644
+- name: Copy HPC CA certificate to trust store
+  copy: src=hpc-ca-2017.asc dest={{ local_ca_certs_dir }}/hpc-ca-2017.crt owner=root group=root mode=0644
   register: update_cert_bundle
 
 - name: update trusted ca-certificates bundle

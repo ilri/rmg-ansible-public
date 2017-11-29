@@ -2,9 +2,7 @@
 - name: Copy ldap.conf
   template: src=ldap.conf.j2 dest={{ ldap_conf_dir}}/ldap.conf owner=root group=root mode=0644
 
-# Remove the old certificates that we added when we first did this(sssd) role
-# NOTE: Remove this task after a month or so
-- name: Remove old certificates
+- name: Remove old CA certificates
   file: path={{ item }} state=absent
   with_items:
     - "{{ local_ca_certs_dir }}/hpc-ca.asc"

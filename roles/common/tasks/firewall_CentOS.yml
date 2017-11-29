@@ -23,11 +23,11 @@
   tags: packages
 
 - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
-  when: inventory_hostname != 'hpc' and ansible_distribution_major_version | version_compare('7', '==')
+  when: ansible_distribution_major_version | version_compare('7', '==')
   template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600
 
 - name: Format public.xml firewalld zone file
-  when: inventory_hostname != 'hpc' and ansible_distribution_major_version | version_compare('7', '==')
+  when: ansible_distribution_major_version | version_compare('7', '==')
   shell: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
   notify:
     - restart firewalld

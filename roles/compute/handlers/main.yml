@@ -1,13 +1,10 @@
 ---
 # file: roles/slurm/handlers/main.yml
 
-- name: restart slurm on CentOS 6 hosts
-  service: name=slurm state=restarted
-
-- name: restart slurm on CentOS 7 hosts
-  service: name=slurmd state=restarted
+- name: restart slurmd
+  systemd: name=slurmd state=restarted
 
 - name: restart munge
-  service: name=munge state=restarted
+  systemd: name=munge state=restarted
 
 # vim: set sw=2 ts=2:

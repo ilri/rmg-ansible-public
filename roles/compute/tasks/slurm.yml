@@ -6,7 +6,6 @@
 - name: Create slurm user
   user: name=slurm system=yes state=present createhome=no uid=490 group=slurm
 
-# TODO: install and configure slurmdbd on head node
 - name: Install slurm
   when: ansible_distribution == 'CentOS'
   yum: name={{ item }} state=present

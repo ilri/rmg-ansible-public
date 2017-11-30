@@ -7,7 +7,6 @@
   user: name=slurm system=yes state=present createhome=no uid=490 group=slurm
 
 - name: Install slurm
-  when: ansible_distribution == 'CentOS'
   yum: name={{ item }} state=present
   with_items:
     - slurm

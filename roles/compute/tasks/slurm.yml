@@ -12,6 +12,7 @@
   yum: name={{ item }} state=present
   with_items:
     - slurm
+    - slurm-slurmd
     - slurm-devel
     - slurm-munge
     - slurm-spank-x11 # for X11 support in slurm

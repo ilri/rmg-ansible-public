@@ -32,6 +32,8 @@
 - name: Start and enable munge
   systemd: name=munge state=started enabled=yes
 
+# don't start slurmd on the head node just yet, because it technically needs to
+# have the slurmdbd service started first and we don't check that.
 - name: Start and enable slurmd
   when: inventory_hostname != slurm_head_node
   systemd: name=slurmd state=started enabled=yes

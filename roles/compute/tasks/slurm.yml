@@ -21,8 +21,11 @@
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
   notify: restart slurmd
 
-- name: Create slurm log dir
-  file: path=/var/log/slurm owner=slurm group=slurm mode=0755 state=directory
+- name: Create slurm directories
+  file: path={{ item }} owner=slurm group=slurm mode=0755 state=directory
+  with_items:
+    - /var/log/slurm
+    - /var/spool/slurmd
   notify: restart slurmd
 
 - name: Copy munge key

@@ -1,9 +1,9 @@
 ---
 # file: roles/ganglia/handlers/main.yml
 - name: restart gmond
-  service: name=gmond state=restarted
+  systemd: name=gmond state=restarted
 
 - name: restart gmetad
-  service: name=gmetad state=restarted
+  systemd: name=gmetad state=restarted
 
 # vim: set sw=2 ts=2:

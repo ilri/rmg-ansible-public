@@ -11,6 +11,6 @@
   - restart gmond
 
 - name: Start gmond
-  service: name=gmond state=started enabled=true
+  systemd: name=gmond state=started enabled=true
 
 # vim: set sw=2 ts=2:

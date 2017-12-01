@@ -11,6 +11,6 @@
   - restart gmetad
 
 - name: Start gmetad service
-  service: name=gmetad state=started enabled=true
+  systemd: name=gmetad state=started enabled=true
 
 # vim: set sw=2 ts=2:

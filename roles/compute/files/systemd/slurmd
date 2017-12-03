@@ -1,1 +1,0 @@
-SLURMCTLD_OPTIONS="-f /etc/slurm/slurm.conf"

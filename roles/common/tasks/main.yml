@@ -81,7 +81,6 @@
   import_tasks: sudoersd.yml
   tags: sudoers
 
-# All scripts—backups & raid mon—will be copied to /opt/ilri/scripts
 - name: Create scripts directory
   file: path=/opt/ilri/scripts owner=root group=root mode=0755 state=directory
   tags:

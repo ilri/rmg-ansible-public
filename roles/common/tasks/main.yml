@@ -15,7 +15,7 @@
     line: "{{ hostvars[item].ansible_host }} {{ item }} {{item}}.ilri.cgiar.org"
     state: present
   with_items: "{{ groups['compute'] | union(groups['storage']) }}"
-  when: inventory_hostname != 'hpc' and ('compute' in group_names or 'storage' in group_names)
+  when: "'compute' in group_names or 'storage' in group_names"
   tags: hosts
 
 - name: Install common packages

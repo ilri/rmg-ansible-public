@@ -25,4 +25,6 @@ ssh_access:
 # the CPU/IO profile to activate with tuned-adm
 tuned_profile: throughput-performance
 
+timezone: 'Africa/Nairobi'
+
 # vim: set ts=2 sw=2:

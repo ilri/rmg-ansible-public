@@ -43,7 +43,10 @@ pg_max_connections: 273
 # Use 10% of system RAM for PostgreSQL buffers (docs say 25% for dedicated SQL
 # boxes, but we also run Tomcat and rely on some OS cache for Solr, etc)
 # See: https://www.postgresql.org/docs/current/static/runtime-config-resource.html
+# Also, tune random_page_cost for SSDs (all Linodes have SSDs)
+# See: https://amplitude.engineering/how-a-single-postgresql-config-change-improved-slow-query-performance-by-50x-85593b8991b0
 pg_confd_vars:
   - { name: "shared_buffers", value: "{{ (ansible_memtotal_mb*0.1)|int|abs }}MB" }
+  - { name: "random_page_cost", value: "1" }
 
 # vim: set ts=2 sw=2:

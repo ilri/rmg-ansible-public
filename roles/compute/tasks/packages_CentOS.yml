@@ -63,5 +63,6 @@
   when: ansible_distribution_major_version | version_compare('7', '==')
   with_items:
     - libpng12.x86_64 # for pre-compiled blat binary
+    - xz-compat-libs.x86_64 # for samtools/1.5 compiled on CentOS 6
 
 # vim: set sw=2 ts=2:

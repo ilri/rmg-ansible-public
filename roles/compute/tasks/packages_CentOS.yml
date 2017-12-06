@@ -31,6 +31,8 @@
     - tmpwatch.x86_64
     - htop
     - nano
+    - unzip
+    - wget
 
 - name: Install non-CentOS 7 extra packages on CentOS 6
   yum: name={{ item }} state=present

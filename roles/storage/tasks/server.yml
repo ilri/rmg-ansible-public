@@ -6,6 +6,7 @@
     - gdisk
     - xfsprogs
     - nfs-utils
+    - htop
     - glusterfs-server
 
 - name: Start & enable glusterd service

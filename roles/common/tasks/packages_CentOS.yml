@@ -4,6 +4,10 @@
 - name: Add CentOS package signing key
   rpm_key: state=present key=/etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
 
+- name: Configure ILRI CentOS mirror
+  copy: src=CentOS-Base-7.repo dest=/etc/yum.repos.d/CentOS-Base.repo owner=root group=root mode=0644
+  when: (ansible_distribution_major_version | version_compare('7','==') and ('compute' in group_names or 'storage' in group_names))
+
 # HPC has an EPEL mirror and we should probably manage the epel.repo file to
 # point to it, but I want to work on other things right now (like the major
 # updating and testing of these playbooks for CentOS 7).

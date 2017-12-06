@@ -50,12 +50,12 @@
     {% if ganglia_master_host is defined %}
     {% if ghetto_ipsets[ganglia_master_host].src is defined %}
      <rule family="ipv4">
-        <source address="{{ ganglia_master_host }}"/>
+        <source address="{{ ghetto_ipsets[ganglia_master_host].src }}"/>
         <port protocol="tcp" port="{{ ganglia_gmond_port }}" />
         <accept/>
     </rule>
    <rule family="ipv4">
-        <source address="{{ ganglia_master_host }}"/>
+        <source address="{{ ghetto_ipsets[ganglia_master_host].src }}"/>
         <port protocol="udp" port="{{ ganglia_gmond_port }}" />
         <accept/>
     </rule>

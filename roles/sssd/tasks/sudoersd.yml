@@ -4,7 +4,7 @@
   when: ansible_os_family == "Debian"
 
 - name: Add rmglinuxadm group to sudoers
-  copy: src=etc/sudoers.d/rmglinuxadm dest=/etc/sudoers.d/rmglinuxadm owner=root group=root mode=600 validate='visudo -cf %s'
+  copy: src=etc/sudoers.d/rmglinuxadm dest=/etc/sudoers.d/rmglinuxadm owner=root group=root mode=0600 validate='visudo -cf %s'
   when: ansible_os_family != "Debian"
 
 # vim: set ts=2 sw=2:

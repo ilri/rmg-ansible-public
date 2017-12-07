@@ -7,7 +7,7 @@
 
 - name: Create gmond.conf
   template: src=gmond.conf.j2 dest=/etc/ganglia/gmond.conf
-  notify: 
+  notify:
   - restart gmond
 
 - name: Start gmond

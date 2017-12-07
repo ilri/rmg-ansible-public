@@ -7,7 +7,7 @@
 
 - name: Create gmetad configuration file
   copy: src=gmetad.conf dest=/etc/ganglia/gmetad.conf
-  notify: 
+  notify:
   - restart gmetad
 
 - name: Start gmetad service

@@ -1,14 +1,14 @@
 ---
 - name: Install munin-node
   when: ansible_os_family == "Debian"
-  apt: name={{ item }} state=latest update_cache=true cache_valid_time=3600
+  apt: name={{ item }} state=present update_cache=true cache_valid_time=3600
   with_items:
     - munin-node
   tags: packages
 
 - name: Install munin-node
   when: ansible_os_family == "RedHat"
-  yum: name={{ item }} state=latest
+  yum: name={{ item }} state=present
   with_items:
     - munin-node
   tags: packages

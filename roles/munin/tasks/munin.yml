@@ -1,12 +1,12 @@
 ---
 - name: Install munin on Debian-based distros
   when: ansible_os_family == "Debian"
-  apt: name=munin update_cache=yes state=latest
+  apt: name=munin update_cache=yes state=present
   tags: packages
 
 - name: Install munin on RedHat-based distros
   when: ansible_os_family == "RedHat"
-  yum: name=munin state=latest
+  yum: name=munin state=present
   tags: packages
 
 - name: Create munin configuration file

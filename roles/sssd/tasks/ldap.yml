@@ -23,7 +23,7 @@
   shell: /usr/bin/update-ca-trust enable && /usr/bin/update-ca-trust extract
 
 - name: Install OpenLDAP utils
-  yum: name=openldap-clients state=latest
+  yum: name=openldap-clients state=present
   when: ansible_distribution == 'CentOS'
   tags: packages
 

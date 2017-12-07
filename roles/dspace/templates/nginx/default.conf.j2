@@ -189,7 +189,7 @@ map $remote_addr $ua {
     # 2017-11-08 ciat.cgiar.org scraper
     104.196.152.243  'CIATBot';
     # 2017-11-08 Random Chinese host grabbing 20,000 PDFs
-    124.17.34.59     'ChineseBot';
+    ~124\.17\.34\.     'ChineseBot';
     default          $http_user_agent;
 }
 

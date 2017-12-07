@@ -31,6 +31,6 @@
 
 - name: Set default tuned profile
   when: tuned_profile is defined
-  shell: tuned-adm profile {{ tuned_profile }}
+  command: tuned-adm profile {{ tuned_profile }}
 
 # vim: set sw=2 ts=2:

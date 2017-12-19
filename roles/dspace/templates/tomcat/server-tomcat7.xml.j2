@@ -46,6 +46,21 @@
               description="User database that can be updated and saved"
               factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
               pathname="conf/tomcat-users.xml" />
+
+    <Resource name="jdbc/dspace" auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}"
+              username="{{ dspace_db_user}}"
+              password="{{ dspace_db_password }}"
+              initialSize='5'
+              maxActive='50'
+              maxIdle='15'
+              minIdle='5'
+              maxWait='5000'
+              validationQuery='SELECT 1'
+              testOnBorrow='true' />
+
   </GlobalNamingResources>
 
   <!-- A "Service" is a collection of one or more "Connectors" that share

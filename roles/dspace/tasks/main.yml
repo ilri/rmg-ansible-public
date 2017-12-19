@@ -99,6 +99,13 @@
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
+# From upstream: https://jdbc.postgresql.org/download.html
+- name: Copy PostgreSQL JDBC library
+  copy: src=postgresql-42.1.4.jar dest=/usr/share/tomcat7/lib/postgresql-42.1.4.jar mode=0644 owner=root group=root
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
+  tags: tomcat
+
 - name: Prepare Tomcat web application contexts
   template: src=tomcat/context.xml.j2 dest={{ item.context_path }}
   with_items: "{{ dspace_webapps }}"

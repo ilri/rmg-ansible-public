@@ -33,7 +33,7 @@
     - nano
     - unzip
     - wget
-    - perl-Text-Soundex.x86_64 # for RepeatMasker/3.3.0
+    - perl-Text-Soundex.x86_64 # for RepeatMasker
 
 - name: Install non-CentOS 7 extra packages on CentOS 6
   yum: name={{ item }} state=present

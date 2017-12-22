@@ -6,6 +6,8 @@
    - sssd
    - sssd-tools
    - pam_ldap
+   - oddjob
+   - oddjob-mkhomedir
   tags: packages
 
 - name: Install sssd package

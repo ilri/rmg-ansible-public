@@ -20,7 +20,7 @@
 
 - name: Configure sssd for compute nodes
   when: "ansible_distribution == 'CentOS' and 'compute' in group_names"
-  command: authconfig --enablesssd --enablesssdauth --enableldap --enableldapauth --ldapserver=ldaps://hpc.ilri.cgiar.org --ldapbasedn=dc=ilri,dc=cgiar,dc=org --disablerfc2307bis --disableldaptls --disablekrb5 --disablekrb5kdcdns --disablekrb5realmdns --updateall
+  command: authconfig --enablesssd --enablesssdauth --enableldap --enableldapauth --enablemkhomedir --ldapserver=ldaps://hpc.ilri.cgiar.org --ldapbasedn=dc=ilri,dc=cgiar,dc=org --disablerfc2307bis --disableldaptls --disablekrb5 --disablekrb5kdcdns --disablekrb5realmdns --updateall
 
 - name: Configure sssd for NON-compute nodes
   when: "ansible_distribution == 'CentOS' and 'compute' not in group_names"

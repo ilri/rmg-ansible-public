@@ -8,7 +8,7 @@
   template: src=nginx_org_packages_ubuntu.list.j2 dest=/etc/apt/sources.list.d/nginx_org_packages_ubuntu.list mode=0644 owner=root group=root
 
 - name: Install nginx
-  apt: pkg=nginx update_cache=yes state=latest
+  apt: pkg=nginx update_cache=yes state=present
   tags: packages
 
 - name: Copy nginx configs

@@ -35,10 +35,8 @@ munin_tomcat_port: 8081
 # postgresql version to deploy
 pg_version: 9.5
 
-# Use formula for rough estimate:
-# db.maxconnections * webapps + 3
-# Where db.maxconnections is from dspace.cfg and webapps are XMLUI, OAI, REST, and 3 is reserved connections for postgres superuser
-pg_max_connections: 273
+# postgresql default is 100, keep in mind that you need to accomodate the DSpace web application pool, command line pool, and leave a few for the postgres super user
+pg_max_connections: 100
 
 # Use 10% of system RAM for PostgreSQL buffers (docs say 25% for dedicated SQL
 # boxes, but we also run Tomcat and rely on some OS cache for Solr, etc)

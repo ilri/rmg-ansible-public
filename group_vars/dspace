@@ -36,7 +36,7 @@ munin_tomcat_port: 8081
 pg_version: 9.5
 
 # postgresql default is 100, keep in mind that you need to accomodate the DSpace web application pool, command line pool, and leave a few for the postgres super user
-pg_max_connections: 150
+pg_max_connections: 325
 
 # Use 10% of system RAM for PostgreSQL buffers (docs say 25% for dedicated SQL
 # boxes, but we also run Tomcat and rely on some OS cache for Solr, etc)

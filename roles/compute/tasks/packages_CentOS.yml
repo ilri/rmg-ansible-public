@@ -26,6 +26,7 @@
     - pandoc.x86_64
     - argtable.x86_64 # for clustalo
     - boost-iostreams.x86_64 # for augustus
+    - boost-devel.x86_64 # for augustus
     - tbb-devel.x86_64 # for flexbar
     - lapack.x86_64 # for presto
     - tmpwatch.x86_64

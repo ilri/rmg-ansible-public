@@ -202,6 +202,8 @@ map $remote_addr $ua {
 # $limit_bots will be used as the key for the limit_req_zone.
 map $http_user_agent $limit_bots {
     ~Baiduspider 'baidu';
+    # 2018-01-10 user agent of bot making a few hundred thousand requests from a handful of IPs
+    'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36' 'perfectip';
 
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html

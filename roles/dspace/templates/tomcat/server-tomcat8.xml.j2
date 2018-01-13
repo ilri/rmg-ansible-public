@@ -53,10 +53,10 @@
               username="{{ dspace_db_user}}"
               password="{{ dspace_db_password }}"
               initialSize='5'
-              maxActive='300'
+              maxTotal='300'
               maxIdle='15'
               minIdle='5'
-              maxWait='5000'
+              maxWaitMillis='5000'
               validationQuery='SELECT 1'
               testOnBorrow='true' />
 

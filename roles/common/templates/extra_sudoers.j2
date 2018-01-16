@@ -1,3 +1,9 @@
 {% for user in extra_sudo_users %}
 {{ user }}   ALL=(ALL)  ALL
 {% endfor %}
+
+{% if 'dspace' in group_names %}
+Cmnd_Alias TOMCAT = /bin/systemctl * tomcat7
+swebshet ALL=(ALL) TOMCAT
+dhmichael ALL=(ALL) TOMCAT
+{% endif %}

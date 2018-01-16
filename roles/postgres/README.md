@@ -30,3 +30,4 @@ For example:
 
 ## OS Family Supported
 - Ubuntu 14.04
+- Ubuntu 16.04

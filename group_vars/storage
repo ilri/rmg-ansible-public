@@ -8,7 +8,7 @@ ganglia_gmond_port: 8650
 
 glusterfs_role: server
 glusterd_mgmt_port: 24007
-glusterfs_brick_ports: "49152:49154"
+glusterfs_brick_ports: "49152:49158"
 
 ssh_allowed_users:
   - root

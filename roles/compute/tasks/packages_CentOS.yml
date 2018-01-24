@@ -35,6 +35,7 @@
     - unzip
     - wget
     - perl-Text-Soundex.x86_64 # for RepeatMasker
+    - firefox # Dedan swears that he needs this
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

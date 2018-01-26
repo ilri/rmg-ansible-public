@@ -106,6 +106,14 @@
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
+- name: Remove old PostgreSQL JDBC libraries
+  file: path=/usr/share/tomcat{{ tomcat_version_major }}/lib/{{ item }} state=absent
+  with_items:
+    - postgresql-42.1.4.jar
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
+  tags: tomcat
+
 - name: Prepare Tomcat web application contexts
   template: src=tomcat/context.xml.j2 dest={{ item.context_path }}
   with_items: "{{ dspace_webapps }}"

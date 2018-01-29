@@ -87,6 +87,11 @@
     <Connector port="8081" protocol="HTTP/1.1"
                connectionTimeout="20000"
                address="127.0.0.1"
+               URIEncoding="UTF-8"
+               maxThreads="400"
+               processorCache="400"
+               minSpareThreads="20"
+               acceptorThreadCount="2"
                maxHttpHeaderSize="16384" />
 
    <!-- tell tomcat it's being proxied via {{ nginx_ssl_port }} / scheme https -->

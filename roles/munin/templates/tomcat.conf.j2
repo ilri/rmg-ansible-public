@@ -2,6 +2,9 @@
 [tomcat_*]
     env.host 127.0.0.1
     env.port {{ munin_tomcat_port }}
+    {% if 'dspace' in group_names %}
+    env.connector "http-bio-127.0.0.1-8443"
+    {% endif %}
     env.user {{ munin_tomcat_user }}
     env.password {{ munin_tomcat_password }}
 {% endif %}

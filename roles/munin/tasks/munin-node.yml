@@ -38,6 +38,12 @@
   notify:
     - restart munin-node
 
+- name: Configure munin DSpace Sessions plugin
+  when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names))
+  copy: src=jmx_dspace_sessions dest=/etc/munin/plugins/jmx_dspace_sessions owner=root group=root mode=0755
+  notify:
+    - restart munin-node
+
 - name: Create munin-node.conf
   template: src=munin-node.conf.j2 dest=/etc/munin/munin-node.conf
   notify:

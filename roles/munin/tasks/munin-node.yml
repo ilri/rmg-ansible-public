@@ -29,6 +29,7 @@
     - ruby # for munin's tomcat checks
     - libxml-simple-perl # for munin's tomcat checks
     - libdbd-pg-perl # for munin's postgres check
+    - munin-plugins-java # to monitor Tomcat via JMX
   tags: packages
 
 - name: Configure munin Tomcat plugin

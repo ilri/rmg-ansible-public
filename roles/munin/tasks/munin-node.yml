@@ -44,6 +44,12 @@
   notify:
     - restart munin-node
 
+- name: Enable munin JMX dbpools plugin
+  when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names))
+  file: src=/usr/share/munin/plugins/jmx_tomcat_dbpools dest=/etc/munin/plugins/jmx_tomcat_dbpools state=link
+  notify:
+    - restart munin-node
+
 - name: Create munin-node.conf
   template: src=munin-node.conf.j2 dest=/etc/munin/munin-node.conf
   notify:

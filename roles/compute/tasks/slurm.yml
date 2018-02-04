@@ -13,12 +13,16 @@
     - slurm-slurmd
     - slurm-devel
     - slurm-spank-x11 # for X11 support in slurm
+    - slurm-pam_slurm
     - munge
   tags: packages
 
 - name: Copy slurm config
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
   notify: restart slurmd
+
+- name: Copy slurm PAM config
+  copy: src=etc/pam.d/slurm dest=/etc/pam.d/slurm owner=root group=root mode=0644
 
 - name: Create slurm directories
   file: path={{ item }} owner=slurm group=slurm mode=0755 state=directory

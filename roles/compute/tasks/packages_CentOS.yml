@@ -39,6 +39,9 @@
     - perl-LWP-Protocol-https.noarch # so perl can use https
     - cairo-devel.x86_64 # for genometools and others
     - pango-devel.x86_64 # for genometools and others
+    - glib.x86_64 # for wise / Cegma
+    - libpng12.x86_64 # for pre-compiled blat binary
+    - xz-compat-libs.x86_64 # for samtools/1.5 compiled on CentOS 6
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present
@@ -51,17 +54,5 @@
     - perl-Text-Format.noarch
     - perl-GD.x86_64
     - perl-Params-Validate.x86_64
-
-- name: Install extra packages for wise (dep of Cegma)
-  yum: name={{ item }} state=present
-  with_items:
-    - glib.x86_64
-
-- name: Install extra packages on CentOS 7
-  yum: name={{ item }} state=present
-  when: ansible_distribution_major_version | version_compare('7', '==')
-  with_items:
-    - libpng12.x86_64 # for pre-compiled blat binary
-    - xz-compat-libs.x86_64 # for samtools/1.5 compiled on CentOS 6
 
 # vim: set sw=2 ts=2:

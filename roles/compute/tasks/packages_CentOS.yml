@@ -37,6 +37,8 @@
     - perl-Text-Soundex.x86_64 # for RepeatMasker
     - firefox # Dedan swears that he needs this
     - perl-LWP-Protocol-https.noarch # so perl can use https
+    - cairo-devel.x86_64 # for genometools and others
+    - pango-devel.x86_64 # for genometools and others
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

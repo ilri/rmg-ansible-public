@@ -1,3 +1,5 @@
 <Context docBase="{{ item.app_path }}">
-  <ResourceLink global="jdbc/dspace" name="jdbc/dspace" type="javax.sql.DataSource"/>
+{% if item.db_pool_name is defined %}
+  <ResourceLink global="{{ item.db_pool_name }}" name="jdbc/dspace" type="javax.sql.DataSource"/>
+{% endif %}
 </Context>

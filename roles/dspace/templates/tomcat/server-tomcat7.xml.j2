@@ -47,20 +47,47 @@
               factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
               pathname="conf/tomcat-users.xml" />
 
-    <Resource name="jdbc/dspace" auth="Container"
+    <Resource name="jdbc/dspaceWeb" auth="Container"
               type="javax.sql.DataSource"
               driverClassName="org.postgresql.Driver"
-              url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceJdbc"
+              url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceWeb"
               username="{{ dspace_db_user }}"
               password="{{ dspace_db_password }}"
               initialSize='5'
-              maxActive='300'
+              maxActive='{{ dspace_dbpool_web_max_connections }}'
               maxIdle='15'
               minIdle='5'
               maxWait='5000'
               validationQuery='SELECT 1'
               testOnBorrow='true' />
 
+    <Resource name="jdbc/dspaceApi" auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceApi"
+              username="{{ dspace_db_user }}"
+              password="{{ dspace_db_password }}"
+              initialSize='5'
+              maxActive='{{ dspace_dbpool_api_max_connections }}'
+              maxIdle='15'
+              minIdle='5'
+              maxWait='5000'
+              validationQuery='SELECT 1'
+              testOnBorrow='true' />
+
+    <Resource name="jdbc/dspaceSolr" auth="Container"
+              type="javax.sql.DataSource"
+              driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceSolr"
+              username="{{ dspace_db_user }}"
+              password="{{ dspace_db_password }}"
+              initialSize='5'
+              maxActive='{{ dspace_dbpool_solr_max_connections }}'
+              maxIdle='15'
+              minIdle='5'
+              maxWait='5000'
+              validationQuery='SELECT 1'
+              testOnBorrow='true' />
   </GlobalNamingResources>
 
   <!-- A "Service" is a collection of one or more "Connectors" that share

@@ -74,20 +74,6 @@
               maxWait='5000'
               validationQuery='SELECT 1'
               testOnBorrow='true' />
-
-    <Resource name="jdbc/dspaceSolr" auth="Container"
-              type="javax.sql.DataSource"
-              driverClassName="org.postgresql.Driver"
-              url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceSolr"
-              username="{{ dspace_db_user }}"
-              password="{{ dspace_db_password }}"
-              initialSize='5'
-              maxActive='{{ dspace_dbpool_solr_max_connections }}'
-              maxIdle='15'
-              minIdle='5'
-              maxWait='5000'
-              validationQuery='SELECT 1'
-              testOnBorrow='true' />
   </GlobalNamingResources>
 
   <!-- A "Service" is a collection of one or more "Connectors" that share

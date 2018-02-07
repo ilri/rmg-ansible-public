@@ -55,4 +55,19 @@
     - perl-GD.x86_64
     - perl-Params-Validate.x86_64
 
+# Not the best place for this, but we want to use HTTPS on HPC's web server and
+# for now I just want to make sure that I record the dependencies somewhere.
+#
+# See: https://certbot.eff.org/
+- name: Install dependencies of certbot-auto
+  when: inventory_hostname == 'hpc'
+  yum: name={{ item }} state=present
+  with_items:
+    - libffi-devel
+    - mod_ssl
+    - python-devel
+    - python-tools
+    - python-virtualenv
+    - python2-pip
+
 # vim: set sw=2 ts=2:

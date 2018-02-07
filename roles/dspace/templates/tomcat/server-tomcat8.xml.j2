@@ -58,7 +58,9 @@
               minIdle='5'
               maxWaitMillis='5000'
               validationQuery='SELECT 1'
-              testOnBorrow='true' />
+              removeAbandoned='true'
+              testOnBorrow='true'
+              testOnReturn='true' />
 
     <Resource name="jdbc/dspaceApi" auth="Container"
               type="javax.sql.DataSource"
@@ -72,7 +74,9 @@
               minIdle='5'
               maxWaitMillis='5000'
               validationQuery='SELECT 1'
-              testOnBorrow='true' />
+              removeAbandoned='true'
+              testOnBorrow='true'
+              testOnReturn='true' />
   </GlobalNamingResources>
 
   <!-- A "Service" is a collection of one or more "Connectors" that share

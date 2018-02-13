@@ -4,6 +4,6 @@
 - name: Configure PostgreSQL
   import_tasks: ubuntu.yml
   when: ansible_distribution == 'Ubuntu'
-  tags: postgres
+  tags: postgresql
 
 # vim: set ts=2 sw=2:

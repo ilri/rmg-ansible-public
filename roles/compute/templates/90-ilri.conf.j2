@@ -4,6 +4,12 @@
 *       -   priority    19
 root    -   priority    0
 
+{% if inventory_hostname != 'hpc' %}
+# override nproc settings from 20-nproc.conf, keeping in mind that the system
+# max is 32,000 (see kernel.pid_max).
+*          soft    nproc     8192
+{% endif %}
+
 {% if inventory_hostname == 'hpc' %}
 # CPU time in minutes
 *       -   cpu         30

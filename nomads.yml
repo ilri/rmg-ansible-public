@@ -1,7 +1,7 @@
 ---
 # file: nomads.yml
 
-- hosts: nomads:grafana
+- hosts: nomads
   become: yes
   remote_user: provisioning
   vars_files:

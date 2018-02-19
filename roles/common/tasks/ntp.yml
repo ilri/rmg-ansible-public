@@ -1,7 +1,7 @@
 ---
 # Hosts running Ubuntu 16.04 or CentOS 7 use the systemd init system and should
 # use the built-in systemd-timesync service instead of a standalone NTP client,
-# while earlier versions of those distributions should use the ntp package.
+# while earlier versions of those distributions should use the Chrony package.
 #
 # Sadly, CentOS 7 ships with systemd 219 and for some reason systemd-timesyncd
 # is not bundled there (either by upstream or Redhat, I'm not sure).
@@ -27,13 +27,25 @@
   when: ansible_os_family == 'Debian' and ansible_service_mgr != 'systemd'
   tags: packages
 
-- name: Install ntp on CentOS
-  yum: name=ntp state=present update_cache=yes
+# 2018-02-19: Make sure ntp is stopped and removed from CentOS machines before
+# installing chrony (just in case). Chrony is now preferred in favor of ntp:
+# https://www.coreinfrastructure.org/news/blogs/2017/09/securing-network-time
+- name: Stop and disable ntp on CentOS
+  systemd: name=ntpd state=stopped enabled=no
+  when: ansible_distribution == 'CentOS'
+
+- name: Uninstall ntp on CentOS
+  yum: name=ntp state=absent
   when: ansible_distribution == 'CentOS'
   tags: packages
 
-- name: Enable ntp on CentOS
-  service: name=ntpd state=started enabled=yes
+- name: Install chrony on CentOS
+  yum: name=chrony state=present
+  when: ansible_distribution == 'CentOS'
+  tags: packages
+
+- name: Start and enable chrony on CentOS
+  systemd: name=chronyd state=started enabled=yes
   when: ansible_distribution == 'CentOS'
 
 # vim: set ts=2 sw=2:

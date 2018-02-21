@@ -42,6 +42,7 @@
     - glib.x86_64 # for wise / Cegma
     - libpng12.x86_64 # for pre-compiled blat binary
     - xz-compat-libs.x86_64 # for samtools/1.5 compiled on CentOS 6
+    - pigz # for SeqKit
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present

@@ -61,6 +61,8 @@
               validationQuery='SELECT 1'
               removeAbandoned='true'
               removeAbandonedTimeout='180'
+              abandonWhenPercentageFull='50'
+              jdbcInterceptors='ResetAbandonedTimer'
               logAbandoned='true'
               testOnBorrow='true'
               testOnReturn='true' />
@@ -79,6 +81,8 @@
               validationQuery='SELECT 1'
               removeAbandoned='true'
               removeAbandonedTimeout='60'
+              abandonWhenPercentageFull='50'
+              jdbcInterceptors='ResetAbandonedTimer'
               logAbandoned='true'
               testOnBorrow='true'
               testOnReturn='true' />

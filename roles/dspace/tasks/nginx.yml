@@ -44,7 +44,7 @@
     - reload nginx
 
 - name: Start & enable nginx service
-  service: name=nginx state=started enabled=yes
+  systemd: name=nginx state=started enabled=yes
 
 # for now this playbook only installs certbot and systemd renewal scripts
 - import_tasks: letsencrypt.yml

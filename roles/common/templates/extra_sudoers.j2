@@ -6,4 +6,8 @@
 Cmnd_Alias TOMCAT = /bin/systemctl * tomcat7
 swebshet ALL=(ALL) TOMCAT
 dhmichael ALL=(ALL) TOMCAT
+
+# for Atmire build/deploy scripts
+tomcat7 ALL = (root) NOPASSWD: /usr/sbin/service tomcat7 s*
+tomcat7 ALL = (root) NOPASSWD: /bin/systemctl s* tomcat7
 {% endif %}

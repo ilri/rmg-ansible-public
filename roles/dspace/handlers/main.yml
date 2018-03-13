@@ -2,16 +2,16 @@
 # file: roles/dspace/handlers/main.yml
 
 - name: restart nginx
-  service: name=nginx state=restarted
+  systemd: name=nginx state=restarted
 
 - name: reload nginx
-  service: name=nginx state=reloaded
+  systemd: name=nginx state=reloaded
 
 - name: restart tomcat7
-  service: name=tomcat7 state=restarted
+  systemd: name=tomcat7 state=restarted
 
 - name: restart tomcat8
-  service: name=tomcat8 state=restarted
+  systemd: name=tomcat8 state=restarted
 
 - name: reload postgresql
-  service: name=postgresql state=reloaded
+  systemd: name=postgresql state=reloaded

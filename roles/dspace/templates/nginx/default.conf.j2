@@ -15,7 +15,7 @@
 {% endif %}
 
 {% if nginx_tls_cert is defined %}
-# Handle cgspace.cgiar.org http -> https
+# Handle {{ nginx_server_name }} http -> https
 #
 server {
     listen 80;

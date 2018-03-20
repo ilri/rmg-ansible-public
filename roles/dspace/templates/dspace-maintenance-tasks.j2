@@ -44,7 +44,8 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # 30 0 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace index-discovery -o > /dev/null
 
 # run the index-authority script once a day at 12:45 to ensure the Solr Authority cache is up to date
-45 0 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace index-authority > /dev/null
+# Disabled 2018-03 because we are no longer using ORCID lookup after they discontinued the v1 API
+#45 0 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace index-authority > /dev/null
 
 # Re-Optimize DSpace Statistics Solr Index at 01:30 every day
 # NOTE: ONLY NECESSARY IF YOU ARE RUNNING SOLR STATISTICS

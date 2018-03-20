@@ -16,7 +16,6 @@
     - debian-goodies
     - lzop
     - vim
-    - sysv-rc-conf
     - acpid
     - schedtool
     - debconf

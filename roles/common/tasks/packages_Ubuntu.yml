@@ -23,7 +23,6 @@
     - debian-goodies
     - mosh
     - python-pycurl # for ansible's apt_repository
-    - sysv-rc-conf
     - lzop
     - vim
     - acpid

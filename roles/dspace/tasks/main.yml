@@ -110,6 +110,7 @@
   file: path=/usr/share/tomcat{{ tomcat_version_major }}/lib/{{ item }} state=absent
   with_items:
     - postgresql-42.1.4.jar
+    - postgresql-42.2.1.jar
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

@@ -19,6 +19,13 @@ On subsequent runs, after SSH keys have been deployed, you only need `--ask-beco
 
     ansible-playbook site.yml --limit=ilrinrb10 --ask-become-pass
 
+## TODO
+
+- Convention: replace all double quotes with single quotes where we don't need variable interpolation
+- Update: sysctl.conf template for Ubuntu, using CentOS template as a reference
+- Remove: rc.local task for Debian/Ubuntu, as it we are apparently not using it
+- Update: heirloom-mailx has been deprecated in Ubuntu >= 16.04, transition to s-nail
+
 ## License
 Copyright (C) 2015–2016 International Livestock Research Institute (ILRI)
 

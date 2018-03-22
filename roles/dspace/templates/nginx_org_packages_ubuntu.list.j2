@@ -1,7 +1,17 @@
 {% if ansible_distribution == 'Ubuntu' %}
 {% if nginx_branch == "stable" %}
+{% if ansible_distribution_version | version_compare('18.04', '==') %}
+# 2018-03-17: no Ubuntu 18.04 "bionic" packages yet, so use 17.10 "artful"
+deb http://nginx.org/packages/ubuntu/ artful nginx
+{% else %}
 deb http://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx
+{% endif %}
 {% elif nginx_branch == "mainline" %}
+{% if ansible_distribution_version | version_compare('18.04', '==') %}
+# 2018-03-17: no Ubuntu 18.04 "bionic" packages yet, so use 17.10 "artful"
+deb http://nginx.org/packages/mainline/ubuntu/ artful nginx
+{% else %}
 deb http://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx
+{% endif %}
 {% endif %}
 {% endif %}

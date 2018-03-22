@@ -5,9 +5,12 @@
   when: ansible_distribution == 'CentOS'
   tags: packages
 
+# Use heirloom-mailx on Ubuntu systems <= 16.04
+# TODO: convert this to s-nail on newer Ubuntu systems
 - name: Install heirloom-mailx on Debian-based hosts
   apt: name=heirloom-mailx state=present
-  when: ansible_os_family == 'Debian'
+  when: ansible_distribution == 'Debian' or
+        (ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('16.04', '<='))
   tags: packages
 
 - name: Copy backup scripts

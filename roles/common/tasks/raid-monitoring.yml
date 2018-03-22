@@ -49,10 +49,12 @@
   yum: name=mailx state=present
   when: ansible_distribution == 'CentOS'
 
-# prefer heirloom-mailx on Debian-based systems (it's newer)
+# Use heirloom-mailx on Ubuntu systems <= 16.04
+# TODO: convert this to s-nail on newer Ubuntu systems
 - name: Install heirloom-mailx
   apt: name=heirloom-mailx state=present
-  when: ansible_os_family == 'Debian'
+  when: ansible_os_family == 'Debian' or
+        (ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('16.04', '<='))
 
 # Copy LSI RAID script to scripts dir /opt/ilri/scripts/
 - name: Copy LSI RAID monitoring script

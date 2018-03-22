@@ -27,7 +27,7 @@ On subsequent runs, after SSH keys have been deployed, you only need `--ask-beco
 - Update: heirloom-mailx has been deprecated in Ubuntu >= 16.04, transition to s-nail
 
 ## License
-Copyright (C) 2015–2016 International Livestock Research Institute (ILRI)
+Copyright (C) 2015–2018 International Livestock Research Institute (ILRI)
 
 The contents of this repository are free software: you can redistribute
 it and/or modify it under the terms of the GNU General Public License

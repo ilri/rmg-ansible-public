@@ -1,7 +1,8 @@
 ---
-# Hosts running Ubuntu 16.04 or CentOS 7 use the systemd init system and should
-# use the built-in systemd-timesync service instead of a standalone NTP client,
-# while earlier versions of those distributions should use the Chrony package.
+# Hosts running Ubuntu >= 16.04 or CentOS 7 use the systemd init system and
+# should use the built-in systemd-timesync service instead of a standalone NTP
+# client, while earlier versions of those distributions should use the Chrony
+# package.
 #
 # Sadly, CentOS 7 ships with systemd 219 and for some reason systemd-timesyncd
 # is not bundled there (either by upstream or Redhat, I'm not sure).

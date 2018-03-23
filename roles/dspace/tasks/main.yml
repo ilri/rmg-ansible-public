@@ -14,6 +14,7 @@
     - ghostscript # for DSpace 5 PDF thumbnails
   tags: packages
 
+# on older Ubuntu we rely on RVM to compile and manage ruby
 - name: Install DSpace 5 Mirage 2 build dependencies
   apt: pkg={{ item }} state=present install_recommends=no
   loop:
@@ -35,6 +36,7 @@
     - libssl-dev
     - libsqlite3-dev
     - libgmp-dev
+  when: ansible_distribution_version | version_compare('16.04', '<=')
   tags: packages
 
 # For quickly analyzing nginx logs, see: https://goaccess.io/download

@@ -39,6 +39,32 @@
   when: ansible_distribution_version | version_compare('16.04', '<=')
   tags: packages
 
+# on Ubuntu 18.04 we use the system ruby and configure the environment
+- block:
+  - name: Install system DSpace 5 Mirage 2 build dependencies
+    apt: pkg={{ item }} state=present install_recommends=no
+    with_items:
+      - make
+      - ruby-dev
+  - name: Install ruby DSpace 5 Mirage 2 build dependencies
+    gem: name={{ item.name }} version={{ item.version }} state=present user_install=yes
+    with_items:
+      - { name: 'sass', version: '3.3.14' }
+      - { name: 'compass', version: '1.0.3' }
+    become_user: '{{ tomcat_user }}'
+  - name: Configure ruby environment
+    lineinfile:
+      dest: '{{ tomcat_user_home }}/.bash_profile'
+      regexp: '^source {{ tomcat_user_home }}/.ruby-env$'
+      line: 'source {{ tomcat_user_home }}/.ruby-env'
+      state: present
+    become_user: '{{ tomcat_user }}'
+  - name: Configure ruby environment
+    template: src=ruby-env.j2 dest={{ tomcat_user_home }}/.ruby-env owner={{ tomcat_user }} group={{ tomcat_user }} mode=0644
+    become_user: '{{ tomcat_user }}'
+  when: ansible_distribution_version | version_compare('18.04', '==')
+  tags: packages
+
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
 - block:
   - name: Add GPG key for GoAccess repo

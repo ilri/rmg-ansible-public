@@ -45,4 +45,22 @@
     - virtualenv
   tags: packages
 
+# dependencies certbot checks for on its first run
+- name: Install certbot dependencies (Ubuntu 18.04)
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('18.04', '==')
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - libexpat1-dev
+    - libpython-dev
+    - libpython2.7
+    - libpython2.7-dev
+    - python-pip-whl
+    - python-pkg-resources
+    - python2.7-dev
+    - python3-virtualenv
+    - augeas-doc
+    - augeas-tools
+    - python-setuptools
+  tags: packages
+
 # vim: set ts=2 sw=2:

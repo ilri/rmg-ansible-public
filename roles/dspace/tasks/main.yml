@@ -144,24 +144,8 @@
   template: src=tomcat/logrotate-access_logs.j2 dest=/etc/logrotate.d/tomcat-access_logs owner=root group=root mode=0644
   tags: tomcat
 
-# Idempotency: remove old versions of the script (delete this task after all hosts have run it)
-- name: Delete old Tomcat server logrotate script(s)
-  file: dest={{ item }} state=absent
-  with_items:
-    - /etc/logrotate.d/tomcat7-access_logs
-    - /etc/logrotate.d/tomcat8-access_logs
-  tags: tomcat
-
 - name: Set open file limits for tomcat user
   template: src=tomcat/limits.conf.j2 dest=/etc/security/limits.d/90-tomcat.conf owner=root group=root mode=0644
-  tags: tomcat
-
-# Idempotency: remove old versions of the config (delete this task after all hosts have run it)
-- name: Delete old limits config(s) for tomcat user
-  file: dest={{ item }} state=absent
-  with_items:
-    - /etc/security/limits.d/90-tomcat7.conf
-    - /etc/security/limits.d/90-tomcat8.conf
   tags: tomcat
 
 - name: Copy maven settings

@@ -14,8 +14,9 @@
     - ghostscript # for DSpace 5 PDF thumbnails
   tags: packages
 
-# On older Ubuntu we use a manually installed RVM and NVM for ruby and Node.js,
-# so we only need to make sure that the build environment exists.
+# On Ubuntu 14.04 and 16.04 we install Ruby and Node.js using RVM and NVM after
+# the initial ansible provisioning. RVM requires these packages to compile Ruby
+# and some of the gems that are used in the DSpace 5 Mirage 2 build process.
 # See: https://gist.github.com/alanorth/2cf9c15834dc68a514262fcb04004cb0
 - name: Install DSpace 5 Mirage 2 build dependencies
   apt: pkg={{ item }} state=present install_recommends=no

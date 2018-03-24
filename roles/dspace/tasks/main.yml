@@ -48,6 +48,8 @@
     apt: pkg={{ item }} state=present install_recommends=no
     with_items:
       - make
+      - nodejs
+      - npm
       - ruby-dev
   - name: Install ruby DSpace 5 Mirage 2 build dependencies
     gem: name={{ item.name }} version={{ item.version }} state=present user_install=yes
@@ -65,6 +67,12 @@
   - name: Configure ruby environment
     template: src=ruby-env.j2 dest={{ tomcat_user_home }}/.ruby-env owner={{ tomcat_user }} group={{ tomcat_user }} mode=0644
     become_user: '{{ tomcat_user }}'
+  - name: Install DSpace 5 Mirage 2 Node.js build dependencies
+    npm: name={{ item }} global=yes
+    with_items:
+      - bower
+      - grunt
+      - grunt-cli
   when: ansible_distribution_version | version_compare('18.04', '==')
   tags: packages
 

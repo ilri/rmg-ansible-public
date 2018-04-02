@@ -1,8 +1,6 @@
 ---
 - name: Install ganglia-gmond
-  yum: name={{ item }} state=present
-  with_items:
-   - ganglia-gmond
+  yum: name=ganglia-gmond state=present
   tags: packages
 
 - name: Create gmond.conf

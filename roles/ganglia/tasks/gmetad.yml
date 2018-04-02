@@ -1,8 +1,6 @@
 ---
 - name: Install ganglia-gmetad package
-  yum: name={{ item }} state=present
-  with_items:
-   - ganglia-gmetad
+  yum: name=ganglia-gmetad state=present
   tags: packages
 
 - name: Create gmetad configuration file

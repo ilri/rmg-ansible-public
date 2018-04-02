@@ -2,7 +2,7 @@
 # tuned prefers to control CPU freq/governor with cpuspeed service
 # see: /etc/tune-profiles/functions
 - name: Install tuned & cpuspeed on CentOS 6 hosts
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('6', '==')
   yum: name={{ item }} state=installed
   loop:
     - tuned
@@ -13,20 +13,20 @@
   tags: packages
 
 - name: Install tuned on CentOS 7 hosts
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '==')
   yum: name=tuned state=installed
 
 # ignore_errors: at times fails on some compute nodes
 - name: Start & enable tuned & cpuspeed services on CentOS 6 hosts
   ignore_errors: yes
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '6'
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('6', '==')
   service: name={{ item }} state=started enabled=yes
   loop:
     - tuned
     - cpuspeed
 
 - name: Start & enable tuned service on CentOS 7 hosts
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version == '7'
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '==')
   service: name=tuned state=started enabled=yes
 
 - name: Set default tuned profile

@@ -10,9 +10,9 @@ TOMCAT8_GROUP=tomcat8
 # JDK version 7. If JAVA_HOME is not set, some common directories for
 # OpenJDK and the Oracle JDK are tried.
 #JAVA_HOME=/usr/lib/jvm/java-7-openjdk
-{% if java_version_major | version_compare('7', '==') %}
+{% if java_version_major is version_compare('7', '==') %}
 JAVA_HOME=/usr/lib/jvm/java-7-oracle
-{% elif java_version_major | version_compare( '8', '==') %}
+{% elif java_version_major is version_compare( '8', '==') %}
 JAVA_HOME=/usr/lib/jvm/java-8-oracle
 {% endif %}
 

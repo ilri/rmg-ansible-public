@@ -2,24 +2,24 @@
 # Use iptables-persistent on Ubuntu 14 & firewalld on Ubunt 15 onwards
 
 - name: Install iptables-persistent
-  when: ansible_distribution_major_version | version_compare('15', '<')
+  when: ansible_distribution_major_version is version_compare('15', '<')
   apt: name=iptables-persistent state=present update_cache=yes cache_valid_time=3600
   tags: packages
 
 - name: Copy /etc/iptables/rules.v4
-  when: ansible_distribution_major_version | version_compare('15', '<')
+  when: ansible_distribution_major_version is version_compare('15', '<')
   template: src=iptables.j2 dest=/etc/iptables/rules.v4 owner=root group=root mode=0600
   notify:
     - restart iptables-persistent
 
 - name: Copy /etc/iptables/rules.v6
-  when: ansible_distribution_major_version | version_compare('15', '<')
+  when: ansible_distribution_major_version is version_compare('15', '<')
   template: src=ip6tables.j2 dest=/etc/iptables/rules.v6 owner=root group=root mode=0600
   notify:
     - restart iptables-persistent
 
 - name: Install firewalld
-  when: ansible_distribution_major_version | version_compare('15', '>=')
+  when: ansible_distribution_major_version is version_compare('15', '>=')
   apt: name={{ item }} state=present
   with_items:
     - firewalld
@@ -27,11 +27,11 @@
   tags: packages
 
 - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
-  when: ansible_distribution_major_version | version_compare('15', '>=')
+  when: ansible_distribution_major_version is version_compare('15', '>=')
   template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600
 
 - name: Format public.xml firewalld zone file
-  when: ansible_distribution_major_version | version_compare('15', '>=')
+  when: ansible_distribution_major_version is version_compare('15', '>=')
   command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
   notify:
     - restart firewalld

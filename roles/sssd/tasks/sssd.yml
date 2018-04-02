@@ -41,7 +41,7 @@
   when: ansible_distribution == 'Ubuntu'
 
 - name: Change minimum PAM UID for SSH logins
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version | version_compare('7', '==')
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '==')
   replace: dest={{ item }} regexp='1000' replace='500'
   with_items:
    - /etc/pam.d/system-auth-ac

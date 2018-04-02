@@ -15,7 +15,7 @@
 
 - name: Remove DSA and ECDSA host keys
   file: name=/etc/ssh/{{ item }} state=absent
-  with_items:
+  loop:
     - ssh_host_dsa_key
     - ssh_host_dsa_key.pub
     - ssh_host_ecdsa_key

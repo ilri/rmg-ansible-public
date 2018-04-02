@@ -22,7 +22,7 @@
 - name: Install firewalld
   when: ansible_distribution_major_version is version_compare('8', '==')
   apt: name={{ item }} state=present
-  with_items:
+  loop:
     - firewalld
     - tidy
   tags: packages

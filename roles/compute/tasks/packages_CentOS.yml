@@ -2,7 +2,7 @@
 
 - name: Install extra packages
   yum: name={{ item }} state=present
-  with_items:
+  loop:
     - environment-modules
     - xauth # or else X11 forwarding doesn't work
     - xeyes # to test x11 :)
@@ -47,7 +47,7 @@
 
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present
-  with_items:
+  loop:
     - perl-Clone.x86_64
     - perl-Config-General.noarch
     - perl-Font-TTF.noarch

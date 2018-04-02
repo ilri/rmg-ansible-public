@@ -8,7 +8,7 @@
 
 - name: Install slurm
   yum: name={{ item }} state=present
-  with_items:
+  loop:
     - slurm
     - slurm-slurmd
     - slurm-devel
@@ -26,7 +26,7 @@
 
 - name: Create slurm directories
   file: path={{ item }} owner=slurm group=slurm mode=0755 state=directory
-  with_items:
+  loop:
     - /var/log/slurm
     - /var/spool/slurmd
   notify: restart slurmd
@@ -46,7 +46,7 @@
 
 - name: Copy spank x11 config
   copy: src={{ item }} dest=/etc/slurm/{{ item }} mode=0644
-  with_items:
+  loop:
     - plugstack.conf
     - plugstack.conf.d/x11.conf.example
 

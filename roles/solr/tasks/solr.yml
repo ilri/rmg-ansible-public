@@ -17,7 +17,7 @@
 
 - name: Create solr data & log dirs
   file: path={{ item }} owner={{ solr_user }} group={{ solr_user }} state=directory
-  with_items:
+  loop:
     - "{{solr_var_dir}}/data"
     - "{{solr_var_dir}}/logs"
 

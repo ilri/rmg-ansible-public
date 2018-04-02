@@ -4,7 +4,7 @@
 
 - name: Remove old CA certificates
   file: path={{ item }} state=absent
-  with_items:
+  loop:
     - "{{ local_ca_certs_dir }}/hpc-ca.asc"
     - "{{ ldap_conf_dir }}/cacerts/hpc-ca.asc"
     - "{{ ldap_conf_dir }}/cacerts/252fd4a1.0"

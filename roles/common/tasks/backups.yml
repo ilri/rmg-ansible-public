@@ -17,7 +17,7 @@
 
 - name: Copy MySQL backup script
   template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0750
-  with_items:
+  loop:
     - { src: "scripts/backup_mysql.py.j2", dest: "/opt/ilri/scripts/backup_mysql.py" }
 
 # vim: set sw=2 ts=2:

@@ -2,7 +2,7 @@
 
 - name: Install disk utilities and glusterfs-server
   yum: name={{ item }} state=present
-  with_items:
+  loop:
     - gdisk
     - xfsprogs
     - nfs-utils

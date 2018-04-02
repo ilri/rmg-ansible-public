@@ -2,7 +2,7 @@
 
 - name: Configure cron-apt (config)
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
-  with_items:
+  loop:
     - { src: 'etc/cron-apt/config.j2', dest: '/etc/cron-apt/config', mode: '0644', owner: 'root', group: 'root' }
     - { src: 'etc/cron-apt/3-download.j2', dest: '/etc/cron-apt/action.d/3-download', mode: '0644', owner: 'root', group: 'root' }
 

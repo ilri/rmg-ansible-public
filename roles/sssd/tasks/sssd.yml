@@ -2,7 +2,7 @@
 - name: Install sssd package
   yum: name={{ item }} state=present
   when: ansible_distribution == 'CentOS'
-  with_items:
+  loop:
    - sssd
    - sssd-tools
    - pam_ldap
@@ -13,7 +13,7 @@
 - name: Install sssd package
   apt: name={{ item }} state=present update_cache=yes cache_valid_time=3600
   when: ansible_distribution == 'Ubuntu'
-  with_items:
+  loop:
    - sssd
    - sssd-tools
   tags: packages
@@ -43,7 +43,7 @@
 - name: Change minimum PAM UID for SSH logins
   when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '==')
   replace: dest={{ item }} regexp='1000' replace='500'
-  with_items:
+  loop:
    - /etc/pam.d/system-auth-ac
    - /etc/pam.d/password-auth-ac
 

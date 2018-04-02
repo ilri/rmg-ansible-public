@@ -23,7 +23,7 @@
 
 - name: Install packages
   yum: name={{ item }} state=present
-  with_items:
+  loop:
     - git
     - acpid
     - lsof

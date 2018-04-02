@@ -1,14 +1,14 @@
 ---
 - name: Install GlusterFS and dependencies
   yum: name={{ item }} state=present
-  with_items:
+  loop:
     - glusterfs-fuse
     - libsemanage-python
 
 - name: Create mount points
   when: glusterfs_mounts is defined
   file: dest={{ item.mount_point }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }} state={{ item.state }}
-  with_items: "{{ glusterfs_mounts }}"
+  loop: "{{ glusterfs_mounts }}"
 
 - name: Set SELinux boolean
   when: glusterfs_mounts is defined
@@ -17,6 +17,6 @@
 - name: Mount glusterfs volumes
   when: glusterfs_mounts is defined
   mount: name={{ item.mount_point }} src={{ item.mount_src }} fstype={{ item.mount_fs }} opts={{ item.mount_opts }} state={{ item.mount_state }}
-  with_items: "{{ glusterfs_mounts }}"
+  loop: "{{ glusterfs_mounts }}"
 
 # vim: set ts=2 sw=2:

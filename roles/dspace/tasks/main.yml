@@ -1,7 +1,7 @@
 ---
 - name: Install DSpace dependencies
   apt: pkg={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
-  with_items:
+  loop:
     - tomcat{{ tomcat_version_major }}
     - tomcat{{ tomcat_version_major }}-admin
     - ant
@@ -16,7 +16,7 @@
 
 - name: Install DSpace 5 Mirage 2 build dependencies
   apt: pkg={{ item }} state=present install_recommends=no
-  with_items:
+  loop:
     - libyaml-dev
     - sqlite3
     - autoconf
@@ -92,7 +92,7 @@
 
 - name: Copy Tomcat server configs
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
-  with_items:
+  loop:
     - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/server.xml', owner: 'root', group: 'root', mode: '0644' }
     - { src: 'tomcat/tomcat-users.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/tomcat-users.xml', owner: 'root', group: '{{ tomcat_user }}', mode: '0640' }
   notify:
@@ -108,7 +108,7 @@
 
 - name: Remove old PostgreSQL JDBC libraries
   file: path=/usr/share/tomcat{{ tomcat_version_major }}/lib/{{ item }} state=absent
-  with_items:
+  loop:
     - postgresql-42.1.4.jar
     - postgresql-42.2.1.jar
   notify:
@@ -117,7 +117,7 @@
 
 - name: Prepare Tomcat web application contexts
   template: src=tomcat/context.xml.j2 dest={{ item.context_path }}
-  with_items: "{{ dspace_webapps }}"
+  loop: "{{ dspace_webapps }}"
   when: dspace_webapps is defined
   notify:
     - restart tomcat{{ tomcat_version_major }}
@@ -135,7 +135,7 @@
 
 - name: Prepare tomcat user's home folder
   file: dest={{ item.dest }} state={{ item.state }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }}
-  with_items:
+  loop:
     - { dest: '{{ tomcat_user_home }}/.m2', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '750' }
     - { dest: '{{ tomcat_user_home }}/src/git/DSpace', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '755' }
   tags: tomcat
@@ -168,7 +168,7 @@
 
 - name: Set up cron jobs
   template: src={{ item }} dest=/etc/cron.d/{{ item | replace(".j2", "") }} owner=root group=root mode=0644
-  with_items:
+  loop:
     - dspace-handle-server.j2
     - dspace-maintenance-tasks.j2
 

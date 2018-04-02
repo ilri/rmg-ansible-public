@@ -11,7 +11,7 @@
 
 - name: Install base packages
   apt: name={{ item }} state=present update_cache=yes
-  with_items:
+  loop:
     - git
     - tmux
     - iotop
@@ -34,13 +34,13 @@
 
 - name: Security hardening (CIS Benchmark 1.0)
   apt: name={{ item }} state=absent purge=yes
-  with_items:
+  loop:
     - whoopsie # CIS 4.1
     - apport   # CIS 4.1
 
 - name: Remove annoying packages
   apt: name={{ item }} state=absent purge=yes
-  with_items:
+  loop:
     - command-not-found
     - command-not-found-data
     - python3-commandnotfound

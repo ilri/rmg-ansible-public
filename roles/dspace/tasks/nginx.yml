@@ -13,7 +13,7 @@
 
 - name: Copy nginx configs
   copy: src=nginx/{{ item }} dest=/etc/nginx/{{ item }} mode=0644 owner=root group=root
-  with_items:
+  loop:
     - extra-security.conf
     - nginx.conf
     - proxy_params
@@ -22,7 +22,7 @@
 
 - name: Configure nginx vhosts
   template: src=nginx/{{ item }} dest=/etc/nginx/conf.d/{{ item | replace(".j2", "") }} mode=0644 owner=root group=root
-  with_items:
+  loop:
     - blank-vhost.conf.j2
     - default.conf.j2
   notify:

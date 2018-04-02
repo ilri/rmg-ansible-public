@@ -11,7 +11,7 @@
 
 - name: Install postgresql
   apt: name={{ item }} update_cache=yes state=present
-  with_items:
+  loop:
     - postgresql-{{ pg_version }}
     - postgresql-client-{{ pg_version }}
     - postgresql-contrib-{{ pg_version }}
@@ -29,7 +29,7 @@
 
 - name: Copy postgres configs
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
-  with_items:
+  loop:
     - { src: 'postgresql-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/postgresql.conf', mode: '0644', owner: 'postgres', group: 'postgres' }
     - { src: 'pg_hba-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/pg_hba.conf', mode: '0640', owner: 'postgres', group: 'postgres' }
   notify: restart postgres

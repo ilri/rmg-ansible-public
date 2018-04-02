@@ -20,7 +20,7 @@
 - name: Install munin-node Tomcat deps
   when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names))
   apt: name={{ item }} state=present
-  with_items:
+  loop:
     - ruby # for munin's tomcat checks
     - libxml-simple-perl # for munin's tomcat checks
     - libdbd-pg-perl # for munin's postgres check

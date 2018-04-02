@@ -1,6 +1,6 @@
 [ilri]
 name=CentOS-$releasever - ILRI packages for $basearch
-baseurl=http://hpc.ilri.cgiar.org/mirror/ilri/CentOS/$releasever/$basearch
+baseurl=https://hpc.ilri.cgiar.org/mirror/ilri/CentOS/$releasever/$basearch
 enabled=1
 gpgcheck=0
 protect=1

@@ -57,7 +57,7 @@
     - libssl-dev
     - libsqlite3-dev
     - libgmp-dev
-  when: ansible_distribution_version | version_compare('16.04', '<=')
+  when: ansible_distribution_version is version_compare('16.04', '<=')
   tags: packages
 
 # On Ubuntu 18.04 we use the system's ruby and nodejs instead of installing them
@@ -92,7 +92,7 @@
       - bower
       - grunt
       - grunt-cli
-  when: ansible_distribution_version | version_compare('18.04', '==')
+  when: ansible_distribution_version is version_compare('18.04', '==')
   tags: packages
 
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
@@ -103,7 +103,7 @@
     apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess
   - name: Install GoAccess
     apt: pkg=goaccess state=present
-  when: ansible_distribution_version | version_compare('16.04', '<=')
+  when: ansible_distribution_version is version_compare('16.04', '<=')
   tags: packages
 
 - name: Configure nginx

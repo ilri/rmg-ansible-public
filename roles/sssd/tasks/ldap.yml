@@ -15,11 +15,11 @@
   register: update_cert_bundle
 
 - name: update trusted ca-certificates bundle
-  when: ansible_distribution == 'Ubuntu' and update_cert_bundle|changed
+  when: ansible_distribution == 'Ubuntu' and update_cert_bundle is changed
   command: /usr/sbin/update-ca-certificates --fresh
 
 - name: update trusted ca-certificates bundle
-  when: ansible_distribution == 'CentOS' and update_cert_bundle|changed
+  when: ansible_distribution == 'CentOS' and update_cert_bundle is changed
   shell: /usr/bin/update-ca-trust enable && /usr/bin/update-ca-trust extract
 
 - name: Install OpenLDAP utils

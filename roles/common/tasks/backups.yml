@@ -10,7 +10,7 @@
 - name: Install heirloom-mailx on Debian-based hosts
   apt: name=heirloom-mailx state=present
   when: ansible_distribution == 'Debian' or
-        (ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('16.04', '<='))
+        (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '<='))
   tags: packages
 
 - name: Copy backup scripts

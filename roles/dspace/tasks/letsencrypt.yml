@@ -16,7 +16,7 @@
 # need to reload to pick up service/timer changes
 - name: Reload systemd daemon
   command: /bin/systemctl daemon-reload
-  when: letsencrypt_service|changed or letsencrypt_timer|changed
+  when: letsencrypt_service is changed or letsencrypt_timer is changed
 
 - name: Start and enable systemd timer to renew Let's Encrypt certs
   service: name=renew-letsencrypt.timer state=started enabled=yes
@@ -47,7 +47,7 @@
 
 # dependencies certbot checks for on its first run
 - name: Install certbot dependencies (Ubuntu 18.04)
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('18.04', '==')
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('18.04', '==')
   apt: name={{ item }} state=present update_cache=yes
   loop:
     - libexpat1-dev

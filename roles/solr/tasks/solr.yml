@@ -9,7 +9,7 @@
 
 - name: Unpack Solr tarball
   unarchive: src={{ solr_prefix_dir }}/{{ solr_tarball }} dest={{ solr_prefix_dir }} creates={{ solr_prefix_dir }}/solr-{{ solr_version }} owner={{ solr_user }} group={{ solr_user }} copy=no
-  when: get_url_result|changed
+  when: get_url_result is changed
 
 # /opt/solr -> /opt/solr-$SOLR_VERSION
 - name: Create a symlink to solr installation dir

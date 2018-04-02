@@ -1,24 +1,19 @@
 ---
 - name: Install munin-node
   when: ansible_os_family == "Debian"
-  apt: name={{ item }} state=present update_cache=true cache_valid_time=3600
-  with_items:
-    - munin-node
+  apt: name=munin-node state=present update_cache=true cache_valid_time=3600
   tags: packages
 
 - name: Install munin-node
   when: ansible_os_family == "RedHat"
-  yum: name={{ item }} state=present
-  with_items:
-    - munin-node
+  yum: name=munin-node state=present
   tags: packages
 
 # some nice things to have for munin-node on Ubuntu (12.04 and 14.04 right now)
+# libwww-perl for munin's nginx_status check
 - name: Install munin-node deps
   when: ansible_distribution == "Ubuntu"
-  apt: name={{ item }} state=present
-  with_items:
-    - libwww-perl #for munin's nginx_status check
+  apt: name=libwww-perl state=present
   tags: packages
 
 # some nice things to have on Ubuntu Tomcat servers

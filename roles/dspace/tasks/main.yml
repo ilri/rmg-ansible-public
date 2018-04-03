@@ -60,6 +60,18 @@
   when: ansible_distribution_version is version_compare('16.04', '<=')
   tags: packages
 
+- name: Set Tomcat user's shell
+  user: name={{ tomcat_user }} shell=/bin/bash
+  tags: tomcat
+
+- name: Allow Tomcat user to write to its home directory
+  file: path={{ tomcat_user_home }} owner={{ tomcat_user }} group={{ tomcat_group }}
+  tags: tomcat
+
+- name: Touch Tomcat user's .profile
+  file: path={{ tomcat_user_home }}/.profile state=touch owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
+  tags: tomcat
+
 # On Ubuntu 18.04 we use the system's ruby and nodejs instead of installing them
 # manually with RVM and NVM after provisioning the machine.
 - block:
@@ -109,18 +121,6 @@
 - name: Configure nginx
   import_tasks: nginx.yml
   tags: nginx
-
-- name: Set Tomcat user's shell
-  user: name={{ tomcat_user }} shell=/bin/bash
-  tags: tomcat
-
-- name: Allow Tomcat user to write to its home directory
-  file: path={{ tomcat_user_home }} owner={{ tomcat_user }} group={{ tomcat_group }}
-  tags: tomcat
-
-- name: Touch Tomcat user's .profile
-  file: path={{ tomcat_user_home }}/.profile state=touch owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
-  tags: tomcat
 
 - name: Set Tomcat server defaults
   template: src=tomcat/defaults-tomcat{{ tomcat_version_major }}.j2 dest=/etc/default/tomcat{{ tomcat_version_major }} owner=root group=root mode=0644

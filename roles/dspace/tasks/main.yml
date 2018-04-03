@@ -90,7 +90,7 @@
     become_user: '{{ tomcat_user }}'
   - name: Configure ruby environment
     lineinfile:
-      dest: '{{ tomcat_user_home }}/.bash_profile'
+      dest: '{{ tomcat_user_home }}/.profile'
       regexp: '^source {{ tomcat_user_home }}/.ruby-env$'
       line: 'source {{ tomcat_user_home }}/.ruby-env'
       state: present

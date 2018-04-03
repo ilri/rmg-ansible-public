@@ -1,21 +1,19 @@
 ---
-- name: Add Oracle Java PPA
-  apt_repository: repo='ppa:webupd8team/java' state=present
-  tags:
-    - java
-    - packages
+# Only use Oracle Java PPA on older Ubuntus. OpenJDK has gotten very good and is
+# considered to be the reference Java implementation as of version 8 anyways.
+- block:
+  - name: Add Oracle Java PPA
+    apt_repository: repo='ppa:webupd8team/java' state=present
 
-- name: Accept Oracle license
-  debconf: name='oracle-java{{ java_version_major }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
-  tags:
-    - java
-    - packages
+  - name: Accept Oracle license
+    debconf: name='oracle-java{{ java_version_major }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
 
-- name: Install Oracle Java
-  apt: pkg=oracle-java{{ java_version_major }}-set-default state=present
+  - name: Install Oracle Java
+    apt: pkg=oracle-java{{ java_version_major }}-set-default state=present
   tags:
     - java
     - packages
+  when: ansible_distribution_version is version_compare('16.04', '<=')
 
 - name: Install DSpace dependencies
   apt: pkg={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600

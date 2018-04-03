@@ -13,7 +13,11 @@ TOMCAT8_GROUP=tomcat8
 {% if java_version_major is version_compare('7', '==') %}
 JAVA_HOME=/usr/lib/jvm/java-7-oracle
 {% elif java_version_major is version_compare( '8', '==') %}
+{% if ansible_distribution_version is version_compare('18.04', '==') %}
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+{% else %}
 JAVA_HOME=/usr/lib/jvm/java-8-oracle
+{% endif %}
 {% endif %}
 
 # You may pass JVM startup parameters to Java here. If unset, the default

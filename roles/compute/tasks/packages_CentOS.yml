@@ -45,6 +45,15 @@
     - pigz # for SeqKit
     - numpy # for Trinity as of v2.6.6
 
+# See: https://hpc.ilri.cgiar.org/vep-software
+- name: Install extra packages for Vep
+  yum: name={{ item }} state=present
+  loop:
+    - perl-DBI
+    - perl-DBD-mysql
+    - perl-JSON
+    - perl-PerlIO-gzip
+
 - name: Install extra packages for Circos
   yum: name={{ item }} state=present
   loop:

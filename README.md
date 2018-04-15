@@ -26,7 +26,6 @@ On subsequent runs, after SSH keys have been deployed, you only need `--ask-beco
 - Remove: rc.local task for Debian/Ubuntu, as it we are apparently not using it
 - Update: heirloom-mailx has been deprecated in Ubuntu >= 16.04, transition to s-nail
 - Update: packages for Ubuntu 18.04 (mariadb, nginx, tarsnap currently using packages for 17.10 artful)
-- Update: update Tomcat 8 DBCP settings
 
 ## License
 Copyright (C) 2015–2018 International Livestock Research Institute (ILRI)

@@ -15,14 +15,20 @@
     - packages
   when: ansible_distribution_version is version_compare('16.04', '<=')
 
+# Explicitly install OpenJDK 8 first in a separate transaction so that tomcat8
+# doesn't pull in Java 10+ via default-jre. Also, it seems there is a bug with
+# the dependency resolution that causes maven to pull in Java 10+ currently.
+- name: Install OpenJDK 8
+  apt: pkg=openjdk-8-jdk-headless state=present install_recommends=no update_cache=yes cache_valid_time=3600
+  tags: packages
+
 - name: Install DSpace dependencies
   apt: pkg={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
   loop:
-    - openjdk-8-jdk-headless # otherwise tomcat will pull in Java 10 via default-jre-headless!
     - tomcat{{ tomcat_version_major }}
     - tomcat{{ tomcat_version_major }}-admin
     - ant
-    - maven # 2018-04-24 currently pulls in Java 10
+    - maven
     - libtcnative-1
     - poppler-utils # for media filter
     - python-psycopg2 # for ansible postgres modules

@@ -18,10 +18,11 @@
 - name: Install DSpace dependencies
   apt: pkg={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
   loop:
+    - openjdk-8-jdk-headless # otherwise tomcat will pull in Java 10 via default-jre-headless!
     - tomcat{{ tomcat_version_major }}
     - tomcat{{ tomcat_version_major }}-admin
     - ant
-    - maven
+    - maven # 2018-04-24 currently pulls in Java 10
     - libtcnative-1
     - poppler-utils # for media filter
     - python-psycopg2 # for ansible postgres modules

@@ -211,4 +211,7 @@
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory
 
+- name: Add DSpace bin directory to PATH
+  template: src=dspace.sh.j2 dest=/etc/profile.d/dspace.sh owner=root group=root mode=0755
+
 # vim: set sw=2 ts=2:

@@ -80,6 +80,8 @@
       - nodejs
       - npm
       - ruby-dev
+      - libffi-dev
+      - gcc
   - name: Install DSpace 5 Mirage 2 ruby build dependencies
     gem: name={{ item.name }} version={{ item.version }} state=present user_install=yes
     loop:

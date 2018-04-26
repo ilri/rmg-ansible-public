@@ -1,23 +1,25 @@
 ---
 
-- name: Create Solr core data dir
-  file: dest={{ solr_var_dir }}/data/{{ item }}/data/index state=directory mode=0755
-  loop: "{{ solr_cores }}"
-  notify: restart solr
+- block:
+  - name: Create Solr core data dir
+    file: dest={{ solr_var_dir }}/data/{{ item }}/data/index state=directory mode=0755
+    loop: "{{ solr_cores }}"
+    notify: restart solr
 
-- name: Create Solr core conf dir
-  file: dest={{ solr_var_dir }}/data/{{ item }}/conf state=directory owner={{ solr_user }} group={{ solr_user }} mode=0755
-  loop: "{{ solr_cores }}"
-  notify: restart solr
+  - name: Create Solr core conf dir
+    file: dest={{ solr_var_dir }}/data/{{ item }}/conf state=directory owner={{ solr_user }} group={{ solr_user }} mode=0755
+    loop: "{{ solr_cores }}"
+    notify: restart solr
 
-- name: Populate Solr core conf dir
-  command: /usr/bin/rsync -a {{ solr_install_dir }}/server/solr/configsets/basic_configs/conf/ {{ solr_var_dir }}/data/{{ item }}/conf/ creates={{ solr_var_dir }}/data/{{ item }}/conf/solrconfig.xml
-  loop: "{{ solr_cores }}"
-  notify: restart solr
+  - name: Populate Solr core conf dir
+    command: /usr/bin/rsync -a {{ solr_install_dir }}/server/solr/configsets/basic_configs/conf/ {{ solr_var_dir }}/data/{{ item }}/conf/ creates={{ solr_var_dir }}/data/{{ item }}/conf/solrconfig.xml
+    loop: "{{ solr_cores }}"
+    notify: restart solr
 
-- name: Create core.properties placeholder
-  file: dest={{ solr_var_dir }}/data/{{ item }}/core.properties state=touch owner={{ solr_user }} group={{ solr_user }} mode=0644
-  loop: "{{ solr_cores }}"
-  notify: restart solr
+  - name: Create core.properties placeholder
+    file: dest={{ solr_var_dir }}/data/{{ item }}/core.properties state=touch owner={{ solr_user }} group={{ solr_user }} mode=0644
+    loop: "{{ solr_cores }}"
+    notify: restart solr
+  tags: solr-cores
 
 # vim: set ts=2 sw=2:

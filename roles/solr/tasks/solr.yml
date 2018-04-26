@@ -38,7 +38,8 @@
 - name: Start & enable service
   service: name=solr state=started enabled=yes
 
-- import_tasks: solr-cores.yml
+- name: Configure solr cores
+  include_tasks: solr-cores.yml
   become_user: "{{solr_user}}"
   when: solr_cores is defined
   tags: solr-cores

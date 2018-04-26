@@ -45,7 +45,6 @@
         - python-dev
         - python-virtualenv
         - virtualenv
-    tags: packages
 
   # Dependencies certbot checks for on its first run. I set them in a fact so that
   # I can pass the list directly to the apt module to install in one transaction.
@@ -64,11 +63,9 @@
         - augeas-doc
         - augeas-tools
         - python-setuptools
-    tags: packages
 
   - name: Install certbot dependencies
     apt: name={{ certbot_dependencies }} state=present update_cache=yes
-    tags: packages
   tags: letsencrypt
 
 # vim: set ts=2 sw=2:

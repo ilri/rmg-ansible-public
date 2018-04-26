@@ -1,6 +1,7 @@
 ---
 - name: Configure apt mirror
   template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
+  tags: packages
 
 - name: Install base packages
   apt: name={{ item }} state=present update_cache=yes cache_valid_time=3600
@@ -22,9 +23,12 @@
     - debconf-utils
     - sysstat
     - software-properties-common
+  tags: packages
 
 - name: Configure cron-apt
   import_tasks: cron-apt.yml
-  tags: cron-apt
+  tags:
+    - cron-apt
+    - packages
 
 # vim: set ts=2 sw=2:

@@ -4,8 +4,62 @@
   import_tasks: slurm.yml
   tags: slurm
 
+- name: Set extra packages fact
+  set_fact:
+    extra_packages:
+      - environment-modules
+      - xauth # or else X11 forwarding doesn't work
+      - xeyes # to test x11 :)
+      - libgomp # for R
+      - libgfortran # for R
+      - libicu # for R
+      - libXtst # for some X apps like CLC Genomics
+      - gsl # for fastSTRUCTURE
+      - emacs
+      - perl-parent # for some BioPerl scripts
+      - java-1.8.0-openjdk # for lots of stuff
+      - libtool-ltdl.x86_64 # for pandaseq/2.7
+      - screen #terminal window manager
+      - openblas.x86_64 #for scipy
+      - compat-libstdc++-33.x86_64 #for libstdc++.so.5
+      - proj.x86_64 #for libproj.so.0
+      - gdal.x86_64 #for libgdal.so.1
+      - libstdc++.i686 # for 32-bit binaries
+      - gnuplot.x86_64
+      - mailx.x86_64
+      - pandoc.x86_64
+      - argtable.x86_64 # for clustalo
+      - boost-iostreams.x86_64 # for augustus
+      - boost-devel.x86_64 # for augustus
+      - tbb-devel.x86_64 # for flexbar
+      - lapack.x86_64 # for presto
+      - tmpwatch.x86_64
+      - htop
+      - nano
+      - unzip
+      - wget
+      - perl-Text-Soundex.x86_64 # for RepeatMasker
+      - firefox # Dedan swears that he needs this
+      - perl-LWP-Protocol-https.noarch # so perl can use https
+      - cairo-devel.x86_64 # for genometools and others
+      - pango-devel.x86_64 # for genometools and others
+      - glib.x86_64 # for wise / Cegma
+      - libpng12.x86_64 # for pre-compiled blat binary
+      - xz-compat-libs.x86_64 # for samtools/1.5 compiled on CentOS 6
+      - pigz # for SeqKit
+      - numpy # for Trinity as of v2.6.6
+      - perl-DBI # for vep, see: https://hpc.ilri.cgiar.org/vep-software
+      - perl-DBD-mysql # for vep
+      - perl-JSON # for vep
+      - perl-PerlIO-gzip # for vep
+      - perl-Clone.x86_64 # for circos, see: https://hpc.ilri.cgiar.org/circos-software
+      - perl-Config-General.noarch # for circos
+      - perl-Font-TTF.noarch # for circos
+      - perl-Readonly.noarch # for circos
+  tags: packages
+
 - name: Install extra packages
-  yum: name={{ compute_extra_packages_centos }} state=present
+  yum: name={{ extra_packages }} state=present
   tags: packages
 
 - name: Clone environment modules

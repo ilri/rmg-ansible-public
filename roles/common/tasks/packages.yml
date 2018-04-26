@@ -2,13 +2,16 @@
 - name: Install common packages on CentOS
   include_tasks: packages_CentOS.yml
   when: ansible_distribution == 'CentOS'
+  tags: packages
 
 - name: Install common packages on Ubuntu
   include_tasks: packages_Ubuntu.yml
   when: ansible_distribution == 'Ubuntu'
+  tags: packages
 
 - name: Install common packages on Debian
   include_tasks: packages_Debian.yml
   when: ansible_distribution == 'Debian'
+  tags: packages
 
 # vim: set ts=2 sw=2:

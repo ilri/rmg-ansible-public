@@ -20,6 +20,7 @@
 # the dependency resolution that causes maven to pull in Java 10+ currently.
 - name: Install OpenJDK 8
   apt: pkg=openjdk-8-jdk-headless state=present install_recommends=no update_cache=yes cache_valid_time=3600
+  when: ansible_distribution_version is version_compare('18.04', '==')
   tags: packages
 
 - name: Install DSpace dependencies

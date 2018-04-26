@@ -21,12 +21,10 @@
 - name: Uninstall ntp on modern Ubuntu/Debian
   apt: name=ntp state=absent update_cache=yes
   when: ansible_os_family == 'Debian' and ansible_service_mgr == 'systemd'
-  tags: packages
 
 - name: Install ntp on old Ubuntu/Debian
   apt: name=ntp state=present update_cache=yes
   when: ansible_os_family == 'Debian' and ansible_service_mgr != 'systemd'
-  tags: packages
 
 # 2018-02-19: Make sure ntp is stopped and removed from CentOS machines before
 # installing chrony (just in case). Chrony is now preferred in favor of ntp:
@@ -38,12 +36,10 @@
 - name: Uninstall ntp on CentOS
   yum: name=ntp state=absent
   when: ansible_distribution == 'CentOS'
-  tags: packages
 
 - name: Install chrony on CentOS
   yum: name=chrony state=present
   when: ansible_distribution == 'CentOS'
-  tags: packages
 
 - name: Start and enable chrony on CentOS
   systemd: name=chronyd state=started enabled=yes

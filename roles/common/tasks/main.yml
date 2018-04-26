@@ -68,7 +68,7 @@
   copy: src=set_irq_affinity.sh dest=/usr/local/bin/set_irq_affinity.sh owner=root mode=0755
 
 - name: Configure tuned
-  import_tasks: tuned.yml
+  include_tasks: tuned.yml
   when: "'compute' in group_names or 'storage' in group_names"
   tags: tuned
 

@@ -10,11 +10,14 @@
   notify:
     - start tuned
     - start cpuspeed
-  tags: packages
+  tags:
+    - packages
+    - tuned
 
 - name: Install tuned on CentOS 7 hosts
   when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '==')
   yum: name=tuned state=installed
+  tags: tuned
 
 # ignore_errors: at times fails on some compute nodes
 - name: Start & enable tuned & cpuspeed services on CentOS 6 hosts
@@ -24,13 +27,16 @@
   loop:
     - tuned
     - cpuspeed
+  tags: tuned
 
 - name: Start & enable tuned service on CentOS 7 hosts
   when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '==')
   service: name=tuned state=started enabled=yes
+  tags: tuned
 
 - name: Set default tuned profile
   when: tuned_profile is defined
   command: tuned-adm profile {{ tuned_profile }}
+  tags: tuned
 
 # vim: set sw=2 ts=2:

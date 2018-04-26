@@ -33,7 +33,7 @@
 # https://www.coreinfrastructure.org/news/blogs/2017/09/securing-network-time
 - name: Stop and disable ntp on CentOS
   systemd: name=ntpd state=stopped enabled=no
-  when: ansible_distribution == 'CentOS'
+  when: ansible_distribution == 'CentOS' and ansible_service_mgr == 'systemd'
 
 - name: Uninstall ntp on CentOS
   yum: name=ntp state=absent
@@ -47,6 +47,6 @@
 
 - name: Start and enable chrony on CentOS
   systemd: name=chronyd state=started enabled=yes
-  when: ansible_distribution == 'CentOS'
+  when: ansible_distribution == 'CentOS' and ansible_service_mgr == 'systemd'
 
 # vim: set ts=2 sw=2:

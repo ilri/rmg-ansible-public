@@ -6,7 +6,6 @@
 
 - name: Install compute packages
   import_tasks: packages_CentOS.yml
-  when: ansible_distribution == 'CentOS'
   tags: packages
 
 - name: Clone environment modules

@@ -1,12 +1,15 @@
 ---
 
-- import_tasks: firewall_Ubuntu.yml
+- include_tasks: firewall_Ubuntu.yml
   when: ansible_distribution == 'Ubuntu'
+  tags: firewall
 
-- import_tasks: firewall_Debian.yml
+- include_tasks: firewall_Debian.yml
   when: ansible_distribution == 'Debian'
+  tags: firewall
 
-- import_tasks: firewall_CentOS.yml
+- include_tasks: firewall_CentOS.yml
   when: ansible_distribution == 'CentOS'
+  tags: firewall
 
 # vim: set sw=2 ts=2:

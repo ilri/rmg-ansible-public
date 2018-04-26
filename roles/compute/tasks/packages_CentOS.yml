@@ -1,6 +1,0 @@
----
-
-- name: Install extra packages
-  yum: name={{ compute_extra_packages_centos }} state=present
-
-# vim: set sw=2 ts=2:

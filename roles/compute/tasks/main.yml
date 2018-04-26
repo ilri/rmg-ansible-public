@@ -4,8 +4,8 @@
   import_tasks: slurm.yml
   tags: slurm
 
-- name: Install compute packages
-  import_tasks: packages_CentOS.yml
+- name: Install extra packages
+  yum: name={{ compute_extra_packages_centos }} state=present
   tags: packages
 
 - name: Clone environment modules

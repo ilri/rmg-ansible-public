@@ -1,59 +1,54 @@
 ---
-- name: Configure apt mirror
-  template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
-  tags: packages
 
-- name: Add GPG key for Extras repo
-  apt_key: id=0x3E5C1192 url=https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x16126D3A3E5C1192 state=present
-  when: ansible_distribution_version is version_compare('14.04', '==')
-  tags: packages
+- block:
+  - name: Configure apt mirror
+    template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
 
-- name: Upgrade base OS
-  apt: upgrade=dist update_cache=yes cache_valid_time=3600
-  tags: packages
+  - name: Add GPG key for Extras repo
+    apt_key: id=0x3E5C1192 url=https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x16126D3A3E5C1192 state=present
+    when: ansible_distribution_version is version_compare('14.04', '==')
 
-- name: Install base packages
-  apt: name={{ item }} state=present update_cache=yes
-  loop:
-    - git
-    - tmux
-    - iotop
-    - htop
-    - strace
-    - s3cmd
-    - cron-apt
-    - safe-rm
-    - debian-goodies
-    - mosh
-    - python-pycurl # for ansible's apt_repository
-    - lzop
-    - vim
-    - acpid
-    - schedtool
-    - debconf
-    - debconf-utils
-    - software-properties-common
-  tags: packages
+  - name: Upgrade base OS
+    apt: upgrade=dist update_cache=yes cache_valid_time=3600
 
-- name: Security hardening (CIS Benchmark 1.0)
-  apt: name={{ item }} state=absent purge=yes
-  loop:
-    - whoopsie # CIS 4.1
-    - apport   # CIS 4.1
-  tags: packages
+  - name: Install base packages
+    apt: name={{ item }} state=present update_cache=yes
+    loop:
+      - git
+      - tmux
+      - iotop
+      - htop
+      - strace
+      - s3cmd
+      - cron-apt
+      - safe-rm
+      - debian-goodies
+      - mosh
+      - python-pycurl # for ansible's apt_repository
+      - lzop
+      - vim
+      - acpid
+      - schedtool
+      - debconf
+      - debconf-utils
+      - software-properties-common
 
-- name: Remove annoying packages
-  apt: name={{ item }} state=absent purge=yes
-  loop:
-    - command-not-found
-    - command-not-found-data
-    - python3-commandnotfound
-  tags: packages
+  - name: Security hardening (CIS Benchmark 1.0)
+    apt: name={{ item }} state=absent purge=yes
+    loop:
+      - whoopsie # CIS 4.1
+      - apport   # CIS 4.1
 
-- name: Configure cron-apt
-  import_tasks: cron-apt.yml
-  tags:
-    - cron-apt
-    - packages
+  - name: Remove annoying packages
+    apt: name={{ item }} state=absent purge=yes
+    loop:
+      - command-not-found
+      - command-not-found-data
+      - python3-commandnotfound
+
+  - name: Configure cron-apt
+    import_tasks: cron-apt.yml
+    tags: cron-apt
+  tags: packages
 
 # vim: set ts=2 sw=2:

@@ -1,34 +1,33 @@
 ---
-- name: Configure apt mirror
-  template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
-  tags: packages
 
-- name: Install base packages
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time=3600
-  loop:
-    - git
-    - tmux
-    - iotop
-    - htop
-    - strace
-    - s3cmd
-    - cron-apt
-    - safe-rm
-    - debian-goodies
-    - lzop
-    - vim
-    - acpid
-    - schedtool
-    - debconf
-    - debconf-utils
-    - sysstat
-    - software-properties-common
-  tags: packages
+- block:
+  - name: Configure apt mirror
+    template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
 
-- name: Configure cron-apt
-  import_tasks: cron-apt.yml
-  tags:
-    - cron-apt
-    - packages
+  - name: Install base packages
+    apt: name={{ item }} state=present update_cache=yes cache_valid_time=3600
+    loop:
+      - git
+      - tmux
+      - iotop
+      - htop
+      - strace
+      - s3cmd
+      - cron-apt
+      - safe-rm
+      - debian-goodies
+      - lzop
+      - vim
+      - acpid
+      - schedtool
+      - debconf
+      - debconf-utils
+      - sysstat
+      - software-properties-common
+
+  - name: Configure cron-apt
+    import_tasks: cron-apt.yml
+    tags: cron-apt
+  tags: packages
 
 # vim: set ts=2 sw=2:

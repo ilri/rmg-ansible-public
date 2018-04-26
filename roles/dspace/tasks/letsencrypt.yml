@@ -5,68 +5,70 @@
 # To use it, add `use_letsencrypt: True` to a host's variables and run the
 # "letsencrypt" tag.
 
-- name: Copy systemd service to renew Let's Encrypt certs
-  template: src=renew-letsencrypt.service.j2 dest=/etc/systemd/system/renew-letsencrypt.service mode=0644 owner=root group=root
-  register: letsencrypt_service
+- block:
+  - name: Copy systemd service to renew Let's Encrypt certs
+    template: src=renew-letsencrypt.service.j2 dest=/etc/systemd/system/renew-letsencrypt.service mode=0644 owner=root group=root
+    register: letsencrypt_service
 
-- name: Copy systemd timer to renew Let's Encrypt certs
-  copy: src=renew-letsencrypt.timer dest=/etc/systemd/system/renew-letsencrypt.timer mode=0644 owner=root group=root
-  register: letsencrypt_timer
+  - name: Copy systemd timer to renew Let's Encrypt certs
+    copy: src=renew-letsencrypt.timer dest=/etc/systemd/system/renew-letsencrypt.timer mode=0644 owner=root group=root
+    register: letsencrypt_timer
 
-# need to reload to pick up service/timer changes
-- name: Reload systemd daemon
-  command: /bin/systemctl daemon-reload
-  when: letsencrypt_service is changed or letsencrypt_timer is changed
+  # need to reload to pick up service/timer changes
+  - name: Reload systemd daemon
+    command: /bin/systemctl daemon-reload
+    when: letsencrypt_service is changed or letsencrypt_timer is changed
 
-- name: Start and enable systemd timer to renew Let's Encrypt certs
-  service: name=renew-letsencrypt.timer state=started enabled=yes
+  - name: Start and enable systemd timer to renew Let's Encrypt certs
+    service: name=renew-letsencrypt.timer state=started enabled=yes
 
-- name: Download certbot
-  get_url: dest={{ letsencrypt_certbot_path }} url=https://dl.eff.org/certbot-auto mode=700
+  - name: Download certbot
+    get_url: dest={{ letsencrypt_certbot_path }} url=https://dl.eff.org/certbot-auto mode=700
 
-# Dependencies certbot checks for on its first run. I set them in a fact so that
-# I can pass the list directly to the apt module to install in one transaction.
-- name: Set certbot dependencies (Ubuntu 16.04)
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '==')
-  set_fact:
-    certbot_dependencies:
-      - libexpat1-dev
-      - libpython-dev
-      - libpython2.7
-      - libpython2.7-dev
-      - python-pip-whl
-      - python-pkg-resources
-      - python2.7-dev
-      - python3-virtualenv
-      - augeas-doc
-      - augeas-tools
-      - dialog
-      - python-dev
-      - python-virtualenv
-      - virtualenv
-  tags: packages
+  # Dependencies certbot checks for on its first run. I set them in a fact so that
+  # I can pass the list directly to the apt module to install in one transaction.
+  - name: Set certbot dependencies (Ubuntu 16.04)
+    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '==')
+    set_fact:
+      certbot_dependencies:
+        - libexpat1-dev
+        - libpython-dev
+        - libpython2.7
+        - libpython2.7-dev
+        - python-pip-whl
+        - python-pkg-resources
+        - python2.7-dev
+        - python3-virtualenv
+        - augeas-doc
+        - augeas-tools
+        - dialog
+        - python-dev
+        - python-virtualenv
+        - virtualenv
+    tags: packages
 
-# Dependencies certbot checks for on its first run. I set them in a fact so that
-# I can pass the list directly to the apt module to install in one transaction.
-- name: Set certbot dependencies (Ubuntu 18.04)
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('18.04', '==')
-  set_fact:
-    certbot_dependencies:
-      - libexpat1-dev
-      - libpython-dev
-      - libpython2.7
-      - libpython2.7-dev
-      - python-pip-whl
-      - python-pkg-resources
-      - python2.7-dev
-      - python3-virtualenv
-      - augeas-doc
-      - augeas-tools
-      - python-setuptools
-  tags: packages
+  # Dependencies certbot checks for on its first run. I set them in a fact so that
+  # I can pass the list directly to the apt module to install in one transaction.
+  - name: Set certbot dependencies (Ubuntu 18.04)
+    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('18.04', '==')
+    set_fact:
+      certbot_dependencies:
+        - libexpat1-dev
+        - libpython-dev
+        - libpython2.7
+        - libpython2.7-dev
+        - python-pip-whl
+        - python-pkg-resources
+        - python2.7-dev
+        - python3-virtualenv
+        - augeas-doc
+        - augeas-tools
+        - python-setuptools
+    tags: packages
 
-- name: Install certbot dependencies
-  apt: name={{ certbot_dependencies }} state=present update_cache=yes
-  tags: packages
+  - name: Install certbot dependencies
+    apt: name={{ certbot_dependencies }} state=present update_cache=yes
+    tags: packages
+  tags: letsencrypt
 
 # vim: set ts=2 sw=2:

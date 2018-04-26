@@ -7,12 +7,12 @@
   yum: name=centos-release-gluster312 state=present
 
 - name: Configure GlusterFS client
-  import_tasks: client.yml
+  include_tasks: client.yml
   when: glusterfs_role == 'client'
   tags: glusterfs-client
 
 - name: Configure GlusterFS server
-  import_tasks: server.yml
+  include_tasks: server.yml
   when: glusterfs_role == 'server'
   tags: glusterfs-server
 

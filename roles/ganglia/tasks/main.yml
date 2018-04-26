@@ -1,6 +1,6 @@
 ---
 - name: Configure Ganglia scraper
-  import_tasks: gmetad.yml
+  include_tasks: gmetad.yml
   when: inventory_hostname == 'hpc'
   tags: gmetad
 

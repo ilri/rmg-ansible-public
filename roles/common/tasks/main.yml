@@ -88,7 +88,7 @@
     - backups
 
 - name: Configure RAID monitoring
-  import_tasks: raid-monitoring.yml
+  include_tasks: raid-monitoring.yml
   when: hw_raid_vendor is defined
   tags: raid-monitoring
 

@@ -1,72 +1,74 @@
 ---
-# MegaCLI binaries are statically compiled, so just use the same repo for all
-# Debian-family hosts
-- name: Add Debian-family HWRaid repo
-  apt_repository: repo='deb http://hwraid.le-vert.net/debian wheezy main' state=present
-  when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
+- block:
+  # MegaCLI binaries are statically compiled, so just use the same repo for all
+  # Debian-family hosts
+  - name: Add Debian-family HWRaid repo
+    apt_repository: repo='deb http://hwraid.le-vert.net/debian wheezy main' state=present
+    when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
-- name: Import HWRaid repo's signing key
-  apt_key: url=https://hwraid.le-vert.net/debian/hwraid.le-vert.net.gpg.key state=present
-  when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
+  - name: Import HWRaid repo's signing key
+    apt_key: url=https://hwraid.le-vert.net/debian/hwraid.le-vert.net.gpg.key state=present
+    when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
-- name: Install LSI MegaCLI tools
-  apt: name=megacli state=present update_cache=yes
-  when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
+  - name: Install LSI MegaCLI tools
+    apt: name=megacli state=present update_cache=yes
+    when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
-# hpssacli is only provided by HP MCP repo
-# http://downloads.linux.hpe.com/SDR/project/mcp/
-- name: Add Debian-based HP MCP repo
-  apt_repository: repo='deb http://downloads.linux.hpe.com/SDR/repo/mcp {{ ansible_distribution_release }}/current non-free' state=present
-  when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor and ansible_distribution_major_version is version_compare('15', '<')
+  # hpssacli is only provided by HP MCP repo
+  # http://downloads.linux.hpe.com/SDR/project/mcp/
+  - name: Add Debian-based HP MCP repo
+    apt_repository: repo='deb http://downloads.linux.hpe.com/SDR/repo/mcp {{ ansible_distribution_release }}/current non-free' state=present
+    when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor and ansible_distribution_major_version is version_compare('15', '<')
 
-# no xenial builds at the moment, so we'll use trusty's
-# http://downloads.linux.hpe.com/SDR/repo/mcp/dists/
-- name: Add Debian-based HP MCP repo on xenial and wily hosts
-  apt_repository: repo='deb http://downloads.linux.hpe.com/SDR/repo/mcp trusty/current non-free' state=present
-  when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor and ansible_distribution_major_version is version_compare('15', '>=')
+  # no xenial builds at the moment, so we'll use trusty's
+  # http://downloads.linux.hpe.com/SDR/repo/mcp/dists/
+  - name: Add Debian-based HP MCP repo on xenial and wily hosts
+    apt_repository: repo='deb http://downloads.linux.hpe.com/SDR/repo/mcp trusty/current non-free' state=present
+    when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor and ansible_distribution_major_version is version_compare('15', '>=')
 
-- name: Import HP MCP repo's signing key
-  apt_key: url=https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub state=present
-  when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
+  - name: Import HP MCP repo's signing key
+    apt_key: url=https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub state=present
+    when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
 
-- name: Install HP Array tools
-  apt: name=hpssacli state=present update_cache=yes
-  when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
+  - name: Install HP Array tools
+    apt: name=hpssacli state=present update_cache=yes
+    when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
 
-# In ILRI CentOS repo, from:
-# http://sarepos.cpanel.net/centos
-- name: Install LSI MegaCLI tools
-  yum: name=MegaCli state=present
-  when: "ansible_distribution == 'CentOS' and 'lsi' in hw_raid_vendor"
+  # In ILRI CentOS repo, from:
+  # http://sarepos.cpanel.net/centos
+  - name: Install LSI MegaCLI tools
+    yum: name=MegaCli state=present
+    when: "ansible_distribution == 'CentOS' and 'lsi' in hw_raid_vendor"
 
-# In ILRI CentOS repo, from:
-# http://downloads.linux.hpe.com/SDR/repo/mcp
-- name: Install HP Array tools
-  yum: name=hpacucli state=present
-  when: "ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor"
+  # In ILRI CentOS repo, from:
+  # http://downloads.linux.hpe.com/SDR/repo/mcp
+  - name: Install HP Array tools
+    yum: name=hpacucli state=present
+    when: "ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor"
 
-- name: Install mailx
-  yum: name=mailx state=present
-  when: ansible_distribution == 'CentOS'
+  - name: Install mailx
+    yum: name=mailx state=present
+    when: ansible_distribution == 'CentOS'
 
-# Use heirloom-mailx on Ubuntu systems <= 16.04
-# TODO: convert this to s-nail on newer Ubuntu systems
-- name: Install heirloom-mailx
-  apt: name=heirloom-mailx state=present
-  when: ansible_os_family == 'Debian' or
-        (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '<='))
+  # Use heirloom-mailx on Ubuntu systems <= 16.04
+  # TODO: convert this to s-nail on newer Ubuntu systems
+  - name: Install heirloom-mailx
+    apt: name=heirloom-mailx state=present
+    when: ansible_os_family == 'Debian' or
+          (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '<='))
 
-# Copy LSI RAID script to scripts dir /opt/ilri/scripts/
-- name: Copy LSI RAID monitoring script
-  template: src=scripts/lsi-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/lsi-raid-monitoring.sh owner=root group=root mode=0750
-  when: "'lsi' in hw_raid_vendor"
+  # Copy LSI RAID script to scripts dir /opt/ilri/scripts/
+  - name: Copy LSI RAID monitoring script
+    template: src=scripts/lsi-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/lsi-raid-monitoring.sh owner=root group=root mode=0750
+    when: "'lsi' in hw_raid_vendor"
 
-# Copy HP RAID script to scripts dir /opt/ilri/scripts/
-- name: Copy HP RAID monitoring script
-  template: src=scripts/hp-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/hp-raid-monitoring.sh owner=root group=root mode=0750
-  when: "'hp' in hw_raid_vendor"
+  # Copy HP RAID script to scripts dir /opt/ilri/scripts/
+  - name: Copy HP RAID monitoring script
+    template: src=scripts/hp-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/hp-raid-monitoring.sh owner=root group=root mode=0750
+    when: "'hp' in hw_raid_vendor"
 
-- name: Configure RAID monitoring cron job
-  template: src=cron/raid-monitoring.j2 dest=/etc/cron.d/1raid-monitoring owner=root group=root mode=0644
+  - name: Configure RAID monitoring cron job
+    template: src=cron/raid-monitoring.j2 dest=/etc/cron.d/1raid-monitoring owner=root group=root mode=0644
+  tags: raid-monitoring
 
 # vim: set sw=2 ts=2:

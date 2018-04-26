@@ -9,6 +9,7 @@
   - restart gmetad
 
 - name: Start gmetad service
+  when: ansible_service_mgr == 'systemd'
   systemd: name=gmetad state=started enabled=true
 
 # vim: set sw=2 ts=2:

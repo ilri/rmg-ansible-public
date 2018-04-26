@@ -9,6 +9,7 @@
   - restart gmond
 
 - name: Start gmond
+  when: ansible_service_mgr == 'systemd'
   systemd: name=gmond state=started enabled=true
 
 # vim: set sw=2 ts=2:

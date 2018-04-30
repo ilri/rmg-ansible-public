@@ -14,7 +14,6 @@ nginx_ssl_buffer_size: 1400
 nginx_ssl_dhparam: /etc/ssl/certs/dhparam.pem
 nginx_ssl_protocols: 'TLSv1 TLSv1.1 TLSv1.2'
 nginx_ssl_port: 443
-nginx_spdy_headers_comp: 6
 
 # DNS resolvers for OCSP stapling (default to Google public DNS)
 # See: https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling

@@ -15,9 +15,9 @@ nginx_ssl_dhparam: /etc/ssl/certs/dhparam.pem
 nginx_ssl_protocols: 'TLSv1 TLSv1.1 TLSv1.2'
 nginx_ssl_port: 443
 
-# DNS resolvers for OCSP stapling (default to Google public DNS)
+# DNS resolvers for OCSP stapling (default to Cloudflare public DNS)
 # See: https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling
-nginx_ssl_stapling_resolver: '8.8.8.8 8.8.4.4 [2001:4860:4860::8888] [2001:4860:4860::8844]'
+nginx_ssl_stapling_resolver: '1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001]'
 
 # default assumes letsencrypt on primary domain, override in hostvars if using
 # self-signed certificates, etc.

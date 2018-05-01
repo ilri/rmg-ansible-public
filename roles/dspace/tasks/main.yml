@@ -83,14 +83,18 @@
 # On Ubuntu 18.04 we use the system's ruby and nodejs instead of installing them
 # manually with RVM and NVM after provisioning the machine.
 - block:
+  - name: Set DSpace 5 Mirage 2 system build dependencies
+    set_fact:
+      dspace_mirage2_system_build_dependencies:
+        - build-essential
+        - nodejs
+        - npm
+        - ruby-dev
+        - libffi-dev
+
   - name: Install DSpace 5 Mirage 2 system build dependencies
-    apt: pkg={{ item }} state=present install_recommends=no
-    loop:
-      - build-essential
-      - nodejs
-      - npm
-      - ruby-dev
-      - libffi-dev
+    apt: pkg={{ dspace_mirage_system_build_dependencies }} state=present install_recommends=no
+
   - name: Install DSpace 5 Mirage 2 ruby build dependencies
     gem: name={{ item.name }} version={{ item.version }} state=present user_install=yes
     loop:

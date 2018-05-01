@@ -1,6 +1,7 @@
 ---
-# Only use Oracle Java PPA on older Ubuntus. OpenJDK has gotten very good and is
-# considered to be the reference Java implementation as of version 8 anyways.
+# We used Oracle Java via the Webupd8 PPA for a few years, but OpenJDK is
+# considered to be the reference Java implementation as of version 8 and
+# has actually gotten pretty good anyways.
 - block:
   - name: Add Oracle Java PPA
     apt_repository: repo='ppa:webupd8team/java' state=present
@@ -13,14 +14,15 @@
   tags:
     - java
     - packages
-  when: ansible_distribution_version is version_compare('16.04', '<=')
+  when: java_distribution == 'oracle'
 
 # Explicitly install OpenJDK 8 first in a separate transaction so that tomcat8
 # doesn't pull in Java 10+ via default-jre. Also, it seems there is a bug with
-# the dependency resolution that causes maven to pull in Java 10+ currently.
+# apt's dependency resolution that causes maven to pull in Java 10+ in Ubuntu
+# 18.04 currently.
 - name: Install OpenJDK 8
   apt: pkg=openjdk-8-jdk-headless state=present install_recommends=no update_cache=yes cache_valid_time=3600
-  when: ansible_distribution_version is version_compare('18.04', '==')
+  when: java_distribution == 'openjdk'
   tags: packages
 
 - name: Install DSpace dependencies

@@ -25,19 +25,22 @@
   when: java_distribution == 'openjdk'
   tags: packages
 
-- name: Install DSpace dependencies
-  apt: pkg={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
-  loop:
-    - tomcat{{ tomcat_version_major }}
-    - tomcat{{ tomcat_version_major }}-admin
-    - ant
-    - maven
-    - libtcnative-1
-    - poppler-utils # for media filter
-    - python-psycopg2 # for ansible postgres modules
-    - postgresql-contrib-{{ pg_version }} # for DSpace functions
-    - imagemagick # for DSpace 5 thumbnails
-    - ghostscript # for DSpace 5 PDF thumbnails
+- name: Set DSpace system dependencies
+  set_fact:
+    dspace_system_dependencies:
+      - tomcat{{ tomcat_version_major }}
+      - tomcat{{ tomcat_version_major }}-admin
+      - ant
+      - maven
+      - libtcnative-1
+      - poppler-utils # for media filter
+      - python-psycopg2 # for ansible postgres modules
+      - postgresql-contrib-{{ pg_version }} # for DSpace functions
+      - imagemagick # for DSpace 5 thumbnails
+      - ghostscript # for DSpace 5 PDF thumbnails
+
+- name: Install DSpace system dependencies
+  apt: pkg={{ dspace_system_dependencies }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
   tags: packages
 
 # On Ubuntu 14.04 and 16.04 we install Ruby and Node.js using RVM and NVM after

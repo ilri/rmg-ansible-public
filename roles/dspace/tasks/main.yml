@@ -12,9 +12,7 @@
   - name: Install Oracle Java
     apt: pkg=oracle-java{{ java_version_major }}-set-default state=present
   when: java_distribution == 'oracle'
-  tags:
-    - java
-    - packages
+  tags: java
 
 # Explicitly install OpenJDK 8 first in a separate transaction so that tomcat8
 # doesn't pull in Java 10+ via default-jre. Also, it seems there is a bug with
@@ -23,7 +21,6 @@
 - name: Install OpenJDK 8
   apt: pkg=openjdk-8-jdk-headless state=present install_recommends=no update_cache=yes cache_valid_time=3600
   when: java_distribution == 'openjdk'
-  tags: packages
 
 - name: Set DSpace system dependencies
   set_fact:
@@ -41,7 +38,6 @@
 
 - name: Install DSpace system dependencies
   apt: pkg={{ dspace_system_dependencies }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
-  tags: packages
 
 # On Ubuntu 14.04 and 16.04 we install Ruby and Node.js using RVM and NVM after
 # the initial ansible provisioning. RVM requires these packages to compile Ruby
@@ -68,7 +64,6 @@
     - libsqlite3-dev
     - libgmp-dev
   when: ansible_distribution_version is version_compare('16.04', '<=')
-  tags: packages
 
 - name: Set Tomcat user's shell
   user: name={{ tomcat_user }} shell=/bin/bash
@@ -116,7 +111,6 @@
       - grunt
       - grunt-cli
   when: ansible_distribution_version is version_compare('18.04', '==')
-  tags: packages
 
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
 - block:
@@ -127,7 +121,6 @@
   - name: Install GoAccess
     apt: pkg=goaccess state=present
   when: ansible_distribution_version is version_compare('16.04', '<=')
-  tags: packages
 
 - name: Configure nginx
   import_tasks: nginx.yml

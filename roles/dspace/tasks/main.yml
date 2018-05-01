@@ -11,10 +11,10 @@
 
   - name: Install Oracle Java
     apt: pkg=oracle-java{{ java_version_major }}-set-default state=present
+  when: java_distribution == 'oracle'
   tags:
     - java
     - packages
-  when: java_distribution == 'oracle'
 
 # Explicitly install OpenJDK 8 first in a separate transaction so that tomcat8
 # doesn't pull in Java 10+ via default-jre. Also, it seems there is a bug with

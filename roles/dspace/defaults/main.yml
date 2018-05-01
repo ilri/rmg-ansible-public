@@ -51,7 +51,9 @@ dspace_db_name: dspace
 dspace_db_user: dspace
 dspace_db_password: Mz97%tU64J
 
-# default Oracle JDK version
+# distribution can be oracle or openjdk
+java_distribution: oracle
+# version must be 8 (for now)
 java_version_major: 8
 
 tomcat_user: tomcat7

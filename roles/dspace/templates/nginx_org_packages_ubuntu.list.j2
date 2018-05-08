@@ -1,7 +1,7 @@
 {% if ansible_distribution == 'Ubuntu' %}
 {% if nginx_branch == "stable" %}
-deb [arch=amd64] http://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx
+deb [arch=amd64] https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx
 {% elif nginx_branch == "mainline" %}
-deb [arch=amd64] http://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx
+deb [arch=amd64] https://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx
 {% endif %}
 {% endif %}

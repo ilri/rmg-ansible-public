@@ -10,7 +10,7 @@ paramiko = "*"
 cryptography = "*"
 "jinja2" = "*"
 pyyaml = "*"
-ansible = "<2.6"
+ansible = "==2.6.*"
 
 [dev-packages]
 

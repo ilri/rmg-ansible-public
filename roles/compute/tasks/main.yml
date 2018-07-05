@@ -59,6 +59,7 @@
       - mesa-libGLU-devel.x86_64 # for some R libraries
       - gdal-devel.x86_64 # for some R libraries
       - proj-devel.x86_64 # for some R libraries
+      - proj-epsg.x86_64 # for some R libraries
   tags: packages
 
 - name: Install extra packages

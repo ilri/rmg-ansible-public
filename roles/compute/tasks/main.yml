@@ -56,6 +56,7 @@
       - perl-Config-General.noarch # for circos
       - perl-Font-TTF.noarch # for circos
       - perl-Readonly.noarch # for circos
+      - mesa-libGLU-devel.x86_64 # for some R libraries
   tags: packages
 
 - name: Install extra packages

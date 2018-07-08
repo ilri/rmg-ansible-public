@@ -222,6 +222,18 @@
 - name: Remove old cron jobs
   file: path=/etc/cron.d/dspace-handle-server state=absent
 
+- name: Copy systemd service to start Handle server
+  template: src=dspace-handle-server.service.j2 dest=/etc/systemd/system/dspace-handle-server.service mode=0644 owner=root group=root
+  register: dspace_handle_service
+
+# need to reload to pick up service/timer changes
+- name: Reload systemd daemon
+  command: /bin/systemctl daemon-reload
+  when: dspace_handle_service is changed
+
+- name: Start and enable systemd service for Handle server
+  systemd: name=dspace-handle-server.service state=started enabled=yes
+
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory
 

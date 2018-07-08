@@ -1,0 +1,12 @@
+[Unit]
+Description=DSpace Handle Server
+# Only run if the DSpace Handle server is configured on this host
+ConditionDirectoryNotEmpty={{ dspace_root }}/handle-server
+
+[Service]
+Type=simple
+User={{ tomcat_user }}
+ExecStart={{ dspace_root }}/bin/start-handle-server
+
+[Install]
+WantedBy=multi-user.target

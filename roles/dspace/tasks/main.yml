@@ -218,6 +218,7 @@
 - name: Set up cron jobs
   template: src=dspace-maintenance-tasks.j2 dest=/etc/cron.d/dspace-maintenance-tasks owner=root group=root mode=0644
 
+# 2018-07: Temporary, remove task once all hosts have the systemd service below
 - name: Remove old cron jobs
   file: path=/etc/cron.d/dspace-handle-server state=absent
 

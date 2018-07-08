@@ -218,6 +218,9 @@
 - name: Set up cron jobs
   template: src=dspace-maintenance-tasks.j2 dest=/etc/cron.d/dspace-maintenance-tasks owner=root group=root mode=0644
 
+- name: Remove old cron jobs
+  file: path=/etc/cron.d/dspace-handle-server state=absent
+
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory
 

@@ -216,10 +216,7 @@
   tags: postgresql
 
 - name: Set up cron jobs
-  template: src={{ item }} dest=/etc/cron.d/{{ item | replace(".j2", "") }} owner=root group=root mode=0644
-  loop:
-    - dspace-handle-server.j2
-    - dspace-maintenance-tasks.j2
+  template: src=dspace-maintenance-tasks.j2 dest=/etc/cron.d/dspace-maintenance-tasks owner=root group=root mode=0644
 
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory

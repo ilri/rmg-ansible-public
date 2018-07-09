@@ -190,6 +190,8 @@ map $remote_addr $ua {
     104.196.152.243  'CIATBot';
     # 2017-11-08 Random Chinese host grabbing 20,000 PDFs
     ~124\.17\.34\.     'ChineseBot';
+    # 2018-07-10 mystery client on Google Cloud
+    35.227.26.162    'Bot';
     default          $http_user_agent;
 }
 

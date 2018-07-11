@@ -11,7 +11,7 @@
       - glusterfs-server
 
   - name: Start & enable glusterd service
-    service: name=glusterd state=started enabled=true
+    systemd: name=glusterd state=started enabled=true
 
   # belongs in a proper "storage" role, but this will have to do for now
   - name: Remove irqbalance

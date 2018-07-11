@@ -20,7 +20,7 @@
     when: letsencrypt_service is changed or letsencrypt_timer is changed
 
   - name: Start and enable systemd timer to renew Let's Encrypt certs
-    service: name=renew-letsencrypt.timer state=started enabled=yes
+    systemd: name=renew-letsencrypt.timer state=started enabled=yes
 
   - name: Download certbot
     get_url: dest={{ letsencrypt_certbot_path }} url=https://dl.eff.org/certbot-auto mode=700

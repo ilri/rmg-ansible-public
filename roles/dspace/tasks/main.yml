@@ -179,7 +179,7 @@
   tags: tomcat
 
 - name: Enable Tomcat
-  service: name=tomcat{{ tomcat_version_major }} enabled=yes
+  systemd: name=tomcat{{ tomcat_version_major }} enabled=yes
   tags: tomcat
 
 - name: Prepare tomcat user's home folder

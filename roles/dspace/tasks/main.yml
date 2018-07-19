@@ -150,7 +150,7 @@
 
 # From upstream: https://jdbc.postgresql.org/download.html
 - name: Copy PostgreSQL JDBC library
-  copy: src=postgresql-42.2.2.jar dest=/usr/share/tomcat{{ tomcat_version_major }}/lib/postgresql-42.2.2.jar mode=0644 owner=root group=root
+  copy: src=postgresql-42.2.4.jar dest=/usr/share/tomcat{{ tomcat_version_major }}/lib/postgresql-42.2.4.jar mode=0644 owner=root group=root
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
@@ -160,6 +160,7 @@
   loop:
     - postgresql-42.1.4.jar
     - postgresql-42.2.1.jar
+    - postgresql-42.2.2.jar
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

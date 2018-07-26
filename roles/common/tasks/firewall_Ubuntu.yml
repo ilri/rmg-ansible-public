@@ -41,6 +41,18 @@
     when: ansible_distribution_major_version is version_compare('15', '>=')
     apt: name=iptables-persistent state=absent
     tags: packages
+
+  # remove old iptables rules and restart new firewall service to make sure its
+  # state is as intended (ie, in case system was upgraded from Ubuntu 14.04).
+  - name: Remove old iptables rules
+    when: ansible_distribution_major_version is version_compare('15', '>=')
+    file: path={{ item }} state=absent
+    loop:
+      - /etc/iptables/rules.v4
+      - /etc/iptables/rules.v6
+    notify:
+      - restart firewalld
+
   tags: firewall
 
 # vim: set sw=2 ts=2:

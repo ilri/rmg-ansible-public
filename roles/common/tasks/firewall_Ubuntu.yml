@@ -52,7 +52,6 @@
       - /etc/iptables/rules.v6
     notify:
       - restart firewalld
-
   tags: firewall
 
 # vim: set sw=2 ts=2:

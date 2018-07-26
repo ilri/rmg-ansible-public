@@ -1,6 +1,5 @@
 ---
-# Use iptables-persistent on Debian 7
-# Use firewalld on Debian 8
+# Use iptables-persistent on Debian 7 and firewalld on Debian 8.
 
 - block:
   - name: Install iptables-persistent

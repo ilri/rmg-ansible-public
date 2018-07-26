@@ -36,6 +36,11 @@
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
+
+  - name: Remove iptables-persistent
+    when: ansible_distribution_major_version is version_compare('15', '>=')
+    apt: name=iptables-persistent state=absent
+    tags: packages
   tags: firewall
 
 # vim: set sw=2 ts=2:

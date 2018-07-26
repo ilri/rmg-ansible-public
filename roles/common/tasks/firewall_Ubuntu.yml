@@ -1,5 +1,5 @@
 ---
-# Use iptables-persistent on Ubuntu 14 & firewalld on Ubunt 15 onwards
+# Use iptables-persistent on Ubuntu 14 and firewalld on Ubuntu 15 and up.
 
 - block:
   - name: Install iptables-persistent

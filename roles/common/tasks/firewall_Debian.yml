@@ -37,6 +37,22 @@
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
+
+  - name: Remove iptables-persistent
+    when: ansible_distribution_major_version is version_compare('8', '==')
+    apt: name=iptables-persistent state=absent
+    tags: packages
+
+  # remove old iptables rules and restart new firewall service to make sure its
+  # state is as intended (ie, in case system was upgraded from Debian 7).
+  - name: Remove old iptables rules
+    when: ansible_distribution_major_version is version_compare('8', '==')
+    file: path={{ item }} state=absent
+    loop:
+      - /etc/iptables/rules.v4
+      - /etc/iptables/rules.v6
+    notify:
+      - restart firewalld
   tags: firewall
 
 # vim: set sw=2 ts=2:

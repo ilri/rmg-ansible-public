@@ -23,15 +23,18 @@
   - name: Configure repository of ILRI CentOS packages
     copy: src=ilri.repo dest=/etc/yum.repos.d/ilri.repo owner=root group=root mode=0644
 
-  - name: Install packages
-    yum: name={{ item }} state=present
-    loop:
+  - name: Set CentOS base packages
+    set_fact:
+      centos_base_packages:
       - git
       - acpid
       - lsof
       - sysstat
       - tmux
       - vim
+
+  - name: Install base packages
+    yum: name={{ centos_base_packages }} state=present
   tags: packages
 
 # vim: set ts=2 sw=2:

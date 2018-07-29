@@ -11,27 +11,30 @@
   - name: Upgrade base OS
     apt: upgrade=dist update_cache=yes cache_valid_time=3600
 
+  - name: Set Ubuntu base packages
+    set_fact:
+      ubuntu_base_packages:
+        - git
+        - tmux
+        - iotop
+        - htop
+        - strace
+        - s3cmd
+        - cron-apt
+        - safe-rm
+        - debian-goodies
+        - mosh
+        - python-pycurl # for ansible's apt_repository
+        - lzop
+        - vim
+        - acpid
+        - schedtool
+        - debconf
+        - debconf-utils
+        - software-properties-common
+
   - name: Install base packages
-    apt: name={{ item }} state=present update_cache=yes
-    loop:
-      - git
-      - tmux
-      - iotop
-      - htop
-      - strace
-      - s3cmd
-      - cron-apt
-      - safe-rm
-      - debian-goodies
-      - mosh
-      - python-pycurl # for ansible's apt_repository
-      - lzop
-      - vim
-      - acpid
-      - schedtool
-      - debconf
-      - debconf-utils
-      - software-properties-common
+    apt: pkg={{ ubuntu_base_packages }} state=present update_cache=yes
 
   - name: Security hardening (CIS Benchmark 1.0)
     apt: name={{ item }} state=absent purge=yes

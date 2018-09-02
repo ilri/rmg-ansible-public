@@ -160,7 +160,7 @@
   loop:
     - postgresql-42.2.1.jar
     - postgresql-42.2.2.jar
-    - postgresql-42.2.5.jar
+    - postgresql-42.2.4.jar
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

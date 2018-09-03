@@ -126,6 +126,11 @@ server {
         proxy_set_header User-Agent $ua;
     }
 
+    # AReS explorer
+    location /explorer {
+        proxy_pass https://codeobia_ares/explorer;
+    }
+
     # log rest requests
     location /rest {
         access_log /var/log/nginx/rest.log;
@@ -174,6 +179,15 @@ upstream tomcat_http {
     {% else %}
     server 127.0.0.1:8001;
     {% endif %}
+
+    # The keepalive parameter sets the maximum number of idle keepalive connections
+    # to upstream servers that are preserved in the cache of each worker process. When
+    # this number is exceeded, the least recently used connections are closed.
+    keepalive 60;
+}
+
+upstream codeobia_ares {
+    server ares.codeobia.com:443;
 
     # The keepalive parameter sets the maximum number of idle keepalive connections
     # to upstream servers that are preserved in the cache of each worker process. When

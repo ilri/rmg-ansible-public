@@ -53,7 +53,7 @@ dspace_db_password: Mz97%tU64J
 
 # default mail server (development hosts should override this to blank in host_vars)
 dspace_mail_server: smtp.serv.cgnet.com
-dspace_ldap_server: ldaps://svcgroot2.cgiarad.org:3269
+dspace_ldap_server: ldaps://svcgroot2.cgiarad.org:3269/
 
 # CMYK/RGB iccprofiles for DSpace 5.6+ PDF thumbnails
 dspace_ghostscript_prefix: /usr/share/ghostscript/9.18

@@ -51,6 +51,14 @@ dspace_db_name: dspace
 dspace_db_user: dspace
 dspace_db_password: Mz97%tU64J
 
+dspace_statistics_db_name: dspacestatistics
+dspace_statistics_db_user: dspacestatistics
+dspace_statistics_db_password: dspacestatistics
+dspace_statistics_db_host: localhost
+dspace_statistics_api_git_repo: https://github.com/alanorth/dspace-statistics-api.git
+dspace_statistics_api_git_version: v0.3.2
+dspace_statistics_api_dir: /opt/ilri/dspace-statistics-api
+
 # default mail server (development hosts should override this to blank in host_vars)
 dspace_mail_server: smtp.serv.cgnet.com
 dspace_ldap_server: ldaps://svcgroot2.cgiarad.org:3269/

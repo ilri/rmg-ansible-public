@@ -1,0 +1,20 @@
+[Unit]
+Description=DSpace Statistics API
+After=network.target
+
+[Service]
+Environment=DATABASE_NAME={{ dspace_statistics_db_name }}
+Environment=DATABASE_USER={{ dspace_statistics_db_user }}
+Environment=DATABASE_PASS={{ dspace_statistics_db_password }}
+Environment=DATABASE_HOST={{ dspace_statistics_db_host }}
+User=nobody
+Group=nogroup
+WorkingDirectory={{ dspace_statistics_api_dir }}
+ExecStart={{ dspace_statistics_api_dir}}/venv/bin/gunicorn \
+          --bind 127.0.0.1:5000                            \
+          app:api
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

@@ -35,6 +35,7 @@
       - postgresql-contrib-{{ pg_version }} # for DSpace functions
       - imagemagick # for DSpace 5 thumbnails
       - ghostscript # for DSpace 5 PDF thumbnails
+      - python3-pip # for dspace-statistics-api
 
 - name: Install DSpace system dependencies
   apt: pkg={{ dspace_system_dependencies }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
@@ -209,15 +210,27 @@
 - name: Copy Maven build.properties
   template: src=build.properties.j2 dest={{ tomcat_user_home }}/src/git/DSpace/{{ nginx_server_name }}.properties owner={{ tomcat_user }} group={{ tomcat_group }} mode=0640
 
-- name: Create DSpace postgres user
-  postgresql_user: name={{ dspace_db_user }} password={{ dspace_db_password }}
+- name: Create postgres users
+  postgresql_user: name={{ item.name }} password={{ item.password }}
+  loop:
+    - { name: '{{ dspace_db_user }}', password: '{{ dspace_db_password }}' }
+    - { name: '{{ dspace_statistics_db_user }}', password: '{{ dspace_statistics_db_password }}' }
   become_user: postgres
   tags: postgresql
 
-- name: Create DSpace postgres database
-  postgresql_db: name={{ dspace_db_name }} encoding='UTF-8' template='template0' owner={{ dspace_db_user }}
+- name: Create postgres databases
+  postgresql_db: name={{ item.name }} encoding='UTF-8' template='template0' owner={{ item.owner }}
+  loop:
+    - { name: '{{ dspace_db_name }}', owner: '{{ dspace_db_user }}' }
+    - { name: '{{ dspace_statistics_db_user }}', owner: '{{ dspace_statistics_db_user }}' }
   become_user: postgres
   tags: postgresql
+
+- name: Clone DSpace statistics API repository
+  git: repo={{ dspace_statistics_api_git_repo }} dest={{ dspace_statistics_api_dir }} version={{ dspace_statistics_api_git_version }} depth=1
+
+- name: Install DSpace statistics API dependencies
+  pip: requirements=requirements.txt chdir={{ dspace_statistics_api_dir }} virtualenv=venv virtualenv_command=pyvenv-3.5
 
 - name: Set up cron jobs
   template: src=dspace-maintenance-tasks.j2 dest=/etc/cron.d/dspace-maintenance-tasks owner=root group=root mode=0644
@@ -226,17 +239,29 @@
 - name: Remove old cron jobs
   file: path=/etc/cron.d/dspace-handle-server state=absent
 
-- name: Copy systemd service to start Handle server
-  template: src=dspace-handle-server.service.j2 dest=/etc/systemd/system/dspace-handle-server.service mode=0644 owner=root group=root
-  register: dspace_handle_service
+- name: Copy systemd service units
+  template: src={{ item.src }} dest=/etc/systemd/system/{{ item.name }} mode=0640 owner=root group=root
+  loop:
+    - { 'src': dspace-handle-server.service.j2, 'name': dspace-handle-server.service }
+    - { 'src': dspace-statistics-api.service.j2, 'name': dspace-statistics-api.service }
+    - { 'src': dspace-statistics-indexer.service.j2, 'name': dspace-statistics-indexer.service }
+  register: dspace_systemd_services
+
+- name: Copy systemd timer unit
+  copy: src=dspace-statistics-indexer.timer dest=/etc/systemd/system/dspace-statistics-indexer.timer mode=0644 owner=root group=root
+  register: dspace_systemd_timer
 
 # need to reload to pick up service/timer changes
 - name: Reload systemd daemon
   command: /bin/systemctl daemon-reload
-  when: dspace_handle_service is changed
+  when: dspace_systemd_services is changed or dspace_systemd_timer is changed
 
-- name: Start and enable systemd service for Handle server
-  systemd: name=dspace-handle-server.service state=started enabled=yes
+- name: Start and enable systemd units
+  systemd: name={{ item }} state=started enabled=yes
+  loop:
+    - dspace-handle-server.service
+    - dspace-statistics-api.service
+    - dspace-statistics-indexer.timer
 
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory

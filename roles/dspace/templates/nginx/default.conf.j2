@@ -133,6 +133,11 @@ server {
 
     # log rest requests
     location /rest {
+        location ~ /rest/statistics/?(.*) {
+            access_log /var/log/nginx/statistics.log;
+            proxy_pass http://statistics_api/$1$is_args$args;
+        }
+
         access_log /var/log/nginx/rest.log;
         proxy_pass http://tomcat_http;
     }
@@ -193,6 +198,10 @@ upstream codeobia_ares {
     # to upstream servers that are preserved in the cache of each worker process. When
     # this number is exceeded, the least recently used connections are closed.
     keepalive 60;
+}
+
+upstream statistics_api {
+    server 127.0.0.1:5000;
 }
 
 # Assign a custom user agent to certain client IPs who are sending hundreds or

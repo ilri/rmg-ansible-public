@@ -215,6 +215,10 @@ map $remote_addr $ua {
     ~124\.17\.34\.     'bot';
     # 2018-07-10 mystery client on Google Cloud
     35.227.26.162    'bot';
+    # 2018-09-27 mystery client on Google Cloud
+    35.237.175.180   'bot';
+    # 2018-09-27 mystery client on Cox
+    68.6.87.12       'bot';
     default          $http_user_agent;
 }
 

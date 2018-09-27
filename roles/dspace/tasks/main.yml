@@ -204,7 +204,7 @@
   when: maven_username is defined and maven_password is defined
 
 - name: Clone DSpace repository
-  git: repo={{ dspace_git_repo }} dest={{ tomcat_user_home }}/src/git/DSpace version={{ dspace_git_branch }} depth=1
+  git: repo={{ dspace_git_repo }} dest={{ tomcat_user_home }}/src/git/DSpace version={{ dspace_git_branch }} force=yes depth=1
   become_user: '{{ tomcat_user }}'
 
 - name: Copy Maven build.properties

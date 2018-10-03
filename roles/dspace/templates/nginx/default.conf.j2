@@ -192,7 +192,7 @@ upstream tomcat_http {
 }
 
 upstream codeobia_ares {
-    server ares.codeobia.com:443;
+    server {{ dspace_explorer_server }}:443;
 
     # The keepalive parameter sets the maximum number of idle keepalive connections
     # to upstream servers that are preserved in the cache of each worker process. When

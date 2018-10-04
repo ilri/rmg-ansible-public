@@ -36,6 +36,7 @@
       - imagemagick # for DSpace 5 thumbnails
       - ghostscript # for DSpace 5 PDF thumbnails
       - python3-pip # for dspace-statistics-api
+      - python3-dev # for dspace-statistics-api
 
 - name: Install DSpace system dependencies
   apt: pkg={{ dspace_system_dependencies }} state=present install_recommends=no update_cache=yes cache_valid_time=3600

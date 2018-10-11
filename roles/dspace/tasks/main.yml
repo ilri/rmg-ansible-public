@@ -41,6 +41,13 @@
 - name: Install DSpace system dependencies
   apt: pkg={{ dspace_system_dependencies }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
 
+# 2018-10-11: See https://usn.ubuntu.com/3785-1
+- name: Enable PDF support in ImageMagick
+  lineinfile:
+    path: /etc/ImageMagick-6/policy.xml
+    regexp: 'pattern="PDF"'
+    state: absent
+
 # On Ubuntu 14.04 and 16.04 we install Ruby and Node.js using RVM and NVM after
 # the initial ansible provisioning. RVM requires these packages to compile Ruby
 # and some of the gems that are used in the DSpace 5 Mirage 2 build process.

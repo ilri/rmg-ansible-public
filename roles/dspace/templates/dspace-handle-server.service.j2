@@ -4,7 +4,7 @@ Description=DSpace Handle Server
 ConditionDirectoryNotEmpty={{ dspace_root }}/handle-server
 
 [Service]
-Type=simple
+Type=forking
 User={{ tomcat_user }}
 ExecStart={{ dspace_root }}/bin/start-handle-server
 

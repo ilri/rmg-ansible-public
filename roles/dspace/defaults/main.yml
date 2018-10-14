@@ -66,7 +66,7 @@ dspace_mail_server: smtp.serv.cgnet.com
 dspace_ldap_server: ldaps://azcgneroot2.cgiarad.org:636/
 
 # CMYK/RGB iccprofiles for DSpace 5.6+ PDF thumbnails
-dspace_ghostscript_prefix: /usr/share/ghostscript/9.18
+dspace_ghostscript_prefix: /usr/share/ghostscript/current
 
 # distribution can be oracle or openjdk
 java_distribution: oracle

@@ -3,11 +3,7 @@ Description=DSpace Statistics Indexer
 After=tomcat7.target
 
 [Service]
-Environment=SOLR_SERVER=http://localhost:8081/solr
-Environment=DATABASE_NAME={{ dspace_statistics_db_name }}
-Environment=DATABASE_USER={{ dspace_statistics_db_user }}
-Environment=DATABASE_PASS={{ dspace_statistics_db_password }}
-Environment=DATABASE_HOST={{ dspace_statistics_db_host }}
+EnvironmentFile=/etc/dspace-statistics-api
 User=nobody
 Group=nogroup
 WorkingDirectory={{ dspace_statistics_api_dir }}

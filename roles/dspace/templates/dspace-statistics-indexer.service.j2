@@ -7,7 +7,7 @@ EnvironmentFile=/etc/dspace-statistics-api
 User=nobody
 Group=nogroup
 WorkingDirectory={{ dspace_statistics_api_dir }}
-ExecStart={{ dspace_statistics_api_dir}}/venv/bin/python indexer.py
+ExecStart={{ dspace_statistics_api_dir}}/venv/bin/python -m dspace_statistics_api.indexer
 
 [Install]
 WantedBy=multi-user.target

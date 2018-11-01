@@ -61,6 +61,7 @@
       - proj-devel.x86_64 # for some R libraries
       - proj-epsg.x86_64 # for some R libraries
       - fftw-devel.x86_64 # for gromacs
+      - python36
   tags: packages
 
 - name: Install extra packages

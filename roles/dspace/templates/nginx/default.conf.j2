@@ -105,6 +105,9 @@ server {
     # tell robots not to index or follow links on dynamic pages (because we can't use * in robots.txt!)
     # see: https://jira.duraspace.org/browse/DS-2962
     location ~ /handle/[0-9]+/[0-9]+/(browse|discover|search-filter|most-popular) {
+        # rate limit for dynamic pages
+        limit_req zone=dynamicpages;
+
         add_header X-Robots-Tag "none";
         proxy_pass http://tomcat_http;
     }
@@ -259,5 +262,15 @@ map $http_user_agent $limit_bots {
 # which should be about 15,999 sessions too many for now as I'm currently only
 # worried about Baidu (see mapping above).
 limit_req_zone $limit_bots zone=badbots:1m rate=1r/m;
+
+# Zone for limiting requests to dynamic pages like browse and discover that are
+# of no use to bots and cause a high load on the server. For now I think I will
+# use a limit of 12, because I imagine a human user could legitimately click a
+# link every five seconds, but bots like Facebook are requesting 300/minute.
+#
+# The user's IP address is used as the key.
+#
+# See: https://www.nginx.com/blog/rate-limiting-nginx/
+limit_req_zone $binary_remote_addr zone=dynamicpages:1m rate=12r/m;
 
 # vim: set ts=4 sw=4:

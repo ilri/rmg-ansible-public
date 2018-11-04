@@ -104,7 +104,7 @@ server {
 
     # tell robots not to index or follow links on dynamic pages (because we can't use * in robots.txt!)
     # see: https://jira.duraspace.org/browse/DS-2962
-    location ~ /handle/[0-9]+/[0-9]+/(browse|discover|search-filter) {
+    location ~ /handle/[0-9]+/[0-9]+/(browse|discover|search-filter|most-popular) {
         add_header X-Robots-Tag "none";
         proxy_pass http://tomcat_http;
     }

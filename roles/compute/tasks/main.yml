@@ -62,6 +62,7 @@
       - proj-epsg.x86_64 # for some R libraries
       - fftw-devel.x86_64 # for gromacs
       - python36
+      - perl-Env.noarch # for masurca
   tags: packages
 
 - name: Install extra packages

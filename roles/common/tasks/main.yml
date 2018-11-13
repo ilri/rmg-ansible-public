@@ -34,6 +34,16 @@
   import_tasks: ntp.yml
   tags: ntp
 
+# this should work on CentOS 7+ and Ubuntu 16.04+
+- block:
+  - name: Create systemd-journald drop-in config directory
+    file: path=/etc/systemd/journald.conf.d owner=root group=root mode=0755 state=directory
+
+  - name: Enable persistent systemd journal
+    copy: src=00-persistent-journal.conf dest=/etc/systemd/journald.conf.d/00-persistent-journal.conf owner=root group=root mode=0644
+  when: ansible_service_mgr == 'systemd'
+  tags: systemd-journald
+
 - name: Reconfigure /etc/sysctl.conf on Debian and Ubuntu
   when: ansible_distribution != "CentOS"
   template: src=sysctl_{{ ansible_distribution }}.j2 dest=/etc/sysctl.conf owner=root group=root mode=0644

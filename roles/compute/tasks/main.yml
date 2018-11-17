@@ -63,6 +63,7 @@
       - fftw-devel.x86_64 # for gromacs
       - python36
       - perl-Env.noarch # for masurca
+      - openmpi # optional for abyss
   tags: packages
 
 - name: Install extra packages

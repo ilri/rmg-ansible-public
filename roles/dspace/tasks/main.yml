@@ -1,19 +1,4 @@
 ---
-# We used Oracle Java via the Webupd8 PPA for a few years, but OpenJDK is
-# considered to be the reference Java implementation as of version 8 and
-# has actually gotten pretty good anyways.
-- block:
-  - name: Add Oracle Java PPA
-    apt_repository: repo='ppa:webupd8team/java' state=present
-
-  - name: Accept Oracle license
-    debconf: name='oracle-java{{ java_version_major }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
-
-  - name: Install Oracle Java
-    apt: pkg=oracle-java{{ java_version_major }}-set-default state=present
-  when: java_distribution == 'oracle'
-  tags: java
-
 # Explicitly install OpenJDK 8 first in a separate transaction so that tomcat8
 # doesn't pull in Java 10+ via default-jre. Also, it seems there is a bug with
 # apt's dependency resolution that causes maven to pull in Java 10+ in Ubuntu

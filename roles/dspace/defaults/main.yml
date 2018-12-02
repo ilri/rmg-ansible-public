@@ -71,7 +71,7 @@ dspace_ghostscript_prefix: /usr/share/ghostscript/current
 # command to use for pyvenv (Ubuntu 16.04 is Python 3.5)
 pyvenv_command: pyvenv-3.5
 
-# distribution can be oracle or openjdk
+# distribution must be openjdk
 java_distribution: openjdk
 # version must be 8 (for now)
 java_version_major: 8

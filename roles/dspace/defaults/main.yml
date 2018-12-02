@@ -72,7 +72,7 @@ dspace_ghostscript_prefix: /usr/share/ghostscript/current
 pyvenv_command: pyvenv-3.5
 
 # distribution can be oracle or openjdk
-java_distribution: oracle
+java_distribution: openjdk
 # version must be 8 (for now)
 java_version_major: 8
 

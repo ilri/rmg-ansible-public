@@ -49,6 +49,20 @@
       - command-not-found-data
       - python3-commandnotfound
 
+  - name: Set fact for more annoying packages
+    set_fact:
+      ubuntu_more_annoying_packages:
+        - snapd
+        - lxd
+        - lxd-client
+        - liblxc1
+        - lxc-common
+        - lxcfs
+    when: ansible_distribution_version is version_compare('16.04', '>=')
+
+  - name: Remove more annoying packages
+    apt: name={{ ubuntu_more_annoying_packages }} state=absent purge=yes
+
   - name: Configure cron-apt
     import_tasks: cron-apt.yml
     tags: cron-apt

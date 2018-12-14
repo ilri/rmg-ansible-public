@@ -42,12 +42,12 @@
       - whoopsie # CIS 4.1
       - apport   # CIS 4.1
 
-  - name: Remove annoying packages
-    apt: name={{ item }} state=absent purge=yes
-    loop:
-      - command-not-found
-      - command-not-found-data
-      - python3-commandnotfound
+  - name: Set fact for annoying packages
+    set_fact:
+      ubuntu_annoying_packages:
+        - command-not-found
+        - command-not-found-data
+        - python3-commandnotfound
 
   - name: Set fact for more annoying packages
     set_fact:
@@ -61,7 +61,7 @@
     when: ansible_distribution_version is version_compare('16.04', '>=')
 
   - name: Remove more annoying packages
-    apt: name={{ ubuntu_more_annoying_packages }} state=absent purge=yes
+    apt: name={{ ubuntu_annoying_packages | union(ubuntu_more_annoying_packages) }} state=absent purge=yes
 
   - name: Configure cron-apt
     import_tasks: cron-apt.yml

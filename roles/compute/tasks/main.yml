@@ -64,6 +64,7 @@
       - python36
       - perl-Env.noarch # for masurca
       - openmpi # optional for abyss
+      - libcurl-devel # for some R libraries
   tags: packages
 
 - name: Install extra packages

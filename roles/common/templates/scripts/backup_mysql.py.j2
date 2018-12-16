@@ -73,6 +73,7 @@ def show_args():
     parser.add_argument("-n", "--notify", default="No", help="Send MySQL backup completion status via email to admin(s)")
     parser.add_argument("-d", "--directory", default=DEF_MYSQL_BACKUPS_DIR, help="Absolute path to MySQL backups directory")
     parser.add_argument("-i", "--ignore-errors", default="Yes", help="Ignore any errors occurred during the backup process i.e. don't exit on error")
+    parser.add_argument("--timestamp-filenames", default="Yes", help="Add YYYY-MM-DD timestamps to backup file names. You might want to disable this if you are rotating backups with something like restic or borg")
     args = parser.parse_args()
     return args, parser
 
@@ -109,7 +110,11 @@ host={host}
 # given a list of databases:
 #    - iterate through the list & back'em up one by one
 def backup_databases(database, auth_file, mysql_backups_dir=DEF_MYSQL_BACKUPS_DIR, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS):
-    dump_filename = "%s/%s-%s.sql" % (mysql_backups_dir, database, get_timestamp())
+    if args.timestamp_filenames:
+        dump_filename = "%s/%s-%s.sql" % (mysql_backups_dir, database, get_timestamp())
+    else:
+        dump_filename = "%s.sql" % (mysql_backups_dir, database)
+
     cmd_dump_db = "%s --defaults-extra-file=%s --events --skip-add-locks -e --opt -c %s > %s" % (BIN_MYSQLDUMP, auth_file, database, dump_filename)
     output, err, returncode = run_cmd(cmd_dump_db)
     if returncode != 0:
@@ -188,6 +193,9 @@ def main():
         ignore_errors = False
     elif args.ignore_errors.lower() == "Yes".lower():
         ignore_errors = True
+
+    if args.timestamp_filenames.lower() == "No".lower():
+        timestamp_filenames = False
 
     # create backup dest. dir
     create_backup_dir(mysql_backups_dir)

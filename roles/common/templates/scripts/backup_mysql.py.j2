@@ -109,8 +109,8 @@ host={host}
 
 # given a list of databases:
 #    - iterate through the list & back'em up one by one
-def backup_databases(database, auth_file, mysql_backups_dir=DEF_MYSQL_BACKUPS_DIR, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS):
-    if args.timestamp_filenames:
+def backup_databases(database, auth_file, mysql_backups_dir=DEF_MYSQL_BACKUPS_DIR, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS, timestamp_filenames):
+    if timestamp_filenames:
         dump_filename = "%s/%s-%s.sql" % (mysql_backups_dir, database, get_timestamp())
     else:
         dump_filename = "%s.sql" % (mysql_backups_dir, database)
@@ -220,7 +220,7 @@ def main():
             pass
         else:
             print "backing up '%s' db" % db
-            backup_databases(db, auth_file, mysql_backups_dir, notify_mail, ignore_errors)
+            backup_databases(db, auth_file, mysql_backups_dir, notify_mail, ignore_errors, timestamp_filenames)
     os.unlink(auth_file)
     print "Peace out !!"
 

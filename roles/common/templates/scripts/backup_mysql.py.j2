@@ -53,22 +53,18 @@ BIN_GZIP = "/bin/gzip"
 BIN_MAILX = "/usr/bin/mailx"
 
 
-"""
-return current timestamp, used in backup filename
-"""
+# return current timestamp, used in backup filename
 def get_timestamp():
     return time.strftime("%Y-%m-%d")
 
 
-"""
-show cmd-line args & parse'em
-    -u, --username -> mysql username used for backup op.
-    -p, --password -> mysql user's password
-    -H, --host -> mysql host
-    -n, --notify -> send cronjob status via mail notifications
-    -d, --destination -> path mysql backups dir
-    -i, --ignore-errors -> ignore any errors occurred i.e. don't exit on error
-"""
+# show cmd-line args & parse'em
+#    -u, --username -> mysql username used for backup op.
+#    -p, --password -> mysql user's password
+#    -H, --host -> mysql host
+#    -n, --notify -> send cronjob status via mail notifications
+#    -d, --destination -> path mysql backups dir
+#    -i, --ignore-errors -> ignore any errors occurred i.e. don't exit on error
 def show_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-u", "--username", default=DEF_MYSQL_USERNAME, help="MySQL superuser used for the backup operation")
@@ -78,30 +74,25 @@ def show_args():
     parser.add_argument("-d", "--directory", default=DEF_MYSQL_BACKUPS_DIR, help="Absolute path to MySQL backups directory")
     parser.add_argument("-i", "--ignore-errors", default="Yes", help="Ignore any errors occurred during the backup process i.e. don't exit on error")
     args = parser.parse_args()
-    return args,parser
+    return args, parser
 
 
-"""
-Run the given cmd & return the output
-"""
+# Run the given cmd & return the output
 def run_cmd(cmd):
     proc = sb.Popen(cmd, stdout=sb.PIPE, stderr=sb.STDOUT, shell=True)
     output, err = proc.communicate()
     return output, err, proc.returncode
 
-"""
-Using mysql creds. provided by user:
-    - return a list of all dbs
-"""
+
+# Using mysql creds. provided by user:
+#    - return a list of all dbs
 def get_databases(auth_file):
     cmd_list_dbs = "%s --defaults-extra-file=%s --silent -N -e 'show databases'" % (BIN_MYSQL, auth_file)
     return run_cmd(cmd_list_dbs)
 
 
-"""
-Generate a temporary login credentials file for
-use in mysql/mysqldump
-"""
+# Generate a temporary login credentials file for
+# use in mysql/mysqldump
 def generate_credentials_file(mysql_user, mysql_pass, mysql_host):
     auth_template = """
 [client]
@@ -114,10 +105,9 @@ host={host}
         tmpfile.write(auth_template.format(**auth_dict))
     return tmpfile.name
 
-"""
-given a list of databases:
-    - iterate through the list & back'em up one by one
-"""
+
+# given a list of databases:
+#    - iterate through the list & back'em up one by one
 def backup_databases(database, auth_file, mysql_backups_dir=DEF_MYSQL_BACKUPS_DIR, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS):
     dump_filename = "%s/%s-%s.sql" % (mysql_backups_dir, database, get_timestamp())
     cmd_dump_db = "%s --defaults-extra-file=%s --events --skip-add-locks -e --opt -c %s > %s" % (BIN_MYSQLDUMP, auth_file, database, dump_filename)
@@ -126,8 +116,9 @@ def backup_databases(database, auth_file, mysql_backups_dir=DEF_MYSQL_BACKUPS_DI
 
         job_status = "Failed to backup '%s' db.\nOutput: %s\nError: %s\nReturn Code: %d" % (database, output, err, returncode)
         print job_status
-        #send mail notification
-        if notify: sendmail_notification(job_status)
+        # send mail notification
+        if notify:
+            sendmail_notification(job_status)
         if not ignore_errors:
             os.unlink(auth_file)
             sys.exit(returncode)
@@ -136,27 +127,25 @@ def backup_databases(database, auth_file, mysql_backups_dir=DEF_MYSQL_BACKUPS_DI
         print "Done backing up '%s' db" % database
 
 
-"""
-Compress dump file using gzip
-"""
+# Compress dump file using gzip
 def compress_backup(dump_filename, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS):
     cmd_gzip_dump = "%s -c %s > %s.gz" % (BIN_GZIP, dump_filename, dump_filename)
     output, err, returncode = run_cmd(cmd_gzip_dump)
     if returncode != 0:
         job_status = "Failed to compress %s sql backup file.\nOutput: %s\nReturn Code: %d" % (dump_filename, output, returncode)
         print job_status
-        #send mail notification
-        if notify: sendmail_notification(job_status)
-        if not ignore_errors: sys.exit(returncode)
+        # send mail notification
+        if notify:
+            sendmail_notification(job_status)
+        if not ignore_errors:
+            sys.exit(returncode)
     else:
         print "Done compressing %s sql backup file" % dump_filename
         os.unlink(dump_filename)
 
 
-"""
-Send mail notifications using mailx which will get mail configs./options
-from ~/.mailrc
-"""
+# Send mail notifications using mailx which will get mail configs./options
+# from ~/.mailrc
 def sendmail_notification(cronjob_status):
     mailrc_opts = "-S from=%s -S smtp=%s -S smtp-auth=login -S smtp-auth-user=%s -S smtp-auth-password=%s" % (MAILRC_FROM_EMAIL, MAILRC_SMTP_SERVER, MAILRC_AUTH_USER, MAILRC_AUTH_PASS)
     mail_subject = "%s - MySQL backup status" % socket.gethostname()
@@ -168,21 +157,17 @@ def sendmail_notification(cronjob_status):
         print "Notification mail(s) sent to %s" % DEF_ADMIN_EMAILS
 
 
-"""
-Create backup destination dir. if nonexistent
-"""
+# Create backup destination dir. if nonexistent
 def create_backup_dir(backup_dir):
     if not os.path.exists(backup_dir):
         print "Backup directory '%s' doesn't exist. Creating it..." % backup_dir
         os.makedirs(backup_dir, 0755)
 
 
-"""
-main function:
-    - Parse user input a.k.a cmd-line args
-    - backup all dbs except information_schema
-    - peace out!!
-"""
+# main function:
+#     - Parse user input a.k.a cmd-line args
+#     - backup all dbs except information_schema
+#     - peace out!!
 def main():
     args, parser = show_args()
     if args.username is None or args.password is None or args.host is None:
@@ -215,7 +200,7 @@ def main():
     if retcode != 0:
         job_status = "Couldn't get a list of databases.\nOutput: %s\nError: %s\nReturn Code: %d" % (output, err, retcode)
         print job_status
-        #send mail notification
+        # send mail notification
         if notify_mail:
             sendmail_notification(job_status)
         os.unlink(auth_file)

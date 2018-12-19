@@ -78,6 +78,30 @@
       - "{{ restic_binary_path }}-0.9.0"
       - "{{ restic_binary_path }}-0.9.1"
       - "{{ restic_binary_path }}-0.9.2"
+
+  - name: Copy restic systemd service units
+    template: src=restic-backup.service.j2 dest=/etc/systemd/system/restic-backup.service mode=0644 owner=root group=root
+    register: restic_systemd_service
+
+  - name: Copy restic systemd timer unit
+    copy: src=restic-backup.timer dest=/etc/systemd/system/restic-backup.timer mode=0644 owner=root group=root
+    register: restic_systemd_timer
+
+  - name: Copy restic-backup environment
+    template: src=restic-backup-environment.j2 dest=/etc/restic-backup mode=0660 owner=root group=root
+    register: restic_systemd_environment
+
+  # need to reload to pick up service/timer/environment changes
+  - name: Reload systemd daemon
+    command: /bin/systemctl daemon-reload
+    when: restic_systemd_service is changed
+          or restic_systemd_timer is changed
+          or restic_systemd_environment is changed
+
+  - name: Start and enable restic systemd timer
+    systemd: name=restic-backup.timer state=started enabled=yes
+
+  when: restic_password is defined
   tags: restic
 
 # vim: set sw=2 ts=2:

@@ -19,11 +19,11 @@
   systemd: name=systemd-timesyncd state=started enabled=yes
 
 - name: Uninstall ntp on modern Ubuntu/Debian
-  apt: name=ntp state=absent update_cache=yes
+  apt: name=ntp state=absent update_cache=yes cache_valid_time=3600
   when: ansible_os_family == 'Debian' and ansible_service_mgr == 'systemd'
 
 - name: Install ntp on old Ubuntu/Debian
-  apt: name=ntp state=present update_cache=yes
+  apt: name=ntp state=present update_cache=yes cache_valid_time=3600
   when: ansible_os_family == 'Debian' and ansible_service_mgr != 'systemd'
 
 # 2018-02-19: Make sure ntp is stopped and removed from CentOS machines before

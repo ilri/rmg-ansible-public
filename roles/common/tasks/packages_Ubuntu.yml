@@ -34,7 +34,7 @@
         - software-properties-common
 
   - name: Install base packages
-    apt: pkg={{ ubuntu_base_packages }} state=present update_cache=yes
+    apt: pkg={{ ubuntu_base_packages }} state=present update_cache=yes cache_valid_time=3600
 
   - name: Security hardening (CIS Benchmark 1.0)
     apt: name={{ item }} state=absent purge=yes

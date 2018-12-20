@@ -19,7 +19,7 @@
     - packages
 
 - name: Install Oracle Java 8
-  apt: name=oracle-java8-installer state=present update_cache=yes
+  apt: name=oracle-java8-installer state=present update_cache=yes cache_valid_time=3600
   tags:
     - java
     - packages

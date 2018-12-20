@@ -18,10 +18,11 @@
   with_fileglob:
     - scripts/*.sh
 
-- name: Copy MySQL backup script
-  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0750
+- name: Copy backup script templates
+  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
   loop:
     - { src: "scripts/backup_mysql.py.j2", dest: "/opt/ilri/scripts/backup_mysql.py" }
+    - { src: "scripts/backup_postgresql.py.j2", dest: "/opt/ilri/scripts/backup_postgresql.py" }
 
 # Install the restic binary as restic-0.9.3 to make version handling easier, as
 # I can then just test if my expected version exists rather than trying to parse

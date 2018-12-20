@@ -1,0 +1,170 @@
+#!/usr/bin/env python2
+
+"""
+Purpose:
+    - Backup all PostgreSQL databases except template0, template1, and postgres
+    - Send PostgreSQL backup completion status via email to admin(s)
+NOTE:
+    - Since SELinux policy on CentOS 6 doesn't allow crond to read root's ~/.mailrc,
+    we had to hardcode mailrc options in this script.
+"""
+
+import argparse
+import json
+import os
+import socket
+import subprocess as sb
+import sys
+import tempfile
+import time
+
+# If a backup process has failed, send a mail notification to
+# admins using mailx
+DEF_SEND_MAIL = False
+
+# Attempt backing up all dbs i.e. if an error occurs
+# when backing up a database, ignore it & continue
+# backing up the rest
+DEF_IGNORE_ERRORS = True
+
+# A space separated list of admins' email address(es) which
+# notification emails will be sent to.
+DEF_ADMIN_EMAILS = "{{ sysadmin_emails|join(" ") }}"
+
+# Default absolute path to PostgreSQL backups directory
+DEF_POSTGRESQL_BACKUPS_DIR = "/home/backup/postgresql"
+
+# SMTP configs. for mandrill API. Circumvents SELinux's policy which
+# prevents crond from reading root's ~/.mailrc
+MAILRC_FROM_EMAIL = "{{ mailrc_from_email }}"
+MAILRC_SMTP_SERVER = "{{ mailrc_smtp_server }}"
+MAILRC_AUTH_USER = "{{ mailrc_auth_user }}"
+MAILRC_AUTH_PASS = "{{ mailrc_auth_pass }}"
+
+# Paths to binaries
+BIN_PSQL = "/usr/bin/psql"
+BIN_PGDUMP = "/usr/bin/pg_dump"
+BIN_MAILX = "/usr/bin/mailx"
+
+
+# return current timestamp, used in backup filename
+def get_timestamp():
+    return time.strftime("%Y-%m-%d")
+
+
+# show cmd-line args & parse'em
+#    -n, --notify -> send cronjob status via mail notifications
+#    -d, --destination -> path to postgres backups dir
+#    -i, --ignore-errors -> ignore any errors occurred i.e. don't exit on error
+def show_args():
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-n", "--notify", default="No", help="Send PostgreSQL backup completion status via email to admin(s)")
+    parser.add_argument("-d", "--directory", default=DEF_POSTGRESQL_BACKUPS_DIR, help="Absolute path to PostgreSQL backups directory")
+    parser.add_argument("-i", "--ignore-errors", default="Yes", help="Ignore any errors occurred during the backup process i.e. don't exit on error")
+    parser.add_argument("--timestamp-filenames", default="Yes", help="Add YYYY-MM-DD timestamps to backup file names. You might want to disable this if you are rotating backups with something like restic or borg")
+    args = parser.parse_args()
+    return args, parser
+
+
+# Run the given cmd & return the output
+def run_cmd(cmd):
+    proc = sb.Popen(cmd, stdout=sb.PIPE, stderr=sb.STDOUT, shell=True)
+    output, err = proc.communicate()
+    return output, err, proc.returncode
+
+
+def get_databases():
+    cmd_list_dbs = "%s -t -c 'SELECT datname FROM pg_database';" % (BIN_PSQL)
+    return run_cmd(cmd_list_dbs)
+
+
+# given a list of databases:
+#    - iterate through the list & back'em up one by one
+def backup_databases(database, timestamp_filenames, postgresql_backups_dir=DEF_POSTGRESQL_BACKUPS_DIR, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS):
+    if timestamp_filenames:
+        dump_filename = "%s/%s-%s.backup" % (postgresql_backups_dir, database, get_timestamp())
+    else:
+        dump_filename = "%s/%s.backup" % (postgresql_backups_dir, database)
+
+    cmd_dump_db = "%s -b -v -o --format=custom -f %s %s" % (BIN_PGDUMP, dump_filename, database)
+    output, err, returncode = run_cmd(cmd_dump_db)
+    if returncode != 0:
+
+        job_status = "Failed to backup '%s' db.\nOutput: %s\nError: %s\nReturn Code: %d" % (database, output, err, returncode)
+        print job_status
+        # send mail notification
+        if notify:
+            sendmail_notification(job_status)
+        if not ignore_errors:
+            sys.exit(returncode)
+    else:
+        print "Done backing up '%s' db" % database
+
+
+# Send mail notifications using mailx which will get mail configs./options
+# from ~/.mailrc
+def sendmail_notification(cronjob_status):
+    mailrc_opts = "-S from=%s -S smtp=%s -S smtp-auth=login -S smtp-auth-user=%s -S smtp-auth-password=%s" % (MAILRC_FROM_EMAIL, MAILRC_SMTP_SERVER, MAILRC_AUTH_USER, MAILRC_AUTH_PASS)
+    mail_subject = "%s - PostgreSQL backup status" % socket.gethostname()
+    cmd_sendmail = "echo %s | %s %s -s '%s' %s" % (json.dumps(cronjob_status), BIN_MAILX, mailrc_opts, mail_subject, DEF_ADMIN_EMAILS)
+    output, err, returncode = run_cmd(cmd_sendmail)
+    if returncode != 0:
+        print "Failed to send mail notification using %s" % BIN_MAILX
+    else:
+        print "Notification mail(s) sent to %s" % DEF_ADMIN_EMAILS
+
+
+# Create backup destination dir. if nonexistent
+def create_backup_dir(backup_dir):
+    if not os.path.exists(backup_dir):
+        print "Backup directory '%s' doesn't exist. Creating it..." % backup_dir
+        os.makedirs(backup_dir, 0755)
+
+
+# main function:
+#     - Parse user input a.k.a cmd-line args
+#     - backup all dbs except system ones
+def main():
+    args, parser = show_args()
+    postgresql_backups_dir = DEF_POSTGRESQL_BACKUPS_DIR if args.directory is None else args.directory
+
+    if args.notify.lower() == "No".lower():
+        notify_mail = False
+    elif args.notify.lower() == "Yes".lower():
+        notify_mail = True
+
+    # ignore errors
+    if args.ignore_errors.lower() == "No".lower():
+        ignore_errors = False
+    elif args.ignore_errors.lower() == "Yes".lower():
+        ignore_errors = True
+
+    if args.timestamp_filenames.lower() == "No".lower():
+        timestamp_filenames = False
+
+    # create backup dest. dir
+    create_backup_dir(postgresql_backups_dir)
+
+    # get a list of dbs, fail otherwise
+    output, err, retcode = get_databases()
+    if retcode != 0:
+        job_status = "Couldn't get a list of databases.\nOutput: %s\nError: %s\nReturn Code: %d" % (output, err, retcode)
+        print job_status
+        # send mail notification
+        if notify_mail:
+            sendmail_notification(job_status)
+        sys.exit(retcode)
+
+    postgresql_dbs = output.splitlines()
+    for db in postgresql_dbs:
+        db = db.strip()
+        if db == 'template0' or db == 'template1' or db == 'postgres' or db == '':
+            pass
+        else:
+            print "backing up '%s' db" % db
+            backup_databases(db, timestamp_filenames, postgresql_backups_dir, notify_mail, ignore_errors)
+
+
+# run all teh tings!
+if __name__ == '__main__':
+    sys.exit(main())

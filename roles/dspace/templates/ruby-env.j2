@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+{{ ansible_managed | comment }}
 
 # DSpace Mirage 2 build explicitly looks for GEM_HOME and GEM_PATH
 export GEM_HOME={{ tomcat_user_home }}/.gem/ruby/2.5.0

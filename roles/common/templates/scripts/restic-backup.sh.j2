@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+{{ ansible_managed | comment }}
+
+{{ restic_binary_path }} version
+
+{{ restic_binary_path }} backup {{ restic_backup_paths|join(" ") }}
+
+# Prune the repository and keep backups from up to 7 days, 4 weeks, and 1 month.
+# This makes the most sense if you do daily backups and want to keep something
+# like a grandfather, father, son scheme. It will still work if you do backups
+# more sporadically, but it's just a bit harder to define what a "day" is.
+{{ restic_binary_path }} forget --keep-daily 7 --keep-weekly 4 --keep-monthly 1 --prune
+
+{{ restic_binary_path }} check

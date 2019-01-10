@@ -11,9 +11,4 @@ Nice=19
 IOSchedulingClass=2
 IOSchedulingPriority=7
 
-ExecStart=/usr/local/bin/restic backup {{ restic_backup_paths|join(" ") }}
-# Prune the repository and keep backups from up to 7 days, 4 weeks, and 1 month.
-# This makes the most sense if you do daily backups and want to keep something
-# like a grandfather, father, son scheme.
-ExecStart=/usr/local/bin/restic forget --keep-daily 7 --keep-weekly 4 --keep-monthly 1 --prune
-ExecStart=/usr/local/bin/restic check
+ExecStart=/opt/ilri/scripts/restic-backup.sh

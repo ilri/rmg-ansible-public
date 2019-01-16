@@ -54,3 +54,7 @@ JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
 # raise limit for tomcat (default 4096) to avoid
 # "java.net.SocketException: Too many open files"
 ulimit -n 16384
+
+# raise shell address space for Solr to avoid
+# "Lock obtain timed out"
+ulimit -v unlimited

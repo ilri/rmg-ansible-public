@@ -4,7 +4,7 @@
   file: path=/etc/yum.repos.d/glusterfs-epel.repo state=absent
 
 - name: Enable GlusterFS packages from CentOS SIG
-  yum: name=centos-release-gluster312 state=present
+  yum: name=centos-release-gluster41 state=present
 
 - name: Configure GlusterFS client
   include_tasks: client.yml

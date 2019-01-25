@@ -96,6 +96,7 @@
       - { name: 'sass', version: '3.3.14' }
       - { name: 'compass', version: '1.0.3' }
     become_user: '{{ tomcat_user }}'
+
   - name: Configure ruby environment
     lineinfile:
       dest: '{{ tomcat_user_home }}/.profile'
@@ -103,9 +104,11 @@
       line: 'source {{ tomcat_user_home }}/.ruby-env'
       state: present
     become_user: '{{ tomcat_user }}'
+
   - name: Configure ruby environment
     template: src=ruby-env.j2 dest={{ tomcat_user_home }}/.ruby-env owner={{ tomcat_user }} group={{ tomcat_user }} mode=0644
     become_user: '{{ tomcat_user }}'
+
   - name: Install DSpace 5 Mirage 2 Node.js build dependencies
     npm: name={{ item }} global=yes
     loop:

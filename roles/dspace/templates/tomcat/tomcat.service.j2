@@ -1,0 +1,20 @@
+[Unit]
+Description=Tomcat 7 servlet container
+After=network.target
+
+[Service]
+SyslogIdentifier=tomcat{{ tomcat_version_major }}
+User={{ tomcat_user }}
+Group={{ tomcat_group }}
+EnvironmentFile=/etc/default/tomcat7
+# Raise the open file limit for Tomcat to avoid
+# "java.net.SocketException: Too many open files"
+LimitNOFILE=16384
+# Raise the shell address space for Solr to avoid
+# "Lock obtain timed out"
+LimitAS=infinity
+
+ExecStart={{ tomcat_path }}/bin/catalina.sh run
+
+[Install]
+WantedBy=multi-user.target

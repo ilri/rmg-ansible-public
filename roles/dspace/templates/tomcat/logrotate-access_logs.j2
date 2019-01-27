@@ -4,7 +4,7 @@
 # POST, etc, and could be useful for security or something,
 # but Tomcat errors are in catalina.out, and dspace logs are
 # in DSpace's own dspace.*.log.
-/var/log/tomcat{{ tomcat_version_major }}/localhost_access_log.txt {
+{{ tomcat_path }}/logs/localhost_access_log.txt {
   copytruncate
   daily
   rotate 30

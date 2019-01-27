@@ -1,0 +1,11 @@
+{{ ansible_managed | comment }}
+
+{% if dspace_java_opts is defined %}
+CATALINA_OPTS="{{ dspace_java_opts }}"
+{% else %}
+JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
+{% endif %}
+
+TOMCAT_JAVA_HOME=/usr/lib/jvm/java-{{ java_version_major }}-openjdk-amd64
+CATALINA_HOME={{ tomcat_path }}
+CATALINA_BASE={{ tomcat_path }}

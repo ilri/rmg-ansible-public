@@ -10,11 +10,8 @@
 - name: Set DSpace system dependencies
   set_fact:
     dspace_system_dependencies:
-      - tomcat{{ tomcat_version_major }}
-      - tomcat{{ tomcat_version_major }}-admin
       - ant
       - maven
-      - libtcnative-1
       - poppler-utils # for media filter
       - python-psycopg2 # for ansible postgres modules
       - postgresql-contrib-{{ pg_version }} # for DSpace functions
@@ -63,16 +60,12 @@
     apt: pkg={{ dspace_mirage2_build_dependencies }} state=present install_recommends=no
   when: ansible_distribution_version is version_compare('16.04', '<=')
 
-- name: Set Tomcat user's shell
-  user: name={{ tomcat_user }} shell=/bin/bash
+- name: Add dspace group
+  group: name={{ tomcat_group }} system=yes
   tags: tomcat
 
-- name: Allow Tomcat user to write to its home directory
-  file: path={{ tomcat_user_home }} owner={{ tomcat_user }} group={{ tomcat_group }}
-  tags: tomcat
-
-- name: Touch Tomcat user's .profile
-  file: path={{ tomcat_user_home }}/.profile state=touch owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
+- name: Add dspace user
+  user: name={{ tomcat_user }} group={{ tomcat_group }} system=yes create_home=yes home={{ tomcat_user_home }} shell=/bin/bash
   tags: tomcat
 
 # On Ubuntu 18.04 we use the system's ruby and nodejs instead of installing them
@@ -131,30 +124,88 @@
   import_tasks: nginx.yml
   tags: nginx
 
-- name: Set Tomcat server defaults
-  template: src=tomcat/defaults-tomcat{{ tomcat_version_major }}.j2 dest=/etc/default/tomcat{{ tomcat_version_major }} owner=root group=root mode=0644
-  notify:
-    - restart tomcat{{ tomcat_version_major }}
+- name: Check installed Tomcat version
+  stat:
+    path: "{{ tomcat_path }}"
+  register: tomcat_stat
+  tags: tomcat
+
+- name: Download Tomcat
+  get_url:
+    url: "{{ tomcat_url }}"
+    dest: "{{ tomcat_path }}.tar.gz"
+    checksum: "sha512:{{ tomcat_url_checksum }}"
+  register: tomcat_download
+  when: tomcat_stat.stat.exists == False
+  tags: tomcat
+
+- name: Unzip Tomcat
+  unarchive:
+    src: "{{ tomcat_path }}.tar.gz"
+    dest: "{{ tomcat_path_prefix }}"
+    remote_src: yes
+  when: tomcat_download is changed
+  register: tomcat_unzip
+  tags: tomcat
+
+# The Tomcat user only needs to read its configuration and write logs / work
+- name: Fix Tomcat ownership
+  file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    recurse: yes
+  loop:
+    - { path: "{{ tomcat_path }}/conf", owner: root , group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/logs", owner: root , group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/temp", owner: root , group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/work", owner: root , group: "{{ tomcat_group }}" }
+  when: tomcat_unzip is changed
+  tags: tomcat
+
+# The Tomcat user only needs to read its configuration and write logs/temp/work
+- name: Fix Tomcat permissions
+  file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ tomcat_path }}/logs", mode: "0770" }
+    - { path: "{{ tomcat_path }}/temp", mode: "0770" }
+    - { path: "{{ tomcat_path }}/work", mode: "0770" }
+    - { path: "{{ tomcat_path }}/conf/context.xml", mode: "0640" }
+    - { path: "{{ tomcat_path }}/conf/tomcat-users.xml", mode: "0640" }
+    - { path: "{{ tomcat_path }}/conf/web.xml", mode: "0640" }
+  when: tomcat_unzip is changed
+  tags: tomcat
+
+- name: Remove old Tomcat versions
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /usr/local/apache-tomcat-7.0.92.tar.gz
+    - /usr/local/apache-tomcat-7.0.91.tar.gz
+    - /usr/local/apache-tomcat-7.0.91
   tags: tomcat
 
 - name: Copy Tomcat server configs
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   loop:
-    - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/server.xml', owner: 'root', group: 'root', mode: '0644' }
-    - { src: 'tomcat/tomcat-users.xml.j2', dest: '/etc/tomcat{{ tomcat_version_major }}/tomcat-users.xml', owner: 'root', group: '{{ tomcat_user }}', mode: '0640' }
+    - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '{{ tomcat_path }}/conf/server.xml', owner: 'root', group: 'root', mode: '0644' }
+    - { src: 'tomcat/tomcat-users.xml.j2', dest: '{{ tomcat_path }}/conf/tomcat-users.xml', owner: 'root', group: '{{ tomcat_user }}', mode: '0640' }
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
 # From upstream: https://jdbc.postgresql.org/download.html
 - name: Copy PostgreSQL JDBC library
-  copy: src=postgresql-42.2.5.jar dest=/usr/share/tomcat{{ tomcat_version_major }}/lib/postgresql-42.2.5.jar mode=0644 owner=root group=root
+  copy: src=postgresql-42.2.5.jar dest={{ tomcat_path }}/lib/postgresql-42.2.5.jar mode=0644 owner=root group=root
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
 - name: Remove old PostgreSQL JDBC libraries
-  file: path=/usr/share/tomcat{{ tomcat_version_major }}/lib/{{ item }} state=absent
+  file: path={{ tomcat_path }}/lib/{{ item }} state=absent
   loop:
     - postgresql-42.2.1.jar
     - postgresql-42.2.2.jar
@@ -163,22 +214,26 @@
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
+- name: Create Tomcat context directory
+  file: path={{ tomcat_path }}/conf/Catalina/localhost state=directory owner=root group={{ tomcat_group }} mode=0770
+  tags: tomcat
+
 - name: Prepare Tomcat web application contexts
-  template: src=tomcat/context.xml.j2 dest={{ item.context_path }}
+  template: src=tomcat/context.xml.j2 dest={{ item.context_path }} owner=root group={{ tomcat_group }} mode=0640
   loop: "{{ dspace_webapps }}"
   when: dspace_webapps is defined
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
-- name: Remove Tomcat's default ROOT context
-  file: path=/var/lib/tomcat{{ tomcat_version_major }}/webapps/ROOT state=absent
+- name: Remove unneccessary default Tomcat web applications
+  file: path={{ tomcat_path }}/webapps/{{ item }} state=absent
+  loop:
+    - docs
+    - examples
+    - ROOT
   notify:
     - restart tomcat{{ tomcat_version_major }}
-  tags: tomcat
-
-- name: Enable Tomcat
-  systemd: name=tomcat{{ tomcat_version_major }} enabled=yes
   tags: tomcat
 
 - name: Prepare tomcat user's home folder
@@ -238,14 +293,18 @@
     - { 'src': dspace-handle-server.service.j2, 'name': dspace-handle-server.service }
     - { 'src': dspace-statistics-api.service.j2, 'name': dspace-statistics-api.service }
     - { 'src': dspace-statistics-indexer.service.j2, 'name': dspace-statistics-indexer.service }
+    - { 'src': 'tomcat/tomcat.service.j2', 'name': 'tomcat{{ tomcat_version_major }}.service' }
   register: dspace_systemd_services
 
 - name: Copy systemd timer unit
   copy: src=dspace-statistics-indexer.timer dest=/etc/systemd/system/dspace-statistics-indexer.timer mode=0644 owner=root group=root
   register: dspace_systemd_timer
 
-- name: Copy dspace-statistics-api environment
-  template: src=dspace-statistics-api.j2 dest=/etc/dspace-statistics-api mode=0660 owner=root group=root
+- name: Copy systemd service environments
+  template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=root group=root
+  loop:
+    - { 'src': dspace-statistics-api.j2, 'dest': /etc/dspace-statistics-api }
+    - { 'src': 'tomcat/defaults.j2', 'dest': '/etc/default/tomcat{{ tomcat_version_major }}' }
   register: dspace_systemd_environment
 
 # need to reload to pick up service/timer/environment changes
@@ -261,6 +320,7 @@
     - dspace-handle-server.service
     - dspace-statistics-api.service
     - dspace-statistics-indexer.timer
+    - 'tomcat{{ tomcat_version_major }}.service'
 
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory

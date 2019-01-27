@@ -33,18 +33,18 @@ nginx_redirect_type: 301
 nginx_enable_hsts: True
 
 # where to install DSpace
-dspace_root: /home/dspace
+dspace_root: /home/dspace-install
 
 # document root
 nginx_root: '{{ dspace_root }}/webapps/xmlui'
 
 # default dspace webapps
 dspace_webapps:
-  - { name: 'ROOT', app_path: '{{ dspace_root }}/webapps/xmlui', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/ROOT.xml', db_pool_name: 'jdbc/dspaceWeb' }
-  - { name: 'jspui', app_path: '{{ dspace_root }}/webapps/jspui', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/jspui.xml', db_pool_name: 'jdbc/dspaceWeb' }
-  - { name: 'oai', app_path: '{{ dspace_root }}/webapps/oai', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/oai.xml', db_pool_name: 'jdbc/dspaceApi' }
-  - { name: 'solr', app_path: '{{ dspace_root }}/webapps/solr', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/solr.xml' }
-  - { name: 'rest', app_path: '{{ dspace_root }}/webapps/rest', context_path: '/etc/tomcat{{ tomcat_version_major }}/Catalina/localhost/rest.xml', db_pool_name: 'jdbc/dspaceApi' }
+  - { name: 'ROOT', app_path: '{{ dspace_root }}/webapps/xmlui', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/ROOT.xml', db_pool_name: 'jdbc/dspaceWeb' }
+  - { name: 'jspui', app_path: '{{ dspace_root }}/webapps/jspui', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/jspui.xml', db_pool_name: 'jdbc/dspaceWeb' }
+  - { name: 'oai', app_path: '{{ dspace_root }}/webapps/oai', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/oai.xml', db_pool_name: 'jdbc/dspaceApi' }
+  - { name: 'solr', app_path: '{{ dspace_root }}/webapps/solr', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/solr.xml' }
+  - { name: 'rest', app_path: '{{ dspace_root }}/webapps/rest', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/rest.xml', db_pool_name: 'jdbc/dspaceApi' }
 
 # default postgresql dspace db credentials
 dspace_db_name: dspace
@@ -77,10 +77,16 @@ java_distribution: openjdk
 # version must be 8 (for now)
 java_version_major: 8
 
-tomcat_user: tomcat7
-tomcat_group: tomcat7
-tomcat_user_home: /usr/share/tomcat7
+tomcat_user: dspace
+tomcat_group: dspace
+tomcat_user_home: /home/dspace
+# See: https://tomcat.apache.org/download-70.cgi
+tomcat_version: 7.0.92
 tomcat_version_major: 7
+tomcat_url: https://www-us.apache.org/dist/tomcat/tomcat-{{ tomcat_version_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
+tomcat_url_checksum: e5e17ea68956df5d4c220f2e2891953b362b4fadd391f7cb9bc00d86986aa2e2499176d59c393f41db9ab3e0d7f1ab492a881f85c6650514a7f02f047d4eb2b0
+tomcat_path_prefix: /usr/local
+tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 
 # install certbot + dependencies?
 # True unless you're in development and using "localhost" + snakeoil certs

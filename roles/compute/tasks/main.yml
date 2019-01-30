@@ -65,6 +65,7 @@
       - perl-Env.noarch # for masurca
       - openmpi # optional for abyss
       - libcurl-devel # for some R libraries
+      - libxml2-devel # for some R libraries
   tags: packages
 
 - name: Install extra packages

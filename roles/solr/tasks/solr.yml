@@ -3,30 +3,51 @@
 - name: Create system user account to run Solr daemon
   user: name={{ solr_user }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
 
+- name: Check installed Solr version
+  stat:
+    path: "{{ solr_install_dir }}"
+  register: solr_stat
+
 - name: Get Solr tarball
-  get_url: url={{ solr_mirror_url }} dest={{ solr_prefix_dir }}/{{ solr_tarball }} sha256sum={{ solr_sha256sum }}
+  get_url:
+    url: "{{ solr_mirror_url }}"
+    dest: "{{ solr_prefix_dir }}/{{ solr_tarball }}"
+    checksum: "sha256:{{ solr_sha256sum }}"
+  when: solr_stat.stat.exists is False
   register: get_url_result
 
 - name: Unpack Solr tarball
-  unarchive: src={{ solr_prefix_dir }}/{{ solr_tarball }} dest={{ solr_prefix_dir }} creates={{ solr_prefix_dir }}/solr-{{ solr_version }} owner={{ solr_user }} group={{ solr_user }} copy=no
+  unarchive:
+    src: "{{ solr_prefix_dir }}/{{ solr_tarball }}"
+    dest: "{{ solr_prefix_dir }}"
+    creates: "{{ solr_install_dir }}"
+    owner: "{{ solr_user }}"
+    group: "{{ solr_user }}"
+    remote_src: yes
   when: get_url_result is changed
-
-# /opt/solr -> /opt/solr-$SOLR_VERSION
-- name: Create a symlink to Solr installation dir
-  file: src="{{solr_prefix_dir}}/solr-{{solr_version}}" dest="{{solr_prefix_dir}}/solr" owner={{ solr_user }} group={{ solr_user }} state=link
 
 - name: Create Solr data & log dirs
   file: path={{ item }} owner={{ solr_user }} group={{ solr_user }} state=directory
   loop:
-    - "{{solr_var_dir}}/data"
-    - "{{solr_var_dir}}/logs"
+    - "{{ solr_var_dir }}/data"
+    - "{{ solr_var_dir }}/logs"
 
 - name: Copy Solr init.d service file
   template: src=init.d-solr.j2 dest=/etc/init.d/solr owner=root group=root mode=0755
   when: ansible_service_mgr != 'systemd'
 
+- name: Copy systemd service unit
+  template: src=solr.service.j2 dest=/etc/systemd/system/solr.service mode=0644 owner=root group=root
+  when: ansible_service_mgr == 'systemd'
+  register: solr_systemd_service
+
+# need to reload to pick up service/timer/environment changes
+- name: Reload systemd daemon
+  command: /bin/systemctl daemon-reload
+  when: solr_systemd_service is changed
+
 - name: Copy solr.xml config files
-  command: /usr/bin/rsync -a "{{solr_install_dir}}/server/solr/solr.xml" "{{solr_var_dir}}/data/" creates="{{solr_var_dir}}/data/solr.xml"
+  command: /usr/bin/rsync -a "{{ solr_install_dir }}/server/solr/solr.xml" "{{ solr_var_dir }}/data/" creates="{{ solr_var_dir }}/data/solr.xml"
 
 - name: Copy Solr environment
   template: src=solr.in.sh.j2 dest={{ solr_var_dir }}/solr.in.sh owner={{ solr_user }} group={{ solr_user }} mode=0755
@@ -41,7 +62,7 @@
 
 - name: Configure Solr cores
   include_tasks: solr-cores.yml
-  become_user: "{{solr_user}}"
+  become_user: "{{ solr_user }}"
   when: solr_cores is defined
   tags: solr-cores
 

@@ -1,6 +1,6 @@
 ---
 
-- name: Create system user account to run solr daemon
+- name: Create system user account to run Solr daemon
   user: name={{ solr_user }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
 
 - name: Get Solr tarball
@@ -12,34 +12,34 @@
   when: get_url_result is changed
 
 # /opt/solr -> /opt/solr-$SOLR_VERSION
-- name: Create a symlink to solr installation dir
+- name: Create a symlink to Solr installation dir
   file: src="{{solr_prefix_dir}}/solr-{{solr_version}}" dest="{{solr_prefix_dir}}/solr" owner={{ solr_user }} group={{ solr_user }} state=link
 
-- name: Create solr data & log dirs
+- name: Create Solr data & log dirs
   file: path={{ item }} owner={{ solr_user }} group={{ solr_user }} state=directory
   loop:
     - "{{solr_var_dir}}/data"
     - "{{solr_var_dir}}/logs"
 
-- name: Copy solr init.d service file
+- name: Copy Solr init.d service file
   template: src=init.d-solr.j2 dest=/etc/init.d/solr owner=root group=root mode=0755
   when: ansible_service_mgr != 'systemd'
 
-- name: Copy solr.xml config. files
+- name: Copy solr.xml config files
   command: /usr/bin/rsync -a "{{solr_install_dir}}/server/solr/solr.xml" "{{solr_var_dir}}/data/" creates="{{solr_var_dir}}/data/solr.xml"
 
-- name: Copy solr env files
+- name: Copy Solr environment
   template: src=solr.in.sh.j2 dest={{ solr_var_dir }}/solr.in.sh owner={{ solr_user }} group={{ solr_user }} mode=0755
   notify: restart solr
 
-- name: Reconfigure solr logging
+- name: Reconfigure Solr logging
   copy: src=log4j.properties dest="{{ solr_var_dir }}/log4j.properties" owner={{ solr_user }} group={{ solr_user }} mode=0644
   notify: restart solr
 
 - name: Start & enable service
   service: name=solr state=started enabled=yes
 
-- name: Configure solr cores
+- name: Configure Solr cores
   include_tasks: solr-cores.yml
   become_user: "{{solr_user}}"
   when: solr_cores is defined

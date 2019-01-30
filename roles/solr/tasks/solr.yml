@@ -23,6 +23,7 @@
 
 - name: Copy solr init.d service file
   template: src=init.d-solr.j2 dest=/etc/init.d/solr owner=root group=root mode=0755
+  when: ansible_service_mgr != 'systemd'
 
 - name: Copy solr.xml config. files
   command: /usr/bin/rsync -a "{{solr_install_dir}}/server/solr/solr.xml" "{{solr_var_dir}}/data/" creates="{{solr_var_dir}}/data/solr.xml"

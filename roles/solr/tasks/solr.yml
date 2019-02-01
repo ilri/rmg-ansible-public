@@ -1,7 +1,10 @@
 ---
 
+- name: Add solr group
+  group: name={{ solr_group }} system=yes
+
 - name: Create system user account to run Solr daemon
-  user: name={{ solr_user }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
+  user: name={{ solr_user }} group={{ solr_group }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
 
 - name: Check installed Solr version
   stat:
@@ -22,12 +25,12 @@
     dest: "{{ solr_prefix_dir }}"
     creates: "{{ solr_install_dir }}"
     owner: "{{ solr_user }}"
-    group: "{{ solr_user }}"
+    group: "{{ solr_group }}"
     remote_src: yes
   when: get_url_result is changed
 
 - name: Create Solr data & log dirs
-  file: path={{ item }} owner={{ solr_user }} group={{ solr_user }} state=directory
+  file: path={{ item }} owner={{ solr_user }} group={{ solr_group }} state=directory
   loop:
     - "{{ solr_var_dir }}/data"
     - "{{ solr_var_dir }}/logs"
@@ -50,11 +53,11 @@
   command: /usr/bin/rsync -a "{{ solr_install_dir }}/server/solr/solr.xml" "{{ solr_var_dir }}/data/" creates="{{ solr_var_dir }}/data/solr.xml"
 
 - name: Copy Solr environment
-  template: src=solr.in.sh.j2 dest={{ solr_var_dir }}/solr.in.sh owner={{ solr_user }} group={{ solr_user }} mode=0755
+  template: src=solr.in.sh.j2 dest={{ solr_var_dir }}/solr.in.sh owner={{ solr_user }} group={{ solr_group }} mode=0755
   notify: restart solr
 
 - name: Reconfigure Solr logging
-  copy: src=log4j.properties dest="{{ solr_var_dir }}/log4j.properties" owner={{ solr_user }} group={{ solr_user }} mode=0644
+  copy: src=log4j.properties dest="{{ solr_var_dir }}/log4j.properties" owner={{ solr_user }} group={{ solr_group }} mode=0644
   notify: restart solr
 
 - name: Start & enable service

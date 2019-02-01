@@ -5,7 +5,7 @@ After=network.target
 [Service]
 Environment=SOLR_INCLUDE={{ solr_var_dir }}/solr.in.sh
 User={{ solr_user }}
-Group={{ solr_user }}
+Group={{ solr_group }}
 
 ExecStart={{ solr_install_dir }/bin/solr start
 

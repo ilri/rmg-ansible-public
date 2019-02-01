@@ -9,6 +9,7 @@ solr_install_dir: /opt/solr-{{ solr_version }}
 solr_var_dir: /var/solr
 solr_port: 8983
 solr_user: solr
+solr_group: solr
 solr_user_homedir: /home/{{ solr_user }}
 
 solr_java_mem: "-Xms1024m -Xmx1024m"

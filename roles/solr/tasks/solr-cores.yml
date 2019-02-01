@@ -1,17 +1,17 @@
 ---
 
 - block:
-  - name: Create Solr core data dir
+  - name: Create Solr core data directory
     file: dest={{ solr_var_dir }}/data/{{ item }}/data/index state=directory mode=0755
     loop: "{{ solr_cores }}"
     notify: restart solr
 
-  - name: Create Solr core conf dir
+  - name: Create Solr core configuration directory
     file: dest={{ solr_var_dir }}/data/{{ item }}/conf state=directory owner={{ solr_user }} group={{ solr_user }} mode=0755
     loop: "{{ solr_cores }}"
     notify: restart solr
 
-  - name: Populate Solr core conf dir
+  - name: Populate Solr core configuration directory
     command: /usr/bin/rsync -a {{ solr_install_dir }}/server/solr/configsets/basic_configs/conf/ {{ solr_var_dir }}/data/{{ item }}/conf/ creates={{ solr_var_dir }}/data/{{ item }}/conf/solrconfig.xml
     loop: "{{ solr_cores }}"
     notify: restart solr

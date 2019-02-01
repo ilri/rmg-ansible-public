@@ -60,7 +60,7 @@
   copy: src=log4j.properties dest="{{ solr_var_dir }}/log4j.properties" owner={{ solr_user }} group={{ solr_group }} mode=0644
   notify: restart solr
 
-- name: Start & enable service
+- name: Start & enable Solr service
   service: name=solr state=started enabled=yes
 
 - name: Configure Solr cores

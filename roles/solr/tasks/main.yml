@@ -1,5 +1,5 @@
 ---
-- name: Install Solr deps
+- name: Install Ansible unarchive dependencies
   apt: name={{ item }} state=present install_recommends=no update_cache=yes cache_valid_time=3600
   loop:
     - unzip

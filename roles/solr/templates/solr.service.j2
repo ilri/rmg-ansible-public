@@ -9,6 +9,7 @@ User={{ solr_user }}
 Group={{ solr_group }}
 
 ExecStart={{ solr_install_dir }}/bin/solr start
+ExecStop={{ solr_install_dir }}/bin/solr stop
 
 [Install]
 WantedBy=multi-user.target

@@ -1,6 +1,6 @@
 ---
 
-- name: Add solr group
+- name: Create system group to run Solr daemon
   group: name={{ solr_group }} system=yes
 
 - name: Create system user account to run Solr daemon

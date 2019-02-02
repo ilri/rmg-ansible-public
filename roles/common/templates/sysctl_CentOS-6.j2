@@ -29,10 +29,18 @@ kernel.msgmnb = 65536
 kernel.msgmax = 65536
 
 # Controls the maximum shared segment size, in bytes
+{% if ansible_userspace_bits == '32' %}
+kernel.shmmax = 2147483648
+{% else %}
 kernel.shmmax = 68719476736
+{% endif %}
 
 # Controls the maximum number of shared memory segments, in pages
+{% if ansible_userspace_bits == '32' %}
+kernel.shmall = 524288
+{% else %}
 kernel.shmall = 4294967296
+{% endif %}
 
 # CIS Benchmark Adjustments
 kernel.randomize_va_space = 2 

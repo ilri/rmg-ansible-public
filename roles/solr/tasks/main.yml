@@ -6,20 +6,22 @@
     - tar
   tags: packages
 
-- name: Add Oracle Java PPA
-  apt_repository: repo='ppa:webupd8team/java' state=present
+- name: Install OpenJDK 7
+  apt:
+    name: openjdk-7-jre-headless
+    state: present
+    install_recommends: no
+  when: ansible_distribution_version is version_compare('14.04', '==')
   tags:
     - java
     - packages
 
-- name: Accept Oracle license
-  debconf: name='oracle-java7-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
-  tags:
-    - java
-    - packages
-
-- name: Install Oracle Java 8
-  apt: name=oracle-java8-installer state=present update_cache=yes cache_valid_time=3600
+- name: Install OpenJDK 8
+  apt:
+    name: openjdk-8-jre-headless
+    state: present
+    install_recommends: no
+  when: ansible_distribution_version is version_compare('16.04', '==')
   tags:
     - java
     - packages

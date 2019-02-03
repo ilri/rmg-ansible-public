@@ -24,12 +24,18 @@ server {
 
     # feedburner doesn't support https :(
     location ~ /(feed|open-search/discover) {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/access.log;
+
         # Send requests to Tomcat
         proxy_pass http://tomcat_http;
     }
 
     # redirect http -> https
     location / {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/access.log;
+
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
         rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
@@ -108,6 +114,9 @@ server {
         # rate limit for dynamic pages
         limit_req zone=dynamicpages burst=5;
 
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/access.log;
+
         proxy_pass http://tomcat_http;
     }
 
@@ -117,6 +126,9 @@ server {
     location ~ /handle/[0-9]+/[0-9]+/(browse|discover|search-filter|most-popular) {
         # rate limit for dynamic pages
         limit_req zone=dynamicpages burst=5;
+
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/access.log;
 
         add_header X-Robots-Tag "none";
         proxy_pass http://tomcat_http;
@@ -141,6 +153,9 @@ server {
 
     # AReS explorer
     location /explorer {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/access.log;
+
         proxy_pass https://codeobia_ares/explorer;
     }
 
@@ -185,6 +200,9 @@ server {
 
     # named location for above try_files
     location @tomcat {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/access.log;
+
         proxy_pass http://tomcat_http;
     }
 

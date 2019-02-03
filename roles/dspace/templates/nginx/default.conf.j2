@@ -111,7 +111,8 @@ server {
         proxy_pass http://tomcat_http;
     }
 
-    # tell robots not to index or follow links on dynamic pages (because we can't use * in robots.txt!)
+    # tell robots not to index or follow links on dynamic pages (because we
+    # can't use * in robots.txt!) and rate limit requests.
     # see: https://jira.duraspace.org/browse/DS-2962
     location ~ /handle/[0-9]+/[0-9]+/(browse|discover|search-filter|most-popular) {
         # rate limit for dynamic pages

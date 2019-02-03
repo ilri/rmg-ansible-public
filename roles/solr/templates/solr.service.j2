@@ -3,8 +3,8 @@ Description=Solr
 After=network.target
 
 [Service]
-PIDFile={{ solr_var_dir }}/solr-{{ solr_port }}.pid
-Environment=SOLR_INCLUDE={{ solr_var_dir }}/solr.in.sh
+PIDFile={{ solr_home_dir }}/solr-{{ solr_port }}.pid
+Environment=SOLR_INCLUDE={{ solr_home_dir }}/solr.in.sh
 User={{ solr_user }}
 Group={{ solr_group }}
 

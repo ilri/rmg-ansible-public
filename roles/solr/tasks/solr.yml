@@ -32,8 +32,8 @@
 - name: Create Solr data & log dirs
   file: path={{ item }} owner={{ solr_user }} group={{ solr_group }} state=directory
   loop:
-    - "{{ solr_var_dir }}/data"
-    - "{{ solr_var_dir }}/logs"
+    - "{{ solr_home_dir }}/data"
+    - "{{ solr_home_dir }}/logs"
 
 - name: Copy Solr init.d service file
   template: src=init.d-solr.j2 dest=/etc/init.d/solr owner=root group=root mode=0755
@@ -50,14 +50,14 @@
   when: solr_systemd_service is changed
 
 - name: Copy solr.xml config files
-  command: /usr/bin/rsync -a "{{ solr_install_dir }}/server/solr/solr.xml" "{{ solr_var_dir }}/data/" creates="{{ solr_var_dir }}/data/solr.xml"
+  command: /usr/bin/rsync -a "{{ solr_install_dir }}/server/solr/solr.xml" "{{ solr_home_dir }}/data/" creates="{{ solr_home_dir }}/data/solr.xml"
 
 - name: Copy Solr environment
-  template: src=solr.in.sh.j2 dest={{ solr_var_dir }}/solr.in.sh owner={{ solr_user }} group={{ solr_group }} mode=0755
+  template: src=solr.in.sh.j2 dest={{ solr_home_dir }}/solr.in.sh owner={{ solr_user }} group={{ solr_group }} mode=0755
   notify: restart solr
 
 - name: Reconfigure Solr logging
-  copy: src=log4j.properties dest="{{ solr_var_dir }}/log4j.properties" owner={{ solr_user }} group={{ solr_group }} mode=0644
+  copy: src=log4j.properties dest="{{ solr_home_dir }}/log4j.properties" owner={{ solr_user }} group={{ solr_group }} mode=0644
   notify: restart solr
 
 - name: Start & enable Solr service

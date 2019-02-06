@@ -196,6 +196,8 @@ def main():
 
     if args.timestamp_filenames.lower() == "No".lower():
         timestamp_filenames = False
+    elif args.timestamp_filenames.lower() == "Yes".lower():
+        timestamp_filenames = True
 
     # create backup dest. dir
     create_backup_dir(mysql_backups_dir)

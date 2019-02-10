@@ -95,9 +95,7 @@ db.poolname = dspacepool
 #######################
 
 # SMTP mail server
-{% if dspace_mail_server is defined and dspace_mail_server != '' %}
 mail.server = {{ dspace_mail_server }}
-{% endif %}
 
 # SMTP mail server authentication username and password (if required)
 mail.server.username = 
@@ -120,6 +118,8 @@ mail.alert.recipient= ${mail.admin}
 
 # Recipient for new user registration emails
 mail.registration.notify= {{ dspace_support_email }}
+
+mail.server.disabled = {{ dspace_mail_disabled }}
 
 
 ########################

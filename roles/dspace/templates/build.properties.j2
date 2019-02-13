@@ -98,11 +98,11 @@ db.poolname = dspacepool
 mail.server = {{ dspace_mail_server }}
 
 # SMTP mail server authentication username and password (if required)
-mail.server.username = 
-mail.server.password = 
+mail.server.username = {{ dspace_support_email }}
+mail.server.password = {{ dspace_support_pass }}
 
 # SMTP mail server alternate port (defaults to 25)
-mail.server.port = 25
+mail.server.port = 587
 
 # From address for mail
 mail.from.address = {{ dspace_support_email }}

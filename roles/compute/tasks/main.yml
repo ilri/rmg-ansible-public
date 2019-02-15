@@ -62,6 +62,7 @@
       - proj-epsg.x86_64 # for some R libraries
       - fftw-devel.x86_64 # for gromacs
       - python36
+      - python36-setuptools # needed by some Python scripts to load entrypoint
       - perl-Env.noarch # for masurca
       - openmpi # optional for abyss
       - libcurl-devel # for some R libraries

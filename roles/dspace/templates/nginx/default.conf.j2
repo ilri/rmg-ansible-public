@@ -114,6 +114,9 @@ server {
         # rate limit for dynamic pages
         limit_req zone=dynamicpages burst=5;
 
+        # rate limit for poorly behaved bots, see limit_req_zone below
+        limit_req zone=badbots;
+
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
 
@@ -126,6 +129,9 @@ server {
     location ~ /handle/[0-9]+/[0-9]+/(browse|discover|search-filter|most-popular) {
         # rate limit for dynamic pages
         limit_req zone=dynamicpages burst=5;
+
+        # rate limit for poorly behaved bots, see limit_req_zone below
+        limit_req zone=badbots;
 
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;

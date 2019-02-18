@@ -273,6 +273,9 @@ map $http_user_agent $limit_bots {
     # 2018-07-12 user agent of bot making tens of thousand requests to /discover, which is forbidden in robots.txt
     ~Pcore-HTTP 1;
 
+    # 2019-02-18 user agent of bot making tens of thousand requests to /discover, which is forbidden in robots.txt
+    'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0' 1;
+
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
     default '';

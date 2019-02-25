@@ -9,9 +9,6 @@
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[network].src }}"/>
         <port protocol="tcp" port="22"/>
-        <log prefix="ssh fw limit 5/m " level="warning">
-            <limit value="5/m"/>
-        </log>
         <accept>
             <limit value="5/m"/>
         </accept>
@@ -23,9 +20,6 @@
     <rule family="ipv6">
         <source address="{{ ghetto_ipsets[network].ipv6src }}"/>
         <port protocol="tcp" port="22"/>
-        <log prefix="ssh fw limit 5/m " level="warning">
-            <limit value="5/m"/>
-        </log>
         <accept>
             <limit value="5/m"/>
         </accept>

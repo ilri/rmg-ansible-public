@@ -84,6 +84,7 @@ tomcat_user_home: /home/dspace
 tomcat_version: 7.0.92
 tomcat_version_major: 7
 tomcat_url: https://www-us.apache.org/dist/tomcat/tomcat-{{ tomcat_version_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
+# sha512
 tomcat_url_checksum: e5e17ea68956df5d4c220f2e2891953b362b4fadd391f7cb9bc00d86986aa2e2499176d59c393f41db9ab3e0d7f1ab492a881f85c6650514a7f02f047d4eb2b0
 tomcat_path_prefix: /usr/local
 tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'

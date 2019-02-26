@@ -185,8 +185,7 @@
     state: absent
   loop:
     - /usr/local/apache-tomcat-7.0.92.tar.gz
-    - /usr/local/apache-tomcat-7.0.91.tar.gz
-    - /usr/local/apache-tomcat-7.0.91
+    - /usr/local/apache-tomcat-7.0.92
   tags: tomcat
 
 - name: Copy Tomcat server configs

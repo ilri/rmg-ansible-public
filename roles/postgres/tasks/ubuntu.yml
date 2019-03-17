@@ -4,11 +4,20 @@
 - block:
   - name: Add PGDG apt list file
     template: src=pgdg.list.j2 dest=/etc/apt/sources.list.d/pgdg.list owner=root group=root mode=0644
+    register: add_postgresql_apt_repository
     tags: packages
 
   - name: Import PGDG repo keys
     apt_key: url="https://www.postgresql.org/media/keys/ACCC4CF8.asc" state=present
+    register: add_postgresql_apt_key
     tags: packages
+
+  - name: Update apt cache
+    apt:
+      update_cache: yes
+    when:
+      add_postgresql_apt_key is changed or
+      add_postgresql_apt_repository is changed
 
   - name: Install postgresql
     apt: name={{ item }} update_cache=yes state=present

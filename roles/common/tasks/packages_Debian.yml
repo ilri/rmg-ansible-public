@@ -3,6 +3,7 @@
 - block:
   - name: Configure apt mirror
     template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
+    register: configure_apt_mirror
 
   - name: Set Debian base packages
     set_fact:
@@ -24,6 +25,12 @@
       - debconf-utils
       - sysstat
       - software-properties-common
+
+  - name: Update apt cache
+    apt:
+      update_cache: yes
+    when:
+      configure_apt_mirror is changed
 
   - name: Install base packages
     apt: name={{ debian_base_packages }} state=present update_cache=yes cache_valid_time=3600

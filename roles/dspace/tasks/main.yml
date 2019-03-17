@@ -76,9 +76,18 @@
   # See: https://bugs.launchpad.net/ubuntu/+source/nodejs/+bug/1794589
   - name: Add Node.js apt signing key
     apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
+    register: add_nodejs_apt_key
 
   - name: Add Node.js 8 LTS repository
     template: src=nodesource.list.j2 dest=/etc/apt/sources.list.d/nodesource.list mode=0644 owner=root group=root
+    register: add_nodejs_apt_repository
+
+  - name: Update apt cache
+    apt:
+      update_cache: yes
+    when:
+      add_nodejs_apt_key is changed or
+      add_nodejs_apt_repository is changed
 
   - name: Set DSpace 5 Mirage 2 system build dependencies
     set_fact:

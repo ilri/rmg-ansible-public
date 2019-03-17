@@ -69,7 +69,7 @@
         - virtualenv
 
   - name: Install certbot dependencies
-    apt: name={{ certbot_dependencies }} state=present update_cache=yes cache_valid_time=3600
+    apt: name={{ certbot_dependencies }} state=present cache_valid_time=3600
   tags: letsencrypt
 
 # vim: set ts=2 sw=2:

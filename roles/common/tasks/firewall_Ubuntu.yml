@@ -4,7 +4,7 @@
 - block:
   - name: Install iptables-persistent
     when: ansible_distribution_major_version is version_compare('15', '<')
-    apt: name=iptables-persistent state=present update_cache=yes cache_valid_time=3600
+    apt: name=iptables-persistent state=present cache_valid_time=3600
     tags: packages
 
   - name: Copy /etc/iptables/rules.v4

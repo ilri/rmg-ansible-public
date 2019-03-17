@@ -9,7 +9,7 @@
     when: ansible_distribution_version is version_compare('14.04', '==')
 
   - name: Upgrade base OS
-    apt: upgrade=dist update_cache=yes cache_valid_time=3600
+    apt: upgrade=dist cache_valid_time=3600
 
   - name: Set Ubuntu base packages
     set_fact:
@@ -34,7 +34,7 @@
         - software-properties-common
 
   - name: Install base packages
-    apt: pkg={{ ubuntu_base_packages }} state=present update_cache=yes cache_valid_time=3600
+    apt: pkg={{ ubuntu_base_packages }} state=present cache_valid_time=3600
 
   - name: Set fact for packages to remove
     set_fact:

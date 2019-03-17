@@ -33,7 +33,7 @@
       configure_apt_mirror is changed
 
   - name: Install base packages
-    apt: name={{ debian_base_packages }} state=present update_cache=yes cache_valid_time=3600
+    apt: name={{ debian_base_packages }} state=present cache_valid_time=3600
 
   - name: Configure cron-apt
     import_tasks: cron-apt.yml

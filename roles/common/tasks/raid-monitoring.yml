@@ -11,7 +11,7 @@
     when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
   - name: Install LSI MegaCLI tools
-    apt: name=megacli state=present update_cache=yes cache_valid_time=3600
+    apt: name=megacli state=present cache_valid_time=3600
     when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
   # hpssacli is only provided by HP MCP repo
@@ -31,7 +31,7 @@
     when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
 
   - name: Install HP Array tools
-    apt: name=hpssacli state=present update_cache=yes cache_valid_time=3600
+    apt: name=hpssacli state=present cache_valid_time=3600
     when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
 
   # In ILRI CentOS repo, from:

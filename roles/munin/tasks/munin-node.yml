@@ -1,7 +1,7 @@
 ---
 - name: Install munin-node
   when: ansible_os_family == "Debian"
-  apt: name=munin-node state=present update_cache=true cache_valid_time=3600
+  apt: name=munin-node state=present cache_valid_time=3600
   tags: packages
 
 - name: Install munin-node

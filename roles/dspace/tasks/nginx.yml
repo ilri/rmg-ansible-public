@@ -5,7 +5,7 @@
   register: add_nginx_apt_key
   tags: packages
 
-- name: Add nginx.org repo
+- name: Add nginx.org repository
   template: src=nginx_org_packages_ubuntu.list.j2 dest=/etc/apt/sources.list.d/nginx_org_packages_ubuntu.list mode=0644 owner=root group=root
   register: add_nginx_apt_repository
 

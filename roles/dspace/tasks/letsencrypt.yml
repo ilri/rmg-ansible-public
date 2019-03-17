@@ -52,20 +52,20 @@
     when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('18.04', '==')
     set_fact:
       certbot_dependencies:
+        - augeas-doc
+        - augeas-tools
         - libexpat1-dev
         - libpython-dev
         - libpython2.7
         - libpython2.7-dev
-        - python-pip-whl
-        - python-pkg-resources
-        - python2.7-dev
-        - python3-virtualenv
-        - augeas-doc
-        - augeas-tools
-        - python-setuptools
         - libssl-dev
         - python-dev
+        - python-pip-whl
+        - python-pkg-resources
+        - python-setuptools
         - python-virtualenv
+        - python2.7-dev
+        - python3-virtualenv
         - virtualenv
 
   - name: Install certbot dependencies

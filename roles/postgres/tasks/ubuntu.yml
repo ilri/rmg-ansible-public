@@ -11,7 +11,7 @@
     tags: packages
 
   - name: Install postgresql
-    apt: name={{ item }} update_cache=yes state=present cache_valid_time=3600
+    apt: name={{ item }} update_cache=yes state=present
     loop:
       - postgresql-{{ pg_version }}
       - postgresql-client-{{ pg_version }}

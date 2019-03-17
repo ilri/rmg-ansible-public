@@ -63,6 +63,10 @@
         - augeas-doc
         - augeas-tools
         - python-setuptools
+        - libssl-dev
+        - python-dev
+        - python-virtualenv
+        - virtualenv
 
   - name: Install certbot dependencies
     apt: name={{ certbot_dependencies }} state=present update_cache=yes cache_valid_time=3600

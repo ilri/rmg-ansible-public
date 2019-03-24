@@ -16,5 +16,8 @@ LimitAS=infinity
 
 ExecStart={{ tomcat_path }}/bin/catalina.sh run
 
+# the JVM exits gracefully with 143 when it receives a SIGTERM (128 + 15 == 143)
+SuccessExitStatus=143
+
 [Install]
 WantedBy=multi-user.target

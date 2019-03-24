@@ -58,9 +58,14 @@
               minIdle='5'
               maxWaitMillis='5000'
               validationQuery='SELECT 1'
+              logValidationErrors='true'
               removeAbandonedOnBorrow='true'
               removeAbandonedTimeout='180'
+              abandonWhenPercentageFull='50'
+              jdbcInterceptors='ResetAbandonedTimer;StatementFinalizer;ConnectionState'
               logAbandoned='true'
+              testWhileIdle='true'
+              testOnConnect='true'
               testOnBorrow='true'
               testOnReturn='true' />
 
@@ -76,9 +81,14 @@
               minIdle='5'
               maxWaitMillis='5000'
               validationQuery='SELECT 1'
+              logValidationErrors='true'
               removeAbandonedOnBorrow='true'
               removeAbandonedTimeout='60'
+              abandonWhenPercentageFull='50'
+              jdbcInterceptors='ResetAbandonedTimer;StatementFinalizer;ConnectionState'
               logAbandoned='true'
+              testWhileIdle='true'
+              testOnConnect='true'
               testOnBorrow='true'
               testOnReturn='true' />
   </GlobalNamingResources>

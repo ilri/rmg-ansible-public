@@ -49,6 +49,7 @@
 
     <Resource name="jdbc/dspaceWeb" auth="Container"
               type="javax.sql.DataSource"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
               driverClassName="org.postgresql.Driver"
               url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceWeb"
               username="{{ dspace_db_user }}"
@@ -64,14 +65,13 @@
               removeAbandoned='true'
               removeAbandonedTimeout='180'
               abandonWhenPercentageFull='50'
-              jdbcInterceptors='ResetAbandonedTimer;StatementFinalizer;ConnectionState'
-              testWhileIdle='true'
-              testOnConnect='true'
+              jdbcInterceptors='ResetAbandonedTimer'
               testOnBorrow='true'
               testOnReturn='true' />
 
     <Resource name="jdbc/dspaceApi" auth="Container"
               type="javax.sql.DataSource"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
               driverClassName="org.postgresql.Driver"
               url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceApi"
               username="{{ dspace_db_user }}"
@@ -87,9 +87,7 @@
               removeAbandoned='true'
               removeAbandonedTimeout='60'
               abandonWhenPercentageFull='50'
-              jdbcInterceptors='ResetAbandonedTimer;StatementFinalizer;ConnectionState'
-              testWhileIdle='true'
-              testOnConnect='true'
+              jdbcInterceptors='ResetAbandonedTimer'
               testOnBorrow='true'
               testOnReturn='true' />
   </GlobalNamingResources>

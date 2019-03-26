@@ -260,6 +260,9 @@ map $remote_addr $ua {
     138.201.49.199   'bot';
     # 2018-11-04 mystery client on Hetzner
     78.46.89.18      'bot';
+    # 2019-03-26 mystery client in Ukraine
+    93.179.69.74     'bot';
+
     default          $http_user_agent;
 }
 
@@ -281,6 +284,21 @@ map $http_user_agent $limit_bots {
 
     # 2019-02-18 user agent of bot making tens of thousand requests to /discover, which is forbidden in robots.txt
     'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0' 1;
+
+    # 2019-03-26 user agent of bot making thousands of requests to /discover, which is forbidden in robots.txt
+    ~BLEXBot 1;
+
+    # 2019-03-26 user agent of bot making thousands of requests to /discover, which is forbidden in robots.txt
+    ~MauiBot 1;
+
+    # 2019-03-26 user agent of bot making thousands of requests to /discover, which is forbidden in robots.txt
+    ~CCBot 1;
+
+    # 2019-03-26 user agent of bot making hundreds of requests to /discover, which is forbidden in robots.txt
+    ~SemanticScholarBot 1;
+
+    # 2019-03-26 user agent of bot making hundreds of requests to /discover, which is forbidden in robots.txt
+    ~DotBot 1;
 
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html

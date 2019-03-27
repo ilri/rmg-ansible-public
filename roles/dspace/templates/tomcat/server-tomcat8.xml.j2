@@ -48,6 +48,7 @@
 
     <Resource name="jdbc/dspaceWeb" auth="Container"
               type="javax.sql.DataSource"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
               driverClassName="org.postgresql.Driver"
               url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceWeb"
               username="{{ dspace_db_user }}"
@@ -56,21 +57,20 @@
               maxTotal='{{ dspace_dbpool_web_max_connections }}'
               maxIdle='15'
               minIdle='5'
-              maxWaitMillis='5000'
+              maxWait='5000'
               validationQuery='SELECT 1'
               logValidationErrors='true'
               logAbandoned='true'
-              removeAbandonedOnBorrow='true'
+              removeAbandoned='true'
               removeAbandonedTimeout='180'
               abandonWhenPercentageFull='50'
-              jdbcInterceptors='ResetAbandonedTimer;StatementFinalizer;ConnectionState'
-              testWhileIdle='true'
-              testOnConnect='true'
+              jdbcInterceptors='ResetAbandonedTimer'
               testOnBorrow='true'
               testOnReturn='true' />
 
     <Resource name="jdbc/dspaceApi" auth="Container"
               type="javax.sql.DataSource"
+              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
               driverClassName="org.postgresql.Driver"
               url="jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceApi"
               username="{{ dspace_db_user }}"
@@ -79,16 +79,14 @@
               maxTotal='{{ dspace_dbpool_api_max_connections }}'
               maxIdle='15'
               minIdle='5'
-              maxWaitMillis='5000'
+              maxWait='5000'
               validationQuery='SELECT 1'
               logValidationErrors='true'
               logAbandoned='true'
-              removeAbandonedOnBorrow='true'
+              removeAbandoned='true'
               removeAbandonedTimeout='60'
               abandonWhenPercentageFull='50'
-              jdbcInterceptors='ResetAbandonedTimer;StatementFinalizer;ConnectionState'
-              testWhileIdle='true'
-              testOnConnect='true'
+              jdbcInterceptors='ResetAbandonedTimer'
               testOnBorrow='true'
               testOnReturn='true' />
   </GlobalNamingResources>
@@ -234,7 +232,7 @@
 
         <!-- Crawler Session Manager Valve helps mitigate damage done by web crawlers -->
         <Valve className="org.apache.catalina.valves.CrawlerSessionManagerValve"
-               crawlerUserAgents=".*[bB]ot.*|.*Yahoo! Slurp.*|.*Feedfetcher-Google.*|.*Baiduspider.*|.*CORE.*|.*Indy Library.*|.*Drupal.*|.*BUbiNG.*|.*Pcore.*|.*crawl.*|.*facebook.*" />
+               crawlerUserAgents=".*[bB]ot.*|.*Yahoo! Slurp.*|.*Feedfetcher-Google.*|.*Baiduspider.*|.*CORE.*|.*Indy Library.*|.*Drupal.*|.*BUbiNG.*|.*Pcore.*|.*crawl.*|.*facebook.*|.*curl.*" />
 
       </Host>
     </Engine>

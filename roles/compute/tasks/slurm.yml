@@ -12,9 +12,16 @@
     - slurm
     - slurm-slurmd
     - slurm-devel
-    - slurm-spank-x11 # for X11 support in slurm
     - slurm-pam_slurm
     - munge
+  tags: packages
+
+# X11 support in SLURM no longer needs a plugin as of version 17.11
+- name: Remove slurm-spank-x11
+  yum: name={{ item }} state=absent
+  loop:
+    - slurm-spank-x11
+    - slurm-spank-x11-debuginfo
   tags: packages
 
 - name: Copy slurm config
@@ -43,11 +50,5 @@
 - name: Start and enable slurmd
   when: inventory_hostname != slurm_head_node
   systemd: name=slurmd state=started enabled=yes
-
-- name: Copy spank x11 config
-  copy: src={{ item }} dest=/etc/slurm/{{ item }} mode=0644
-  loop:
-    - plugstack.conf
-    - plugstack.conf.d/x11.conf.example
 
 # vim: set sw=2 ts=2:

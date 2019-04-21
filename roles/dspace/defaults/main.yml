@@ -56,7 +56,7 @@ dspace_statistics_db_user: dspacestatistics
 dspace_statistics_db_password: dspacestatistics
 dspace_statistics_db_host: localhost
 dspace_statistics_api_git_repo: https://github.com/ilri/dspace-statistics-api.git
-dspace_statistics_api_git_version: v0.9.0
+dspace_statistics_api_git_version: v1.0.0
 dspace_statistics_api_dir: /opt/ilri/dspace-statistics-api
 
 dspace_explorer_server: prod.ares.codeobia.com

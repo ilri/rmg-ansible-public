@@ -24,8 +24,8 @@ tls_cipher_suite: "ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECD
 dspace_git_repo: https://github.com/ilri/DSpace.git
 dspace_git_branch: 5_x-prod
 
-# stable is 1.14.x
-# mainline is 1.15.x
+# stable is 1.16.x
+# mainline is 1.17.x
 nginx_branch: stable
 
 munin_tomcat_user: ilri-munin

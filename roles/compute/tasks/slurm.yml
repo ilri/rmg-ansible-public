@@ -13,6 +13,7 @@
     - slurm-slurmd
     - slurm-devel
     - slurm-pam_slurm
+    - slurm-example-configs
     - munge
   tags: packages
 

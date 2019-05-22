@@ -10,6 +10,17 @@
     copy: src=CentOS-Base-7.repo dest=/etc/yum.repos.d/CentOS-Base.repo owner=root group=root mode=0644
     when: (ansible_distribution_major_version is version_compare('7','==') and ('compute' in group_names or 'storage' in group_names))
 
+    # 2019-05-22: disable fastestmirror plugin because it causes a delay of
+    # several minutes for every yum invocation. Let's limit to storage and
+    # compute hosts for now.
+  - name: Disable yum fastestmirror plugin
+    lineinfile:
+      dest: /etc/yum/pluginconf.d/fastestmirror.conf
+      regexp: '^enabled=1$'
+      line: "enabled=0"
+      state: present
+    when: "'compute' in group_names or 'storage' in group_names"
+
   - name: Install EPEL
     yum: name=epel-release state=present
 

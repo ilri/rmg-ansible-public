@@ -17,14 +17,6 @@
     - munge
   tags: packages
 
-# X11 support in SLURM no longer needs a plugin as of version 17.11
-- name: Remove slurm-spank-x11
-  yum: name={{ item }} state=absent
-  loop:
-    - slurm-spank-x11
-    - slurm-spank-x11-debuginfo
-  tags: packages
-
 - name: Copy slurm config
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
   notify: restart slurmd

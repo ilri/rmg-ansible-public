@@ -21,8 +21,12 @@
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
   notify: restart slurmd
 
-- name: Copy slurm PAM config
-  copy: src=etc/pam.d/slurm dest=/etc/pam.d/slurm owner=root group=root mode=0644
+- name: Copy extra slurm configs
+  copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0644
+  loop:
+    - { src: 'etc/pam.d/slurm', dest: '/etc/pam.d/slurm'}
+    - { src: 'etc/slurm/cgroup.conf', dest: '/etc/slurm/cgroup.conf'}
+  notify: restart slurmd
 
 - name: Create slurm directories
   file: path={{ item }} owner=slurm group=slurm mode=0755 state=directory

@@ -17,7 +17,7 @@
     - munge
   tags: packages
 
-- name: Copy slurm config
+- name: Copy slurm.conf
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
   notify: restart slurmd
 

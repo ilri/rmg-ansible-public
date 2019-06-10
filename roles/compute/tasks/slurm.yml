@@ -6,15 +6,18 @@
 - name: Create slurm user
   user: name=slurm system=yes state=present createhome=no uid=490 group=slurm
 
+- name: Set slurm packages
+  set_fact:
+    slurm_packages:
+      - slurm
+      - slurm-slurmd
+      - slurm-devel
+      - slurm-pam_slurm
+      - slurm-example-configs
+      - munge
+
 - name: Install slurm
-  yum: name={{ item }} state=present
-  loop:
-    - slurm
-    - slurm-slurmd
-    - slurm-devel
-    - slurm-pam_slurm
-    - slurm-example-configs
-    - munge
+  yum: name={{ slurm_packages }} state=present
   tags: packages
 
 - name: Copy slurm.conf

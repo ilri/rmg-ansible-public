@@ -15,6 +15,7 @@
       - slurm-pam_slurm
       - slurm-example-configs
       - munge
+  tags: packages
 
 - name: Install slurm
   yum: name={{ slurm_packages }} state=present

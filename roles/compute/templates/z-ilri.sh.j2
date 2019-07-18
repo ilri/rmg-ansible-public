@@ -9,20 +9,20 @@ TTY=$(tty -s)
 
 # Generate SSH keys for keyless logins! (ripped from Rocks 5.4)
 # If we are interactive and don't have a public key, send prompt.
-if [[ $INTERACTIVE != "false" ]] && [[ ! -f $HOME/.ssh/id_rsa.pub ]]
+if [[ $INTERACTIVE != "false" ]] && [[ ! -f $HOME/.ssh/id_ed25519.pub ]]
 then
     echo
     echo "It doesn't appear that you have set up your ssh key."
     echo "This process will make the files:"
-    echo "    " $HOME/.ssh/id_rsa.pub
-    echo "    " $HOME/.ssh/id_rsa
+    echo "    " $HOME/.ssh/id_ed25519.pub
+    echo "    " $HOME/.ssh/id_ed25519
     echo "    " $HOME/.ssh/authorized_keys
     echo
 
     # generate a key automatically, without prompting for a filename/password
-    ssh-keygen -t rsa -f $HOME/.ssh/id_rsa -N ''
+    ssh-keygen -t ed25519 -f $HOME/.ssh/id_ed25519 -N ''
 
-    cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+    cat $HOME/.ssh/id_ed25519.pub >> $HOME/.ssh/authorized_keys
 
     chmod 600 $HOME/.ssh/authorized_keys
     chmod g-w $HOME

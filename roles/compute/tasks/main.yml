@@ -69,6 +69,11 @@
       - libxml2-devel # for some R libraries
       - udunits2-devel # for some R libraries
       - gcc-c++ # for some R libraries
+      - libzstd-devel # for some R libraries
+      - sqlite-devel # for some R libraries
+      - libwebp-devel # for some R libraries
+      - hdf5-devel # for some R libraries
+      - geos-devel # for some R libraries
   tags: packages
 
 - name: Install extra packages

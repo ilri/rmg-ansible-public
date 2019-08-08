@@ -4,6 +4,11 @@
   import_tasks: slurm.yml
   tags: slurm
 
+# needed for newer compilers, etc
+- name: Enable Red Hat software collections
+  yum: name=centos-release-scl state=present
+  tags: packages
+
 - name: Set extra packages fact
   set_fact:
     extra_packages:
@@ -74,6 +79,9 @@
       - libwebp-devel # for some R libraries
       - hdf5-devel # for some R libraries
       - geos-devel # for some R libraries
+      - devtoolset-7-gcc # some software wants a newer gcc
+      - devtoolset-7-gcc-gfortran # some software wants a newer gcc
+      - devtoolset-7-gcc-c++ # some software wants a newer gcc
   tags: packages
 
 - name: Install extra packages

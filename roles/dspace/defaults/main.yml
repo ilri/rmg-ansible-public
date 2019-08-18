@@ -81,11 +81,11 @@ tomcat_user: dspace
 tomcat_group: dspace
 tomcat_user_home: /home/dspace
 # See: https://tomcat.apache.org/download-70.cgi
-tomcat_version: 7.0.94
+tomcat_version: 7.0.96
 tomcat_version_major: 7
 tomcat_url: https://www-us.apache.org/dist/tomcat/tomcat-{{ tomcat_version_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
 # sha512
-tomcat_url_checksum: b16f4b08591199e15f953c34965389a80d5597c28626a51c71ce42695ddd3359dc4df7f333ef0e1a1e8f9b2b6245041d57607c46764f33e560246c119cdc0f7a
+tomcat_url_checksum: a7ab7627ebafab8c5e5b1b09cff3a6e760f45dbc9b9ab235e14532357e47cf3bb6bbcfbdd92cd94561fe471296fd734d221ba8d59e1216a8369d2c39b1a80c98
 tomcat_path_prefix: /usr/local
 tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 

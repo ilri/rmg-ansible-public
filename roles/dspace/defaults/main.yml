@@ -12,7 +12,7 @@ nginx_ssl_session_cache: shared:SSL:10m
 # 1400 bytes to fit in one MTU (default is 16k!)
 nginx_ssl_buffer_size: 1400
 nginx_ssl_dhparam: /etc/ssl/certs/dhparam.pem
-nginx_ssl_protocols: 'TLSv1 TLSv1.1 TLSv1.2'
+nginx_ssl_protocols: 'TLSv1.2'
 nginx_ssl_port: 443
 
 # DNS resolvers for OCSP stapling (default to Cloudflare public DNS)

@@ -37,6 +37,15 @@
     notify:
       - restart firewalld
 
+  - name: Copy ipsets of abusive IPs
+    when: ansible_distribution_major_version is version_compare('15', '>=')
+    copy: src={{ item }} dest=/etc/firewalld/ipsets/{{ item }} owner=root group=root mode=0600
+    loop:
+      - abusers-ipv4.xml
+      - abusers-ipv6.xml
+    notify:
+      - restart firewalld
+
   - name: Remove iptables-persistent
     when: ansible_distribution_major_version is version_compare('15', '>=')
     apt: name=iptables-persistent state=absent

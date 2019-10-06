@@ -10,7 +10,7 @@
         <source address="{{ ghetto_ipsets[network].src }}"/>
         <port protocol="tcp" port="22"/>
         <accept>
-            <limit value="5/m"/>
+            <limit value="12/m"/>
         </accept>
     </rule>
     {% endif %}
@@ -21,7 +21,7 @@
         <source address="{{ ghetto_ipsets[network].ipv6src }}"/>
         <port protocol="tcp" port="22"/>
         <accept>
-            <limit value="5/m"/>
+            <limit value="12/m"/>
         </accept>
     </rule>
     {% endif %}

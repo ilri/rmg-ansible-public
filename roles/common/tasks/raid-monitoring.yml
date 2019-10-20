@@ -40,10 +40,17 @@
     yum: name=MegaCli state=present
     when: "ansible_distribution == 'CentOS' and 'lsi' in hw_raid_vendor"
 
-  # In ILRI CentOS repo, from:
-  # http://downloads.linux.hpe.com/SDR/repo/mcp
-  - name: Install HP Array tools
-    yum: name=hpacucli state=present
+  - name: Configure ILRI mirror of HPE MCP repository
+    copy: src=hpe-mcp.repo dest=/etc/yum.repos.d/hpe-mcp.repo owner=root group=root mode=0644
+    when: (ansible_distribution_major_version is version_compare('7','==') and ('compute' in group_names or 'storage' in group_names))
+
+  - name: Install HPE Smart Storage Administrator CLI
+    yum: name=ssacli state=present
+    when: "ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor"
+
+  # HPE Array tools were replaced by the Smart Storate Administrator CLI
+  - name: Remove HPE Array tools
+    yum: name=hpacucli state=absent
     when: "ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor"
 
   - name: Install mailx

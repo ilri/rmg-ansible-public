@@ -11,7 +11,7 @@
 set -e
 
 {% if ansible_distribution == 'CentOS' %}
-HP_CLI_BIN=/usr/sbin/hpacucli
+HP_CLI_BIN=/usr/sbin/ssacli
 {% endif %}
 {% if ansible_os_family == 'Debian' %}
 HP_CLI_BIN=/usr/sbin/hpssacli

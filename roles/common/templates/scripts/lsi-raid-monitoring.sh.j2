@@ -16,7 +16,7 @@ MegaCli="/usr/sbin/megacli"
 {% endif %}
 
 # extra mail options -> mailrc
-MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-auth-user=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'
+MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-auth=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'
 
 # The identifying number of the enclosure. Default for our systems is "8". Use
 # "MegaCli64 -PDlist -a0 | grep "Enclosure Device"" to see what your number

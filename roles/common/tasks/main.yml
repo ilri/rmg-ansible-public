@@ -32,7 +32,6 @@
   when: "'compute' in group_names or 'storage' in group_names"
   tags: hosts
 
-
 - name: Install common packages
   import_tasks: packages.yml
   tags: packages

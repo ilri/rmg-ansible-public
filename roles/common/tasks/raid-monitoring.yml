@@ -21,6 +21,15 @@
       - https://downloads.linux.hpe.com/SDR/repo/mcp
     when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor
 
+  # Add HPC IP to nodes that are using its mirrors for HW RAID utilities
+  - name: Add HPC to /etc/hosts
+    lineinfile:
+      dest: /etc/hosts
+      regexp: '{{ hostvars["hpc"].ansible_host }}.*hpc.*hpc\.ilri\.cgiar\.org$'
+      line: "{{ hostvars['hpc'].ansible_host }} hpc hpc.ilri.cgiar.org"
+      state: present
+    when: hw_raid_vendor is defined
+
   - name: Add ILRI mirror of Debian-based HPE MCP repository
     apt_repository: repo='deb https://hpc.ilri.cgiar.org/mirror/mcp {{ ansible_distribution_release }}/current non-free' state=present
     when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor

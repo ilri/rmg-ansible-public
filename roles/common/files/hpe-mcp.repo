@@ -1,0 +1,6 @@
+[hpe-mcp]
+name=CentOS-$releasever - HPE mcp packages for $basearch
+baseurl=https://hpc.ilri.cgiar.org/mirror/mcp/CentOS/$releasever/$basearch/current
+enabled=1
+gpgcheck=0
+protect=1

@@ -16,7 +16,7 @@ HP_CLI_BIN=/usr/sbin/ssacli
 EMAIL="{{ sysadmin_emails|join(" ") }}"
 
 # extra mail options -> mailrc
-MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-auth=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'
+MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'
 
 # get slots on this machine's HP storage
 SLOTS=$($HP_CLI_BIN controller all show | grep -E 'Slot [0-9]{0,2}' | awk '{print $6}')

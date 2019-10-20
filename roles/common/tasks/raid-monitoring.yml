@@ -14,17 +14,16 @@
     apt: name=megacli state=present cache_valid_time=3600
     when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
-  # hpssacli is only provided by HPE MCP repo
-  # http://downloads.linux.hpe.com/SDR/project/mcp/
-  - name: Add Debian-based HPE MCP repo
-    apt_repository: repo='deb https://downloads.linux.hpe.com/SDR/repo/mcp {{ ansible_distribution_release }}/current non-free' state=present
-    when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor and ansible_distribution_major_version is version_compare('17', '<')
+  - name: Remove old Debian-based HPE MCP repos
+    apt_repository: repo='deb {{ item }} {{ ansible_distribution_release }}/current non-free' state=absent
+    loop:
+      - http://downloads.linux.hpe.com/SDR/repo/mcp
+      - https://downloads.linux.hpe.com/SDR/repo/mcp
+    when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor
 
-  # no bionic builds at the moment, so we'll use xenial's
-  # http://downloads.linux.hpe.com/SDR/repo/mcp/dists/
-  - name: Add Debian-based HPE MCP repo
-    apt_repository: repo='deb https://downloads.linux.hpe.com/SDR/repo/mcp xenial/current non-free' state=present
-    when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor and ansible_distribution_major_version is version_compare('17', '>=')
+  - name: Add ILRI mirror of Debian-based HPE MCP repository
+    apt_repository: repo='deb https://hpc.ilri.cgiar.org/mirror/mcp {{ ansible_distribution_release }}/current non-free' state=present
+    when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor
 
   - name: Import HPE MCP repo's signing key
     apt_key: url=https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub state=present

@@ -2,9 +2,9 @@ SHELL=/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 {% for vendor in hw_raid_vendor %}
 {% if vendor == 'lsi' %}
-00 */2 * * * root /opt/ilri/scripts/lsi-raid-monitoring.sh checkNemail
+00 */12 * * * root /opt/ilri/scripts/lsi-raid-monitoring.sh checkNemail
 {% endif %}
 {% if vendor == 'hp' %}
-01 */2 * * * root /opt/ilri/scripts/hp-raid-monitoring.sh
+01 */12 * * * root /opt/ilri/scripts/hp-raid-monitoring.sh
 {% endif %}
 {% endfor %}

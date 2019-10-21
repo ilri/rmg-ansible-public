@@ -26,4 +26,11 @@ restic_binary_path: /usr/local/bin/restic
 restic_backup_paths:
   - /etc
 
+fail2ban_maxretry: 12
+# 1 hour in seconds
+fail2ban_findtime: 3600
+# 2 weeks in seconds
+fail2ban_bantime: 1209600
+fail2ban_ignoreip: 127.0.0.1/8,172.26.0.0/16,192.168.5.0/24
+
 # vim: set ts=2 sw=2:

@@ -1,0 +1,22 @@
+[Service]
+PrivateDevices=yes
+PrivateTmp=yes
+ProtectHome=read-only
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version_compare('18','==') %}
+ProtectSystem=strict
+{% else %}
+{# Older systemd versions don't have ProtectSystem=strict #}
+ProtectSystem=full
+{% endif %}
+NoNewPrivileges=yes
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version_compare('18','==') %}
+ReadWritePaths=-/var/run/fail2ban
+ReadWritePaths=-/var/lib/fail2ban
+ReadWritePaths=-/var/log/fail2ban.log
+{% else %}
+{# Older systemd versions don't have ReadWritePaths #}
+ReadWriteDirectories=-/var/run/fail2ban
+ReadWriteDirectories=-/var/lib/fail2ban
+ReadWriteDirectories=-/var/log
+{% endif %}
+CapabilityBoundingSet=CAP_AUDIT_READ CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW

@@ -15,11 +15,15 @@
     notify:
       - restart ip6tables
 
-  - name: Install tidy
+  - name: Set CentOS firewall packages
+    set_fact:
+      centos_firewall_packages:
+        - tidy
+        - fail2ban
+
+  - name: Install firewall packages
     when: ansible_distribution_major_version is version_compare('7', '==')
-    yum: name={{ item }} state=present
-    loop:
-      - tidy
+    yum: name={{ centos_firewall_packages }} state=present
     tags: packages
 
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
@@ -40,6 +44,9 @@
       - abusers-ipv6.xml
     notify:
       - restart firewalld
+
+  - include_tasks: fail2ban.yml
+    when: ansible_distribution_major_version is version_compare('7', '==')
   tags: firewall
 
 # vim: set sw=2 ts=2:

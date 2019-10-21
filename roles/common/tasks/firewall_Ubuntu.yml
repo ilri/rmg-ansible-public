@@ -19,12 +19,17 @@
     notify:
       - restart iptables-persistent
 
-  - name: Install firewalld
+  - name: Set Ubuntu firewall packages
+    set_fact:
+      ubuntu_firewall_packages:
+        - firewalld
+        - tidy
+        - fail2ban
+        - python3-systemd # for fail2ban systemd backend
+
+  - name: Install firewall packages
     when: ansible_distribution_major_version is version_compare('15', '>=')
-    apt: name={{ item }} state=present
-    loop:
-      - firewalld
-      - tidy
+    apt: name={{ ubuntu_firewall_packages }} state=present cache_valid_time=3600
     tags: packages
 
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
@@ -61,6 +66,9 @@
       - /etc/iptables/rules.v6
     notify:
       - restart firewalld
+
+  - include_tasks: fail2ban.yml
+    when: ansible_distribution_major_version is version_compare('15', '>=')
   tags: firewall
 
 # vim: set sw=2 ts=2:

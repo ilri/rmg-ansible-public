@@ -25,6 +25,12 @@
 - name: restart firewalld
   service: name=firewalld state=restarted
 
+- name: restart fail2ban
+  systemd: name=fail2ban state=restarted
+
+- name: reload systemd
+  systemd: daemon_reload=yes
+
 # ignore_errors: at times fails on some compute nodes
 - name: start tuned
   ignore_errors: yes

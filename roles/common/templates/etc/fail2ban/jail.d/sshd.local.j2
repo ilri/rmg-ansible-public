@@ -1,0 +1,11 @@
+[sshd]
+enabled   = true
+# See: /etc/fail2ban/filter.d/sshd.conf
+filter    = sshd
+# Integrate with firewalld and ipsets
+banaction = firewallcmd-ipset
+backend   = systemd
+maxretry  = {{ fail2ban_maxretry }}
+findtime  = {{ fail2ban_findtime }}
+bantime   = {{ fail2ban_bantime }}
+ignoreip  = {{ fail2ban_ignoreip }}

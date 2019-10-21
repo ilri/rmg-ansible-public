@@ -36,6 +36,11 @@
         <port protocol="tcp" port="80"/>
         <accept/>
     </rule>
+    <rule family="ipv4">
+        <source address="{{ ghetto_ipsets[network].src }}"/>
+        <port protocol="tcp" port="443"/>
+        <accept/>
+    </rule>
     {% endif %}
 
     {# ipv6 web rules #}
@@ -43,6 +48,11 @@
     <rule family="ipv6">
         <source address="{{ ghetto_ipsets[network].ipv6src }}"/>
         <port protocol="tcp" port="80"/>
+        <accept/>
+    </rule>
+    <rule family="ipv6">
+        <source address="{{ ghetto_ipsets[network].ipv6src }}"/>
+        <port protocol="tcp" port="443"/>
         <accept/>
     </rule>
     {% endif %}

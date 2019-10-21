@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
   <ipset type="hash:ip">
   <option name="family" value="inet6"/>
-  <short>abusers-ipv4</short>
+  <short>abusers-ipv6</short>
   <description>A list of abusive IPv6 addresses.</description>
   <entry>2a03:2880:11ff:10::face:b00c</entry>
 </ipset>

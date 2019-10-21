@@ -9,7 +9,7 @@
 
 # See Arch Linux's example: https://wiki.archlinux.org/index.php/Fail2ban
 - name: Configure fail2ban service override
-  template: src=etc/systemd/system/fail2ban.service.d/override.conf.j2 dest=/etc/systemd/system/fail2ban.service.d/override.conf owner=root mode=0600
+  template: src=etc/systemd/system/fail2ban.service.d/override.conf.j2 dest=/etc/systemd/system/fail2ban.service.d/override.conf owner=root mode=0644
   notify:
     - reload systemd
     - restart fail2ban

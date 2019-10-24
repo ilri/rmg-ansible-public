@@ -24,7 +24,6 @@ On subsequent runs, after SSH keys have been deployed, you only need `--ask-beco
 - Convention: replace all double quotes with single quotes where we don't need variable interpolation
 - Update: sysctl.conf template for Ubuntu, using CentOS template as a reference
 - Remove: rc.local task for Debian/Ubuntu, as it we are apparently not using it
-- Update: heirloom-mailx has been deprecated in Ubuntu >= 16.04, transition to s-nail
 - Update: make SSH rate limits configurable
 
 ## License

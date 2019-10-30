@@ -14,7 +14,7 @@
     - reload systemd
     - restart fail2ban
 
-- name: Enable fail2ban service
-  systemd: name=fail2ban enabled=yes
+- name: Start and enable fail2ban service
+  systemd: name=fail2ban state=started enabled=yes
 
 # vim: set sw=2 ts=2:

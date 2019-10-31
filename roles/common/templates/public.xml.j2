@@ -9,9 +9,7 @@
     <rule family="ipv4">
         <source address="{{ ghetto_ipsets[network].src }}"/>
         <port protocol="tcp" port="22"/>
-        <accept>
-            <limit value="12/m"/>
-        </accept>
+        <accept/>
     </rule>
     {% endif %}
 
@@ -20,9 +18,7 @@
     <rule family="ipv6">
         <source address="{{ ghetto_ipsets[network].ipv6src }}"/>
         <port protocol="tcp" port="22"/>
-        <accept>
-            <limit value="12/m"/>
-        </accept>
+        <accept/>
     </rule>
     {% endif %}
     {% endfor %}

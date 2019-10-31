@@ -65,7 +65,7 @@ fi
 # Shows the state of all drives and if they are online, unconfigured or missing.
 if [ "$1" = "drives" ]
    then
-      $MegaCli -PDlist -aALL -NoLog | egrep 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g'
+      $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g'
    exit
 fi
 
@@ -100,7 +100,7 @@ fi
 # read/write retries or corrupt data.
 if [ "$1" = "errors" ]
    then
-      echo "Slot Number: 0"; $MegaCli -PDlist -aALL -NoLog | egrep -i 'error|fail|slot' | egrep -v '0'
+      echo "Slot Number: 0"; $MegaCli -PDlist -aALL -NoLog | grep -i -E 'error|fail|slot' | grep -v '0'
    exit
 fi
 
@@ -166,7 +166,7 @@ fi
 # completion time.
 if [ "$1" = "progress" ]
    then
-      DRIVE=`$MegaCli -PDlist -aALL -NoLog | egrep 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | egrep build | awk '{print $3}'`
+      DRIVE=`$MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | grep build | awk '{print $3}'`
       $MegaCli -PDRbld -ShowProg -PhysDrv [$ENCLOSURE:$DRIVE] -a0 -NoLog
    exit
 fi
@@ -181,19 +181,19 @@ if [ "$1" = "checkNemail" ]
       EMAIL="{{ sysadmin_emails|join(" ") }}"
 
       # Check if raid is in good condition
-      STATUS1=`$MegaCli -LDInfo -Lall -aALL -NoLog | egrep -i 'fail|degrad|error'`
+      STATUS1=`$MegaCli -LDInfo -Lall -aALL -NoLog | grep -i -E 'fail|degrad|error'`
 
       # On bad raid status send email with basic drive information
       if [ "$STATUS1" ]; then
-         $MegaCli -PDlist -aALL -NoLog | egrep 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | mail ${MAIL_ARGS} -s `hostname`' - RAID Notification' $EMAIL
+         $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | mail ${MAIL_ARGS} -s `hostname`' - RAID Notification' $EMAIL
       fi
 
       # Check if disks are in good condition
-      STATUS2=`$MegaCli -LDInfo -Lall -aALL -NoLog | egrep -i 'fail|degrad|error'`
+      STATUS2=`$MegaCli -LDInfo -Lall -aALL -NoLog | grep -i -E 'fail|degrad|error'`
 
       # On bad disk status send email with basic drive information
       if [ "$STATUS2" ]; then
-         $MegaCli -PDlist -aALL -NoLog | egrep 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | mail ${MAIL_ARGS} -s `hostname`' - RAID Notification' $EMAIL
+         $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | mail ${MAIL_ARGS} -s `hostname`' - RAID Notification' $EMAIL
       fi
 
 fi

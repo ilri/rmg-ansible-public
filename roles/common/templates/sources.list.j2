@@ -21,7 +21,7 @@ deb http://extras.ubuntu.com/ubuntu {{ ansible_distribution_release }} main
 {% endif %}
 
 {% elif ansible_distribution == "Debian" %}
-{% set apt_mirror    = apt_mirror | default("debian.mirror.ac.ke") %}
+{% set apt_mirror    = apt_mirror | default("debian-archive.mirror.liquidtelecom.com") %}
 deb http://{{ apt_mirror }}/debian {{ ansible_distribution_release }} main contrib non-free
 
 deb http://{{ apt_mirror }}/debian {{ ansible_distribution_release }}-updates main contrib non-free

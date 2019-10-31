@@ -52,7 +52,7 @@ if [ $# -eq 0 ]
 
 # General status of all RAID virtual disks or volumes and if PATROL disk check
 # is running.
-if [ $1 = "status" ]
+if [ "$1" = "status" ]
    then
       $MegaCli -LDInfo -Lall -aALL -NoLog
       echo "###############################################"
@@ -63,14 +63,14 @@ if [ $1 = "status" ]
 fi
 
 # Shows the state of all drives and if they are online, unconfigured or missing.
-if [ $1 = "drives" ]
+if [ "$1" = "drives" ]
    then
       $MegaCli -PDlist -aALL -NoLog | egrep 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g'
    exit
 fi
 
 # Use to blink the light on the slot in question. Hit enter again to turn the blinking light off.
-if [ $1 = "ident" ]
+if [ "$1" = "ident" ]
    then
       $MegaCli  -PdLocate -start -physdrv[$ENCLOSURE:$2] -a0 -NoLog
       logger "`hostname` - identifying enclosure $ENCLOSURE, drive $2 "
@@ -84,7 +84,7 @@ fi
 # the drive "good." Basically, Unconfigured(bad) to Unconfigured(good). We use
 # this method on our FreeBSD ZFS machines before the drive is added back into
 # the zfs pool.
-if [ $1 = "good" ]
+if [ "$1" = "good" ]
    then
       # set Unconfigured(bad) to Unconfigured(good)
       $MegaCli -PDMakeGood -PhysDrv[$ENCLOSURE:$2] -a0 -NoLog
@@ -98,7 +98,7 @@ fi
 # under the slot number. At this point you can decided to replace the flaky
 # drive. Bad drives might not fail right away and will slow down your raid with
 # read/write retries or corrupt data.
-if [ $1 = "errors" ]
+if [ "$1" = "errors" ]
    then
       echo "Slot Number: 0"; $MegaCli -PDlist -aALL -NoLog | egrep -i 'error|fail|slot' | egrep -v '0'
    exit
@@ -107,7 +107,7 @@ fi
 # status of the battery and the amount of charge. Without a working Battery
 # Backup Unit (BBU) most of the LSI read/write caching will be disabled
 # automatically. You want caching for speed so make sure the battery is ok.
-if [ $1 = "bat" ]
+if [ "$1" = "bat" ]
    then
       $MegaCli -AdpBbuCmd -aAll -NoLog
    exit
@@ -124,7 +124,7 @@ fi
 # or if the BBU comes up and says it has no charge try powering off the machine
 # and restart it. This will force the LSI card to re-evaluate the BBU. Silly
 # but it works.
-if [ $1 = "batrelearn" ]
+if [ "$1" = "batrelearn" ]
    then
       $MegaCli -AdpBbuCmd -BbuLearn -aALL -NoLog
    exit
@@ -139,7 +139,7 @@ fi
 # either way. NOTE: if you pass a slot number which is already part of the raid
 # by mistake the LSI raid card is smart enough to just error out and _NOT_
 # destroy the raid drive, thankfully.
-if [ $1 = "replace" ]
+if [ "$1" = "replace" ]
    then
       logger "`hostname` - REPLACE enclosure $ENCLOSURE, drive $2 "
       # set Unconfigured(bad) to Unconfigured(good)
@@ -154,7 +154,7 @@ if [ $1 = "replace" ]
 fi
 
 # Print all the logs from the LSI raid card. You can grep on the output.
-if [ $1 = "logs" ]
+if [ "$1" = "logs" ]
    then
       $MegaCli -FwTermLog -Dsply -aALL -NoLog
    exit
@@ -164,7 +164,7 @@ fi
 # will then query the rebuilding drive to see what percentage it is rebuilt and
 # how much time it has taken so far. You can then guess-ti-mate the
 # completion time.
-if [ $1 = "progress" ]
+if [ "$1" = "progress" ]
    then
       DRIVE=`$MegaCli -PDlist -aALL -NoLog | egrep 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | egrep build | awk '{print $3}'`
       $MegaCli -PDRbld -ShowProg -PhysDrv [$ENCLOSURE:$DRIVE] -a0 -NoLog
@@ -175,7 +175,7 @@ fi
 # script will send email to the address in the $EMAIL variable. We normally add
 # this method to a cron job to be run every few hours so we are notified of any
 # issues.
-if [ $1 = "checkNemail" ]
+if [ "$1" = "checkNemail" ]
    then
       # admin email(s)
       EMAIL="{{ sysadmin_emails|join(" ") }}"
@@ -193,7 +193,7 @@ fi
 # firmware version (FW Package Build), battery back-up unit presence, installed
 # cache memory and the capabilities of the adapter. Pipe to grep to find the
 # term you need.
-if [ $1 = "allinfo" ]
+if [ "$1" = "allinfo" ]
    then
       $MegaCli -AdpAllInfo -aAll -NoLog
    exit
@@ -202,7 +202,7 @@ fi
 # Update the LSI card's time with the current operating system time. You may
 # want to setup a cron job to call this method once a day or whenever you
 # think the raid card's time might drift too much.
-if [ $1 = "settime" ]
+if [ "$1" = "settime" ]
    then
       $MegaCli -AdpGetTime -aALL -NoLog
       $MegaCli -AdpSetTime `date +%Y%m%d` `date +%H:%M:%S` -aALL -NoLog
@@ -215,7 +215,7 @@ fi
 # too. These options are for speed optimization, build rate tweaks and PATROL
 # options. When setting up a new machine we simply execute the "setdefaults"
 # method and the raid is configured. You can use this on live raids too.
-if [ $1 = "setdefaults" ]
+if [ "$1" = "setdefaults" ]
    then
       # Read Cache enabled specifies that all reads are buffered in cache memory.
        $MegaCli -LDSetProp -Cached -LAll -aAll -NoLog

@@ -177,7 +177,7 @@ if [ "$1" = "checkNemail" ]; then
    fi
 
    # Check if disks are in good condition
-   STATUS2=$($MegaCli -PDlist -aALL -NoLog | grep -E 'Yes')
+   STATUS2=$($MegaCli -PDlist -aALL -NoLog | grep -E 'S\.M\.A\.R\.T.*?Yes')
 
    # On bad disk status send email with basic drive information
    if [ "$STATUS2" ]; then

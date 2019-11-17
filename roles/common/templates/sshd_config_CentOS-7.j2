@@ -131,10 +131,6 @@ X11Forwarding no
 UsePrivilegeSeparation sandbox		# Default for new installations.
 #PermitUserEnvironment no
 #Compression delayed
-{% if not 'compute' in group_names %}
-ClientAliveInterval 300
-ClientAliveCountMax 0
-{% endif %}
 #ShowPatchLevel no
 #UseDNS yes
 #PidFile /var/run/sshd.pid

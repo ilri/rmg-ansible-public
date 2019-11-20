@@ -46,7 +46,7 @@
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  command: /bin/systemctl daemon-reload
+  systemd: daemon_reload=yes
   when: solr_systemd_service is changed
 
 - name: Copy solr.xml config files

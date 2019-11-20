@@ -16,7 +16,7 @@
 
   # need to reload to pick up service/timer changes
   - name: Reload systemd daemon
-    command: /bin/systemctl daemon-reload
+    systemd: daemon_reload=yes
     when: letsencrypt_service is changed or letsencrypt_timer is changed
 
   - name: Start and enable systemd timer to renew Let's Encrypt certs

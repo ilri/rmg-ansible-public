@@ -99,7 +99,7 @@
 
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
-    command: /bin/systemctl daemon-reload
+    systemd: daemon_reload=yes
     when: restic_systemd_service is changed
           or restic_systemd_timer is changed
           or restic_systemd_environment is changed

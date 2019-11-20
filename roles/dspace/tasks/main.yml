@@ -325,7 +325,7 @@
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  command: /bin/systemctl daemon-reload
+  systemd: daemon_reload=yes
   when: dspace_systemd_services is changed
         or dspace_systemd_timer is changed
         or dspace_systemd_environment is changed

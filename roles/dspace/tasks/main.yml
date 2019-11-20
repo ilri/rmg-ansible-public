@@ -153,7 +153,7 @@
     dest: "{{ tomcat_path }}.tar.gz"
     checksum: "sha512:{{ tomcat_url_checksum }}"
   register: tomcat_download
-  when: tomcat_stat.stat.exists == False
+  when: tomcat_stat.stat.exists is False
   tags: tomcat
 
 - name: Unzip Tomcat

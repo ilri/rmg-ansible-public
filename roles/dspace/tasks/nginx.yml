@@ -58,7 +58,7 @@
 # for now this playbook only installs certbot and systemd renewal scripts
 - include_tasks: letsencrypt.yml
   when: use_letsencrypt is defined and
-        use_letsencrypt == True and
+        use_letsencrypt is True and
         ansible_service_mgr == 'systemd'
   tags: letsencrypt
 

@@ -12,7 +12,7 @@
   lineinfile:
     dest: /etc/hosts
     regexp: '{{ hostvars[item].ansible_host }}.*{{ item }}.*{{ item }}\.ilri\.cgiar\.org$'
-    line: "{{ hostvars[item].ansible_host }} {{ item }} {{item}}.ilri.cgiar.org"
+    line: "{{ hostvars[item].ansible_host }} {{ item }} {{ item }}.ilri.cgiar.org"
     state: present
   loop: "{{ groups['compute'] | union(groups['storage']) }}"
   when: "'compute' in group_names or 'storage' in group_names"

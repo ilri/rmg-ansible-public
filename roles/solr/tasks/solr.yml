@@ -64,9 +64,11 @@
   service: name=solr state=started enabled=yes
 
 - name: Configure Solr cores
-  include_tasks: solr-cores.yml
-  become_user: "{{ solr_user }}"
+  include_tasks:
+    file: solr-cores.yml
+    apply:
+      become_user: "{{ solr_user }}"
+      tags: solr-cores
   when: solr_cores is defined
-  tags: solr-cores
 
 # vim: set ts=2 sw=2:

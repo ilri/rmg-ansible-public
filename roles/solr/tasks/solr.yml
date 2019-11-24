@@ -16,7 +16,7 @@
     url: "{{ solr_mirror_url }}"
     dest: "{{ solr_prefix_dir }}/{{ solr_tarball }}"
     checksum: "sha256:{{ solr_sha256sum }}"
-  when: solr_stat.stat.exists is False
+  when: not solr_stat.stat.exists
   register: get_url_result
 
 - name: Unpack Solr tarball

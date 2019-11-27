@@ -299,6 +299,7 @@
 
 - name: Install DSpace statistics API dependencies
   pip: requirements=requirements.txt chdir={{ dspace_statistics_api_dir }} virtualenv=venv virtualenv_command={{ pyvenv_command }} state=forcereinstall
+  notify: restart dspace-statistics-api
 
 - name: Set up cron jobs
   template: src=dspace-maintenance-tasks.j2 dest=/etc/cron.d/dspace-maintenance-tasks owner=root group=root mode=0644

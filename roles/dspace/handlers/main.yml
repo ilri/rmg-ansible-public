@@ -15,3 +15,6 @@
 
 - name: reload postgresql
   systemd: name=postgresql state=reloaded
+
+- name: restart dspace-statistics-api
+  systemd: name=dspace-statistics-api state=restarted

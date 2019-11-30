@@ -135,7 +135,7 @@
     apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess
   - name: Install GoAccess
     apt: pkg=goaccess state=present
-  when: ansible_distribution_version is version_compare('16.04', '<=')
+  when: ansible_distribution_version is version_compare('18.04', '<=')
 
 - name: Configure nginx
   import_tasks: nginx.yml

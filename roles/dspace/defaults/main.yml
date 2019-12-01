@@ -12,7 +12,7 @@ nginx_ssl_session_cache: shared:SSL:10m
 # 1400 bytes to fit in one MTU (default is 16k!)
 nginx_ssl_buffer_size: 1400
 nginx_ssl_dhparam: /etc/ssl/certs/dhparam.pem
-nginx_ssl_protocols: 'TLSv1.2'
+nginx_ssl_protocols: 'TLSv1.2 TLSv1.3'
 nginx_ssl_port: 443
 
 # DNS resolvers for OCSP stapling (default to Cloudflare public DNS)
@@ -69,8 +69,8 @@ dspace_mail_disabled: false
 # CMYK/RGB iccprofiles for DSpace 5.6+ PDF thumbnails
 dspace_ghostscript_prefix: /usr/share/ghostscript/current
 
-# command to use for pyvenv (Ubuntu 16.04 is Python 3.5)
-pyvenv_command: pyvenv-3.5
+# command to use for pyvenv (Ubuntu 18.04 is Python 3.6)
+pyvenv_command: pyvenv-3.6
 
 # distribution must be openjdk
 java_distribution: openjdk

@@ -1,6 +1,6 @@
 ---
 # Use iptables service on CentOS 6
-# Use firewalld on CentOS 7
+# Use firewalld on CentOS >= 7
 
 - block:
   - name: Copy /etc/sysconfig/iptables
@@ -22,22 +22,22 @@
         - fail2ban
 
   - name: Install firewall packages
-    when: ansible_distribution_major_version is version_compare('7', '==')
+    when: ansible_distribution_major_version is version_compare('7', '>=')
     yum: name={{ centos_firewall_packages }} state=present
     tags: packages
 
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
-    when: ansible_distribution_major_version is version_compare('7', '==')
+    when: ansible_distribution_major_version is version_compare('7', '>=')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600
 
   - name: Format public.xml firewalld zone file
-    when: ansible_distribution_major_version is version_compare('7', '==')
+    when: ansible_distribution_major_version is version_compare('7', '>=')
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
 
   - name: Copy ipsets of abusive IPs
-    when: ansible_distribution_major_version is version_compare('7', '==')
+    when: ansible_distribution_major_version is version_compare('7', '>=')
     copy: src={{ item }} dest=/etc/firewalld/ipsets/{{ item }} owner=root group=root mode=0600
     loop:
       - abusers-ipv4.xml
@@ -46,7 +46,7 @@
       - restart firewalld
 
   - include_tasks: fail2ban.yml
-    when: ansible_distribution_major_version is version_compare('7', '==')
+    when: ansible_distribution_major_version is version_compare('7', '>=')
   tags: firewall
 
 # vim: set sw=2 ts=2:

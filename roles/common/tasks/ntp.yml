@@ -10,7 +10,10 @@
 # See: https://www.centos.org/forums/viewtopic.php?t=54021
 #
 # Sadly, CentOS 8 ships with system 239 and for some reason systemd-timesysncd
-# is not bundled there either. Hmmm.
+# is not bundled there either. According to Red Hat's RHEL8 documentation NTP
+# is provided by chrony.
+#
+# See: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/using-chrony-to-configure-ntp
 
 - name: Set timezone
   when: timezone is defined and ansible_service_mgr == 'systemd'

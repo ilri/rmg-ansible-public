@@ -1,5 +1,5 @@
 ---
-# Hosts running Ubuntu >= 16.04 or CentOS 7 use the systemd init system and
+# Hosts running Ubuntu >= 16.04 or CentOS >= 7 use the systemd init system and
 # should use the built-in systemd-timesync service instead of a standalone NTP
 # client, while earlier versions of those distributions should use the Chrony
 # package.
@@ -8,6 +8,9 @@
 # is not bundled there (either by upstream or Redhat, I'm not sure).
 #
 # See: https://www.centos.org/forums/viewtopic.php?t=54021
+#
+# Sadly, CentOS 8 ships with system 239 and for some reason systemd-timesysncd
+# is not bundled there either. Hmmm.
 
 - name: Set timezone
   when: timezone is defined and ansible_service_mgr == 'systemd'

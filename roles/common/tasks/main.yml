@@ -18,20 +18,6 @@
   when: "'compute' in group_names or 'storage' in group_names"
   tags: hosts
 
-# there's no idempotent way to remove hosts after we've removed them from the
-# ansible inventory, so let's just use a hard-coded list of old servers that
-# should NOT be present in any hosts files.
-- name: Remove old compute and storage nodes from /etc/hosts
-  lineinfile:
-    dest: /etc/hosts
-    regexp: '{{ item }}'
-    state: absent
-  loop:
-    - '192.168.5.27\s+wingu0\s+.*$'
-    - '192.168.5.28\s+wingu1\s+.*$'
-  when: "'compute' in group_names or 'storage' in group_names"
-  tags: hosts
-
 - name: Install common packages
   import_tasks: packages.yml
   tags: packages

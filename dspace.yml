@@ -3,7 +3,6 @@
 
 - hosts: dspace
   become: yes
-  remote_user: provisioning
   vars_files:
     - private/vars/common.yml
     - private/vars/dspace.yml

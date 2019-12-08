@@ -2,7 +2,6 @@
 
 - hosts: solr
   become: yes
-  remote_user: provisioning
   vars_files:
     - private/vars/common.yml
     - private/vars/ipsets.yml

@@ -20,7 +20,6 @@
 #ListenAddress ::
 
 HostKey /etc/ssh/ssh_host_rsa_key
-HostKey /etc/ssh/ssh_host_ecdsa_key
 HostKey /etc/ssh/ssh_host_ed25519_key
 
 # Ciphers and keying
@@ -38,14 +37,15 @@ HostKey /etc/ssh/ssh_host_ed25519_key
 # Logging
 #SyslogFacility AUTH
 SyslogFacility AUTHPRIV
-#LogLevel INFO
+# LogLevel VERBOSE logs user's key fingerprint on login. Needed to have a clear audit track of which key was using to log in.
+LogLevel VERBOSE
 
 # Authentication:
 
 #LoginGraceTime 2m
-PermitRootLogin yes
+PermitRootLogin prohibit-password
 #StrictModes yes
-#MaxAuthTries 6
+MaxAuthTries 4
 #MaxSessions 10
 
 #PubkeyAuthentication yes
@@ -84,8 +84,8 @@ ChallengeResponseAuthentication no
 #KerberosUseKuserok yes
 
 # GSSAPI options
-GSSAPIAuthentication yes
-GSSAPICleanupCredentials no
+GSSAPIAuthentication no
+GSSAPICleanupCredentials yes
 #GSSAPIStrictAcceptorCheck yes
 #GSSAPIKeyExchange no
 #GSSAPIEnablek5users no
@@ -106,7 +106,11 @@ UsePAM yes
 #AllowAgentForwarding yes
 #AllowTcpForwarding yes
 #GatewayPorts no
+{% if 'compute' in group_names %}
 X11Forwarding yes
+{% else %}
+X11Forwarding no
+{% endif %}
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PermitTTY yes
@@ -147,3 +151,21 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
+
+# https://stribika.github.io/2015/01/04/secure-secure-shell.html
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes128-ctr
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+
+{% if ssh_allowed_users is defined and ssh_allowed_users %}
+# Is there a list of allowed users?
+# Is it populated? (An empty list is 'None', which evaluates as False in Python)
+# merge the items of a list into one string using a space as a separator
+# http://jinja.pocoo.org/docs/dev/templates/#join
+AllowUsers {{ ssh_allowed_users|join(" ") }} {{ provisioning_user.name }}
+{% endif %}
+
+{% if inventory_hostname == 'hpc' %}
+# only allow members of the "ssh" and root groups to login via ssh
+AllowGroups     ssh root provisioning
+{% endif %}

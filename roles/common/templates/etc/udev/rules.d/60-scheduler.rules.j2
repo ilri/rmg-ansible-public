@@ -16,7 +16,7 @@ ACTION=="add|change", KERNEL=="xvd[a-z]|[sv]d[a-z]", ATTR{queue/rotational}=="1"
 ## see: http://www.fhgfs.com/wiki/wikka.php?wakka=StorageServerTuning
 ## see: http://community.gluster.org/a/linux-kernel-tuning-for-glusterfs/
 # give the IO scheduler more flexibility by increasing the number of schedulable requests (queue_depth * 2):
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/nr_requests}="512"
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/nr_requests}="2048"
 # To improve throughput for sequential reads, increase the maximum amount of read-ahead data. The actual amount of read-ahead is adaptive, so using a high value here won't harm performance for small random access.
 # According to RedHat Storage best practices and rhs-high-throughput tuned profile:
 #

@@ -5,28 +5,35 @@
   # some installs (like from ISO).
   - name: Add CentOS package signing key
     rpm_key: state=present key=/etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+    when: ansible_distribution_major_version is version_compare('7','==')
 
   - name: Configure ILRI CentOS mirror
     copy: src=CentOS-Base-7.repo dest=/etc/yum.repos.d/CentOS-Base.repo owner=root group=root mode=0644
     when: (ansible_distribution_major_version is version_compare('7','==') and ('compute' in group_names or 'storage' in group_names))
 
+  - name: Configure ILRI CentOS mirror
+    copy: src={{ item }} dest=/etc/yum.repos.d/{{ item }} owner=root group=root mode=0644
+    when: (ansible_distribution_major_version is version_compare('8','==') and ('compute' in group_names or 'storage' in group_names))
+    with_fileglob:
+      - CentOS-*-8.repo
+
     # 2019-05-22: disable fastestmirror plugin because it causes a delay of
     # several minutes for every yum invocation. Let's limit to storage and
-    # compute hosts for now.
+    # compute hosts for now. Only seems to exist on CentOS 7.
   - name: Disable yum fastestmirror plugin
     lineinfile:
       dest: /etc/yum/pluginconf.d/fastestmirror.conf
       regexp: '^enabled=1$'
       line: "enabled=0"
       state: present
-    when: "'compute' in group_names or 'storage' in group_names"
+    when: (ansible_distribution_major_version is version_compare('7','==') and ('compute' in group_names or 'storage' in group_names))
 
   - name: Install EPEL
     yum: name=epel-release state=present
 
   - name: Configure ILRI EPEL mirror
-    copy: src=epel-7.repo dest=/etc/yum.repos.d/epel.repo owner=root group=root mode=0644
-    when: (ansible_distribution_major_version is version_compare('7','==') and ('compute' in group_names or 'storage' in group_names))
+    copy: src=epel-{{ ansible_distribution_major_version }}.repo dest=/etc/yum.repos.d/epel.repo owner=root group=root mode=0644
+    when: (ansible_distribution_major_version is version_compare('7','>=') and ('compute' in group_names or 'storage' in group_names))
 
   - name: Add EPEL RPM package signing key
     rpm_key: state=present key=/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
@@ -43,7 +50,7 @@
       - lsof
       - sysstat
       - tmux
-      - vim
+      - vim-enhanced
 
   - name: Install base packages
     yum: name={{ centos_base_packages }} state=present

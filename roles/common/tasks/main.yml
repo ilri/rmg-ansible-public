@@ -79,7 +79,7 @@
 
 - name: Configure tuned
   include_tasks: tuned.yml
-  when: "'compute' in group_names or 'storage' in group_names"
+  when: ansible_distribution == 'CentOS'
   tags: tuned
 
 - name: Copy admin SSH keys

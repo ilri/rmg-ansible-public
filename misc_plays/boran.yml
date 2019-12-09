@@ -9,7 +9,6 @@
 
 - hosts: boran
   become: yes
-  user: provisioning
   vars:
     apt_mirror: ubuntu-archive.mirror.liquidtelecom.com
   vars_files:

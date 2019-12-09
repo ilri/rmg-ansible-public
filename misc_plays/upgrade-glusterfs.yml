@@ -7,7 +7,6 @@
 
 - hosts: storage
   become: yes
-  user: provisioning
   tasks:
     - name: Stop glusterd
       service: name=glusterd state=stopped

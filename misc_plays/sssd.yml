@@ -12,7 +12,6 @@
 
 - hosts: all
   become: yes
-  user: provisioning
   vars_files:
     - "../vars/{{ ansible_os_family }}.yml"
     - ../private/vars/common.yml

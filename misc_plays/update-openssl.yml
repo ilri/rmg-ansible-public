@@ -7,7 +7,6 @@
 
 - hosts: all
   become: yes
-  user: provisioning
   vars:
     debian_openssl_packages:
       - openssl

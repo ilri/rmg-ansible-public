@@ -14,8 +14,8 @@
     - packages
     - tuned
 
-- name: Install tuned on CentOS 7 hosts
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '==')
+- name: Install tuned on CentOS 7+ hosts
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '>=')
   yum: name=tuned state=installed
   tags: tuned
 
@@ -29,8 +29,8 @@
     - cpuspeed
   tags: tuned
 
-- name: Start & enable tuned service on CentOS 7 hosts
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '==')
+- name: Start & enable tuned service on CentOS 7+ hosts
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7', '>=')
   systemd: name=tuned state=started enabled=yes
   tags: tuned
 

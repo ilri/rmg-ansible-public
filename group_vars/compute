@@ -20,7 +20,7 @@ ssh_access:
   - ilri_nbo_dmz
 
 # the CPU/IO profile to activate with tuned-adm
-tuned_profile: latency-performance
+tuned_profile: hpc-compute
 
 #slurm vars
 slurm_head_node: hpc

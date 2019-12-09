@@ -1,0 +1,32 @@
+---
+# Kernel version tests. I'm trying to understand how to use the Jinja2 version
+# function when versions are not so clean.
+#
+#   $ ansible-playbook misc_plays/kernel-version.yml -l ilrinrb01
+#
+
+- hosts: all
+  become: yes
+  vars_files:
+    - "../vars/{{ ansible_os_family }}.yml"
+    - ../private/vars/common.yml
+    - "../private/vars/{{ ansible_os_family }}.yml"
+    - ../private/vars/ipsets.yml
+  tasks:
+    - name: Kernel version 3.x
+      debug: msg="Kernel version >= 3.x ({{ ansible_kernel }})"
+      when: ansible_kernel is version('3', '>=')
+
+    - name: Kernel version 4.15.x
+      debug: msg="Kernel version >= 4.15.x ({{ ansible_kernel }})"
+      when: ansible_kernel is version('4.15', '>=')
+
+    - name: Kernel version 4.18.x
+      debug: msg="Kernel version >= 4.18.x ({{ ansible_kernel }})"
+      when: ansible_kernel is version('4.18', '>=')
+
+    - name: Kernel version 5.x
+      debug: msg="Kernel version >= 5.x ({{ ansible_kernel }})"
+      when: ansible_kernel is version('5', '>=')
+
+# vim: set sw=2 ts=2:

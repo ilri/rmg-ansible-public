@@ -26,6 +26,17 @@
     yum: name={{ centos_firewall_packages }} state=present
     tags: packages
 
+# firewalld developers only claim nftables support with nftables >= 0.9.3
+# See: https://firewalld.org/2019/09/libnftables-JSON
+  - name: Use iptables backend in firewalld
+    when: ansible_distribution_major_version is version_compare('8', '==')
+    lineinfile:
+      dest: /etc/firewalld/firewalld.conf
+      regexp: '^FirewallBackend=nftables$'
+      line: 'FirewallBackend=iptables'
+    notify:
+      - restart firewalld
+
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
     when: ansible_distribution_major_version is version_compare('7', '>=')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600

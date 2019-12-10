@@ -2,10 +2,12 @@
 
 - name: Configure munin scraper
   import_tasks: munin.yml
+  when: ansible_distribution != 'CentOS' or (ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8','!='))
   tags: munin
 
 - name: Configure munin listener
   import_tasks: munin-node.yml
+  when: ansible_distribution != 'CentOS' or (ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8','!='))
   tags: munin-node
 
 # vim: set sw=2 ts=2:

@@ -44,8 +44,8 @@
     when: ansible_distribution_major_version is version_compare('8', '==')
     lineinfile:
       dest: /etc/firewalld/firewalld.conf
-      regexp: '^IndividualCalls=yes$'
-      line: 'IndividualCalls=no'
+      regexp: '^IndividualCalls=no$'
+      line: 'IndividualCalls=yes'
     notify:
       - restart firewalld
 

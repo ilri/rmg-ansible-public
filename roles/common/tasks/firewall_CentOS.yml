@@ -37,6 +37,18 @@
     notify:
       - restart firewalld
 
+# firewalld seems to have an issue with iptables 1.8.2. Using individual calls
+# seems to work around it.
+# See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=931722
+  - name: Use individual iptables calls
+    when: ansible_distribution_major_version is version_compare('8', '==')
+    lineinfile:
+      dest: /etc/firewalld/firewalld.conf
+      regexp: '^IndividualCalls=yes$'
+      line: 'IndividualCalls=no'
+    notify:
+      - restart firewalld
+
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
     when: ansible_distribution_major_version is version_compare('7', '>=')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600

@@ -87,26 +87,16 @@
   tags: packages
 
 # 2019-12-09: currently missing from CentOS 8:
-#   - screen
 #   - compat-libstdc++-33.x86_64
-#   - proj.x86_64 #for libproj.so.0
 #   - gdal.x86_64 #for libgdal.so.1
 #   - pandoc.x86_64
 #   - argtable.x86_64 # for clustalo
-#   - htop
-#   - perl-Text-Soundex.x86_64 # for RepeatMasker
-#   - perl-PerlIO-gzip # for vep
 #   - perl-Clone.x86_64 # for circos, see: https://hpc.ilri.cgiar.org/circos-software
 #   - perl-Config-General.noarch # for circos
 #   - perl-Font-TTF.noarch # for circos
 #   - perl-Readonly.noarch # for circos
 #   - gdal-devel.x86_64 # for some R libraries
-#   - proj-devel.x86_64 # for some R libraries
 #   - proj-epsg.x86_64 # for some R libraries
-#   - udunits2-devel # for some R libraries
-#   - libzstd-devel # for some R libraries
-#   - hdf5-devel # for some R libraries
-#   - geos-devel # for some R libraries
 - name: Set extra packages fact for CentOS 8
   when: ansible_distribution_major_version is version('8','==')
   set_fact:
@@ -120,9 +110,12 @@
       - fftw-devel.x86_64 # for gromacs
       - firefox.x86_64
       - gcc-c++.x86_64 # for some R libraries
+      - geos-devel.x86_64 # for some R libraries
       - glib2.x86_64 # for wise / Cegma
       - gnuplot.x86_64
       - gsl.x86_64 # for fastSTRUCTURE
+      - hdf5-devel.x86_64 # for some R libraries
+      - htop.x86_64
       - java-1.8.0-openjdk.x86_64 # for lots of stuff
       - lapack.x86_64 # for presto
       - libXtst.x86_64 # for some X apps like CLC Genomics
@@ -135,6 +128,7 @@
       - libtool-ltdl.x86_64 # for pandaseq/2.7
       - libwebp-devel.x86_64 # for some R libraries
       - libxml2-devel.x86_64 # for some R libraries
+      - libzstd-devel.x86_64 # for some R libraries
       - mesa-libGLU-devel.x86_64 # for some R libraries
       - nano.x86_64
       - openblas.x86_64 #for scipy
@@ -145,14 +139,20 @@
       - perl-Env.noarch # for masurca
       - perl-JSON.noarch # for vep
       - perl-LWP-Protocol-https.noarch # so perl can use https
+      - perl-PerlIO-gzip.x86_64 # for vep
+      - perl-Text-Soundex.x86_64 # for RepeatMasker
       - perl-parent.noarch # for some BioPerl scripts
       - pigz.x86_64 # for SeqKit
+      - proj-devel.x86_64 # for some R libraries
+      - proj.x86_64 #for libproj.so.0
       - python3-numpy.x86_64 # for Trinity as of v2.6.6
       - python3-setuptools.noarch # needed by some Python scripts to load entrypoint
       - python36.x86_64
+      - screen.x86_64
       - sqlite-devel.x86_64 # for some R libraries
       - tbb-devel.x86_64 # for flexbar
       - tmpwatch.x86_64
+      - udunits2-devel.x86_64 # for some R libraries
       - unzip.x86_64
       - wget.x86_64
       - xorg-x11-xauth.x86_64 # or else X11 forwarding doesn't work

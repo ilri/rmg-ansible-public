@@ -49,6 +49,19 @@
     notify:
       - restart firewalld
 
+# 2019-12-10: fail2ban does not currently work with SELinux on CentOS 8, ie:
+#
+#   SELinux is preventing /usr/lib/systemd/systemd from mounton access on the directory /run/systemd/unit-root/var/lib/fail2ban.
+#   SELinux is preventing /usr/libexec/platform-python3.6 from using the nnp_transition access on a process.
+#
+# Set SELinux to permissive for now.
+  - name: Disable selinux on CentOS 8
+    when: ansible_distribution_major_version is version_compare('8', '==')
+    selinux:
+      state: permissive
+    notify:
+      - restart firewalld
+
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
     when: ansible_distribution_major_version is version_compare('7', '>=')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600

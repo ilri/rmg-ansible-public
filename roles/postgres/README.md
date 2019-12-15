@@ -26,3 +26,4 @@ Tested and working on the following OS versions:
 
 - Ubuntu 14.04
 - Ubuntu 16.04
+- Ubuntu 18.04

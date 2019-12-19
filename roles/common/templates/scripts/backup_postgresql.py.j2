@@ -104,7 +104,7 @@ def backup_databases(database, timestamp_filenames, postgresql_backups_dir=DEF_P
 # Send mail notifications using mailx which will get mail configs./options
 # from ~/.mailrc
 def sendmail_notification(cronjob_status):
-    mailrc_opts = "-S from=%s -S smtp=%s -S smtp-auth=login -S smtp-auth-user=%s -S smtp-auth-password=%s" % (MAILRC_FROM_EMAIL, MAILRC_SMTP_SERVER, MAILRC_AUTH_USER, MAILRC_AUTH_PASS)
+    mailrc_opts = "-S from=%s -S smtp=%s -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user=%s -S smtp-auth-password=%s" % (MAILRC_FROM_EMAIL, MAILRC_SMTP_SERVER, MAILRC_AUTH_USER, MAILRC_AUTH_PASS)
     mail_subject = "%s - PostgreSQL backup status" % socket.gethostname()
     cmd_sendmail = "echo %s | %s %s -s '%s' %s" % (json.dumps(cronjob_status), BIN_MAILX, mailrc_opts, mail_subject, DEF_ADMIN_EMAILS)
     output, err, returncode = run_cmd(cmd_sendmail)

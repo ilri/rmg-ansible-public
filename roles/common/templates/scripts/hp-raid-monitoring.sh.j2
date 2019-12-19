@@ -15,6 +15,14 @@ HP_CLI_BIN=/usr/sbin/ssacli
 # admin email(s)
 EMAIL="{{ sysadmin_emails|join(" ") }}"
 
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '<') %}
+BIN_MAIL="/usr/bin/mail"
+{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '>=') %}
+BIN_MAIL="/usr/bin/s-nail"
+{% elif ansible_distribution == 'CentOS' %}
+BIN_MAIL="/usr/bin/mailx"
+{% endif %}
+
 # extra mail options -> mailrc
 MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'
 
@@ -32,7 +40,7 @@ function checkPhysicalDisks () {
     result=$($HP_CLI_BIN ctrl slot=$slot pd all show | grep -v '^Error: ' | grep physicaldrive | grep -v OK | wc -l)
 
     if [[ $result > 0 ]]; then
-        $HP_CLI_BIN ctrl slot=$slot pd all show | mail ${MAIL_ARGS} -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
+        $HP_CLI_BIN ctrl slot=$slot pd all show | ${BIN_MAIL} ${MAIL_ARGS} -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
     fi
 }
 

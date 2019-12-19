@@ -15,6 +15,14 @@ MegaCli="/opt/MegaRAID/MegaCli/MegaCli64"
 MegaCli="/usr/sbin/megacli"
 {% endif %}
 
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '<') %}
+BIN_MAIL="/usr/bin/mail"
+{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '>=') %}
+BIN_MAIL="/usr/bin/s-nail"
+{% elif ansible_distribution == 'CentOS' %}
+BIN_MAIL="/usr/bin/mailx"
+{% endif %}
+
 # extra mail options -> mailrc
 MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'
 
@@ -181,7 +189,7 @@ if [ "$1" = "checkNemail" ]; then
 
    # On bad disk status send email with basic drive information
    if [ "$STATUS2" ]; then
-      $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|S\.M\.A\.R\.T' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" - "$0;}END{print x;}' | grep -v 'No' | mail ${MAIL_ARGS} -s $(hostname)' - RAID Notification' $EMAIL
+      $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|S\.M\.A\.R\.T' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" - "$0;}END{print x;}' | grep -v 'No' | ${BIN_MAIL} ${MAIL_ARGS} -s $(hostname)' - RAID Notification' $EMAIL
    fi
 
 fi

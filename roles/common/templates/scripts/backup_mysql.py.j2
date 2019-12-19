@@ -50,7 +50,13 @@ MAILRC_AUTH_PASS = "{{ mailrc_auth_pass }}"
 BIN_MYSQL = "/usr/bin/mysql"
 BIN_MYSQLDUMP = "/usr/bin/mysqldump"
 BIN_GZIP = "/bin/gzip"
-BIN_MAILX = "/usr/bin/mailx"
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '<') %}
+BIN_MAIL = "/usr/bin/mail"
+{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '>=') %}
+BIN_MAIL = "/usr/bin/s-nail"
+{% elif ansible_distribution == 'CentOS' %}
+BIN_MAIL = "/usr/bin/mailx"
+{% endif %}
 
 
 # return current timestamp, used in backup filename
@@ -154,10 +160,10 @@ def compress_backup(dump_filename, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNOR
 def sendmail_notification(cronjob_status):
     mailrc_opts = "-S from=%s -S smtp=%s -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user=%s -S smtp-auth-password=%s" % (MAILRC_FROM_EMAIL, MAILRC_SMTP_SERVER, MAILRC_AUTH_USER, MAILRC_AUTH_PASS)
     mail_subject = "%s - MySQL backup status" % socket.gethostname()
-    cmd_sendmail = "echo %s | %s %s -s '%s' %s" % (json.dumps(cronjob_status), BIN_MAILX, mailrc_opts, mail_subject, DEF_ADMIN_EMAILS)
+    cmd_sendmail = "echo %s | %s %s -s '%s' %s" % (json.dumps(cronjob_status), BIN_MAIL, mailrc_opts, mail_subject, DEF_ADMIN_EMAILS)
     output, err, returncode = run_cmd(cmd_sendmail)
     if returncode != 0:
-        print "Failed to send mail notification using %s" % BIN_MAILX
+        print "Failed to send mail notification using %s" % BIN_MAIL
     else:
         print "Notification mail(s) sent to %s" % DEF_ADMIN_EMAILS
 

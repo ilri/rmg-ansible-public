@@ -1,0 +1,47 @@
+---
+# Perform SLURM upgrade on HPC:
+#
+# 1. Upgrade SLURM on HPC head node
+# 2. Restart slurmdbd, then slurmd
+# 3. Upgrade SLURM on HPC compute nodes
+# 4. Restart slurmd on HPC compute nodes
+
+- hosts: hpc
+  become: yes
+  tasks:
+    - name: Upgrade SLURM on HPC
+      yum:
+        name: 'slurm-*'
+        state: latest
+        update_cache: yes
+
+    - name: Reload systemd daemon definitions
+      systemd:
+        daemon_reload: yes
+
+    - name: Restart SLURM database daemon on HPC
+      systemd:
+        name: slurmdbd
+        state: restarted
+
+    - name: Restart slurmd on HPC
+      systemd:
+        name: slurmd
+        state: restarted
+
+- hosts: compute:!hpc
+  become: yes
+  tasks:
+    - name: Upgrade SLURM on compute nodes
+      yum:
+        name: 'slurm-*'
+        state: latest
+        update_cache: yes
+
+    - name: Restart slurmd on compute nodes
+      systemd:
+        name: slurmd
+        state: restarted
+        daemon_reload: yes
+
+# vim: set sw=2 ts=2:

@@ -1,8 +1,4 @@
 ---
-# used for old versions of GlusterFS that were hosted on gluster.org
-- name: Remove old GlusterFS yum repo
-  file: path=/etc/yum.repos.d/glusterfs-epel.repo state=absent
-
 - name: Enable GlusterFS packages from CentOS SIG
   yum: name=centos-release-gluster5 state=present
 

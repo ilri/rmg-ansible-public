@@ -177,7 +177,8 @@
     - { path: "{{ tomcat_path }}/logs", owner: root , group: "{{ tomcat_group }}" }
     - { path: "{{ tomcat_path }}/temp", owner: root , group: "{{ tomcat_group }}" }
     - { path: "{{ tomcat_path }}/work", owner: root , group: "{{ tomcat_group }}" }
-    - { path: "{{ tomcat_path }}/bin/catalina.sh", owner: root , group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/bin", owner: root , group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/lib", owner: root , group: "{{ tomcat_group }}" }
   when: tomcat_unzip is changed
   tags: tomcat
 
@@ -190,6 +191,7 @@
     - { path: "{{ tomcat_path }}/logs", mode: "0770" }
     - { path: "{{ tomcat_path }}/temp", mode: "0770" }
     - { path: "{{ tomcat_path }}/work", mode: "0770" }
+    - { path: "{{ tomcat_path }}/conf", mode: "0750" }
     - { path: "{{ tomcat_path }}/conf/context.xml", mode: "0640" }
     - { path: "{{ tomcat_path }}/conf/tomcat-users.xml", mode: "0640" }
     - { path: "{{ tomcat_path }}/conf/web.xml", mode: "0640" }
@@ -208,7 +210,7 @@
 - name: Copy Tomcat server configs
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   loop:
-    - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '{{ tomcat_path }}/conf/server.xml', owner: 'root', group: 'root', mode: '0644' }
+    - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '{{ tomcat_path }}/conf/server.xml', owner: 'root', group: '{{ tomcat_group }}', mode: '0640' }
     - { src: 'tomcat/tomcat-users.xml.j2', dest: '{{ tomcat_path }}/conf/tomcat-users.xml', owner: 'root', group: '{{ tomcat_group }}', mode: '0640' }
   notify:
     - restart tomcat{{ tomcat_version_major }}

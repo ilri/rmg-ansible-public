@@ -56,4 +56,11 @@
     yum: name={{ centos_base_packages }} state=present
   tags: packages
 
+  - name: Disable annoying Canonical spam in MOTD
+    file: path={{ item }} mode=0644 state=absent
+    when: ansible_distribution_major_version is version_compare('8','==')
+    loop:
+      - /etc/motd.d/cockpit
+    ignore_errors: yes
+
 # vim: set ts=2 sw=2:

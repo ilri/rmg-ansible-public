@@ -116,7 +116,7 @@
     become_user: '{{ tomcat_user }}'
 
   - name: Configure ruby environment
-    template: src=ruby-env.j2 dest={{ tomcat_user_home }}/.ruby-env owner={{ tomcat_user }} group={{ tomcat_user }} mode=0644
+    template: src=ruby-env.j2 dest={{ tomcat_user_home }}/.ruby-env owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
     become_user: '{{ tomcat_user }}'
 
   - name: Install DSpace 5 Mirage 2 Node.js build dependencies
@@ -209,7 +209,7 @@
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
   loop:
     - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '{{ tomcat_path }}/conf/server.xml', owner: 'root', group: 'root', mode: '0644' }
-    - { src: 'tomcat/tomcat-users.xml.j2', dest: '{{ tomcat_path }}/conf/tomcat-users.xml', owner: 'root', group: '{{ tomcat_user }}', mode: '0640' }
+    - { src: 'tomcat/tomcat-users.xml.j2', dest: '{{ tomcat_path }}/conf/tomcat-users.xml', owner: 'root', group: '{{ tomcat_group }}', mode: '0640' }
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

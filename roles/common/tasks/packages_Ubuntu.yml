@@ -60,7 +60,7 @@
     apt: name={{ ubuntu_annoying_packages }} state=absent purge=yes
 
   - name: Disable annoying Canonical spam in MOTD
-    file: path={{ item }} mode=0644
+    file: path={{ item }} mode=0644 state=absent
     loop:
       - /etc/update-motd.d/99-esm # Ubuntu 14.04
       - /etc/update-motd.d/10-help-text # Ubuntu 14.04+

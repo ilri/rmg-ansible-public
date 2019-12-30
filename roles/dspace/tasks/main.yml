@@ -177,6 +177,7 @@
     - { path: "{{ tomcat_path }}/logs", owner: root , group: "{{ tomcat_group }}" }
     - { path: "{{ tomcat_path }}/temp", owner: root , group: "{{ tomcat_group }}" }
     - { path: "{{ tomcat_path }}/work", owner: root , group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/bin/catalina.sh", owner: root , group: "{{ tomcat_group }}" }
   when: tomcat_unzip is changed
   tags: tomcat
 

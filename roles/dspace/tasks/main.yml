@@ -78,7 +78,7 @@
     apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
     register: add_nodejs_apt_key
 
-  - name: Add Node.js 8 LTS repository
+  - name: Add Node.js 10 LTS repository
     template: src=nodesource.list.j2 dest=/etc/apt/sources.list.d/nodesource.list mode=0644 owner=root group=root
     register: add_nodejs_apt_repository
 

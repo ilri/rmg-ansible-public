@@ -218,7 +218,7 @@
 
 # From upstream: https://jdbc.postgresql.org/download.html
 - name: Copy PostgreSQL JDBC library
-  copy: src=postgresql-42.2.9.jar dest={{ tomcat_path }}/lib/postgresql-42.2.9.jar mode=0644 owner=root group=root
+  copy: src=postgresql-42.2.10.jar dest={{ tomcat_path }}/lib/postgresql-42.2.10.jar mode=0644 owner=root group=root
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
@@ -226,9 +226,9 @@
 - name: Remove old PostgreSQL JDBC libraries
   file: path={{ tomcat_path }}/lib/{{ item }} state=absent
   loop:
-    - postgresql-42.2.6.jar
     - postgresql-42.2.7.jar
     - postgresql-42.2.8.jar
+    - postgresql-42.2.9.jar
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

@@ -83,7 +83,7 @@ tomcat_user_home: /home/dspace
 # See: https://tomcat.apache.org/download-70.cgi
 tomcat_version: 7.0.100
 tomcat_version_major: 7
-tomcat_url: https://www-eu.apache.org/dist/tomcat/tomcat-{{ tomcat_version_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
+tomcat_url: https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_version_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
 # sha512
 tomcat_url_checksum: c81fbd42e47e269ceae530ab75f9eacba59dbbad1fc608a90cd4dad0b25202df81f006f3270f5691eb22aae4eed760435beb616b469e30e0f8c6f8fe2a183eec
 tomcat_path_prefix: /usr/local

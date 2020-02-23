@@ -7,6 +7,15 @@
   apt: pkg=openjdk-8-jdk-headless state=present install_recommends=no cache_valid_time=3600
   when: java_distribution == 'openjdk'
 
+# 2020-02-23: Fix issue with JFreeChart in Atmire CUA
+# see https://code-maven.com/slides/jenkins-intro/no-graph-error
+- name: Disable OpenJDK assistive technologies
+  lineinfile:
+    path: /etc/java-8-openjdk/accessibility.properties
+    regexp: '^assistive_technologies=org.GNOME.Accessibility.AtkWrapper$'
+    line: '#assistive_technologies=org.GNOME.Accessibility.AtkWrapper'
+    state: present
+
 - name: Set DSpace system dependencies
   set_fact:
     dspace_system_dependencies:

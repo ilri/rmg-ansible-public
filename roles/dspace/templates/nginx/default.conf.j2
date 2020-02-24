@@ -285,6 +285,16 @@ map $remote_addr $ua {
     # 2020-02-24 ILRI website harvesters
     2a01:7e00::f03c:91ff:fe9a:3a37 'bot';
     2a01:7e00::f03c:91ff:fe18:7396 'bot';
+    # 2020-02-24 wle.cgiar.org REST API harvester
+    70.32.90.172     'bot';
+    # 2020-02-24 ccafs.cgiar.org REST API harvester
+    205.186.128.185  'bot';
+    # 2020-02-24 some other CIAT REST API harvester
+    45.5.184.72      'bot';
+    # 2020-02-24 Macaroni Bros test server REST API harvester
+    63.32.242.35     'bot';
+    # 2020-02-24 Africa RISING REST API harvester
+    162.243.171.159  'bot';
 
     default          $http_user_agent;
 }

@@ -254,13 +254,13 @@ upstream statistics_api {
 # can then rely on Tomcat's Crawler Session Manager Valve to assign one single
 # session to all these users in order to reduce resource usage.
 map $remote_addr $ua {
-    # 2017-11-08 ciat.cgiar.org scraper
+    # 2017-11-08 old ciat.cgiar.org scraper
     104.196.152.243  'bot';
     # 2017-11-08 Random Chinese host grabbing 20,000 PDFs
     ~124\.17\.34\.   'bot';
     # 2018-07-10 mystery client on Google Cloud
     35.227.26.162    'bot';
-    # 2018-09-27 mystery client on Google Cloud
+    # 2018-09-27 ciat.cgiar.org scraper
     35.237.175.180   'bot';
     # 2018-09-27 mystery client on Cox
     68.6.87.12       'bot';

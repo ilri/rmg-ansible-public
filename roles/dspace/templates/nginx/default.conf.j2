@@ -121,6 +121,8 @@ server {
         access_log /var/log/nginx/access.log;
 
         proxy_pass http://tomcat-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
     }
 
     # tell robots not to index or follow links on dynamic pages (because we
@@ -138,6 +140,8 @@ server {
 
         add_header X-Robots-Tag "none";
         proxy_pass http://tomcat-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
     }
 
     location / {
@@ -176,6 +180,8 @@ server {
 
         access_log /var/log/nginx/rest.log;
         proxy_pass http://tomcat-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
     }
 
     # log oai requests

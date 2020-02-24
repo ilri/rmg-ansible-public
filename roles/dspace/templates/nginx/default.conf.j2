@@ -274,6 +274,11 @@ map $remote_addr $ua {
     186.32.217.255   'bot';
     # 2020-02-23 mystery client in UK
     31.6.77.23       'bot';
+    # 2020-02-24 AReS harvester
+    172.104.229.92   'bot';
+    # 2020-02-24 ILRI website harvesters
+    2a01:7e00::f03c:91ff:fe9a:3a37 'bot';
+    2a01:7e00::f03c:91ff:fe18:7396 'bot';
 
     default          $http_user_agent;
 }

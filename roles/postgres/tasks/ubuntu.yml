@@ -45,6 +45,6 @@
     notify: restart postgres
 
   - name: start & enable postgres
-    service: name=postgresql state=started enabled=true
+    systemd: name=postgresql state=started enabled=true
   tags: postgresql
 # vim: set sw=2 ts=2:

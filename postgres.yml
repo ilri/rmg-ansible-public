@@ -1,0 +1,14 @@
+---
+# file: postgres.yml
+
+- hosts: postgres
+  become: yes
+  vars_files:
+    - private/vars/common.yml
+    - private/vars/ipsets.yml
+  roles:
+    - common
+    - postgres
+    - munin
+
+# vim: set sw=2 ts=2:

@@ -50,7 +50,7 @@
 
   - name: Configure ILRI mirror of HPE MCP repository
     copy: src=hpe-mcp.repo dest=/etc/yum.repos.d/hpe-mcp.repo owner=root group=root mode=0644
-    when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version_compare('7','==') and 'hp' in hw_raid_vendor
+    when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('7','==') and 'hp' in hw_raid_vendor
 
   - name: Install HPE Smart Storage Administrator CLI
     yum: name=ssacli state=present
@@ -72,11 +72,11 @@
 
   - name: Install heirloom-mailx
     apt: name=heirloom-mailx state=present
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '<')
+    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '<')
 
   - name: Install s-nail
     apt: name=s-nail state=present
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '>=')
+    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '>=')
 
   - name: Copy LSI RAID monitoring script
     template: src=scripts/lsi-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/lsi-raid-monitoring.sh owner=root group=root mode=0750

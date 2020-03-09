@@ -19,7 +19,7 @@
 # explicitly install the JRE before munin-plugins-java so it doesn't pull in
 # default-jre (Java 10) on Ubuntu 18.04.
 - name: Install Java 8 JRE
-  when: ((ansible_distribution == "Ubuntu" and ansible_distribution_version is version_compare('18.04', '=='))
+  when: ((ansible_distribution == "Ubuntu" and ansible_distribution_version is version('18.04', '=='))
         and ("dspace" in group_names or "solr" in group_names))
   apt: name=openjdk-8-jre-headless state=present
   tags: packages

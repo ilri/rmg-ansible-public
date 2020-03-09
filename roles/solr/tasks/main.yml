@@ -11,7 +11,7 @@
     name: openjdk-7-jre-headless
     state: present
     install_recommends: no
-  when: ansible_distribution_version is version_compare('14.04', '==')
+  when: ansible_distribution_version is version('14.04', '==')
   tags:
     - java
     - packages
@@ -21,7 +21,7 @@
     name: openjdk-8-jre-headless
     state: present
     install_recommends: no
-  when: ansible_distribution_version is version_compare('16.04', '>=')
+  when: ansible_distribution_version is version('16.04', '>=')
   tags:
     - java
     - packages

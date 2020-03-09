@@ -67,7 +67,7 @@
         - libgmp-dev
   - name: Install DSpace 5 Mirage 2 build dependencies
     apt: pkg={{ dspace_mirage2_build_dependencies }} state=present install_recommends=no
-  when: ansible_distribution_version is version_compare('16.04', '<=')
+  when: ansible_distribution_version is version('16.04', '<=')
 
 - name: Add dspace group
   group: name={{ tomcat_group }} system=yes
@@ -133,7 +133,7 @@
       - bower
       - grunt
       - grunt-cli
-  when: ansible_distribution_version is version_compare('18.04', '==')
+  when: ansible_distribution_version is version('18.04', '==')
 
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
 - block:
@@ -143,7 +143,7 @@
     apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess
   - name: Install GoAccess
     apt: pkg=goaccess state=present
-  when: ansible_distribution_version is version_compare('18.04', '<=')
+  when: ansible_distribution_version is version('18.04', '<=')
 
 - name: Configure nginx
   import_tasks: nginx.yml

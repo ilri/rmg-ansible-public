@@ -78,7 +78,7 @@ server {
     ssl_ciphers "{{ tls_cipher_suite }}";
     ssl_prefer_server_ciphers on;
 
-    {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '>=') %}
+    {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '>=') %}
     ssl_stapling on;
     ssl_stapling_verify on;
     resolver {{ nginx_ssl_stapling_resolver }};

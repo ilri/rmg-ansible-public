@@ -3,18 +3,18 @@
 
 - block:
   - name: Install iptables-persistent
-    when: ansible_distribution_major_version is version_compare('15', '<')
+    when: ansible_distribution_major_version is version('15', '<')
     apt: name=iptables-persistent state=present cache_valid_time=3600
     tags: packages
 
   - name: Copy /etc/iptables/rules.v4
-    when: ansible_distribution_major_version is version_compare('15', '<')
+    when: ansible_distribution_major_version is version('15', '<')
     template: src=iptables.j2 dest=/etc/iptables/rules.v4 owner=root group=root mode=0600
     notify:
       - restart iptables-persistent
 
   - name: Copy /etc/iptables/rules.v6
-    when: ansible_distribution_major_version is version_compare('15', '<')
+    when: ansible_distribution_major_version is version('15', '<')
     template: src=ip6tables.j2 dest=/etc/iptables/rules.v6 owner=root group=root mode=0600
     notify:
       - restart iptables-persistent
@@ -28,22 +28,22 @@
         - python3-systemd # for fail2ban systemd backend
 
   - name: Install firewall packages
-    when: ansible_distribution_major_version is version_compare('15', '>=')
+    when: ansible_distribution_major_version is version('15', '>=')
     apt: name={{ ubuntu_firewall_packages }} state=present cache_valid_time=3600
     tags: packages
 
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
-    when: ansible_distribution_major_version is version_compare('15', '>=')
+    when: ansible_distribution_major_version is version('15', '>=')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600
 
   - name: Format public.xml firewalld zone file
-    when: ansible_distribution_major_version is version_compare('15', '>=')
+    when: ansible_distribution_major_version is version('15', '>=')
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
 
   - name: Copy ipsets of abusive IPs
-    when: ansible_distribution_major_version is version_compare('15', '>=')
+    when: ansible_distribution_major_version is version('15', '>=')
     copy: src={{ item }} dest=/etc/firewalld/ipsets/{{ item }} owner=root group=root mode=0600
     loop:
       - abusers-ipv4.xml
@@ -52,14 +52,14 @@
       - restart firewalld
 
   - name: Remove iptables-persistent
-    when: ansible_distribution_major_version is version_compare('15', '>=')
+    when: ansible_distribution_major_version is version('15', '>=')
     apt: name=iptables-persistent state=absent
     tags: packages
 
   # remove old iptables rules and restart new firewall service to make sure its
   # state is as intended (ie, in case system was upgraded from Ubuntu 14.04).
   - name: Remove old iptables rules
-    when: ansible_distribution_major_version is version_compare('15', '>=')
+    when: ansible_distribution_major_version is version('15', '>=')
     file: path={{ item }} state=absent
     loop:
       - /etc/iptables/rules.v4
@@ -68,7 +68,7 @@
       - restart firewalld
 
   - include_tasks: fail2ban.yml
-    when: ansible_distribution_major_version is version_compare('15', '>=')
+    when: ansible_distribution_major_version is version('15', '>=')
   tags: firewall
 
 # vim: set sw=2 ts=2:

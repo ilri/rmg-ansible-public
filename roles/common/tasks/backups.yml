@@ -7,12 +7,12 @@
 
 - name: Install heirloom-mailx
   apt: name=heirloom-mailx state=present
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '<')
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '<')
   tags: packages
 
 - name: Install s-nail
   apt: name=s-nail state=present
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '>=')
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '>=')
   tags: packages
 
 - name: Copy backup scripts

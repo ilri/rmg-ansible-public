@@ -28,7 +28,7 @@
   # Dependencies certbot checks for on its first run. I set them in a fact so that
   # I can pass the list directly to the apt module to install in one transaction.
   - name: Set certbot dependencies (Ubuntu 16.04)
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('16.04', '==')
+    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '==')
     set_fact:
       certbot_dependencies:
         - libexpat1-dev
@@ -49,7 +49,7 @@
   # Dependencies certbot checks for on its first run. I set them in a fact so that
   # I can pass the list directly to the apt module to install in one transaction.
   - name: Set certbot dependencies (Ubuntu 18.04)
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version_compare('18.04', '==')
+    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==')
     set_fact:
       certbot_dependencies:
         - augeas-doc

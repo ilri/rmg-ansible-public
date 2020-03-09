@@ -14,7 +14,7 @@ deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates m
 ###### Ubuntu Partner Repo
 deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
 
-{% if ansible_distribution_version is version_compare('14.04', '==') %}
+{% if ansible_distribution_version is version('14.04', '==') %}
 {# extras repo was discontinued after 14.10 #}
 ###### Ubuntu Extras Repo
 deb http://extras.ubuntu.com/ubuntu {{ ansible_distribution_release }} main
@@ -24,7 +24,7 @@ deb http://extras.ubuntu.com/ubuntu {{ ansible_distribution_release }} main
 {% set apt_mirror    = apt_mirror | default("debian-archive.mirror.liquidtelecom.com") %}
 deb http://{{ apt_mirror }}/debian {{ ansible_distribution_release }} main contrib non-free
 
-{% if ansible_distribution_version is version_compare('8', '>=') %}
+{% if ansible_distribution_version is version('8', '>=') %}
 {# Debian 7 "Wheezy" is seriously EOL since 2018-05 #}
 deb http://{{ apt_mirror }}/debian {{ ansible_distribution_release }}-updates main contrib non-free
 

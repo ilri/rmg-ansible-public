@@ -313,7 +313,9 @@ map $remote_addr $ua {
 #
 # $limit_bots will be used as the key for the limit_req_zone.
 map $http_user_agent $limit_bots {
-    ~Baiduspider 1;
+    ~[Bb]ot    1;
+    ~[Cc]rawl  1;
+    ~[Sp]ider  1;
 
     # 2018-01-10 user agent of bot making a few hundred thousand requests from a handful of IPs
     'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36' 1;
@@ -324,29 +326,8 @@ map $http_user_agent $limit_bots {
     # 2019-02-18 user agent of bot making tens of thousand requests to /discover, which is forbidden in robots.txt
     'Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0' 1;
 
-    # 2019-03-26 user agent of bot making thousands of requests to /discover, which is forbidden in robots.txt
-    ~BLEXBot 1;
-
-    # 2019-03-26 user agent of bot making thousands of requests to /discover, which is forbidden in robots.txt
-    ~MauiBot 1;
-
-    # 2019-03-26 user agent of bot making thousands of requests to /discover, which is forbidden in robots.txt
-    ~CCBot 1;
-
-    # 2019-03-26 user agent of bot making hundreds of requests to /discover, which is forbidden in robots.txt
-    ~SemanticScholarBot 1;
-
-    # 2019-03-26 user agent of bot making hundreds of requests to /discover, which is forbidden in robots.txt
-    ~DotBot 1;
-
-    # 2019-03-26 user agent of bot making thousands of requests to /discover, which is forbidden in robots.txt
-    ~SemrushBot 1;
-
     # 2019-03-26 user agent of bot making hundreds of requests to /discover, which is forbidden in robots.txt
     ~GuzzleHttp 1;
-
-    # 2019-11-03 user agent of bot making hundreds of thousands of requests to /discover, which is forbidden in robots.txt
-    ~Amazonbot 1;
 
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html

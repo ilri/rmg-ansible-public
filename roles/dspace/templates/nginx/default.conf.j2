@@ -121,7 +121,8 @@ server {
         access_log /var/log/nginx/access.log;
 
         # Explicitly set proxy headers again because the existing headers from
-        # the global context get cleared when we set the User-Agent here.
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
 
@@ -147,7 +148,8 @@ server {
         access_log /var/log/nginx/access.log;
 
         # Explicitly set proxy headers again because the existing headers from
-        # the global context get cleared when we set the User-Agent here.
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
 
@@ -167,7 +169,8 @@ server {
         access_log /var/log/nginx/access.log;
 
         # Explicitly set proxy headers again because the existing headers from
-        # the global context get cleared when we set the User-Agent here.
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
 

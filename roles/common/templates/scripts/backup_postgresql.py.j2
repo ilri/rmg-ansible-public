@@ -78,7 +78,7 @@ def run_cmd(cmd):
 
 
 def get_databases():
-    cmd_list_dbs = "%s -t -c 'SELECT datname FROM pg_database';" % (BIN_PSQL)
+    cmd_list_dbs = "%s -q -t -c 'SELECT datname FROM pg_database';" % (BIN_PSQL)
     return run_cmd(cmd_list_dbs)
 
 

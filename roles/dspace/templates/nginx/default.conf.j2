@@ -103,7 +103,7 @@ server {
     location ~ /(themes|aspects/ReportingSuite|aspects/Statistics) {
         try_files $uri @tomcat;
 
-        location ~* \.(?:ico|css|js|gif|jpe?g|png|woff)$ {
+        location ~* \.(?:ico|css|js|gif|jpe?g|png|woff|svg)$ {
             add_header Cache-Control "max-age=604800";
         }
     }

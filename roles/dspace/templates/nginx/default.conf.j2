@@ -120,6 +120,11 @@ server {
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
 
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we set the User-Agent here.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
         # Never index dynamic pages!
         add_header X-Robots-Tag "none";
 
@@ -140,6 +145,11 @@ server {
 
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we set the User-Agent here.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
 
         # Never index dynamic pages!
         add_header X-Robots-Tag "none";

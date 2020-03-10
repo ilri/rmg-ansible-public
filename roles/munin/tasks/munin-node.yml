@@ -26,7 +26,7 @@
 
 # some nice things to have on Ubuntu Tomcat servers
 - name: Install munin-node Tomcat deps
-  when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names))
+  when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names or "postgres" in group_names))
   apt: name={{ item }} state=present
   loop:
     - ruby # for munin's tomcat checks

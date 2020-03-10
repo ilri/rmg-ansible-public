@@ -19,12 +19,15 @@
       add_postgresql_apt_key is changed or
       add_postgresql_apt_repository is changed
 
-  - name: Install postgresql
-    apt: name={{ item }} cache_valid_time=3600 state=present
-    loop:
+  - name: Set PostgreSQL packages fact
+    set_fact:
+      postgresql_packages:
       - postgresql-{{ pg_version }}
       - postgresql-client-{{ pg_version }}
       - postgresql-contrib-{{ pg_version }}
+
+  - name: Install PostgreSQL packages
+    apt: name={{ postgresql_packages }} cache_valid_time=3600 state=present
     notify:
       - restart postgres
     tags: packages

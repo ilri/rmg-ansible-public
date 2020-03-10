@@ -317,6 +317,14 @@ map $remote_addr $ua {
     95.110.154.135   'bot';
     # 2020-02-24 ICARDA MEL
     34.209.213.122   'bot';
+    # 2020-03-10 Robot on Online.net in France (mostly hitting XMLUI, but also REST API)
+    163.172.68.99    'bot';
+    # 2020-03-10 Robot on Online.net in France (mostly hitting XMLUI, but also REST API)
+    163.172.70.248   'bot';
+    # 2020-03-10 Robot on Online.net in France (mostly hitting XMLUI, but also REST API)
+    163.172.71.24    'bot';
+    # 2020-03-10 Robot on Digital Ocean hitting the REST API
+    64.225.40.66     'bot';
 
     default          $http_user_agent;
 }
@@ -344,6 +352,9 @@ map $http_user_agent $limit_bots {
 
     # 2019-03-26 user agent of bot making hundreds of requests to /discover, which is forbidden in robots.txt
     ~GuzzleHttp 1;
+
+    # 2020-03-10 user agent of bot on Online.net in France making tens of thousand requests to /discover, which is forbidden in robots.txt
+    'Mozilla/5.0 ((Windows; U; Windows NT 6.1; fr; rv:1.9.2) Gecko/20100115 Firefox/3.6)' 1;
 
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html

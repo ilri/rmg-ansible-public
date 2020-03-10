@@ -357,6 +357,9 @@ map $http_user_agent $limit_bots {
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
     default '';
 
+    # 2020-03-10 Explicitly allow UptimeRobot
+    ~UptimeRobot 0;
+
     ~[Bb]ot    1;
     ~[Cc]rawl  1;
     ~[Sp]ider  1;

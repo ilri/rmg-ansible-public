@@ -170,6 +170,7 @@ server {
         # the global context get cleared when we set the User-Agent here.
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
+
         # Send requests to Tomcat
         proxy_pass http://tomcat-http;
         # Set user agent string to mapped value (see mapping block)

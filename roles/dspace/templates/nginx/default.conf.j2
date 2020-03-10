@@ -185,6 +185,12 @@ server {
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
 
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
         # explicitly set the Host header before proxying to upstream nginx
         proxy_set_header Host {{ dspace_explorer_server }};
         proxy_pass https://codeobia_ares/explorer;
@@ -198,6 +204,13 @@ server {
         }
 
         access_log /var/log/nginx/rest.log;
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
         proxy_pass http://tomcat-http;
         # Set user agent string to mapped value (see mapping block)
         proxy_set_header User-Agent $ua;

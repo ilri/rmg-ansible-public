@@ -352,7 +352,7 @@ map $http_user_agent $limit_bots {
     default '';
 
     # 2020-03-10 Explicitly allow UptimeRobot
-    ~UptimeRobot 0;
+    ~UptimeRobot '';
 
     ~[Bb]ot    1;
     ~[Cc]rawl  1;

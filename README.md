@@ -13,7 +13,7 @@ Take note that the first-ever invocation after the clean installation of a machi
 
 On the first run, you need to use `-k --ask-become-pass` to prompt for the SSH/sudo password of the provisioning user:
 
-    $ ansible-playbook site.yml --limit=ilrinrb10 -k --ask-become-pass
+    $ ansible-playbook site.yml --limit=ilrinrb10 -k --ask-become-pass -t sshd,ssh-keys,sudoers
 
 On subsequent runs, after SSH keys have been deployed, you only need `--ask-become-pass` for the sudo password of the provisioning user:
 

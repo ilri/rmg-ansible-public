@@ -127,12 +127,25 @@
     template: src=ruby-env.j2 dest={{ tomcat_user_home }}/.ruby-env owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
     become_user: '{{ tomcat_user }}'
 
+  - name: Configure npm environment
+    template: src=npmrc.j2 dest={{ tomcat_user_home }}/.npmrc owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
+    become_user: '{{ tomcat_user }}'
+
   - name: Install DSpace 5 Mirage 2 Node.js build dependencies
     npm: name={{ item }} global=yes
     loop:
       - bower
       - grunt
       - grunt-cli
+    become_user: '{{ tomcat_user }}'
+
+  - name: Add npm packages to PATH
+    lineinfile:
+      dest: '{{ tomcat_user_home }}/.profile'
+      regexp: '^export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin$'
+      line: 'export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin'
+      state: present
+    become_user: '{{ tomcat_user }}'
   when: ansible_distribution_version is version('18.04', '==')
 
 # For quickly analyzing nginx logs, see: https://goaccess.io/download

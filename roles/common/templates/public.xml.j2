@@ -156,10 +156,28 @@
     </rule>
     {% endif %}
 
+    {# Extra IPv4 dest rules #}
+    {% if ghetto_ipsets[rule.acl].dest is defined %}
+    <rule family="ipv4">
+        <destination address="{{ ghetto_ipsets[rule.acl].dest }}"/>
+        <port protocol="{{ rule.protocol }}" port="{{ rule.port }}"/>
+        <accept/>
+    </rule>
+    {% endif %}
+
     {# Extra IPv6 src rules #}
     {% if ghetto_ipsets[rule.acl].ipv6src is defined %}
     <rule family="ipv6">
         <source address="{{ ghetto_ipsets[rule.acl].ipv6src }}"/>
+        <port protocol="{{ rule.protocol }}" port="{{ rule.port }}"/>
+        <accept/>
+    </rule>
+    {% endif %}
+
+    {# Extra IPv6 dest rules #}
+    {% if ghetto_ipsets[rule.acl].ipv6dest is defined %}
+    <rule family="ipv6">
+        <destination address="{{ ghetto_ipsets[rule.acl].ipv6dest }}"/>
         <port protocol="{{ rule.protocol }}" port="{{ rule.port }}"/>
         <accept/>
     </rule>

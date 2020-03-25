@@ -24,8 +24,8 @@
       - poppler-utils # for media filter
       - python-psycopg2 # for ansible postgres modules
       - python3-psycopg2 # for ansible postgres modules
-      - imagemagick # for DSpace 5 thumbnails
-      - ghostscript # for DSpace 5 PDF thumbnails
+      - imagemagick # for DSpace 5+ thumbnails
+      - ghostscript # for DSpace 5+ PDF thumbnails
       - python3-pip # for dspace-statistics-api
       - python3-dev # for dspace-statistics-api
       - python3-venv # for dspace-statistics-api
@@ -42,10 +42,10 @@
 
 # On Ubuntu 14.04 and 16.04 we install Ruby and Node.js using RVM and NVM after
 # the initial ansible provisioning. RVM requires these packages to compile Ruby
-# and some of the gems that are used in the DSpace 5 Mirage 2 build process.
+# and some of the gems that are used in the DSpace Mirage 2 build process.
 # See: https://gist.github.com/alanorth/2cf9c15834dc68a514262fcb04004cb0
 - block:
-  - name: Set DSpace 5 Mirage 2 build dependencies
+  - name: Set DSpace Mirage 2 build dependencies
     set_fact:
       dspace_mirage2_build_dependencies:
         - build-essential
@@ -65,7 +65,7 @@
         - libssl-dev
         - libsqlite3-dev
         - libgmp-dev
-  - name: Install DSpace 5 Mirage 2 build dependencies
+  - name: Install DSpace Mirage 2 build dependencies
     apt: pkg={{ dspace_mirage2_build_dependencies }} state=present install_recommends=no
   when: ansible_distribution_version is version('16.04', '<=')
 
@@ -97,7 +97,7 @@
       add_nodejs_apt_key is changed or
       add_nodejs_apt_repository is changed
 
-  - name: Set DSpace 5 Mirage 2 system build dependencies
+  - name: Set DSpace Mirage 2 system build dependencies
     set_fact:
       dspace_mirage2_system_build_dependencies:
         - build-essential
@@ -105,10 +105,10 @@
         - ruby-dev
         - libffi-dev
 
-  - name: Install DSpace 5 Mirage 2 system build dependencies
+  - name: Install DSpace Mirage 2 system build dependencies
     apt: pkg={{ dspace_mirage2_system_build_dependencies }} state=present install_recommends=no cache_valid_time=3600
 
-  - name: Install DSpace 5 Mirage 2 ruby build dependencies
+  - name: Install DSpace Mirage 2 ruby build dependencies
     gem: name={{ item.name }} version={{ item.version }} state=present user_install=yes
     loop:
       - { name: 'sass', version: '3.3.14' }
@@ -131,7 +131,7 @@
     template: src=npmrc.j2 dest={{ tomcat_user_home }}/.npmrc owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
     become_user: '{{ tomcat_user }}'
 
-  - name: Install DSpace 5 Mirage 2 Node.js build dependencies
+  - name: Install DSpace Mirage 2 Node.js build dependencies
     npm: name={{ item }} global=yes
     loop:
       - bower

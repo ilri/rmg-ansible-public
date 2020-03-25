@@ -269,8 +269,8 @@
   git: repo={{ dspace_git_repo }} dest={{ tomcat_user_home }}/src/git/DSpace version={{ dspace_git_branch }} force=yes depth=1
   become_user: '{{ tomcat_user }}'
 
-- name: Copy Maven build.properties
-  template: src=build.properties.j2 dest={{ tomcat_user_home }}/src/git/DSpace/{{ nginx_server_name }}.properties owner={{ tomcat_user }} group={{ tomcat_group }} mode=0640
+- name: Copy DSpace local.cfg
+  template: src=local.cfg.j2 dest={{ tomcat_user_home }}/src/git/DSpace/local.cfg owner={{ tomcat_user }} group={{ tomcat_group }} mode=0640
 
 - name: Create postgres users
   postgresql_user: name={{ item.name }} password={{ item.password }}

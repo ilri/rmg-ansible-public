@@ -29,6 +29,7 @@
       - python3-pip # for dspace-statistics-api
       - python3-dev # for dspace-statistics-api
       - python3-venv # for dspace-statistics-api
+      - geoipupdate # for DSpace statistics
 
 - name: Install DSpace system dependencies
   apt: pkg={{ dspace_system_dependencies }} state=present install_recommends=no cache_valid_time=3600
@@ -271,6 +272,9 @@
 
 - name: Copy DSpace local.cfg
   template: src=local.cfg.j2 dest={{ tomcat_user_home }}/src/git/DSpace/local.cfg owner={{ tomcat_user }} group={{ tomcat_group }} mode=0640
+
+- name: Copy GeoIP.conf
+  template: src=GeoIP.conf.j2 dest=/etc/GeoIP.conf owner=root group=root mode=0640
 
 - name: Create postgres users
   postgresql_user: name={{ item.name }} password={{ item.password }}

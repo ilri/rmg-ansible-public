@@ -1,6 +1,6 @@
 [Unit]
-Description=DSpace Statistics Indexer
-After=tomcat7.target
+Description=DSpace Statistics Indexer {{ dspace_statistics_api_git_version }}
+After=tomcat{{ tomcat_version_major }}.target
 
 [Service]
 EnvironmentFile=/etc/dspace-statistics-api

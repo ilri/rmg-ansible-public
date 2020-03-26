@@ -135,7 +135,6 @@
     npm: name={{ item }} global=yes
     loop:
       - bower
-      - grunt
       - grunt-cli
     become_user: '{{ tomcat_user }}'
 

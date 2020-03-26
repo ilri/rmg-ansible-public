@@ -25,6 +25,7 @@
       - emacs
       - perl-parent # for some BioPerl scripts
       - java-1.8.0-openjdk # for lots of stuff
+      - java-1.8.0-openjdk-devel # for lots of stuff
       - libtool-ltdl.x86_64 # for pandaseq/2.7
       - screen #terminal window manager
       - openblas.x86_64 #for scipy

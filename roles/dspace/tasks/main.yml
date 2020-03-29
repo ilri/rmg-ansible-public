@@ -290,6 +290,15 @@
     - { name: '{{ dspace_db_name }}', owner: '{{ dspace_db_user }}' }
     - { name: '{{ dspace_statistics_db_user }}', owner: '{{ dspace_statistics_db_user }}' }
   become_user: postgres
+  register: create_postgres_databases
+  tags: postgresql
+
+- name: Enable pgcrypto for DSpace 6
+  postgresql_query:
+    db: '{{ dspace_db_name }}'
+    query: CREATE EXTENSION pgcrypto
+  become_user: postgres
+  when: create_postgres_databases is changed
   tags: postgresql
 
 - name: Clone DSpace statistics API repository

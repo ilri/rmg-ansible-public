@@ -3,11 +3,11 @@
 {% endfor %}
 
 {% if 'dspace' in group_names %}
-Cmnd_Alias TOMCAT = /bin/systemctl * tomcat7
+Cmnd_Alias TOMCAT = /bin/systemctl * tomcat{{ tomcat_version_major }}
 swebshet ALL=(ALL) TOMCAT
 dhmichael ALL=(ALL) TOMCAT
 
 # for Atmire build/deploy scripts
-tomcat7 ALL = (root) NOPASSWD: /usr/sbin/service tomcat7 s*
-tomcat7 ALL = (root) NOPASSWD: /bin/systemctl s* tomcat7
+{{ tomcat_user }} ALL = (root) NOPASSWD: /usr/sbin/service tomcat{{ tomcat_version_major }} s*
+{{ tomcat_user }} ALL = (root) NOPASSWD: /bin/systemctl s* tomcat{{ tomcat_version_major }}
 {% endif %}

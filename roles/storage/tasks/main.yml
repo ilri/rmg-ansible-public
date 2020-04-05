@@ -1,6 +1,6 @@
 ---
 - name: Enable GlusterFS packages from CentOS SIG
-  yum: name=centos-release-gluster5 state=present
+  yum: name=centos-release-gluster6 state=present
 
 - name: Configure GlusterFS client
   include_tasks: client.yml

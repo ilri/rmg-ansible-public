@@ -108,6 +108,7 @@
     loop:
       - bower
       - grunt-cli
+      - yarn
     become_user: '{{ tomcat_user }}'
 
   - name: Add npm packages to PATH

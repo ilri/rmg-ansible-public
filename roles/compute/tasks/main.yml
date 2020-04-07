@@ -65,6 +65,7 @@
       - perl-Font-TTF.noarch # for circos
       - perl-Readonly.noarch # for circos
       - perl-Math-Round.noarch # for circos
+      - perl-Statistics-Basic.noarch # for circos
       - mesa-libGLU-devel.x86_64 # for some R libraries
       - gdal-devel.x86_64 # for some R libraries
       - proj-devel.x86_64 # for some R libraries

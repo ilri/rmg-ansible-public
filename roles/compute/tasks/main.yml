@@ -67,7 +67,7 @@
       - perl-Math-Round.noarch # for circos
       - perl-Statistics-Basic.noarch # for circos
       - perl-Regexp-Common.noarch # for circos
-      - perl-GD.noarch # for circos
+      - perl-GD.x86_64 # for circos
       - perl-Text-Format.noarch # for circos
       - perl-Regexp-Common.noarch # for circos
       - mesa-libGLU-devel.x86_64 # for some R libraries

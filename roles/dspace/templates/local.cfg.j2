@@ -219,3 +219,10 @@ authentication-ldap.search.password = {{ dspace_ldap_pass }}
 
 # Path to GeoLite2-City.mmdb database
 usage-statistics.dbfile = /var/lib/GeoIP/GeoLite2-City.mmdb
+
+# For Atmire modules
+useproxies.enabled = true
+atmire-dspace-api.cookie.encoding.password = {{ atmire_dspace_api_cookie_encoding_password }}
+dspace.rest.contextPath = /rest
+dspace.contextpath.jspui = /jspui
+dev.mode = {{ dspace_dev_mode }}

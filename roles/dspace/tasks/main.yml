@@ -40,35 +40,6 @@
     regexp: 'pattern="PDF"'
     state: absent
 
-# On Ubuntu 14.04 and 16.04 we install Ruby and Node.js using RVM and NVM after
-# the initial ansible provisioning. RVM requires these packages to compile Ruby
-# and some of the gems that are used in the DSpace Mirage 2 build process.
-# See: https://gist.github.com/alanorth/2cf9c15834dc68a514262fcb04004cb0
-- block:
-  - name: Set DSpace Mirage 2 build dependencies
-    set_fact:
-      dspace_mirage2_build_dependencies:
-        - build-essential
-        - libyaml-dev
-        - sqlite3
-        - autoconf
-        - libgdbm-dev
-        - libncurses5-dev
-        - automake
-        - libtool
-        - bison
-        - pkg-config
-        - libffi-dev
-        - gawk
-        - libreadline6-dev
-        - zlib1g-dev
-        - libssl-dev
-        - libsqlite3-dev
-        - libgmp-dev
-  - name: Install DSpace Mirage 2 build dependencies
-    apt: pkg={{ dspace_mirage2_build_dependencies }} state=present install_recommends=no
-  when: ansible_distribution_version is version('16.04', '<=')
-
 - name: Add dspace group
   group: name={{ tomcat_group }} system=yes
   tags: tomcat

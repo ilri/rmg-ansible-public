@@ -27,27 +27,6 @@
 
   # Dependencies certbot checks for on its first run. I set them in a fact so that
   # I can pass the list directly to the apt module to install in one transaction.
-  - name: Set certbot dependencies (Ubuntu 16.04)
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '==')
-    set_fact:
-      certbot_dependencies:
-        - libexpat1-dev
-        - libpython-dev
-        - libpython2.7
-        - libpython2.7-dev
-        - python-pip-whl
-        - python-pkg-resources
-        - python2.7-dev
-        - python3-virtualenv
-        - augeas-doc
-        - augeas-tools
-        - dialog
-        - python-dev
-        - python-virtualenv
-        - virtualenv
-
-  # Dependencies certbot checks for on its first run. I set them in a fact so that
-  # I can pass the list directly to the apt module to install in one transaction.
   - name: Set certbot dependencies (Ubuntu 18.04)
     when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==')
     set_fact:

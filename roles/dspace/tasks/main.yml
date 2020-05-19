@@ -121,7 +121,7 @@
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
 - block:
   - name: Add GPG key for GoAccess repo
-    apt_key: id=0x742483B7B222C443 url=https://deb.goaccess.io/gnugpg.key state=present
+    apt_key: id=0x97BD1A0133449C3D url=https://deb.goaccess.io/gnugpg.key state=present
   - name: Add GoAccess repository
     apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess
   - name: Install GoAccess

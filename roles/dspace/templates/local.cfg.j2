@@ -64,7 +64,7 @@ default.language = en_US
 # The included 'solr' webapp MUST be deployed to Tomcat for DSpace to function.
 # Usually it will be available via port 8080 and the 'solr' context path. But,
 # But, you may need to modify this if you are running DSpace on a custom port, etc.
-solr.server = http://localhost:8080/solr
+solr.server = ${dspace.internalUrl}/solr
 
 ##########################
 # DATABASE CONFIGURATION #

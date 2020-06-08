@@ -382,6 +382,10 @@ map $http_user_agent $limit_bots {
     # 2020-03-10 Explicitly allow UptimeRobot
     ~UptimeRobot '';
 
+    # 2020-06-08 Explicitly allow Altmetric
+    ~Altmetribot '';
+    ~Postgenomic '';
+
     ~[Bb]ot    1;
     ~[Cc]rawl  1;
     ~[Sp]ider  1;

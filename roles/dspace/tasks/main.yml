@@ -194,10 +194,8 @@
     path: "{{ item }}"
     state: absent
   loop:
-    - /usr/local/apache-tomcat-7.0.99.tar.gz
-    - /usr/local/apache-tomcat-7.0.99
-    - /usr/local/apache-tomcat-7.0.100.tar.gz
-    - /usr/local/apache-tomcat-7.0.100
+    - /usr/local/apache-tomcat-7.0.103.tar.gz
+    - /usr/local/apache-tomcat-7.0.103
   tags: tomcat
 
 - name: Copy Tomcat server configs

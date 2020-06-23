@@ -122,8 +122,10 @@
 - block:
   - name: Add GPG key for GoAccess repo
     apt_key: id=0x97BD1A0133449C3D url=https://deb.goaccess.io/gnugpg.key state=present
-  - name: Add GoAccess repository
-    apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess
+  - name: Add new GoAccess repository
+    apt_repository: repo='deb [arch=amd64] https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess state=present
+  - name: Remove old GoAccess repository
+    apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess state=absent
   - name: Install GoAccess
     apt: pkg=goaccess state=present
   when: ansible_distribution_version is version('18.04', '<=')

@@ -69,6 +69,13 @@
       - /etc/update-motd.d/80-livepatch # Ubuntu 18.04+
     ignore_errors: yes
 
+  - name: Disable annoying Canonical spam in MOTD
+    systemd: name={{ item }} state=stopped enabled=no
+    when: ansible_service_mgr == 'systemd'
+    loop:
+      - motd-news.service
+      - motd-news.timer
+
   - name: Configure cron-apt
     import_tasks: cron-apt.yml
     tags: cron-apt

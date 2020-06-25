@@ -212,6 +212,9 @@ server {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 
+        # redirect invalid REST retrieveLink values (see DS-3193)
+        rewrite ^/rest/rest/(.*)$ https://{{ nginx_server_name }}/rest/$1 redirect;
+
         location ~ /rest/statistics/?(.*) {
             access_log /var/log/nginx/statistics.log;
             proxy_pass http://statistics_api/$1$is_args$args;

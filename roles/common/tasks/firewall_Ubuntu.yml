@@ -37,6 +37,27 @@
     apt: pkg=ufw state=absent
     tags: packages
 
+  # I'm not sure why, but you can use firewalld with the nftables backend even
+  # if nftables itself is not installed. In that case the only way to see the
+  # currently active rules is with firewall-cmd. I prefer installing nftables
+  # so that we can have somewhat of a parallel with iptables:
+  #
+  #   nft list ruleset
+  #
+  # See: https://firewalld.org/2018/07/nftables-backend
+  - name: Install nftables
+    when: ansible_distribution_version is version('20.04', '==')
+    apt: pkg=nftables state=present
+
+  - name: Use nftables backend in firewalld
+    when: ansible_distribution_version is version('20.04', '==')
+    lineinfile:
+      dest: /etc/firewalld/firewalld.conf
+      regexp: '^FirewallBackend=iptables$'
+      line: 'FirewallBackend=nftables'
+    notify:
+      - restart firewalld
+
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
     when: ansible_distribution_major_version is version('15', '>=')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600

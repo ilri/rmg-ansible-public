@@ -41,6 +41,23 @@
   - name: Install base packages
     apt: pkg={{ ubuntu_base_packages }} state=present cache_valid_time=3600
 
+  # We have to remove snaps one by one in a specific order because some depend
+  # on others. Only after that can we remove the corresponding system packages.
+  - name: Remove lxd snap
+    snap: name=lxd state=absent
+    when: ansible_distribution_version is version('20.04', '==')
+    ignore_errors: yes
+
+  - name: Remove core18 snap
+    snap: name=core18 state=absent
+    when: ansible_distribution_version is version('20.04', '==')
+    ignore_errors: yes
+
+  - name: Remove snapd snap
+    snap: name=snapd state=absent
+    when: ansible_distribution_version is version('20.04', '==')
+    ignore_errors: yes
+
   - name: Set fact for packages to remove
     set_fact:
       ubuntu_annoying_packages:
@@ -55,6 +72,19 @@
         - liblxc1 # annoying (Ubuntu >= 16.04)
         - lxc-common # annoying (Ubuntu >= 16.04)
         - lxcfs #annoying (Ubuntu >= 16.04)
+    when: ansible_distribution_version is version('18.04', '<=')
+
+  - name: Set fact for packages to remove (Ubuntu 20.04)
+    set_fact:
+      ubuntu_annoying_packages:
+        - whoopsie # security (CIS 4.1)
+        - apport   # security (CIS 4.1)
+        - command-not-found # annoying
+        - command-not-found-data # annoying
+        - python3-commandnotfound # annoying
+        - snapd # annoying (Ubuntu >= 16.04)
+        - lxd-agent-loader # annoying (Ubuntu 20.04)
+    when: ansible_distribution_version is version('20.04', '==')
 
   - name: Remove packages
     apt: name={{ ubuntu_annoying_packages }} state=absent purge=yes

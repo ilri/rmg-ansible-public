@@ -92,6 +92,7 @@
       - devtoolset-7-gcc-gfortran # some software wants a newer gcc
       - devtoolset-7-gcc-c++ # some software wants a newer gcc
       - perl-PDF-API2.noarch # for mirdeep2
+      - graphviz
   tags: packages
 
 # 2019-12-09: currently missing from CentOS 8:
@@ -164,6 +165,7 @@
       - unzip.x86_64
       - wget.x86_64
       - xorg-x11-xauth.x86_64 # or else X11 forwarding doesn't work
+      - graphviz
   tags: packages
 
 - name: Install extra packages

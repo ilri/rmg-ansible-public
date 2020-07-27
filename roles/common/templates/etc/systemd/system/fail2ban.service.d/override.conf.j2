@@ -2,14 +2,14 @@
 PrivateDevices=yes
 PrivateTmp=yes
 ProtectHome=read-only
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('18','==') %}
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('18','>=') %}
 ProtectSystem=strict
 {% else %}
 {# Older systemd versions don't have ProtectSystem=strict #}
 ProtectSystem=full
 {% endif %}
 NoNewPrivileges=yes
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('18','==') %}
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('18','>=') %}
 ReadWritePaths=-/var/run/fail2ban
 ReadWritePaths=-/var/lib/fail2ban
 ReadWritePaths=-/var/log/fail2ban.log

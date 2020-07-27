@@ -32,6 +32,11 @@
     apt: name={{ ubuntu_firewall_packages }} state=present cache_valid_time=3600
     tags: packages
 
+  - name: Remove ufw
+    when: ansible_distribution_version is version('16.04', '>=')
+    apt: pkg=ufw state=absent
+    tags: packages
+
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
     when: ansible_distribution_major_version is version('15', '>=')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600

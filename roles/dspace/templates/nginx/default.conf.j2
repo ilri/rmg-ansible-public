@@ -389,6 +389,11 @@ map $http_user_agent $limit_bots {
     ~Altmetribot '';
     ~Postgenomic '';
 
+    # 2020-08-10 Explicitly allow Googlebot and Twitterbot because they don't
+    # crawl haphazardly and usually respect robots.txt
+    ~Googlebot '';
+    ~Twitterbot '';
+
     # Need to make sure we match: bot, Bot, BOT, etc...
     ~*bot      1;
     ~[Cc]rawl  1;

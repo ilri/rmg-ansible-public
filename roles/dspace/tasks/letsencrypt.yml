@@ -49,6 +49,14 @@
 
   - name: Install certbot dependencies
     apt: name={{ certbot_dependencies }} state=present cache_valid_time=3600
+  when: ansible_distribution != 'Ubuntu' and ansible_distribution_major_version is version('20.04', '!=')
+  tags: letsencrypt
+
+# On Ubuntu 20.04 it is no longer recommended/supported to use the standalone
+# certbot-auto so I guess we need to use the one from the repositories.
+- name: Install certbot (Ubuntu 20.04)
+	apt: name=certbot state=present update_cache=yes
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '==')
   tags: letsencrypt
 
 # vim: set ts=2 sw=2:

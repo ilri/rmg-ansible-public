@@ -54,8 +54,15 @@
 
 # On Ubuntu 20.04 it is no longer recommended/supported to use the standalone
 # certbot-auto so I guess we need to use the one from the repositories.
-- name: Install certbot (Ubuntu 20.04)
-	apt: name=certbot state=present update_cache=yes
+- block:
+  - name: Install certbot (Ubuntu 20.04)
+    apt: name=certbot state=present update_cache=yes
+
+  - name: Copy certbot post and pre hooks for nginx
+    copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
+    with_items:
+      - { src: 'stop-nginx.sh', dest: '/etc/letsencrypt/renewal-hooks/post/stop-nginx.sh' }
+      - { src: 'start-nginx.sh', dest: '/etc/letsencrypt/renewal-hooks/post/start-nginx.sh' }
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '==')
   tags: letsencrypt
 

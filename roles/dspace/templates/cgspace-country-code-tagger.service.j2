@@ -8,7 +8,11 @@ Environment="JAVA_OPTS=-Xmx1024M -Dfile.encoding=UTF-8"
 User={{ tomcat_user }}
 CPUSchedulingPolicy=batch
 CPUSchedulingPriority=0
+{% if '5' in dspace_git_branch %}
 ExecStart={{ dspace_root }}/bin/dspace curate -t countrycodetagger -i all -l 500 -s object
+{% else %}
+ExecStart={{ dspace_root }}/bin/dspace curate -t countrycodetagger -i all -s object
+{% endif %}
 
 [Install]
 WantedBy=multi-user.target

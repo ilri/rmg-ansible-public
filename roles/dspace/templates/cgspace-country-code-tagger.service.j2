@@ -1,0 +1,14 @@
+[Unit]
+Description=CGSpace Country Code Tagger
+Wants=tomcat7.service
+Requires=postgresql.service
+
+[Service]
+Environment="JAVA_OPTS=-Xmx1024M -Dfile.encoding=UTF-8"
+User={{ tomcat_user }}
+CPUSchedulingPolicy=batch
+CPUSchedulingPriority=0
+ExecStart={{ dspace_root }}/bin/dspace curate -t countrycodetagger -i all -l 500 -s object
+
+[Install]
+WantedBy=multi-user.target

@@ -305,11 +305,15 @@
     - { 'src': dspace-statistics-api.service.j2, 'name': dspace-statistics-api.service }
     - { 'src': dspace-statistics-indexer.service.j2, 'name': dspace-statistics-indexer.service }
     - { 'src': 'tomcat/tomcat.service.j2', 'name': 'tomcat{{ tomcat_version_major }}.service' }
+    - { 'src': 'cgspace-country-code-tagger.service.j2', 'name': 'cgspace-country-code-tagger.service.j2' }
   register: dspace_systemd_services
 
-- name: Copy systemd timer unit
-  copy: src=dspace-statistics-indexer.timer dest=/etc/systemd/system/dspace-statistics-indexer.timer mode=0644 owner=root group=root
-  register: dspace_systemd_timer
+- name: Copy systemd timer units
+  copy: src={{ item.src }} dest=/etc/systemd/system/{{ item.name }} mode=0644 owner=root group=root
+  loop:
+    - { 'src': dspace-statistics-indexer.timer, 'name': dspace-statistics-indexer.timer }
+    - { 'src': cgspace-country-code-tagger.timer, 'name': cgspace-country-code-tagger.timer }
+  register: dspace_systemd_timers
 
 - name: Copy systemd service environments
   template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=root group=root
@@ -322,7 +326,7 @@
 - name: Reload systemd daemon
   systemd: daemon_reload=yes
   when: dspace_systemd_services is changed
-        or dspace_systemd_timer is changed
+        or dspace_systemd_timers is changed
         or dspace_systemd_environment is changed
 
 - name: Start and enable systemd units
@@ -332,6 +336,7 @@
     - dspace-statistics-api.service
     - dspace-statistics-indexer.timer
     - 'tomcat{{ tomcat_version_major }}.service'
+    - cgspace-country-code-tagger.timer
 
 - name: Create DSpace install directory
   file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory

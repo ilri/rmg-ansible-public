@@ -305,7 +305,7 @@
     - { 'src': dspace-statistics-api.service.j2, 'name': dspace-statistics-api.service }
     - { 'src': dspace-statistics-indexer.service.j2, 'name': dspace-statistics-indexer.service }
     - { 'src': 'tomcat/tomcat.service.j2', 'name': 'tomcat{{ tomcat_version_major }}.service' }
-    - { 'src': 'cgspace-country-code-tagger.service.j2', 'name': 'cgspace-country-code-tagger.service.j2' }
+    - { 'src': 'cgspace-country-code-tagger.service.j2', 'name': 'cgspace-country-code-tagger.service' }
   register: dspace_systemd_services
 
 - name: Copy systemd timer units

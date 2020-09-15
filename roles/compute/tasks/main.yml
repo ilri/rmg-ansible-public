@@ -93,6 +93,7 @@
       - devtoolset-7-gcc-c++ # some software wants a newer gcc
       - perl-PDF-API2.noarch # for mirdeep2
       - graphviz
+      - devtoolset-7-libatomic-devel.x86_64 # needed by seqwish/0.6
   tags: packages
 
 # 2019-12-09: currently missing from CentOS 8:

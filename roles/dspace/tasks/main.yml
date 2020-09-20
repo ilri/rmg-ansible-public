@@ -49,8 +49,6 @@
   user: name={{ tomcat_user }} group={{ tomcat_group }} system=yes create_home=yes home={{ tomcat_user_home }} shell=/bin/bash
   tags: tomcat
 
-# On Ubuntu 18.04 we use the system's ruby and nodejs instead of installing them
-# manually with RVM and NVM after provisioning the machine.
 - block:
   # Use Node.js repository instead of Ubuntu's due to libssl conflicts
   # See: https://bugs.launchpad.net/ubuntu/+source/nodejs/+bug/1794589
@@ -74,30 +72,9 @@
       dspace_mirage2_system_build_dependencies:
         - build-essential
         - nodejs
-        - ruby-dev
-        - libffi-dev
 
   - name: Install DSpace Mirage 2 system build dependencies
     apt: pkg={{ dspace_mirage2_system_build_dependencies }} state=present install_recommends=no cache_valid_time=3600
-
-  - name: Install DSpace Mirage 2 ruby build dependencies
-    gem: name={{ item.name }} version={{ item.version }} state=present user_install=yes
-    loop:
-      - { name: 'sass', version: '3.3.14' }
-      - { name: 'compass', version: '1.0.3' }
-    become_user: '{{ tomcat_user }}'
-
-  - name: Configure ruby environment
-    lineinfile:
-      dest: '{{ tomcat_user_home }}/.profile'
-      regexp: '^source {{ tomcat_user_home }}/.ruby-env$'
-      line: 'source {{ tomcat_user_home }}/.ruby-env'
-      state: present
-    become_user: '{{ tomcat_user }}'
-
-  - name: Configure ruby environment
-    template: src=ruby-env.j2 dest={{ tomcat_user_home }}/.ruby-env owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
-    become_user: '{{ tomcat_user }}'
 
   - name: Configure npm environment
     template: src=npmrc.j2 dest={{ tomcat_user_home }}/.npmrc owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
@@ -106,7 +83,6 @@
   - name: Install DSpace Mirage 2 Node.js build dependencies
     npm: name={{ item }} global=yes
     loop:
-      - bower
       - grunt-cli
       - yarn
     become_user: '{{ tomcat_user }}'

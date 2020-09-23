@@ -18,9 +18,9 @@ mailrc_auth_pass: A2YtYma2i1D1
 timezone: Etc/UTC
 
 # See: https://github.com/restic/restic/releases
-restic_version: 0.9.6
+restic_version: 0.10.0
 restic_url: https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2
-restic_url_checksum: a88ca09d1dd051d470965667a224a2b81930c6628a0566b7b17868be40207dc8
+restic_url_checksum: 41d47f100f61c503c462f53069e5c2aaad4dafec461e56b85b1de7730e4f9c4d
 restic_binary_path: /usr/local/bin/restic
 # list of restic backup paths
 restic_backup_paths:

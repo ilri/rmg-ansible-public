@@ -26,7 +26,7 @@
     - { src: "scripts/backup_mysql.py.j2", dest: "/opt/ilri/scripts/backup_mysql.py" }
     - { src: "scripts/backup_postgresql.py.j2", dest: "/opt/ilri/scripts/backup_postgresql.py" }
 
-# Install the restic binary as restic-0.9.6 to make version handling easier, as
+# Install the restic binary as restic-0.1.0 to make version handling easier, as
 # I can then just test if my expected version exists rather than trying to parse
 # the output of `restic version` (especially since I don't know what versioning
 # they will use in the future).
@@ -78,9 +78,9 @@
       path: "{{ item }}"
       state: absent
     loop:
-      - "{{ restic_binary_path }}-0.9.3"
       - "{{ restic_binary_path }}-0.9.4"
       - "{{ restic_binary_path }}-0.9.5"
+      - "{{ restic_binary_path }}-0.9.6"
 
   - name: Copy restic-backup.sh
     template: src=scripts/restic-backup.sh.j2 dest=/opt/ilri/scripts/restic-backup.sh owner=root group=root mode=0755

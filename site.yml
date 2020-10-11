@@ -7,5 +7,6 @@
 - import_playbook: solr.yml
 - import_playbook: storage.yml
 - import_playbook: web.yml
+- import_playbook: postgres.yml
 
 # vim: set sw=2 ts=2:

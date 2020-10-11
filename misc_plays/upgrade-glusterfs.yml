@@ -18,7 +18,6 @@
   tasks:
     - name: Stop glusterd
       systemd: name=glusterd state=stopped
-      yum: name=centos-release-gluster6 state=present
 
     - name: Upgrade glusterfs
       yum: name=* enablerepo=centos-gluster6 disablerepo=* state=latest

@@ -1,5 +1,5 @@
 ---
-# Perform Gluster 5.x -> 6.x upgrade on storage and compute nodes
+# Perform Gluster 6.x -> 7.x upgrade on storage and compute nodes
 
 - hosts: compute:storage
   become: yes
@@ -10,8 +10,8 @@
     - name: Update yum cache
       command: yum makecache fast
 
-    - name: Install Gluster 6 release channel
-      yum: name=centos-release-gluster6 state=present
+    - name: Install Gluster 7 release channel
+      yum: name=centos-release-gluster7 state=present
 
 - hosts: storage
   become: yes
@@ -20,7 +20,7 @@
       systemd: name=glusterd state=stopped
 
     - name: Upgrade glusterfs
-      yum: name=* enablerepo=centos-gluster6 disablerepo=* state=latest
+      yum: name=* enablerepo=centos-gluster7 disablerepo=* state=latest
 
     - name: Start glusterd
       systemd: name=glusterd state=started
@@ -28,11 +28,8 @@
 - hosts: compute
   become: yes
   tasks:
-    - name: Install Gluster 6 release channel
-      yum: name=centos-release-gluster6 state=present
-
     - name: Upgrade glusterfs
-      yum: name=* enablerepo=centos-gluster6 disablerepo=* state=latest
+      yum: name=* enablerepo=centos-gluster7 disablerepo=* state=latest
 
 # then reboot all storage nodes...
 # then reboot all compute nodes...

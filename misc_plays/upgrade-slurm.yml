@@ -6,6 +6,15 @@
 # 3. Upgrade SLURM on HPC compute nodes
 # 4. Restart slurmd on HPC compute nodes
 
+- hosts: compute
+  become: yes
+  tasks:
+    - name: Clear yum cache
+      command: yum clean all
+
+    - name: Update yum cache
+      command: yum makecache fast
+
 - hosts: hpc
   become: yes
   tasks:

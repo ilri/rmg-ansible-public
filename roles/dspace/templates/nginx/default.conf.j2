@@ -255,7 +255,7 @@ server {
 
     # Only allow jspui access for atmire modules
     location /jspui {
-        location ~ ^/jspui/(export|listings-and-reports) {
+        location ~ ^/jspui/(export|listings-and-reports|static) {
             allow all;
             proxy_pass http://tomcat-http;
         }

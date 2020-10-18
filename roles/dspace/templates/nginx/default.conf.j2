@@ -394,6 +394,11 @@ map $http_user_agent $limit_bots {
     ~Googlebot '';
     ~Twitterbot '';
 
+    # 2020-10-18 Explicitly allow CCAFS bot because they are scraping /browse
+    # and the REST API's find-by-metadata-field endpoint is really slow with
+    # large result sets.
+    'CCAFS Website Publications importer BOT' '';
+
     # Need to make sure we match: bot, Bot, BOT, etc...
     ~*bot      1;
     ~[Cc]rawl  1;

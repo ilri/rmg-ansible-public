@@ -3,50 +3,14 @@
   <option name="family" value="inet6" />
   <short>abusers-ipv6</short>
   <description>A list of abusive IPv6 addresses.</description>
-  <entry>2001:41d0:1004:2384::1</entry>
-  <entry>2001:41d0:1008:c3a::</entry>
-  <entry>2001:41d0:1:8ebd::1</entry>
-  <entry>2001:41d0:1:f934::1</entry>
-  <entry>2001:41d0:203:6706::</entry>
-  <entry>2001:41d0:2:ca86::1</entry>
-  <entry>2001:41d0:2:d544::</entry>
-  <entry>2001:41d0:303:384::</entry>
-  <entry>2001:41d0:303:3d4a::</entry>
   <entry>2001:41d0:602:238d::</entry>
-  <entry>2001:41d0:800:1548::9696</entry>
-  <entry>2001:41d0:8:737c::</entry>
-  <entry>2001:41d0:8:940e::1</entry>
   <entry>2001:41d0:8:9924::1</entry>
-  <entry>2001:41d0:a:29ce::</entry>
   <entry>2001:41d0:a:4284::</entry>
-  <entry>2001:41d0:a:446f::</entry>
-  <entry>2001:41d0:a:4582::</entry>
-  <entry>2001:41d0:a:66c5::1</entry>
-  <entry>2001:470:70:e5a::2</entry>
-  <entry>2001:b011:b801:78b4:211:32ff:febd:e6b</entry>
-  <entry>2001:bc8:6005:131:208:a2ff:fe0c:5dac</entry>
-  <entry>2400:6180:0:d1::4ce:d001</entry>
-  <entry>2400:6180:0:d1::83b:4001</entry>
-  <entry>2400:6180:100:d0::95a:e001</entry>
-  <entry>2402:1f00:8101:4::</entry>
-  <entry>240e:d9:d800:200::d4</entry>
-  <entry>2603:3003:4bef:2000:6118:5690:b385:4927</entry>
-  <entry>2604:a880:2:d0::4c81:c001</entry>
-  <entry>2604:a880:400:d0::8d:6001</entry>
-  <entry>2604:a880:400:d1::63f:1</entry>
-  <entry>2604:a880:400:d1::c33:b001</entry>
-  <entry>2604:a880:800:10::5bf:2001</entry>
-  <entry>2604:a880:cad:d0::54f:c001</entry>
-  <entry>2604:a880:cad:d0::5d2:4001</entry>
-  <entry>2607:5300:120:3a9::1</entry>
-  <entry>2607:5300:203:1747::</entry>
-  <entry>2607:5300:203:2be::</entry>
-  <entry>2607:5300:203:555c::</entry>
-  <entry>2607:5300:60:14f::1</entry>
-  <entry>2607:5300:60:1c57::</entry>
-  <entry>2607:5300:60:3c30::1</entry>
-  <entry>2607:5300:60:3d28::1</entry>
-  <entry>2607:5300:60:3e1c::1</entry>
-  <entry>2607:5300:60:56c3::</entry>
-  <entry>2607:5300:60:e28::1</entry>
+  <entry>2402:1f00:8001:8bd::</entry>
+  <entry>240e:f7:4f01:c::3</entry>
+  <entry>2604:a880:800:10::b5:d001</entry>
+  <entry>2a00:d680:30:50::67</entry>
+  <entry>2a03:b0c0:3:d0::d4d:b001</entry>
+  <entry>2a03:b0c0:3:e0::33c:b001</entry>
+  <entry>2a03:b0c0:3:f0::1aa:8000</entry>
 </ipset>

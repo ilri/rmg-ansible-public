@@ -253,16 +253,6 @@ server {
         deny all;
     }
 
-    # Only allow jspui access for atmire modules
-    location /jspui {
-        location ~ ^/jspui/(export|listings-and-reports|static) {
-            allow all;
-            proxy_pass http://tomcat-http;
-        }
-
-        deny all;
-    }
-
     # named location for above try_files
     location @tomcat {
         # log access requests for debug / load analysis

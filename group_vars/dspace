@@ -23,7 +23,7 @@ apt_mirror: ubuntu-archive.mirror.liquidtelecom.com
 tls_cipher_suite: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
 
 dspace_git_repo: https://github.com/ilri/DSpace.git
-dspace_git_branch: 6_x-dev-atmire-modules
+dspace_git_branch: 6_x-prod
 
 # stable is 1.18.x
 # mainline is 1.19.x

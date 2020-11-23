@@ -33,7 +33,7 @@ DEF_ADMIN_EMAILS = "{{ sysadmin_emails|join(" ") }}"
 # Default absolute path to PostgreSQL backups directory
 DEF_POSTGRESQL_BACKUPS_DIR = "/home/backup/postgresql"
 
-# SMTP configs. for mandrill API. Circumvents SELinux's policy which
+# SMTP configs. Circumvents SELinux's policy which
 # prevents crond from reading root's ~/.mailrc
 MAILRC_FROM_EMAIL = "{{ mailrc_from_email }}"
 MAILRC_SMTP_SERVER = "{{ mailrc_smtp_server }}"

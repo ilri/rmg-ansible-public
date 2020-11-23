@@ -148,14 +148,14 @@ def main():
     create_backup_dir(postgresql_backups_dir)
 
     # get a list of dbs, fail otherwise
-    output, err, retcode = get_databases()
-    if retcode != 0:
-        job_status = "Couldn't get a list of databases.\nOutput: %s\nError: %s\nReturn Code: %d" % (output, err, retcode)
+    output, err, returncode = get_databases()
+    if returncode != 0:
+        job_status = "Couldn't get a list of databases.\nOutput: %s\nError: %s\nReturn Code: %d" % (output, err, returncode)
         print job_status
         # send mail notification
         if notify_mail:
             sendmail_notification(job_status)
-        sys.exit(retcode)
+        sys.exit(returncode)
 
     postgresql_dbs = output.splitlines()
     for db in postgresql_dbs:

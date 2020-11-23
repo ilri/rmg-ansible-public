@@ -19,15 +19,15 @@ import tempfile
 import time
 
 # If a backup process has failed, send a mail notification to admins
-DEF_SEND_MAIL = True
+DEF_SEND_MAIL = False
 
 # Attempt backing up all dbs i.e. if an error occurs
 # when backing up a database, ignore it & continue
 # backing up the rest
-DEF_IGNORE_ERRORS = True
+DEF_IGNORE_ERRORS = False
 
 # Add date timestamps to filenames
-DEF_TIMESTAMP_FILENAMES = True
+DEF_TIMESTAMP_FILENAMES = False
 
 # A space separated list of admins' email address(es) which
 # notification emails will be sent to.

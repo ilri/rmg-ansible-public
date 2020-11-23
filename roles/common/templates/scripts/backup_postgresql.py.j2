@@ -93,11 +93,7 @@ def backup_databases(database, timestamp_filenames, postgresql_backups_dir, noti
     else:
         dump_filename = "%s/%s.backup" % (postgresql_backups_dir, database)
 
-    {% if pg_version is version('10', '<') %}
-    cmd_dump_db = "%s -v -o --format=custom -f %s %s" % (BIN_PGDUMP, dump_filename, database)
-    {% else %}
     cmd_dump_db = "%s -v --format=custom -f %s %s" % (BIN_PGDUMP, dump_filename, database)
-    {% endif %}
     output, err, returncode = run_cmd(cmd_dump_db)
 
     if returncode != 0:

@@ -19,12 +19,15 @@ import tempfile
 import time
 
 # If a backup process has failed, send a mail notification to admins
-DEF_SEND_MAIL = False
+DEF_SEND_MAIL = True
 
 # Attempt backing up all dbs i.e. if an error occurs
 # when backing up a database, ignore it & continue
 # backing up the rest
 DEF_IGNORE_ERRORS = True
+
+# Add date timestamps to filenames
+DEF_TIMESTAMP_FILENAMES = True
 
 # A space separated list of admins' email address(es) which
 # notification emails will be sent to.
@@ -62,10 +65,10 @@ def get_timestamp():
 #    -i, --ignore-errors -> ignore any errors occurred i.e. don't exit on error
 def show_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-n", "--notify", default="No", help="Send PostgreSQL backup completion status via email to admin(s)")
+    parser.add_argument("-n", "--notify", help="Send PostgreSQL backup completion status via email to admin(s)", action="store_true")
     parser.add_argument("-d", "--directory", default=DEF_POSTGRESQL_BACKUPS_DIR, help="Absolute path to PostgreSQL backups directory")
-    parser.add_argument("-i", "--ignore-errors", default="Yes", help="Ignore any errors occurred during the backup process i.e. don't exit on error")
-    parser.add_argument("--timestamp-filenames", default="Yes", help="Add YYYY-MM-DD timestamps to backup file names. You might want to disable this if you are rotating backups with something like restic or borg")
+    parser.add_argument("-i", "--ignore-errors", help="Ignore any errors occurred during the backup process i.e. don't exit on error", action="store_true")
+    parser.add_argument("--timestamp-filenames", help="Add YYYY-MM-DD timestamps to backup file names. You might want to disable this if you are rotating backups with something like restic or borg", action="store_true")
     args = parser.parse_args()
     return args, parser
 
@@ -84,7 +87,7 @@ def get_databases():
 
 # given a list of databases:
 #    - iterate through the list & back'em up one by one
-def backup_databases(database, timestamp_filenames, postgresql_backups_dir=DEF_POSTGRESQL_BACKUPS_DIR, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS):
+def backup_databases(database, timestamp_filenames, postgresql_backups_dir, notify, ignore_errors):
     if timestamp_filenames:
         dump_filename = "%s/%s-%s.backup" % (postgresql_backups_dir, database, get_timestamp())
     else:
@@ -96,13 +99,14 @@ def backup_databases(database, timestamp_filenames, postgresql_backups_dir=DEF_P
     cmd_dump_db = "%s -v --format=custom -f %s %s" % (BIN_PGDUMP, dump_filename, database)
     {% endif %}
     output, err, returncode = run_cmd(cmd_dump_db)
-    if returncode != 0:
 
+    if returncode != 0:
         job_status = "Failed to backup '%s' db.\nOutput: %s\nError: %s\nReturn Code: %d" % (database, output, err, returncode)
         print job_status
         # send mail notification
         if notify:
             sendmail_notification(job_status)
+
         if not ignore_errors:
             sys.exit(returncode)
     else:
@@ -134,21 +138,11 @@ def create_backup_dir(backup_dir):
 #     - backup all dbs except system ones
 def main():
     args, parser = show_args()
+
     postgresql_backups_dir = DEF_POSTGRESQL_BACKUPS_DIR if args.directory is None else args.directory
-
-    if args.notify.lower() == "No".lower():
-        notify_mail = False
-    elif args.notify.lower() == "Yes".lower():
-        notify_mail = True
-
-    # ignore errors
-    if args.ignore_errors.lower() == "No".lower():
-        ignore_errors = False
-    elif args.ignore_errors.lower() == "Yes".lower():
-        ignore_errors = True
-
-    if args.timestamp_filenames.lower() == "No".lower():
-        timestamp_filenames = False
+    notify_mail = DEF_SEND_MAIL if args.notify is None else args.notify
+    ignore_errors = DEF_IGNORE_ERRORS if args.ignore_errors is None else args.ignore_errors
+    timestamp_filenames = DEF_TIMESTAMP_FILENAMES if args.timestamp_filenames is None else args.timestamp_filenames
 
     # create backup dest. dir
     create_backup_dir(postgresql_backups_dir)

@@ -1,6 +1,14 @@
+{% if extra_sudo_users is defined %}
 {% for user in extra_sudo_users %}
 {{ user }}   ALL=(ALL)  ALL
 {% endfor %}
+{% endif %}
+
+{% if extra_nopasswd_sudo_users is defined %}
+{% for user in extra_nopasswd_sudo_users %}
+{{ user }}   ALL=(ALL)  NOPASSWD:ALL
+{% endfor %}
+{% endif %}
 
 {% if 'dspace' in group_names %}
 Cmnd_Alias TOMCAT = /bin/systemctl * tomcat{{ tomcat_version_major }}

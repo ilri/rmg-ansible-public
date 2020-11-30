@@ -10,10 +10,10 @@
 
 - name: Add extra sudo users
   template: src=extra_sudoers.j2 dest=/etc/sudoers.d/extra_sudoers owner=root group=root mode=0440 validate='visudo -cf %s'
-  when: extra_sudo_users is defined and ansible_os_family == "Debian"
+  when: (extra_sudo_users is defined or extra_nopasswd_sudo_users is defined) and ansible_os_family == "Debian"
 
 - name: Add extra sudo users
   template: src=extra_sudoers.j2 dest=/etc/sudoers.d/extra_sudoers owner=root group=root mode=0600 validate='visudo -cf %s'
-  when: extra_sudo_users is defined and ansible_os_family != "Debian"
+  when: (extra_sudo_users is defined or extra_nopasswd_sudo_users is defined) and ansible_os_family != "Debian"
 
 # vim: set ts=2 sw=2:

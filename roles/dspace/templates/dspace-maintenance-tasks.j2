@@ -101,4 +101,4 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # This ensures each year has its own Solr index, which improves performance.
 # NOTE: ONLY NECESSARY IF YOU ARE RUNNING SOLR STATISTICS
 # NOTE: This is scheduled here for 2:00AM so that it happens *after* the daily cleaning & re-optimization of this index.
-0 2 1 1 * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace stats-util -s >> $DSPACE/log/cron-stats-util.log.$(date --iso-8601) 2>&1
+#0 2 1 1 * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace stats-util -s >> $DSPACE/log/cron-stats-util.log.$(date --iso-8601) 2>&1

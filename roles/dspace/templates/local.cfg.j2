@@ -225,7 +225,6 @@ useproxies.enabled = true
 # I think we can use a random string here...
 atmire-dspace-api.cookie.encoding.password = {{ lookup('password', '/dev/null length=20 chars=ascii_letters') }}
 dspace.rest.contextPath = /rest
-dspace.contextpath.jspui = /jspui
 # To work around an issue with variable interpolation not working for this part-
 # icular variable (defined in pom.xml and doesn't get substituted at run time).
 cua.version.number=${cua.version.number}

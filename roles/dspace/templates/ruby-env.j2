@@ -1,7 +1,0 @@
-{{ ansible_managed | comment }}
-
-# DSpace Mirage 2 build explicitly looks for GEM_HOME and GEM_PATH
-export GEM_HOME={{ tomcat_user_home }}/.gem/ruby/2.5.0
-export GEM_PATH={{ tomcat_user_home }}/.gem/ruby/2.5.0
-# Add gem binaries to shell PATH
-PATH=$PATH:{{ tomcat_user_home }}/.gem/ruby/2.5.0/bin

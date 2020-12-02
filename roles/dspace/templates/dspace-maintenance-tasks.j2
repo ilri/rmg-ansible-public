@@ -37,21 +37,21 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 0 1 * * * {{ tomcat_user }} $DSPACE/bin/dspace oai clean-cache > /dev/null
 # Clean and Update the Discovery indexes at midnight every day
 # (This ensures that any deleted documents are cleaned from the Discovery search/browse index)
-0 0 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace index-discovery > /dev/null
+0 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-discovery > /dev/null
 # Re-Optimize the Discovery indexes at 12:30 every day
 # (This ensures that the Discovery Solr Index is re-optimized for better performance)
 # Disabled 2016-09, see: https://issues.apache.org/jira/browse/SOLR-3141
-# 30 0 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace index-discovery -o > /dev/null
+# 30 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-discovery -o > /dev/null
 
 # run the index-authority script once a day at 12:45 to ensure the Solr Authority cache is up to date
 # Disabled 2018-03 because we are no longer using ORCID lookup after they discontinued the v1 API
-#45 0 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace index-authority > /dev/null
+#45 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-authority > /dev/null
 
 # Re-Optimize DSpace Statistics Solr Index at 01:30 every day
 # NOTE: ONLY NECESSARY IF YOU ARE RUNNING SOLR STATISTICS
 # (This ensures that the Statistics Solr Index is re-optimized for better performance)
 # Disabled 2016-09, see: https://issues.apache.org/jira/browse/SOLR-3141
-#30 1 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace stats-util -o
+#30 1 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace stats-util -o
 
 # Send out subscription e-mails at 02:00 every day
 # (This sends an email to any users who have "subscribed" to a Collection, notifying them of newly added content.)
@@ -60,7 +60,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # Run the media filter at 03:00 every day.
 # (This task ensures that thumbnails are generated for newly add images,
 # and also ensures full text search is available for newly added PDF/Word/PPT/HTML documents)
-0 3 * * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace filter-media >> $DSPACE/log/cron-filter-media.log.$(date --iso-8601) 2>&1
+0 3 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace filter-media >> $DSPACE/log/cron-filter-media.log.$(date --iso-8601) 2>&1
 
 # Run any Curation Tasks queued from the Admin UI at 04:00 every day
 # (Ensures that any curation task that an administrator "queued" from the Admin UI is executed
@@ -79,7 +79,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # If your site is very large, you may need to only check a portion of your content per week. The below commented-out task
 # would instead check all the content it can within *one hour*. The next week it would start again where it left off.
 # Check twice a week, for 1 hour each time.
-0 4 * * 0,3 {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace checker -d 1h -p >> $DSPACE/log/cron-checker.log.$(date --iso-8601) 2>&1
+0 4 * * 0,3 {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace checker -d 1h -p >> $DSPACE/log/cron-checker.log.$(date --iso-8601) 2>&1
 
 # Mail the results of the checksum checker (see above) to the configured "mail.admin" at 05:00 every Sunday.
 # (This ensures the system administrator is notified whether any checksums were found to be different.)
@@ -92,7 +92,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # Permanently delete any bitstreams flagged as "deleted" in DSpace, on the first of every month at 01:00
 # (This ensures that any files which were deleted from DSpace are actually removed from your local filesystem.
 # By default they are just marked as deleted, but are not removed from the filesystem.)
-0 1 1 * * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace cleanup >> $DSPACE/log/cleanup.log.$(date --iso-8601) 2>&1
+0 1 1 * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace cleanup >> $DSPACE/log/cleanup.log.$(date --iso-8601) 2>&1
 
 #----------------
 # YEARLY TASKS (Recommended to be run once per year)
@@ -101,4 +101,4 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # This ensures each year has its own Solr index, which improves performance.
 # NOTE: ONLY NECESSARY IF YOU ARE RUNNING SOLR STATISTICS
 # NOTE: This is scheduled here for 2:00AM so that it happens *after* the daily cleaning & re-optimization of this index.
-#0 2 1 1 * {{ tomcat_user }} schedtool -B -e ionice -c2 -n7 $DSPACE/bin/dspace stats-util -s >> $DSPACE/log/cron-stats-util.log.$(date --iso-8601) 2>&1
+#0 2 1 1 * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace stats-util -s >> $DSPACE/log/cron-stats-util.log.$(date --iso-8601) 2>&1

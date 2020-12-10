@@ -94,6 +94,7 @@
       - perl-PDF-API2.noarch # for mirdeep2
       - graphviz
       - devtoolset-7-libatomic-devel.x86_64 # needed by seqwish/0.6
+      - pcre2-devel.x86_64 # needed as of R/4.0
   tags: packages
 
 # 2019-12-09: currently missing from CentOS 8:

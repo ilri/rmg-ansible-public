@@ -1,0 +1,21 @@
+# Script to export IWMI's community as CSV because they want to maintain their
+# internal InMagic database with items submitted to CGSpace.
+
+[Unit]
+Description=DSpace IWMI Exporter
+After=tomcat{{ tomcat_version_major }}.service
+
+[Service]
+User={{ tomcat_user }}
+Group={{ tomcat_group }}
+WorkingDirectory=/tmp
+
+# Low priority CPU and I/O
+Nice=19
+IOSchedulingClass=2
+IOSchedulingPriority=7
+
+ExecStart={{ dspace_root }}/bin/dspace metadata-export -i 10568/16814 -f /tmp/iwmi.csv
+
+[Install]
+WantedBy=multi-user.target

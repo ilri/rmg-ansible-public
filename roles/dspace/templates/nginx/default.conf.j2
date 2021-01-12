@@ -196,6 +196,11 @@ server {
         proxy_set_header User-Agent $ua;
     }
 
+    # static alias for weekly IWMI CSV export
+    location /iwmi.csv {
+        alias /tmp/iwmi.csv;
+    }
+
     # AReS explorer
     location /explorer {
         # log access requests for debug / load analysis

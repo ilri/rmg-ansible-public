@@ -2,7 +2,8 @@
 Description=DSpace IWMI Exporter
 
 [Timer]
-OnCalendar=weekly
+# Run Monday and Friday morning
+OnCalendar=Mon,Fri *-*-* 00:00:00
 # Add a random delay of 0–3600 seconds
 RandomizedDelaySec=3600
 Persistent=true

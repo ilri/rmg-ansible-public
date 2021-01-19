@@ -198,7 +198,7 @@ server {
 
     # static alias for weekly IWMI CSV export
     location /iwmi.csv {
-        alias /tmp/iwmi.csv;
+        alias {{ nginx_server_name }}/exports/iwmi.csv;
     }
 
     # AReS explorer

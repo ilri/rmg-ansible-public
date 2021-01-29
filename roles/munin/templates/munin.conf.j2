@@ -24,7 +24,11 @@
 # cgitmpdir /var/lib/munin/cgi-tmp
 
 # (Exactly one) directory to include all files from.
+{% if ansible_os_family == 'Debian' %}
 includedir /etc/munin/munin-conf.d
+{% else %}
+includedir /etc/munin/conf.d
+{% endif %}
 
 # You can choose the time reference for "DERIVE" like graphs, and show
 # "per minute", "per hour" values instead of the default "per second"

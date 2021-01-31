@@ -37,6 +37,7 @@
   loop:
     - /var/log/slurm
     - /var/spool/slurmd
+    - /var/spool/slurmctld
   notify: restart slurmd
 
 - name: Copy munge key

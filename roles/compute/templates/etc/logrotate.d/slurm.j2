@@ -1,5 +1,9 @@
 ##
 # Slurm Logrotate Configuration
+#
+# Note: this comes from the example in the slurm.conf man page. The use of
+# SIGUSR2 here is the preferred way to get SLURM daemons to re-read their
+# configuration files (as opposed to scontrol reconfigure).
 ##
 /var/log/slurm/*.log {
     compress

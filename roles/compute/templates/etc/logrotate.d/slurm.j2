@@ -1,0 +1,24 @@
+##
+# Slurm Logrotate Configuration
+##
+/var/log/slurm/*.log {
+    compress
+    missingok
+    nocopytruncate
+    nodelaycompress
+    nomail
+    notifempty
+    noolddir
+    rotate 5
+    sharedscripts
+    size=5M
+    create 640 slurm root
+    postrotate
+        pkill -x --signal SIGUSR2 slurmd
+{% if inventory_hostname == slurm_head_node %}
+        pkill -x --signal SIGUSR2 slurmctld
+        pkill -x --signal SIGUSR2 slurmdbd
+{% endif %}
+        exit 0
+    endscript
+}

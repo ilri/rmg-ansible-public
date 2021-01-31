@@ -25,6 +25,9 @@
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
   notify: restart slurmd
 
+- name: Configure logrotate for slurm
+  template: src=etc/logrotate.d/slurm.j2 dest=/etc/logrotate.d/slurm owner=root group=root mode=0644
+
 - name: Copy extra slurm configs
   copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0644
   loop:

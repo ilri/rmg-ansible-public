@@ -40,8 +40,12 @@
   loop:
     - /var/log/slurm
     - /var/spool/slurmd
-    - /var/spool/slurmctld
   notify: restart slurmd
+
+- name: Create slurmctld directory on head node
+  file: path=/var/spool/slurmctld owner=slurm group=slurm mode=0755 state=directory
+  notify: restart slurmctld
+  when: inventory_hostname == slurm_head_node
 
 - name: Copy munge key
   copy: src=munge.key dest=/etc/munge/munge.key mode=0600 owner=munge group=munge

@@ -98,6 +98,7 @@
       - libgit2-devel.x86_64 # needed for some R packages like devtools
       - libjpeg-turbo-devel.x86_64 # needed for some R packages like HiCeekR
       - gsl-devel.x86_64 # needed for some R packages like HiCeekR
+      - rh-nodejs12-nodejs.x86_64 # needed by nextclade
   tags: packages
 
 # 2019-12-09: currently missing from CentOS 8:

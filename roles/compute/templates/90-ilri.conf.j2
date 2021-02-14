@@ -11,11 +11,6 @@ root    -   priority    0
 {% endif %}
 
 {% if inventory_hostname == 'hpc' %}
-# CPU time in minutes
-*       -   cpu         30
-@rmglinuxadm    -   cpu unlimited
-root    -   cpu         unlimited
-
 # number of processes
 *       -   nproc       512
 @rmglinuxadm    -   nproc 4096

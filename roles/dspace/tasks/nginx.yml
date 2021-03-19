@@ -47,8 +47,11 @@
   notify:
     - reload nginx
 
-- name: Generate 2048-bit dhparam
-  command: openssl dhparam -out dhparam.pem 2048 chdir=/etc/ssl/certs creates=dhparam.pem
+- name: Download 4096-bit RFC 7919 dhparams
+  get_url:
+    url: https://raw.githubusercontent.com/internetstandards/dhe_groups/master/ffdhe4096.pem
+    checksum: sha256:64852d6890ff9e62eecd1ee89c72af9af244dfef5b853bcedea3dfd7aade22b3
+    dest: "{{ nginx_ssl_dhparam }}"
   notify:
     - reload nginx
 

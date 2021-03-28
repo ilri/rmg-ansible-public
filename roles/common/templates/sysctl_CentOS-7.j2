@@ -101,6 +101,11 @@ net.ipv4.tcp_fin_timeout = 30
 # see comments by Ben England: https://www.gluster.org/community/documentation/index.php/Linux_Kernel_Tuning
 # and: http://blog.syszone.co.kr/3087
 vm.swappiness = 10
+
+# 2021-03-28 from the rhgs-random-io tuned profile
+# see: ftp.redhat.com:/redhat/linux/enterprise/7Server/en/RHS/SRPMS/redhat-storage-server-3.5.0.0-7.el7rhgs.src.rpm
+vm.dirty_ratio = 5
+vm.dirty_background_ratio = 2
 {% endif %}
 
 # From Mellanox tuning guide

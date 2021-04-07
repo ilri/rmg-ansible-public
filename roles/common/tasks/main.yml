@@ -18,6 +18,16 @@
   when: "'compute' in group_names or 'storage' in group_names"
   tags: hosts
 
+- name: Add static DNS entries to /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '{{ item.address }}.+{{ item.name }}$'
+    line: "{{ item.address }} {{ item.name }}"
+    state: present
+  loop: "{{ static_dns_entries }}"
+  when: static_dns_entries is defined
+  tags: hosts
+
 - name: Install common packages
   import_tasks: packages.yml
   tags: packages

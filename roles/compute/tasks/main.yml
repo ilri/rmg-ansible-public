@@ -101,6 +101,7 @@
       - rh-nodejs12-nodejs.x86_64 # needed by nextclade
       - bcl2fastq2 # from Illumina, in ILRI repo
       - perl-File-Which.noarch # for repeatmodeler/2.0.1
+      - singularity # from EPEL, for viralrecon pipeline
   tags: packages
 
 # 2019-12-09: currently missing from CentOS 8:

@@ -3,15 +3,15 @@
   <option name="family" value="inet6" />
   <short>abusers-ipv6</short>
   <description>A list of abusive IPv6 addresses.</description>
-  <entry>2001:41d0:8:9924::1</entry>
-  <entry>2001:41d0:a:2a31::</entry>
-  <entry>2001:41d0:a:2e46::</entry>
-  <entry>2001:bc8:1600::208:a2ff:fe0c:878c</entry>
-  <entry>2400:6180:0:d1::476:7001</entry>
-  <entry>2400:8901::f03c:92ff:fe55:bd3e</entry>
-  <entry>2607:5300:60:1c57::</entry>
+  <entry>2001:19f0:200:3191:225:90ff:fe88:27a8</entry>
+  <entry>2001:41d0:2:5137::</entry>
+  <entry>2402:1f00:8101:4::</entry>
+  <entry>2604:2dc0:200:1424::</entry>
+  <entry>2604:a880:0:1010::76:f001</entry>
   <entry>2607:5300:60:2540::</entry>
-  <entry>2a00:d680:20:50::42</entry>
-  <entry>2a00:d680:20:50::bcb2</entry>
-  <entry>2c0f:f850:154:198::186</entry>
+  <entry>2607:f1c0:842:3400::5c:29d</entry>
+  <entry>2a00:d680:20:50::cdb4</entry>
+  <entry>2a01:4f8:192:62c7::2</entry>
+  <entry>2a01:4f8:251:15ea::2</entry>
+  <entry>2a04:3543:1000:2310:cc4:41ff:fe7a:54cc</entry>
 </ipset>

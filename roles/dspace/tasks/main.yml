@@ -22,7 +22,6 @@
       - ant
       - maven
       - poppler-utils # for media filter
-      - python-psycopg2 # for ansible postgres modules
       - python3-psycopg2 # for ansible postgres modules
       - imagemagick # for DSpace 5+ thumbnails
       - ghostscript # for DSpace 5+ PDF thumbnails
@@ -94,7 +93,7 @@
       line: 'export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin'
       state: present
     become_user: '{{ tomcat_user }}'
-  when: ansible_distribution_version is version('18.04', '==')
+  when: ansible_distribution_version is version('18.04', '>=')
 
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
 - block:
@@ -106,7 +105,7 @@
     apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess state=absent
   - name: Install GoAccess
     apt: pkg=goaccess state=present
-  when: ansible_distribution_version is version('18.04', '<=')
+  when: ansible_distribution_version is version('20.04', '<=')
 
 - name: Configure nginx
   import_tasks: nginx.yml

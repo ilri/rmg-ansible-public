@@ -58,6 +58,12 @@
   - name: Install certbot (Ubuntu 20.04)
     apt: name=certbot state=present update_cache=yes
 
+  - name: Create Let's Encrypt hooks directories
+    file: path={{ item }} state=directory owner=root group=root mode=0755
+    with_items:
+      - pre
+      - post
+
   - name: Copy certbot post and pre hooks for nginx
     copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
     with_items:

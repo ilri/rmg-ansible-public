@@ -165,14 +165,14 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 RebootProgram=/sbin/reboot
 #
 #
-# COMPUTE NODES
-NodeName=hpc CPUs=4 State=UNKNOWN
-NodeName=taurus CPUs=64 State=UNKNOWN Weight=10
-NodeName=mammoth CPUs=8 State=UNKNOWN Weight=10
-NodeName=compute2 CPUs=64 State=UNKNOWN Weight=05
-NodeName=compute03 CPUs=8 State=UNKNOWN Weight=05
-NodeName=compute04 CPUs=8 State=UNKNOWN Weight=20
-NodeName=compute05 CPUs=48 State=UNKNOWN Weight=05
+# COMPUTE NODES (Output based on slurmd -C)
+NodeName=hpc CPUs=4 Boards=1 SocketsPerBoard=1 CoresPerSocket=4 ThreadsPerCore=1 RealMemory=128876 State=UNKNOWN
+NodeName=taurus CPUs=64 Boards=1 SocketsPerBoard=4 CoresPerSocket=8 ThreadsPerCore=2 RealMemory=112791 State=UNKNOWN Weight=10
+NodeName=mammoth CPUs=8 Boards=1 SocketsPerBoard=2 CoresPerSocket=4 ThreadsPerCore=1 RealMemory=451467 State=UNKNOWN Weight=10
+NodeName=compute2 CPUs=64 Boards=1 SocketsPerBoard=4 CoresPerSocket=8 ThreadsPerCore=2 RealMemory=128914 State=UNKNOWN Weight=05
+NodeName=compute03 CPUs=8 Boards=1 SocketsPerBoard=2 CoresPerSocket=4 ThreadsPerCore=1 RealMemory=451270 State=UNKNOWN Weight=05
+NodeName=compute04 CPUs=8 Boards=1 SocketsPerBoard=2 CoresPerSocket=4 ThreadsPerCore=1 RealMemory=48127 State=UNKNOWN Weight=20
+NodeName=compute05 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsPerCore=1 RealMemory=386874 State=UNKNOWN Weight=05
 
 PartitionName=debug Nodes=hpc Default=YES MaxTime=5:00 State=UP
 PartitionName=highmem Nodes=mammoth,compute03 Default=NO MaxTime=UNLIMITED State=UP

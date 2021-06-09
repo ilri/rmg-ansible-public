@@ -55,12 +55,29 @@
   - name: Install base packages
     yum: name={{ centos_base_packages }} state=present
 
-# The mlnx-tools package contains the set_irq_affinity.sh script that we need
-# to tune the 25GbE network cards on compute and storage hosts. Ideally this
-# would go in the compute or storage role, but I can't think of how to do that
-# right now. The script is called by /etc/rc.local on CentOS 7.
+# see: https://www.mellanox.com/support/mlnx-ofed-public-repository
+  - name: Add Mellanox package signing key
+    rpm_key:
+      key: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
+      state: present
+    when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
+
+  - name: Configure Mellanox yum repository
+    yum_repository:
+      name: mellanox_mlnx_en
+      description: Mellanox Ethernet drivers
+      baseurl: https://linux.mellanox.com/public/repo/mlnx_en/5.1-1.0.4.0/rhel7.9/x86_64
+      gpgkey: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
+      gpgcheck: yes
+    when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
+
+# Install an updated Mellanox Ethernet driver (newer than the upstream kernel
+# driver in CentOS 7) as well as some utilities like set_irq_affinity.sh. We
+# use that script to tune the 25GbE network cards on compute and storage hosts.
+# Ideally this would go in the compute or storage role, but I can't think of
+# how to do that right now. The script is called by /etc/rc.local on CentOS 7.
   - name: Install Mellanox tools
-    yum: name=mlnx-tools state=present
+    yum: name=mlnx-en-eth-only state=present
     when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
   tags: packages
 

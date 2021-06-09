@@ -1,0 +1,29 @@
+---
+# For now this only installs the Certbot Let's Encrypt client and some renewal
+# pre/post hooks on Ubuntu 20.04. Eventually I would like to move away from
+# certbot to acme.sh and start using .well-known so we don't have to stop/start
+# httpd in order to bind to TCP 80 when certbot runs.
+#
+
+- block:
+  - name: Install certbot (Ubuntu 20.04)
+    apt: name=certbot state=present update_cache=yes
+
+  - name: Create Let's Encrypt hooks pre/post directories
+    file: path={{ item }} state=directory owner=root group=root mode=0755
+    with_items:
+      - /etc/letsencrypt/renewal-hooks/pre
+      - /etc/letsencrypt/renewal-hooks/post
+
+# Eventually this should be parameterized so we only copy scripts we need, for
+# example we might use nginx instead of apache2, or the service name could be
+# different (httpd instead of apache2 on CentOS).
+  - name: Copy Let's Encrypt pre/post hooks
+    copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
+    with_items:
+      - { src: 'stop-apache2.sh', dest: '/etc/letsencrypt/renewal-hooks/pre/stop-apache2.sh' }
+      - { src: 'start-apache2.sh', dest: '/etc/letsencrypt/renewal-hooks/post/start-apache2.sh' }
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '==')
+  tags: letsencrypt
+
+# vim: set ts=2 sw=2:

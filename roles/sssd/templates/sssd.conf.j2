@@ -12,6 +12,7 @@ ldap_uri = ldaps://hpc.ilri.cgiar.org
 # ca cert works on both GNUTLS(Ubuntu) & OpenSSL(CentOS)
 #ldap_tls_cacertdir = {{ ldap_conf_dir }}/cacerts
 ldap_tls_cacert = {{ local_ca_certs_dir }}/hpc-ca-2017.crt
+filter_users = provisioning
 [sssd]
 services = nss, pam
 config_file_version = 2

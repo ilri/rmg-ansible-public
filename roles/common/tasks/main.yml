@@ -97,9 +97,9 @@
   tags: udev
 
 # should really be part of compute/storage roles... but not sure the best way right now
-- name: Copy IRQ affinity script
+- name: Remove old Intel 10GbE IRQ affinity script
   when: ansible_distribution == 'CentOS'
-  copy: src=set_irq_affinity.sh dest=/usr/local/bin/set_irq_affinity.sh owner=root mode=0755
+  file: path=/usr/local/bin/set_irq_affinity.sh state=absent
 
 - name: Configure tuned
   include_tasks: tuned.yml

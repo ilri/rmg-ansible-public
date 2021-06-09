@@ -61,13 +61,13 @@
   - name: Create Let's Encrypt hooks directories
     file: path={{ item }} state=directory owner=root group=root mode=0755
     with_items:
-      - pre
-      - post
+      - /etc/letsencrypt/renewal-hooks/pre
+      - /etc/letsencrypt/renewal-hooks/post
 
   - name: Copy certbot post and pre hooks for nginx
     copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
     with_items:
-      - { src: 'stop-nginx.sh', dest: '/etc/letsencrypt/renewal-hooks/post/stop-nginx.sh' }
+      - { src: 'stop-nginx.sh', dest: '/etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh' }
       - { src: 'start-nginx.sh', dest: '/etc/letsencrypt/renewal-hooks/post/start-nginx.sh' }
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '==')
   tags: letsencrypt

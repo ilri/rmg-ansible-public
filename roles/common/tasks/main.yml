@@ -96,11 +96,6 @@
   template: src=etc/udev/rules.d/60-scheduler.rules.j2 dest=/etc/udev/rules.d/60-scheduler.rules owner=root group=root mode=0644
   tags: udev
 
-# should really be part of compute/storage roles... but not sure the best way right now
-- name: Remove old Intel 10GbE IRQ affinity script
-  when: ansible_distribution == 'CentOS'
-  file: path=/usr/local/bin/set_irq_affinity.sh state=absent
-
 - name: Configure tuned
   include_tasks: tuned.yml
   when: ansible_distribution == 'CentOS'

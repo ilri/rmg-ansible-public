@@ -12,6 +12,6 @@
 
 touch /var/lock/subsys/local
 
-# bind Intel 10GbE interrupts to CPUs manually (irqbalance service
+# bind Mellanox 25GbE interrupts to CPUs manually (irqbalance service
 # should be disabled)
-/usr/local/bin/set_irq_affinity.sh {{ ansible_default_ipv4.interface }} > /dev/null 2> /dev/null
+/usr/sbin/set_irq_affinity.sh {{ ansible_default_ipv4.interface }} > /dev/null 2> /dev/null

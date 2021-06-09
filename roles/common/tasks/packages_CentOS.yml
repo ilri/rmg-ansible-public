@@ -54,6 +54,14 @@
 
   - name: Install base packages
     yum: name={{ centos_base_packages }} state=present
+
+# The mlnx-tools package contains the set_irq_affinity.sh script that we need
+# to tune the 25GbE network cards on compute and storage hosts. Ideally this
+# would go in the compute or storage role, but I can't think of how to do that
+# right now. The script is called by /etc/rc.local on CentOS 7.
+  - name: Install Mellanox tools
+    yum: name=mlnx-tools state=present
+    when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
   tags: packages
 
 - name: Disable annoying cockpit notice in MOTD

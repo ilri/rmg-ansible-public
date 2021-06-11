@@ -51,7 +51,7 @@
   lineinfile: dest=/etc/hosts insertafter=EOF line='{{ hostvars['hpc'].ansible_host }}     hpc.ilri.cgiar.org hpc' state=present
   tags: hosts
 
-- name: Start sssd service
+- name: Start and enable sssd service
   service: name=sssd state=started enabled=true
 
 # vim: set ts=2 sw=2:

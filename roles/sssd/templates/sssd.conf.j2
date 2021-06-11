@@ -16,14 +16,23 @@ chpass_provider = ldap
 ldap_access_order = filter
 ldap_access_filter = (objectClass=posixAccount)
 
-{% if ansible_distribution == 'CentOS' and ansible_distribution_release == 'Stream' %}
-ldap_uri = ldap://hpc.ilri.cgiar.org
-{% else %}
 ldap_uri = ldaps://hpc.ilri.cgiar.org
+
 # CACERT should work on both GnuTLS (Ubuntu) and OpenSSL (CentOS)
 ldap_tls_cacert = {{ local_ca_certs_dir }}/hpc-ca-2017.crt
 ldap_tls_reqcert = demand
-{% endif %}
+
+# General SSSD heartbeat timeout. After three missed heartbeats SSSD will shut
+# itself down. (default: 10 seconds)
+timeout = 20
+
+# Increase LDAP timeouts. For some reason it takes several seconds for our LDAP
+# to respond from some hosts, which causes cryptic TLS errors in SSSD that have
+# nothing to do with TLS. (default: 6 seconds)
+ldap_network_timeout = 12
+ldap_opt_timeout = 12
+ldap_search_timeout = 12
+ldap_enumeration_search_timeout = 12
 
 [nss]
 filter_groups = root

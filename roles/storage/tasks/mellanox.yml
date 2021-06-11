@@ -1,0 +1,26 @@
+---
+- block:
+  - name: Configure Mellanox IRQ affinity service
+    template: src=set-mellanox-irq-affinity.service.j2 dest=/etc/systemd/system/set-mellanox-irq-affinity.service mode=0644 owner=root group=root
+    register: mellanox_irq_affinity_systemd_service
+
+  - name: Configure Mellanox rx/tx descriptors service
+    template: src=set-mellanox-descriptors.service.j2 dest=/etc/systemd/system/set-mellanox-descriptors.service mode=0644 owner=root group=root
+    register: mellanox_descriptors_systemd_service
+
+  # need to reload to pick up service/timer/environment changes
+  - name: Reload systemd daemon
+    systemd: daemon_reload=yes
+    when: mellanox_irq_affinity_systemd_service is changed
+          or mellanox_descriptors_systemd_service is changed
+
+  - name: Start and enable Mellanox IRQ affinity service
+    systemd: name=set-mellanox-irq-affinity.service state=started enabled=yes
+    when: mellanox_irq_affinity_systemd_service is changed
+
+  - name: Start and enable Mellanox rx/tx descriptors service
+    systemd: name=set-mellanox-descriptors.service state=started enabled=yes
+    when: mellanox_descriptors_systemd_service is changed
+  tags: mellanox
+
+# vim: set sw=2 ts=2:

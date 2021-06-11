@@ -12,17 +12,9 @@
 - name: Enable GlusterFS packages from CentOS SIG
   yum: name=centos-release-gluster8 state=present
 
-- name: Configure Mellanox IRQ affinity service
-  template: src=set-mellanox-irq-affinity.service.j2 dest=/etc/systemd/system/set-mellanox-irq-affinity.service mode=0644 owner=root group=root
-  register: mellanox_systemd_service
-
-# need to reload to pick up service/timer/environment changes
-- name: Reload systemd daemon
-  systemd: daemon_reload=yes
-  when: mellanox_systemd_service is changed
-
-- name: Start and enable Mellanox IRQ affinity service
-  systemd: name=set-mellanox-irq-affinity.service state=started enabled=yes
+- name: Configure Mellanox network cards
+  include_tasks: mellanox.yml
+  tags: mellanox
 
 - name: Configure GlusterFS client
   include_tasks: client.yml

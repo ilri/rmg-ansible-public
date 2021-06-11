@@ -85,7 +85,7 @@
 # use that script to tune the 25GbE network cards on compute and storage hosts.
 # Ideally this would go in the compute or storage role, but I can't think of
 # how to do that right now. The script is called by /etc/rc.local on CentOS 7.
-  - name: Install Mellanox tools
+  - name: Install Mellanox drivers/tools
     yum: name=mlnx-en-eth-only state=present
     when: (ansible_distribution == 'CentOS' and ('compute' in group_names or 'storage' in group_names))
   tags: packages

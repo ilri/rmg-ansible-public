@@ -5,8 +5,8 @@
   loop:
    - sssd
    - sssd-tools
+   - sssd-ldap
    - pam_ldap
-   - oddjob
    - oddjob-mkhomedir
   tags: packages
 

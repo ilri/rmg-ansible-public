@@ -81,10 +81,11 @@
     - reload sysctl
   tags: sysctl
 
-# Don't modify rc.local on CentOS 8
+# Don't modify rc.local on CentOS anymore, since we now set the network card's
+# IRQ affinity in a systemd service instead. Remove executable bit.
 - name: Reconfigure /etc/rc.local
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('7', '<=')
-  template: src=rc.local_CentOS-{{ ansible_distribution_major_version }}.j2 dest=/etc/rc.d/rc.local owner=root group=root mode=0755
+  when: ansible_distribution == 'CentOS'
+  file: path=/etc/rc.d/rc.local owner=root group=root mode=0644
   tags: rclocal
 
 - name: Reconfigure /etc/rc.local

@@ -1,0 +1,9 @@
+[Unit]
+Description=Set IRQ affinity of Mellanox 25GbE network card
+ConditionFileIsExecutable=/usr/sbin/set_irq_affinity.sh
+
+[Service]
+ExecStart=/usr/sbin/set_irq_affinity.sh {{ ansible_default_ipv4.interface }}
+
+[Install]
+WantedBy=multi-user.target

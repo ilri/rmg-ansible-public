@@ -54,4 +54,8 @@
 - name: Start and enable sssd service
   service: name=sssd state=started enabled=true
 
+- name: Start and enable oddjob service
+  systemd: name=oddjob state=started enabled=true
+  when: ansible_distribution == 'CentOS' != ansible_distribution_release == 'Stream'
+
 # vim: set ts=2 sw=2:

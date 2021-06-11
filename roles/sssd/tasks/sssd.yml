@@ -6,7 +6,6 @@
    - sssd
    - sssd-tools
    - sssd-ldap
-   - pam_ldap
    - oddjob-mkhomedir
   tags: packages
 

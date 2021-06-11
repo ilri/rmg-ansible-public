@@ -11,11 +11,11 @@
     copy: src=CentOS-Base-7.repo dest=/etc/yum.repos.d/CentOS-Base.repo owner=root group=root mode=0644
     when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
 
-  - name: Configure ILRI CentOS mirror
-    copy: src={{ item }} dest=/etc/yum.repos.d/{{ item }} owner=root group=root mode=0644
-    when: (ansible_distribution_major_version is version('8','==') and ('compute' in group_names or 'storage' in group_names))
+  - name: Configure ILRI CentOS Stream mirror
+    copy: src={{ item }} dest=/etc/yum.repos.d/{{ item | basename }} owner=root group=root mode=0644
+    when: (ansible_distribution_release == 'Stream' and 'compute' in group_names)
     with_fileglob:
-      - CentOS-*-8.repo
+      - CentOS-Stream-*.repo
 
     # 2019-05-22: disable fastestmirror plugin because it causes a delay of
     # several minutes for every yum invocation. Let's limit to storage and

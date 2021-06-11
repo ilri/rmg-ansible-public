@@ -11,7 +11,8 @@
 [appstream]
 name=CentOS Stream $releasever - AppStream
 mirrorlist=http://mirrorlist.centos.org/?release=$stream&arch=$basearch&repo=AppStream&infra=$infra
-#baseurl=http://mirror.centos.org/$contentdir/$stream/AppStream/$basearch/os/
+# note that $stream comes from /etc/dnf/vars/stream and might change ...?
+baseurl=https://hpc.ilri.cgiar.org/mirror/centos/$stream/AppStream/$basearch/os/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial

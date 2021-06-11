@@ -173,6 +173,6 @@ NodeName=compute05 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsP
 NodeName=compute06 CPUs=64 Boards=1 SocketsPerBoard=2 CoresPerSocket=32 ThreadsPerCore=1 RealMemory=257667 State=UNKNOWN Weight=05
 NodeName=compute07 CPUs=8 Boards=1 SocketsPerBoard=1 CoresPerSocket=8 ThreadsPerCore=1 RealMemory=1019684 State=UNKNOWN Weight=05
 
-PartitionName=debug Nodes=hpc Default=YES MaxTime=5:00 State=UP
+PartitionName=debug Nodes=hpc,compute06,compute07 Default=YES MaxTime=5:00 State=UP
 PartitionName=highmem Nodes=compute03 Default=NO MaxTime=UNLIMITED State=UP
 PartitionName=batch Nodes=compute2,compute05 Default=NO MaxTime=UNLIMITED State=UP

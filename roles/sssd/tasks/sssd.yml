@@ -17,14 +17,14 @@
    - sssd-tools
   tags: packages
 
-- name: Configure sssd on CentOS
-  when: "ansible_distribution == 'CentOS'"
+- name: Configure sssd on CentOS 7
+  when: ansible_distribution == 'CentOS' and ansible_distribution_release != 'Stream'
   command: authconfig --enablesssd --enablesssdauth --enableldap --enableldapauth --enablemkhomedir --ldapserver=ldaps://hpc.ilri.cgiar.org --ldapbasedn=dc=ilri,dc=cgiar,dc=org --disablerfc2307bis --disableldaptls --disablekrb5 --disablekrb5kdcdns --disablekrb5realmdns --updateall
 
 # authconfig updates ldap.conf & adds TLS_CACERTDIR which overrides TLS_CACERT
 # so we'll need to remove it from ldap.conf
 - name: remove TLS_CACERTDIR in ldap.conf
-  when: ansible_distribution == 'CentOS'
+  when: ansible_distribution == 'CentOS' != ansible_distribution_release == 'Stream'
   lineinfile: dest={{ ldap_conf_dir }}/ldap.conf regexp="^TLS_CACERTDIR" state=absent
 
 - name: Configure sssd

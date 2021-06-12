@@ -10,6 +10,7 @@
     - "{{ ldap_conf_dir }}/cacerts/252fd4a1.0"
     - "{{ local_ca_certs_dir }}/hpc-ca.crt"
     - "{{ local_ca_certs_dir }}/hpc-ca-2017.crt"
+    - /etc/pki/ca-trust/source/anchors/hpc-ca-2017.crt
 
 - name: Copy HPC CA certificate to trust store
   copy: src=hpc-ca-2017.pem dest={{ local_ca_certs_dir }}/hpc-ca-2017.pem owner=root group=root mode=0644

@@ -27,6 +27,10 @@
   when: ansible_distribution == 'CentOS' != ansible_distribution_release == 'Stream'
   lineinfile: dest={{ ldap_conf_dir }}/ldap.conf regexp="^TLS_CACERTDIR" state=absent
 
+- name: Configure sssd on CentOS 8 Stream
+  when: ansible_distribution == 'CentOS' and ansible_distribution_release == 'Stream'
+  command: authselect select sssd with-mkhomedir
+
 - name: Configure sssd
   template: src=sssd.conf.j2 dest=/etc/sssd/sssd.conf owner=root group=root mode=0600
   notify: restart sssd

@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 ansible = "*"
+ansible-lint = "*"
 
 [dev-packages]
 ansible-lint = "*"

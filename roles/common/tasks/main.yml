@@ -81,11 +81,6 @@
     - reload sysctl
   tags: sysctl
 
-- name: Reconfigure /etc/rc.local
-  when: ansible_distribution == 'Debian' or (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('19.04', '<='))
-  template: src=rc.local_{{ ansible_distribution }}.j2 dest=/etc/rc.local owner=root group=root mode=0755
-  tags: rclocal
-
 - name: Set I/O scheduler
   template: src=etc/udev/rules.d/60-scheduler.rules.j2 dest=/etc/udev/rules.d/60-scheduler.rules owner=root group=root mode=0644
   tags: udev

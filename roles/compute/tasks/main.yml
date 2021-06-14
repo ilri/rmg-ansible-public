@@ -193,7 +193,7 @@
   template: src=90-ilri.conf.j2 dest=/etc/security/limits.d/90-ilri.conf owner=root group=root mode=0644
   tags: limits
 
-- name: Set sticky bit in local_scratch
+- name: Set sticky bit on local scratch
   when: inventory_hostname != "hpc"
   file: path={{ local_scratch }} group=root owner=root mode=01777 state=directory
   tags: scratch

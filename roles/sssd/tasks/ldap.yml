@@ -1,6 +1,6 @@
 ---
 - name: Copy ldap.conf
-  template: src=ldap.conf.j2 dest={{ ldap_conf_dir}}/ldap.conf owner=root group=root mode=0644
+  template: src=ldap.conf.j2 dest={{ ldap_conf_dir }}/ldap.conf owner=root group=root mode=0644
 
 - name: Remove old CA certificates
   file: path={{ item }} state=absent

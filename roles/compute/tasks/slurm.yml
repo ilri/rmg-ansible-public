@@ -35,6 +35,11 @@
     - { src: 'etc/slurm/cgroup.conf', dest: '/etc/slurm/cgroup.conf'}
   notify: restart slurmd
 
+- name: Copy gres.conf on compute06
+  when: inventory_hostname == 'compute06'
+  copy: src=etc/slurm/gres.conf dest=/etc/slurm/gres.conf owner=root group=root mode=0644
+  notify: restart slurmd
+
 - name: Create slurm directories
   file: path={{ item }} owner=slurm group=slurm mode=0755 state=directory
   loop:

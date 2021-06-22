@@ -28,6 +28,7 @@
       - python3-pip # for dspace-statistics-api
       - python3-dev # for dspace-statistics-api
       - python3-venv # for dspace-statistics-api
+      - libpq-dev # for dspace-statistics-api
       - geoipupdate # for DSpace statistics
 
 - name: Install DSpace system dependencies

@@ -102,6 +102,7 @@
       - bcl2fastq2 # from Illumina, in ILRI repo
       - perl-File-Which.noarch # for repeatmodeler/2.0.1
       - singularity # from EPEL, for viralrecon pipeline
+      - perl-Time-Piece # for purge_haplotigs/1.1.1
   tags: packages
 
 # 2019-12-09: currently missing from CentOS 8:

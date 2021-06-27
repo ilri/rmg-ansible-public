@@ -255,6 +255,12 @@ server {
         proxy_set_header User-Agent $ua;
     }
 
+    # Hardcode an alias for the Bing Webmaster Tools verification file
+    # test: https://cgspace.cgiar.org/BingSiteAuth.xml
+    location = /BingSiteAuth.xml {
+        alias {{ nginx_root }}/themes/0_CGIAR/BingSiteAuth.xml;
+    }
+
     # log oai requests
     location /oai {
         access_log /var/log/nginx/oai.log;

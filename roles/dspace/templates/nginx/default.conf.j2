@@ -196,8 +196,8 @@ server {
         proxy_set_header User-Agent $ua;
     }
 
-    # Explicitly allow anyone to request the sitemap
-    location /sitemap {
+    # Explicitly allow anyone to request robots.txt and the sitemap
+    location ~ /(robots\.txt|sitemap) {
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
 

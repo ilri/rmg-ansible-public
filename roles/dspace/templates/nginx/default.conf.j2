@@ -432,6 +432,9 @@ map $http_user_agent $limit_bots {
 
     # 2020-03-10 user agent of bot on Online.net in France making tens of thousand requests to /discover, which is forbidden in robots.txt
     'Mozilla/5.0 ((Windows; U; Windows NT 6.1; fr; rv:1.9.2) Gecko/20100115 Firefox/3.6)' 1;
+
+    # 2021-06-27 user agent for some MSN bot (DNS is always msnbot-x-x-x-x.search.msn.com.)
+    'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko' 1;
 }
 
 # Zone for limiting "bad bot" requests with a hard limit of 1 per minute. Uses

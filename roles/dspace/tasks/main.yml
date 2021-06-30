@@ -201,7 +201,7 @@
   file: path={{ tomcat_path }}/lib/{{ item }} state=absent
   loop:
     - postgresql-42.2.19.jar
-    - postgresql-42.2.22.jar
+    - postgresql-42.2.20.jar
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

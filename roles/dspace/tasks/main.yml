@@ -16,6 +16,15 @@
     line: '#assistive_technologies=org.GNOME.Accessibility.AtkWrapper'
     state: present
 
+# 2021-06-30: Fix slow Tomcat startup due to blocking /dev/random
+# tomcat7[30294]: WARNING: Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [111,733] milliseconds.
+- name: Use /dev/urandom for JVM SecureRandom
+  lineinfile:
+    path: /etc/java-8-openjdk/security/java.security
+    regexp: '^securerandom.source=file:/dev/random$'
+    line: 'securerandom.source=file:/dev/urandom'
+    state: present
+
 - name: Set DSpace system dependencies
   set_fact:
     dspace_system_dependencies:

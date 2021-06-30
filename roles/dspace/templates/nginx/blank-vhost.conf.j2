@@ -17,9 +17,9 @@ server {
     # see: http://nginx.org/en/docs/http/server_names.html
     server_name _;
 
-    # "snakeoil" certificate (self signed!)
-    ssl_certificate /etc/ssl/certs/nginx-snakeoil.crt;
-    ssl_certificate_key /etc/ssl/private/nginx-snakeoil.key;
+    # self-signed "snakeoil" certificate from ssl-cert package
+    ssl_certificate /etc/ssl/certs/ssl-cert-snakeoil.pem;
+    ssl_certificate_key /etc/ssl/private/ssl-cert-snakeoil.key;
 
     ssl_session_timeout {{ nginx_ssl_session_timeout }};
     ssl_session_cache {{ nginx_ssl_session_cache }};

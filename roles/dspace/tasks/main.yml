@@ -30,6 +30,7 @@
       - python3-venv # for dspace-statistics-api
       - libpq-dev # for dspace-statistics-api
       - geoipupdate # for DSpace statistics
+      - acl # for using template with unprivileged become_user
 
 - name: Install DSpace system dependencies
   apt: pkg={{ dspace_system_dependencies }} state=present install_recommends=no cache_valid_time=3600

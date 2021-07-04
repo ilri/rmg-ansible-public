@@ -33,7 +33,6 @@
         - lzop
         - vim
         - acpid
-        - schedtool
         - debconf
         - debconf-utils
         - software-properties-common

@@ -20,7 +20,6 @@
       - lzop
       - vim
       - acpid
-      - schedtool
       - debconf
       - debconf-utils
       - sysstat

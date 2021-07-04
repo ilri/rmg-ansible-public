@@ -23,7 +23,7 @@ for disk_path in $IMAGES_DIR/*.qcow2; do
 
     #skip a few vm images—ibli(115G), ilrinrb06(azizi-test,27G)
     if [[ $disk_name != "ibli-ubuntu1204.qcow2" && $disk_name != "ilrinrb6.qcow2" ]]; then
-        schedtool -B -n 19 -e ionice -c 3 cp -v --sparse=always ${disk_path} ${disk_backup_path}
+        chrt -b 0 -e ionice -c 3 cp -v --sparse=always ${disk_path} ${disk_backup_path}
     fi
 done
 

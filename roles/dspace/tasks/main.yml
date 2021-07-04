@@ -7,6 +7,11 @@
   apt: pkg=openjdk-8-jdk-headless state=present install_recommends=no cache_valid_time=3600
   when: java_distribution == 'openjdk'
 
+- name: Set OpenJDK 8 as default java
+  community.general.alternatives:
+    name: java
+    path: /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+
 # 2020-02-23: Fix issue with JFreeChart in Atmire CUA
 # see https://code-maven.com/slides/jenkins-intro/no-graph-error
 - name: Disable OpenJDK assistive technologies

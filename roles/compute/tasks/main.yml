@@ -103,6 +103,7 @@
       - perl-File-Which.noarch # for repeatmodeler/2.0.1
       - singularity # from EPEL, for viralrecon pipeline
       - perl-Time-Piece # for purge_haplotigs/1.1.1
+      - mpich-3.2-devel.x86_64 # for maker
   tags: packages
 
 # 2019-12-09: currently missing from CentOS 8:

@@ -205,18 +205,13 @@
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
-# From upstream: https://jdbc.postgresql.org/download.html
-- name: Copy PostgreSQL JDBC library
-  copy: src=postgresql-42.2.22.jar dest={{ tomcat_path }}/lib/postgresql-42.2.22.jar mode=0644 owner=root group=root
-  notify:
-    - restart tomcat{{ tomcat_version_major }}
-  tags: tomcat
-
+# 2021-07-07: we install this via DSpace's pom.xml now
 - name: Remove old PostgreSQL JDBC libraries
   file: path={{ tomcat_path }}/lib/{{ item }} state=absent
   loop:
     - postgresql-42.2.19.jar
     - postgresql-42.2.20.jar
+    - postgresql-42.2.22.jar
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

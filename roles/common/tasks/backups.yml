@@ -15,11 +15,6 @@
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '>=')
   tags: packages
 
-- name: Copy backup scripts
-  copy: src={{ item }} dest=/opt/ilri/scripts/ owner=root group=root mode=0755
-  with_fileglob:
-    - scripts/*.sh
-
 - name: Copy backup script templates
   template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
   loop:

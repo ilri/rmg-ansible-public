@@ -99,11 +99,15 @@
   import_tasks: sudoersd.yml
   tags: sudoers
 
-- name: Create scripts directory
+- name: Create ILRI scripts directory
   file: path=/opt/ilri/scripts owner=root group=root mode=0755 state=directory
-  tags:
-    - raid-monitoring
-    - backups
+  tags: scripts
+
+- name: Copy ILRI scripts
+  copy: src={{ item }} dest=/opt/ilri/scripts/ owner=root group=root mode=0755
+  with_fileglob:
+    - scripts/*.sh
+  tags: scripts
 
 - name: Configure RAID monitoring
   include_tasks: raid-monitoring.yml

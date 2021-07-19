@@ -80,6 +80,7 @@
       - restart firewalld
 
   - name: Copy Spamhaus systemd units
+    when: ansible_distribution_version is version('16.04', '>=')
     copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
     loop:
         - update-spamhaus-lists.service
@@ -92,6 +93,7 @@
     when: spamhaus_systemd_units is changed
 
   - name: Start and enable Spamhaus update timer
+    when: ansible_distribution_version is version('16.04', '>=')
     systemd: name=update-spamhaus-lists.timer state=started enabled=yes
 
   - name: Remove iptables-persistent

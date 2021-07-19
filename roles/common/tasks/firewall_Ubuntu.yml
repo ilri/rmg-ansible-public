@@ -74,8 +74,25 @@
     loop:
       - abusers-ipv4.xml
       - abusers-ipv6.xml
+      - spamhaus-ipv4.xml
+      - spamhaus-ipv6.xml
     notify:
       - restart firewalld
+
+  - name: Copy Spamhaus systemd units
+    copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
+    loop:
+        - update-spamhaus-lists.service
+        - update-spamhaus-lists.timer
+    register: spamhaus_systemd_units
+
+  # need to reload to pick up service/timer/environment changes
+  - name: Reload systemd daemon
+    systemd: daemon_reload=yes
+    when: spamhaus_systemd_units is changed
+
+  - name: Start and enable Spamhaus update timer
+    systemd: name=update-spamhaus-lists.timer state=started enabled=yes
 
   - name: Remove iptables-persistent
     when: ansible_distribution_major_version is version('15', '>=')

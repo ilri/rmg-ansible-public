@@ -15,7 +15,7 @@ Nice=19
 IOSchedulingClass=2
 IOSchedulingPriority=7
 
-ExecStart={{ dspace_root }}/bin/dspace metadata-export -i 10568/16814 -f /home/cgspace.cgiar.org/exports/iwmi.csv
+ExecStart={{ dspace_root }}/bin/dspace metadata-export -i 10568/16814 -f {{ dspace_root }}/exports/iwmi.csv
 
 [Install]
 WantedBy=multi-user.target

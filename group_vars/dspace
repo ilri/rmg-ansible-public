@@ -53,4 +53,10 @@ pg_confd_vars:
   - { name: "shared_buffers", value: "{{ (ansible_memtotal_mb*0.1)|int|abs }}MB" }
   - { name: "random_page_cost", value: "1" }
 
+# All hosts run fail2ban with the sshd filter, but some can use other filters.
+# For example, DSpace hosts run nginx so we can use the nginx-botsearch filter
+# to ban hosts that request wp-login.php etc here.
+extra_fail2ban_filters:
+  - nginx
+
 # vim: set ts=2 sw=2:

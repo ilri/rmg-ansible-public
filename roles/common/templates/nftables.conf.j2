@@ -70,15 +70,29 @@ table inet filter {
         ip protocol igmp limit rate 4/second accept comment "Allow IGMP"
 
         {# SSH rules #}
-        ip saddr 0.0.0.0/0 ct state new tcp dport 22 counter accept comment "Allow SSH"
-        ip6 saddr ::/0 ct state new tcp dport 22 counter accept comment "Allow SSH"
+        {% for network in ssh_access %}
+        {% if ghetto_ipsets[network].src is defined %}
+        ip saddr {{ ghetto_ipsets[network].src }} ct state new tcp dport 22 counter accept comment "Allow SSH"
+        {% endif %}
+
+        {% if ghetto_ipsets[network].ipv6src is defined %}
+        ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new tcp dport 22 counter accept comment "Allow IPv6 SSH"
+        {% endif %}
+        {% endfor %}
 
         {# Web rules #}
         {% if 'web' in group_names or 'dspace' in group_names %}
-        ip saddr 0.0.0.0/0 ct state new tcp dport 80 counter accept comment "Allow HTTP"
-        ip saddr 0.0.0.0/0 ct state new tcp dport 443 counter accept comment "Allow HTTPS"
-        ip6 saddr ::/0 ct state new tcp dport 80 counter accept comment "Allow HTTP"
-        ip6 saddr ::/0 ct state new tcp dport 443 counter accept comment "Allow HTTPS"
+        {% for network in web_access %}
+        {% if ghetto_ipsets[network].src is defined %}
+        ip saddr {{ ghetto_ipsets[network].src }} ct state new tcp dport 80 counter accept comment "Allow HTTP"
+        ip saddr {{ ghetto_ipsets[network].src }} ct state new tcp dport 443 counter accept comment "Allow HTTPS"
+        {% endif %}
+
+        {% if ghetto_ipsets[network].ipv6src is defined %}
+        ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new tcp dport 80 counter accept comment "Allow HTTP"
+        ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new tcp dport 443 counter accept comment "Allow HTTPS"
+        {% endif %}
+        {% endfor %}
         {% endif %}
 
         {# Extra rules #}

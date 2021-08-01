@@ -71,40 +71,40 @@ table inet filter {
 
         {# SSH rules #}
         {% for network in ssh_access %}
-        {% if ghetto_ipsets[network].src is defined %}
+        {%     if ghetto_ipsets[network].src is defined %}
         ip saddr {{ ghetto_ipsets[network].src }} ct state new tcp dport 22 counter accept comment "Allow SSH"
-        {% endif %}
+        {%     endif %}
 
-        {% if ghetto_ipsets[network].ipv6src is defined %}
+        {%     if ghetto_ipsets[network].ipv6src is defined %}
         ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new tcp dport 22 counter accept comment "Allow IPv6 SSH"
-        {% endif %}
+        {%     endif %}
         {% endfor %}
 
         {# Web rules #}
         {% if 'web' in group_names or 'dspace' in group_names %}
-        {% for network in web_access %}
-        {% if ghetto_ipsets[network].src is defined %}
+        {%     for network in web_access %}
+        {%         if ghetto_ipsets[network].src is defined %}
         ip saddr {{ ghetto_ipsets[network].src }} ct state new tcp dport 80 counter accept comment "Allow HTTP"
         ip saddr {{ ghetto_ipsets[network].src }} ct state new tcp dport 443 counter accept comment "Allow HTTPS"
-        {% endif %}
+        {%         endif %}
 
-        {% if ghetto_ipsets[network].ipv6src is defined %}
+        {%         if ghetto_ipsets[network].ipv6src is defined %}
         ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new tcp dport 80 counter accept comment "Allow HTTP"
         ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new tcp dport 443 counter accept comment "Allow HTTPS"
-        {% endif %}
-        {% endfor %}
+        {%         endif %}
+        {%     endfor %}
         {% endif %}
 
         {# Extra rules #}
         {% if extra_iptables_rules is defined %}
-        {% for rule in extra_iptables_rules %}
+        {%     for rule in extra_iptables_rules %}
         ip saddr {{ ghetto_ipsets[rule.acl].src }} ct state new {{ rule.protocol }} dport {{ rule.port }} counter accept
 
-        {% if ghetto_ipsets[rule.acl].ipv6src is defined %}
+        {%         if ghetto_ipsets[rule.acl].ipv6src is defined %}
         ip6 saddr {{ ghetto_ipsets[rule.acl].ipv6src }} ct state new {{ rule.protocol }} dport {{ rule.port }} counter accept
-        {% endif %}
+        {%         endif %}
 
-        {% endfor %}
+        {%     endfor %}
         {% endif %}
 
         # everything else

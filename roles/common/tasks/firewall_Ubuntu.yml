@@ -1,5 +1,8 @@
 ---
-# Use iptables-persistent on Ubuntu 14 and firewalld on Ubuntu 15 and up.
+# Ubuntu 20.04 will use nftables directly, with no firewalld.
+# Ubuntu 18.04 will use firewalld with the nftables backend.
+# Ubuntu 16.04 will use firewalld with the iptables backend.
+# Ubuntu 14.04 will use iptables-persistent.
 
 - block:
   - name: Install iptables-persistent
@@ -20,6 +23,7 @@
       - restart iptables-persistent
 
   - name: Set Ubuntu firewall packages
+    when: ansible_distribution_version is version('20.04', '<') and ansible_distribution_version is version('14.04', '>')
     set_fact:
       ubuntu_firewall_packages:
         - firewalld
@@ -27,49 +31,58 @@
         - fail2ban
         - python3-systemd # for fail2ban systemd backend
 
+  - name: Set Ubuntu firewall packages
+    when: ansible_distribution_version is version('20.04', '>=')
+    set_fact:
+      ubuntu_firewall_packages:
+        - fail2ban
+        - libnet-ip-perl # for aggregate-cidr-addresses.pl
+        - nftables
+        - python3-systemd
+        - curl # for nftables update scripts
+
   - name: Install firewall packages
-    when: ansible_distribution_major_version is version('16', '>=')
-    apt: name={{ ubuntu_firewall_packages }} state=present cache_valid_time=3600
-    tags: packages
+    apt: pkg={{ ubuntu_firewall_packages }} state=present cache_valid_time=3600
 
   - name: Remove ufw
     when: ansible_distribution_version is version('16.04', '>=')
     apt: pkg=ufw state=absent
     tags: packages
 
-  # I'm not sure why, but you can use firewalld with the nftables backend even
-  # if nftables itself is not installed. In that case the only way to see the
-  # currently active rules is with firewall-cmd. I prefer installing nftables
-  # so that we can have somewhat of a parallel with iptables:
-  #
-  #   nft list ruleset
-  #
-  # See: https://firewalld.org/2018/07/nftables-backend
-  - name: Install nftables
-    when: ansible_distribution_version is version('20.04', '==')
-    apt: pkg=nftables state=present
-
-  - name: Use nftables backend in firewalld
-    when: ansible_distribution_version is version('20.04', '==')
-    lineinfile:
-      dest: /etc/firewalld/firewalld.conf
-      regexp: '^FirewallBackend=iptables$'
-      line: 'FirewallBackend=nftables'
+  - name: Copy nftables.conf
+    when: ansible_distribution_version is version('20.04', '>=')
+    template: src=nftables.conf.j2 dest=/etc/nftables.conf owner=root mode=0644
     notify:
-      - restart firewalld
+      - restart nftables
 
-  - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
-    when: ansible_distribution_major_version is version('16', '>=')
+  - name: Create /etc/nftables extra config directory
+    when: ansible_distribution_version is version('20.04', '>=')
+    file: path=/etc/nftables state=directory owner=root mode=0755
+
+  - name: Copy extra nftables configuration files
+    when: ansible_distribution_version is version('20.04', '>=')
+    copy: src={{ item }} dest=/etc/nftables/{{ item }} owner=root group=root mode=0644 force=no
+    loop:
+      - spamhaus-ipv4.nft
+      - spamhaus-ipv6.nft
+      - abusech-ipv4.nft
+      - abuseipdb-ipv4.nft
+      - abuseipdb-ipv6.nft
+    notify:
+      - restart nftables
+
+  - name: Copy firewalld public zone file
+    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600
 
   - name: Format public.xml firewalld zone file
-    when: ansible_distribution_major_version is version('16', '>=')
+    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
 
-  - name: Copy ipsets of abusive IPs
-    when: ansible_distribution_major_version is version('16', '>=')
+  - name: Copy firewalld ipsets of abusive IPs
+    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
     copy: src={{ item }} dest=/etc/firewalld/ipsets/{{ item }} owner=root group=root mode=0600
     loop:
       - abusers-ipv4.xml
@@ -79,38 +92,58 @@
     notify:
       - restart firewalld
 
-  - name: Copy Spamhaus systemd units
-    when: ansible_distribution_version is version('16.04', '>=')
+  - name: Copy Spamhaus firewalld update script
+    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
+    copy: src=update-spamhaus-lists.sh dest=/usr/local/bin/update-spamhaus-lists.sh mode=0755 owner=root group=root
+
+  - name: Copy Spamhaus firewalld systemd units
+    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
     copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
     loop:
         - update-spamhaus-lists.service
         - update-spamhaus-lists.timer
-    register: spamhaus_systemd_units
+    register: spamhaus_firewalld_systemd_units
+
+  - name: Copy nftables update scripts
+    when: ansible_distribution_version is version('20.04', '>=')
+    copy: src={{ item }} dest=/usr/local/bin/{{ item }} mode=0755 owner=root group=root
+    loop:
+      - update-spamhaus-nftables.sh
+      - aggregate-cidr-addresses.pl
+      - update-abusech-nftables.sh
+
+  - name: Copy nftables systemd units
+    when: ansible_distribution_version is version('20.04', '>=')
+    copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
+    loop:
+        - update-spamhaus-nftables.service
+        - update-spamhaus-nftables.timer
+        - update-abusech-nftables.service
+        - update-abusech-nftables.timer
+    register: nftables_systemd_units
 
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
     systemd: daemon_reload=yes
-    when: spamhaus_systemd_units is changed
+    when: spamhaus_firewalld_systemd_units is changed or
+          nftables_systemd_units is changed
 
-  - name: Start and enable Spamhaus update timer
-    when: ansible_distribution_version is version('16.04', '>=')
+  - name: Start and enable Spamhaus firewalld update timer
+    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
     systemd: name=update-spamhaus-lists.timer state=started enabled=yes
-
-  - name: Remove iptables-persistent
-    when: ansible_distribution_major_version is version('15', '>=')
-    apt: name=iptables-persistent state=absent
-    tags: packages
-
-  # remove old iptables rules and restart new firewall service to make sure its
-  # state is as intended (ie, in case system was upgraded from Ubuntu 14.04).
-  - name: Remove old iptables rules
-    when: ansible_distribution_major_version is version('15', '>=')
-    file: path={{ item }} state=absent
-    loop:
-      - /etc/iptables/rules.v4
-      - /etc/iptables/rules.v6
     notify:
       - restart firewalld
+
+  - name: Start and enable nftables update timers
+    when: ansible_distribution_version is version('20.04', '>=')
+    systemd: name={{ item }} state=started enabled=yes
+    loop:
+      - update-spamhaus-nftables.timer
+      - update-abusech-nftables.timer
+
+  - name: Start and enable nftables
+    when: ansible_distribution_version is version('20.04', '>=')
+    systemd: name=nftables state=started enabled=yes
 
   - include_tasks: fail2ban.yml
     when: ansible_distribution_major_version is version('16', '>=')

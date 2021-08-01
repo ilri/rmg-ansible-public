@@ -1,0 +1,5 @@
+#!/usr/sbin/nft -f
+
+define SPAMHAUS_IPV6 = {
+fd21:3523:74e0:7301::/64
+}

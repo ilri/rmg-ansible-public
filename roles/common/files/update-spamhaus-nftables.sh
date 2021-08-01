@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+#
+# update-spamhaus-nftables.sh v0.0.1
+#
+# Download Spamhaus DROP lists and load them into nftables sets.
+# 
+# See: https://www.spamhaus.org/drop/
+#
+# Copyright (C) 2021 Alan Orth
+#
+# SPDX-License-Identifier: GPL-3.0-only
+
+# Exit on first error
+set -o errexit
+
+spamhaus_ipv4_set_path=/etc/nftables/spamhaus-ipv4.nft
+spamhaus_ipv6_set_path=/etc/nftables/spamhaus-ipv6.nft
+
+function download() {
+    echo "Downloading $1"
+    wget -q -O - "https://www.spamhaus.org/drop/$1" > "$1"
+}
+
+download drop.txt
+download edrop.txt
+download dropv6.txt
+
+if [[ -f "drop.txt" && -f "edrop.txt" ]]; then
+    echo "Processing IPv4 DROP lists"
+
+    spamhaus_ipv4_list_temp=$(mktemp)
+    spamhaus_ipv4_set_temp=$(mktemp)
+
+    # Extract all networks from drop.txt and edrop.txt, skipping blank lines and
+    # comments. Use aggregate-cidr-addresses.pl to merge overlapping IPv4 CIDR
+    # ranges to work around a firewalld bug.
+    #
+    # See: https://bugzilla.redhat.com/show_bug.cgi?id=1836571
+    cat drop.txt edrop.txt | sed -e '/^$/d' -e '/^;.*/d' -e 's/[[:space:]];[[:space:]].*//' | aggregate-cidr-addresses.pl > "$spamhaus_ipv4_list_temp"
+
+    echo "Building spamhaus-ipv4 set"
+    cat << NFT_HEAD > "$spamhaus_ipv4_set_temp"
+#!/usr/sbin/nft -f
+
+define SPAMHAUS_IPV4 = {
+NFT_HEAD
+
+    while read -r network; do
+        # nftables doesn't mind if the last element in the set has a trailing
+        # comma so we don't need to do anything special here.
+        echo "$network," >> "$spamhaus_ipv4_set_temp"
+    done < $spamhaus_ipv4_list_temp
+
+    echo "}" >> "$spamhaus_ipv4_set_temp"
+
+    install -m 0600 "$spamhaus_ipv4_set_temp" "$spamhaus_ipv4_set_path"
+
+    rm -f "$spamhaus_ipv4_list_temp" "$spamhaus_ipv4_set_temp"
+fi
+
+if [[ -f "dropv6.txt" ]]; then
+    echo "Processing IPv6 DROP lists"
+
+    spamhaus_ipv6_list_temp=$(mktemp)
+    spamhaus_ipv6_set_temp=$(mktemp)
+
+    sed -e '/^$/d' -e '/^;.*/d' -e 's/[[:space:]];[[:space:]].*//' dropv6.txt > "$spamhaus_ipv6_list_temp"
+
+    echo "Building spamhaus-ipv6 set"
+    cat << NFT_HEAD > "$spamhaus_ipv6_set_temp"
+#!/usr/sbin/nft -f
+
+define SPAMHAUS_IPV6 = {
+NFT_HEAD
+
+    while read -r network; do
+        echo "$network," >> "$spamhaus_ipv6_set_temp"
+    done < $spamhaus_ipv6_list_temp
+
+    echo "}" >> "$spamhaus_ipv6_set_temp"
+
+    install -m 0600 "$spamhaus_ipv6_set_temp" "$spamhaus_ipv6_set_path"
+
+    rm -f "$spamhaus_ipv6_list_temp" "$spamhaus_ipv6_set_temp"
+fi
+
+echo "Reloading nftables"
+# The spamhaus nftables sets are included by nftables.conf
+/usr/sbin/nft -f /etc/nftables.conf
+
+rm -v drop.txt edrop.txt dropv6.txt

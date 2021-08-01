@@ -21,7 +21,7 @@ WorkingDirectory=/var/tmp
 
 SyslogIdentifier=update-spamhaus-lists
 ExecStart=/usr/bin/flock -x update-spamhaus-lists.lck \
-          /opt/ilri/scripts/update-spamhaus-lists.sh
+          /usr/local/bin/update-spamhaus-lists.sh
 
 [Install]
 WantedBy=multi-user.target

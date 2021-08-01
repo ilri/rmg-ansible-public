@@ -31,6 +31,9 @@
 - name: reload systemd
   systemd: daemon_reload=yes
 
+- name: restart nftables
+  systemd: name=nftables state=restarted
+
 # ignore_errors: at times fails on some compute nodes
 - name: start tuned
   ignore_errors: yes

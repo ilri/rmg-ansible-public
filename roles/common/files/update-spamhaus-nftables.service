@@ -1,0 +1,27 @@
+[Unit]
+Description=Update Spamhaus lists
+# This service will fail if nftables is not running so we use Requires to make
+# sure that nftables is started.
+Requires=nftables.service
+# Make sure the network is up and nftables is started
+After=network-online.target nftables.service
+Wants=network-online.target update-spamhaus-nftables.timer
+
+[Service]
+# https://www.ctrl.blog/entry/systemd-service-hardening.html
+# Doesn't need access to /home or /root
+ProtectHome=true
+# Possibly only works on Ubuntu 18.04+
+ProtectKernelTunables=true
+ProtectSystem=full
+# Newer systemd can use ReadWritePaths to list files, but this works everywhere
+ReadWriteDirectories=/etc/nftables
+PrivateTmp=true
+WorkingDirectory=/var/tmp
+
+SyslogIdentifier=update-spamhaus-nftables
+ExecStart=/usr/bin/flock -x update-spamhaus-nftables.lck \
+          /usr/local/bin/update-spamhaus-nftables.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,5 @@
+#!/usr/sbin/nft -f
+
+define ABUSECH_IPV4 = {
+192.168.254.254
+}

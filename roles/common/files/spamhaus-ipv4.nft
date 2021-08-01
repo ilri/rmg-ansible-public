@@ -1,0 +1,5 @@
+#!/usr/sbin/nft -f
+
+define SPAMHAUS_IPV4 = {
+192.168.254.254/32
+}

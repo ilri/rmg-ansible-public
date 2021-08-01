@@ -3,18 +3,18 @@
 
 - block:
   - name: Install iptables-persistent
-    when: ansible_distribution_major_version is version('15', '<')
+    when: ansible_distribution_version is version('14.04', '==')
     apt: name=iptables-persistent state=present cache_valid_time=3600
     tags: packages
 
   - name: Copy /etc/iptables/rules.v4
-    when: ansible_distribution_major_version is version('15', '<')
+    when: ansible_distribution_version is version('14.04', '==')
     template: src=iptables.j2 dest=/etc/iptables/rules.v4 owner=root group=root mode=0600
     notify:
       - restart iptables-persistent
 
   - name: Copy /etc/iptables/rules.v6
-    when: ansible_distribution_major_version is version('15', '<')
+    when: ansible_distribution_version is version('14.04', '==')
     template: src=ip6tables.j2 dest=/etc/iptables/rules.v6 owner=root group=root mode=0600
     notify:
       - restart iptables-persistent

@@ -1,0 +1,49 @@
+---
+# Clean up previous firewalld/iptables/ipsets configuration on Ubuntu 20.04 now
+# that we are migrating to a pure nftables configuration. I run this script on
+# each host before running the main playbooks.
+
+- name: Clean up old firewall configuration
+  become: yes
+  hosts: all
+
+  tasks:
+  - name: Stop and disable firewalld
+    systemd: name=nftables state=stopped enabled=no
+    ignore_errors: yes
+
+  - name: Set Ubuntu firewall packages to remove
+    set_fact:
+      ubuntu_firewall_packages:
+        - firewalld
+        - tidy
+
+  - name: Remove old firewall packages
+    apt: pkg={{ ubuntu_firewall_packages }} state=absent
+
+  - name: Remove old firewalld zone and ipsets
+    file: dest={{ item }} state=absent
+    loop:
+      - /etc/firewalld/zones/public.xml
+      - /etc/firewalld/ipsets/abusers-ipv4.xml
+      - /etc/firewalld/ipsets/abusers-ipv6.xml
+      - /etc/firewalld/ipsets/spamhaus-ipv4.xml
+      - /etc/firewalld/ipsets/spamhaus-ipv6.xml
+    ignore_errors: yes
+
+  - name: Stop and disable old Spamhaus firewalld systemd timer
+    systemd: name=update-spamhaus-lists.timer state=stopped enabled=no
+    ignore_errors: yes
+
+  - name: Remove old Spamhaus firewalld update script and systemd units
+    file: dest={{ item }} state=absent
+    loop:
+      - /opt/ilri/scripts/update-spamhaus-lists.sh
+      - /etc/systemd/system/update-spamhaus-lists.service
+      - /etc/systemd/system/update-spamhaus-lists.timer
+
+  # need to reload to pick up service/timer/environment changes
+  - name: Reload systemd daemon
+    systemd: daemon_reload=yes
+
+# vim: set sw=2 ts=2:

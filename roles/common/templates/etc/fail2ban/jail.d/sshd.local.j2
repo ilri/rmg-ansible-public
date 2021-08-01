@@ -2,8 +2,13 @@
 enabled   = true
 # See: /etc/fail2ban/filter.d/sshd.conf
 filter    = sshd
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
+# Integrate with nftables
+banaction=nftables[type=allports]
+{% else %}
 # Integrate with firewalld and ipsets
 banaction = firewallcmd-ipset
+{% endif %}
 backend   = systemd
 maxretry  = {{ fail2ban_maxretry }}
 findtime  = {{ fail2ban_findtime }}

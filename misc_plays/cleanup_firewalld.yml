@@ -1,7 +1,7 @@
 ---
-# Clean up previous firewalld/iptables/ipsets configuration on Ubuntu 20.04 now
-# that we are migrating to a pure nftables configuration. I run this script on
-# each host before running the main playbooks.
+# Clean up previous firewalld/iptables/ipsets configuration on Ubuntu 20.04 and
+# Ubuntu 18.04 that we are migrating to a pure nftables configuration. I run
+# this script on each host before running the main playbooks.
 
 - name: Clean up old firewall configuration
   become: yes
@@ -17,6 +17,8 @@
       ubuntu_firewall_packages:
         - firewalld
         - tidy
+        - iptables
+        - ipset
 
   - name: Remove old firewall packages
     apt: pkg={{ ubuntu_firewall_packages }} state=absent

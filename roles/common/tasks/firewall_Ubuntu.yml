@@ -1,6 +1,6 @@
 ---
 # Ubuntu 20.04 will use nftables directly, with no firewalld.
-# Ubuntu 18.04 will use firewalld with the nftables backend.
+# Ubuntu 18.04 will use nftables directly, with no firewalld.
 # Ubuntu 16.04 will use firewalld with the iptables backend.
 # Ubuntu 14.04 will use iptables-persistent.
 
@@ -23,7 +23,7 @@
       - restart iptables-persistent
 
   - name: Set Ubuntu firewall packages
-    when: ansible_distribution_version is version('20.04', '<') and ansible_distribution_version is version('14.04', '>')
+    when: ansible_distribution_version is version('16.04', '==')
     set_fact:
       ubuntu_firewall_packages:
         - firewalld
@@ -32,7 +32,7 @@
         - python3-systemd # for fail2ban systemd backend
 
   - name: Set Ubuntu firewall packages
-    when: ansible_distribution_version is version('20.04', '>=')
+    when: ansible_distribution_version is version('18.04', '>=')
     set_fact:
       ubuntu_firewall_packages:
         - fail2ban
@@ -42,7 +42,18 @@
         - curl # for nftables update scripts
 
   - name: Install firewall packages
+    when: ansible_distribution_version is version('16.04', '>=')
     apt: pkg={{ ubuntu_firewall_packages }} state=present cache_valid_time=3600
+
+  # Ubuntu 18.04's linux-virtual and linux-kvm kernels don't support nftables.
+  # For virtual machines we need to either install the generic kernel, which
+  # pulls in a bunch of firmware and microcode, or use the LTS enablement stack
+  # to get a newer virtual kernel that supports nftables.
+  #
+  # See: https://bugs.launchpad.net/ubuntu/+source/linux-kvm/+bug/1881346
+  - name: Install Ubuntu LTS kernel package
+    when: ansible_distribution_version is version('18.04', '==') and ansible_virtualization_role == 'guest'
+    apt: pkg=linux-virtual-hwe-18.04 state=present cache_valid_time=3600
 
   - name: Remove ufw
     when: ansible_distribution_version is version('16.04', '>=')
@@ -50,17 +61,17 @@
     tags: packages
 
   - name: Copy nftables.conf
-    when: ansible_distribution_version is version('20.04', '>=')
+    when: ansible_distribution_version is version('18.04', '>=')
     template: src=nftables.conf.j2 dest=/etc/nftables.conf owner=root mode=0644
     notify:
       - restart nftables
 
   - name: Create /etc/nftables extra config directory
-    when: ansible_distribution_version is version('20.04', '>=')
+    when: ansible_distribution_version is version('18.04', '>=')
     file: path=/etc/nftables state=directory owner=root mode=0755
 
   - name: Copy extra nftables configuration files
-    when: ansible_distribution_version is version('20.04', '>=')
+    when: ansible_distribution_version is version('18.04', '>=')
     copy: src={{ item }} dest=/etc/nftables/{{ item }} owner=root group=root mode=0644 force=no
     loop:
       - spamhaus-ipv4.nft
@@ -72,17 +83,17 @@
       - restart nftables
 
   - name: Copy firewalld public zone file
-    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
+    when: ansible_distribution_version is version('16.04', '==')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600
 
   - name: Format public.xml firewalld zone file
-    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
+    when: ansible_distribution_version is version('16.04', '==')
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
 
   - name: Copy firewalld ipsets of abusive IPs
-    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
+    when: ansible_distribution_version is version('16.04', '==')
     copy: src={{ item }} dest=/etc/firewalld/ipsets/{{ item }} owner=root group=root mode=0600
     loop:
       - abusers-ipv4.xml
@@ -93,11 +104,11 @@
       - restart firewalld
 
   - name: Copy Spamhaus firewalld update script
-    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
+    when: ansible_distribution_version is version('16.04', '==')
     copy: src=update-spamhaus-lists.sh dest=/usr/local/bin/update-spamhaus-lists.sh mode=0755 owner=root group=root
 
   - name: Copy Spamhaus firewalld systemd units
-    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
+    when: ansible_distribution_version is version('16.04', '==')
     copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
     loop:
         - update-spamhaus-lists.service
@@ -105,7 +116,7 @@
     register: spamhaus_firewalld_systemd_units
 
   - name: Copy nftables update scripts
-    when: ansible_distribution_version is version('20.04', '>=')
+    when: ansible_distribution_version is version('18.04', '>=')
     copy: src={{ item }} dest=/usr/local/bin/{{ item }} mode=0755 owner=root group=root
     loop:
       - update-spamhaus-nftables.sh
@@ -113,7 +124,7 @@
       - update-abusech-nftables.sh
 
   - name: Copy nftables systemd units
-    when: ansible_distribution_version is version('20.04', '>=')
+    when: ansible_distribution_version is version('18.04', '>=')
     copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
     loop:
         - update-spamhaus-nftables.service
@@ -129,20 +140,24 @@
           nftables_systemd_units is changed
 
   - name: Start and enable Spamhaus firewalld update timer
-    when: ansible_distribution_version is version('18.04', '<=') and ansible_distribution_version is version('14.04', '>')
+    when: ansible_distribution_version is version('16.04', '==')
     systemd: name=update-spamhaus-lists.timer state=started enabled=yes
     notify:
       - restart firewalld
 
   - name: Start and enable nftables update timers
-    when: ansible_distribution_version is version('20.04', '>=')
+    when: ansible_distribution_version is version('18.04', '>=')
     systemd: name={{ item }} state=started enabled=yes
     loop:
       - update-spamhaus-nftables.timer
       - update-abusech-nftables.timer
 
+  # If the host is currently running Ubuntu 18.04 with the linux-virtual or
+  # linux-kvm kernel nftables will fail to start because those kernels lack
+  # the appropriate kernel modules. We installed a newer LTS kernel from the
+  # hardware enablement stack above so that should fix it on the next reboot.
   - name: Start and enable nftables
-    when: ansible_distribution_version is version('20.04', '>=')
+    when: ansible_distribution_version is version('18.04', '>=')
     systemd: name=nftables state=started enabled=yes
 
   - include_tasks: fail2ban.yml

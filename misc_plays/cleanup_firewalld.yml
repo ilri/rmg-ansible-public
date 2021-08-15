@@ -8,44 +8,116 @@
   hosts: all
 
   tasks:
-  - name: Stop and disable firewalld
-    systemd: name=nftables state=stopped enabled=no
-    ignore_errors: yes
+  - name: Stupid mandatory name for block
+    block:
+    # Disable this so it doesn't error on startup after we remove iptables.
+    # It will get re-enabled when we run the new playbooks with nftables.
+    - name: Stop and disable fail2ban
+      systemd: name=fail2ban state=stopped enabled=no
 
-  - name: Set Ubuntu firewall packages to remove
-    set_fact:
-      ubuntu_firewall_packages:
-        - firewalld
-        - tidy
-        - iptables
-        - ipset
+    - name: Stop and disable firewalld
+      systemd: name=firewalld state=stopped enabled=no
+      ignore_errors: yes
 
-  - name: Remove old firewall packages
-    apt: pkg={{ ubuntu_firewall_packages }} state=absent
+    - name: Set Ubuntu firewall packages to remove
+      set_fact:
+        ubuntu_firewall_packages:
+          - firewalld
+          - tidy
+          - iptables
+          - ipset
 
-  - name: Remove old firewalld zone and ipsets
-    file: dest={{ item }} state=absent
-    loop:
-      - /etc/firewalld/zones/public.xml
-      - /etc/firewalld/ipsets/abusers-ipv4.xml
-      - /etc/firewalld/ipsets/abusers-ipv6.xml
-      - /etc/firewalld/ipsets/spamhaus-ipv4.xml
-      - /etc/firewalld/ipsets/spamhaus-ipv6.xml
-    ignore_errors: yes
+    - name: Remove old firewall packages
+      apt: pkg={{ ubuntu_firewall_packages }} state=absent
 
-  - name: Stop and disable old Spamhaus firewalld systemd timer
-    systemd: name=update-spamhaus-lists.timer state=stopped enabled=no
-    ignore_errors: yes
+    - name: Remove old firewalld zone and ipsets
+      file: dest={{ item }} state=absent
+      loop:
+        - /etc/firewalld/zones/public.xml
+        - /etc/firewalld/ipsets/abusers-ipv4.xml
+        - /etc/firewalld/ipsets/abusers-ipv6.xml
+        - /etc/firewalld/ipsets/spamhaus-ipv4.xml
+        - /etc/firewalld/ipsets/spamhaus-ipv6.xml
+      ignore_errors: yes
 
-  - name: Remove old Spamhaus firewalld update script and systemd units
-    file: dest={{ item }} state=absent
-    loop:
-      - /opt/ilri/scripts/update-spamhaus-lists.sh
-      - /etc/systemd/system/update-spamhaus-lists.service
-      - /etc/systemd/system/update-spamhaus-lists.timer
+    - name: Stop and disable old Spamhaus firewalld systemd timer
+      systemd: name=update-spamhaus-lists.timer state=stopped enabled=no
+      ignore_errors: yes
 
-  # need to reload to pick up service/timer/environment changes
-  - name: Reload systemd daemon
-    systemd: daemon_reload=yes
+    - name: Remove old Spamhaus firewalld update script and systemd units
+      file: dest={{ item }} state=absent
+      loop:
+        - /opt/ilri/scripts/update-spamhaus-lists.sh
+        - /etc/systemd/system/update-spamhaus-lists.service
+        - /etc/systemd/system/update-spamhaus-lists.timer
+
+    # need to reload to pick up service/timer/environment changes
+    - name: Reload systemd daemon
+      systemd: daemon_reload=yes
+
+    # Ubuntu 18.04's linux-virtual and linux-kvm kernels don't support nftables.
+    # For virtual machines we need to either install the generic kernel, which
+    # pulls in a bunch of firmware and microcode, or use the LTS enablement stack
+    # to get a newer virtual kernel that supports nftables.
+    #
+    # See: https://bugs.launchpad.net/ubuntu/+source/linux-kvm/+bug/1881346
+    #
+    # Here I only install the LTS kernel on Ubuntu 18.04 virtual machine guests
+    # that are running the default 4.15.0 kernel. We can't be sure whether the
+    # host is running linux-virtual or not because it reports "-generic" (where
+    # as the linux-kvm kernel reports "-kvm"), so we just install the LTS kernel
+    # on any host that is running 4.15.0. This is done by default on newer inst-
+    # alls anyways as per Ubuntu's release strategy when an LTS release is over
+    # two years old.
+    - name: Install Ubuntu LTS kernel package
+      when: ansible_distribution_version is version('18.04', '==') and
+            ansible_virtualization_role == 'guest' and
+            ansible_kernel is match('4.15.0-.*')
+      apt: pkg=linux-virtual-hwe-18.04 state=present cache_valid_time=3600
+      register: apt_action
+
+    # Wait up to 60 seconds for the host to come back
+    - name: Reboot into LTS kernel
+      when: apt_action is changed
+      reboot:
+        reboot_timeout: 60
+
+    - name: Force Ansible to regather kernel fact
+      setup: filter='ansible_kernel'
+
+    - name: Check kernel version
+      when: ansible_distribution_version is version('18.04', '==') and
+            ansible_virtualization_role == 'guest'
+      debug:
+        msg: "{{ ansible_kernel }}"
+      register: apt_action
+
+    # We don't need these packages on virtual hosts now that we are running the
+    # latest LTS HWE kernel. At the very least the firmware package is annoying
+    # because it increases the time it takes for the initramfs to build during
+    # updates.
+    - name: Set Ubuntu system packages to remove
+      when: ansible_virtualization_role == 'guest'
+      set_fact:
+        ubuntu_system_packages:
+          - linux-kvm
+          - linux-virtual
+          - linux-firmware
+          - wireless-regdb
+          - crda
+
+    - name: Remove old system packages
+      when: ansible_virtualization_role == 'guest'
+      apt: pkg={{ ubuntu_system_packages }} state=absent
+
+    - name: Remove dependencies that are no longer required
+      apt:
+        autoremove: yes
+
+    - name: Remove unused packages from apt package cache
+      apt:
+        autoclean: yes
+
+    when: ansible_distribution_version is version(18.04, '>=')
 
 # vim: set sw=2 ts=2:

@@ -1,7 +1,11 @@
 ---
 
+# Glaring fucking hack: skip the firewall on linode20 and linode31 because they
+# run Docker and Docker doesn't work with nftables.
 - include_tasks: firewall_Ubuntu.yml
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu' and
+        inventory_hostname != 'linode20' and
+        inventory_hostname != 'linode31'
   tags: firewall
 
 - include_tasks: firewall_Debian.yml

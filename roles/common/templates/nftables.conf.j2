@@ -16,6 +16,10 @@ include "/etc/nftables/abuseipdb-ipv6.nft"
 # Lists updated daily by update-abusech-nftables.sh
 include "/etc/nftables/abusech-ipv4.nft"
 
+# List of networks belonging to Russian DDoS operator
+include "/etc/nftables/russian-ddos-networks-ipv4.nft"
+include "/etc/nftables/russian-ddos-networks-ipv6.nft"
+
 # Notes:
 #   - tables hold chains, chains hold rules
 #   - inet is for both ipv4 and ipv6
@@ -48,6 +52,18 @@ table inet filter {
         elements = $ABUSEIPDB_IPV6
     }
 
+    set russian-ddos-ipv4 {
+        type ipv4_addr
+        flags interval
+        elements = $RUSSIAN_DDOS_NETWORKS_IPV4
+    }
+
+    set russian-ddos-ipv6 {
+        type ipv6_addr
+        flags interval
+        elements = $RUSSIAN_DDOS_NETWORKS_IPV6
+    }
+
     chain input {
         type filter hook input priority 0;
 
@@ -62,6 +78,9 @@ table inet filter {
 
         ip saddr @abuseipdb-ipv4 counter drop comment "Early drop of incoming packets matching abuseipdb-ipv4 list"
         ip6 saddr @abuseipdb-ipv6 counter drop comment "Early drop of incoming packets matching abuseipdb-ipv6 list"
+
+        ip saddr @russian-ddos-ipv4 counter drop comment "Early drop of incoming packets matching russian-ddos-ipv4 list"
+        ip6 saddr @russian-ddos-ipv6 counter drop comment "Early drop of incoming packets matching russian-ddos-ipv6 list"
 
         iifname lo accept comment "Allow from loopback"
 
@@ -122,5 +141,8 @@ table inet filter {
 
         ip daddr @abuseipdb-ipv4 counter drop comment "Drop outgoing packets matching abuseipdb-ipv4 list"
         ip6 daddr @abuseipdb-ipv6 counter drop comment "Drop outgoing packets matching abuseipdb-ipv6 list"
+
+        ip daddr @russian-ddos-ipv4 counter drop comment "Drop outgoing packets matching russian-ddos-ipv4 list"
+        ip6 daddr @russian-ddos-ipv6 counter drop comment "Drop outgoing packets matching russian-ddos-ipv6 list"
     }
 }

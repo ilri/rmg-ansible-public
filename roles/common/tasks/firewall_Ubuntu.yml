@@ -70,15 +70,29 @@
     when: ansible_distribution_version is version('18.04', '>=')
     file: path=/etc/nftables state=directory owner=root mode=0755
 
-  - name: Copy extra nftables configuration files
+  # Copy placeholder nftables sets. Don't overwrite if they already exist on the
+  # host because they are updated daily by systemd timers so we only want to co-
+  # py them if they don't already exist (ie, the host is new).
+  - name: Copy dynamic nftables sets
     when: ansible_distribution_version is version('18.04', '>=')
     copy: src={{ item }} dest=/etc/nftables/{{ item }} owner=root group=root mode=0644 force=no
     loop:
       - spamhaus-ipv4.nft
       - spamhaus-ipv6.nft
       - abusech-ipv4.nft
+    notify:
+      - restart nftables
+
+  # These nftables sets are generated on the Ansible host and stored in git so
+  # we can always update them if they have changed.
+  - name: Copy static nftables sets
+    when: ansible_distribution_version is version('18.04', '>=')
+    copy: src={{ item }} dest=/etc/nftables/{{ item }} owner=root group=root mode=0644
+    loop:
       - abuseipdb-ipv4.nft
       - abuseipdb-ipv6.nft
+      - russian-ddos-networks-ipv4.nft
+      - russian-ddos-networks-ipv6.nft
     notify:
       - restart nftables
 

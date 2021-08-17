@@ -34,7 +34,6 @@
   loop:
     - blank-vhost.conf.j2
     - default.conf.j2
-    - abusive-networks.conf.j2
   notify:
     - reload nginx
 

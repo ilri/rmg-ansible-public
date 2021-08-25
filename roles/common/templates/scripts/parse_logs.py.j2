@@ -54,7 +54,7 @@ def main(arguments):
             # Assume year is the current year.
             attack_datetime = attack_datetime.replace(datetime.now().year)
             # !! Set tzinfo to your system timezone using timezone.
-            my_tz = pytz.timezone("America/New_York")
+            my_tz = pytz.timezone("{{ timezone }}")
             attack_datetime = attack_datetime.replace(tzinfo=my_tz)
 
             # Format to ISO 8601 to make it universal and portable.

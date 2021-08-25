@@ -16,4 +16,12 @@
   when: ansible_distribution == 'CentOS'
   tags: firewall
 
+- name: Copy AbuseIPDB.com script
+  template:
+    src: scripts/parse_logs.py.j2
+    dest: /opt/ilri/scripts/parse_logs.py
+    owner: root
+    group: root
+    mode: 0755
+
 # vim: set sw=2 ts=2:

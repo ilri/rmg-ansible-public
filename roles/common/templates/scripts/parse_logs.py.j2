@@ -39,12 +39,12 @@ def main(arguments):
 
     for line in args.infile:
         # !! Match this format to your system's format.
-        timestamp = "([a-zA-Z]+ [0-9]+ [0-9]+:[0-9]+:[0-9]+)"
-        ipv4 = "([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})"
-        comment = "(Invalid user [a-zA-Z0-9]+ from " + ipv4 + " port [0-9]+)"
+        timestamp = r"([a-zA-Z]+ [0-9]+ [0-9]+:[0-9]+:[0-9]+)"
+        ipv4 = r"([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})"
+        comment = fr"(Invalid user [a-zA-Z0-9]+ from {ipv4} port [0-9]+)"
 
         # The regex of the line we're looking for, built up from component regexps.
-        combined_re = timestamp + " .* " + comment
+        combined_re = fr"{timestamp} .* {comment}"
 
         # Run the regexp.
         matches = re.findall(combined_re, line)

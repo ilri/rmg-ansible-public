@@ -3,7 +3,6 @@
 # TODO:
 #   - use dateutil.tz, see: https://blog.ganssle.io/articles/2018/03/pytz-fastest-footgun.html
 #   - ignore private address ranges
-#   - ignore duplicate IPs
 #   - support ipv6
 
 import os
@@ -37,6 +36,9 @@ def main(arguments):
     writer = csv.DictWriter(args.outfile, fieldnames=fieldnames)
     writer.writeheader()
 
+    # Initialize empty list to hold addresses
+    ipv4_addresses = list()
+
     for line in args.infile:
         # !! Match this format to your system's format.
         timestamp = r"([a-zA-Z]+ [0-9]+ [0-9]+:[0-9]+:[0-9]+)"
@@ -52,6 +54,15 @@ def main(arguments):
         if matches:
             # Pull the tuple out of the list.
             matches_flat = matches[0]
+
+            # Check if the address is already added to the report so we don't
+            # waste time and resources submitting duplicates.
+            #
+            # See: https://www.abuseipdb.com/faq.html
+            if matches_flat[2] not in ipv4_addresses:
+                ipv4_addresses.append(matches_flat[2])
+            else:
+                continue
 
             ### !!! You may need to update this. ###
             # Parse log datetime to Python datetime object so we can update the timezone.

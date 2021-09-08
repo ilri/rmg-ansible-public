@@ -87,7 +87,7 @@
   # we can always update them if they have changed.
   - name: Copy static nftables sets
     when: ansible_distribution_version is version('18.04', '>=')
-    copy: src={{ item }} dest=/etc/nftables/{{ item }} owner=root group=root mode=0644
+    copy: src={{ item }} dest=/etc/nftables/{{ item }} owner=root group=root mode=0644 force=yes
     loop:
       - abuseipdb-ipv4.nft
       - abuseipdb-ipv6.nft

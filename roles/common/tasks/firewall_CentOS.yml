@@ -79,6 +79,31 @@
     loop:
       - abusers-ipv4.xml
       - abusers-ipv6.xml
+      - spamhaus-ipv4.xml
+      - spamhaus-ipv6.xml
+    notify:
+      - restart firewalld
+
+  - name: Copy Spamhaus firewalld update script
+    when: ansible_distribution_major_version is version('7', '>=')
+    copy: src=update-spamhaus-lists.sh dest=/usr/local/bin/update-spamhaus-lists.sh mode=0755 owner=root group=root
+
+  - name: Copy Spamhaus firewalld systemd units
+    when: ansible_distribution_major_version is version('7', '>=')
+    copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
+    loop:
+        - update-spamhaus-lists.service
+        - update-spamhaus-lists.timer
+    register: spamhaus_firewalld_systemd_units
+
+  # need to reload to pick up service/timer/environment changes
+  - name: Reload systemd daemon
+    systemd: daemon_reload=yes
+    when: spamhaus_firewalld_systemd_units is changed
+
+  - name: Start and enable Spamhaus firewalld update timer
+    when: ansible_distribution_major_version is version('7', '>=')
+    systemd: name=update-spamhaus-lists.timer state=started enabled=yes
     notify:
       - restart firewalld
 

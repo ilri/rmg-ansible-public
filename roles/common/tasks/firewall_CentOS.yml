@@ -75,12 +75,12 @@
 
   - name: Copy ipsets of abusive IPs
     when: ansible_distribution_major_version is version('7', '>=')
-    copy: src={{ item }} dest=/etc/firewalld/ipsets/{{ item }} owner=root group=root mode=0600
+    copy: src={{ item.src }} dest=/etc/firewalld/ipsets/{{ item.src }} owner=root group=root mode=0600 force={{ item.force }}
     loop:
-      - abusers-ipv4.xml
-      - abusers-ipv6.xml
-      - spamhaus-ipv4.xml
-      - spamhaus-ipv6.xml
+      - { src: "spamhaus-ipv4.xml", force: "no" }
+      - { src: "spamhaus-ipv6.xml", force: "no" }
+      - { src: "abusers-ipv4.xml", force: "yes" }
+      - { src: "abusers-ipv6.xml", force: "yes" }
     notify:
       - restart firewalld
 

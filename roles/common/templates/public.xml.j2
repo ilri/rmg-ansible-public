@@ -145,6 +145,22 @@
     {% endfor %}
     {% endif %}
 
+    {# Mosh ports, we only need these on publicly facing servers #}
+    {% if 'compute' not in group_names and 'storage' not in group_names %}
+    {%   for port in (60001, 60002, 60003) %}
+    <rule family="ipv4">
+      <source address="0.0.0.0/0" />
+      <port protocol="udp" port="{{ port }}" />
+      <accept />
+    </rule>
+    <rule family="ipv6">
+      <source address="::/0" />
+      <port protocol="udp" port="{{ port }}" />
+      <accept />
+    </rule>
+    {%   endfor %}
+    {% endif %}
+
     {# Extra IPv4 src rules #}
     {% if extra_iptables_rules is defined %}
     {% for rule in extra_iptables_rules %}

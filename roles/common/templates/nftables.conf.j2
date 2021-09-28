@@ -116,10 +116,8 @@ table inet filter {
 
         {# Mosh ports, we only need these on publicly facing servers #}
         {% if 'compute' not in group_names and 'storage' not in group_names %}
-        {%   for port in (60001, 60002, 60003) %}
-        ip saddr 0.0.0.0/0 ct state new udp dport {{ port }} counter accept comment "Allow mosh"
-        ip6 saddr ::/0 ct state new udp dport {{ port }} counter accept comment "Allow mosh"
-        {%   endfor %}
+        ip saddr 0.0.0.0/0 ct state new udp dport 60001-60003 counter accept comment "Allow mosh"
+        ip6 saddr ::/0 ct state new udp dport 60001-60003 counter accept comment "Allow mosh"
         {% endif %}
 
         {# Extra rules -#}

@@ -1,7 +1,5 @@
 #!/usr/sbin/nft -f
 
 define ABUSEIPDB_IPV6 = {
-2400:6180:0:d1::4ce:d001,
-2607:5300:60:232d::,
-2607:f298:6:a066::1bf:e80e,
+fe80::bca2:37fa:fe58:414e
 }

@@ -73,6 +73,8 @@ def main(arguments):
             # !! Set tzinfo to your system timezone using timezone.
             my_tz = pytz.timezone("{{ timezone }}")
             attack_datetime = attack_datetime.replace(tzinfo=my_tz)
+            # Human readable attack time for the log
+            attack_datetime_human = attack_datetime.strftime('%b %d %H:%M:%S')
 
             # Format to ISO 8601 to make it universal and portable.
             attack_datetime_iso = attack_datetime.isoformat()
@@ -83,7 +85,7 @@ def main(arguments):
                 {
                     "IP": matches_flat[2],
                     "Categories": "18,22",
-                    "Comment": matches_flat[1],
+                    "Comment": f"{attack_datetime_human} {matches_flat[1]}",
                     "ReportDate": attack_datetime_iso,
                 }
             )

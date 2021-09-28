@@ -65,6 +65,7 @@
     template: src=nftables.conf.j2 dest=/etc/nftables.conf owner=root mode=0644
     notify:
       - restart nftables
+      - restart fail2ban
 
   - name: Create /etc/nftables extra config directory
     when: ansible_distribution_version is version('18.04', '>=')
@@ -86,6 +87,7 @@
       - { src: "russian-ddos-networks-ipv6.nft", force: "yes" }
     notify:
       - restart nftables
+      - restart fail2ban
 
   - name: Copy firewalld public zone file
     when: ansible_distribution_version is version('16.04', '==')
@@ -96,6 +98,7 @@
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
+      - restart fail2ban
 
   - name: Copy firewalld ipsets
     when: ansible_distribution_version is version('16.04', '==')
@@ -107,6 +110,7 @@
       - { src: "abusers-ipv6.xml", force: "yes" }
     notify:
       - restart firewalld
+      - restart fail2ban
 
   - name: Copy Spamhaus firewalld update script
     when: ansible_distribution_version is version('16.04', '==')
@@ -149,6 +153,7 @@
     systemd: name=update-spamhaus-lists.timer state=started enabled=yes
     notify:
       - restart firewalld
+      - restart fail2ban
 
   - name: Start and enable nftables update timers
     when: ansible_distribution_version is version('18.04', '>=')

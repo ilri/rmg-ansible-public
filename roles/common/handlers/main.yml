@@ -25,14 +25,17 @@
 - name: restart firewalld
   service: name=firewalld state=restarted
 
-- name: restart fail2ban
-  systemd: name=fail2ban state=restarted
-
 - name: reload systemd
   systemd: daemon_reload=yes
 
 - name: restart nftables
   systemd: name=nftables state=restarted
+
+# 2021-09-28: note to self, this should be defined after the firewalld and
+# nftables handlers, as handlers are run in the order they are defined, not
+# the order they are listed in the task's notify.
+- name: restart fail2ban
+  systemd: name=fail2ban state=restarted
 
 # ignore_errors: at times fails on some compute nodes
 - name: start tuned

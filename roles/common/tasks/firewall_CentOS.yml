@@ -36,6 +36,7 @@
       line: 'FirewallBackend=iptables'
     notify:
       - restart firewalld
+      - restart fail2ban
 
 # firewalld seems to have an issue with iptables 1.8.2. Using individual calls
 # seems to work around it.
@@ -48,6 +49,7 @@
       line: 'IndividualCalls=yes'
     notify:
       - restart firewalld
+      - restart fail2ban
 
 # 2019-12-10: fail2ban does not currently work with SELinux on CentOS 8, ie:
 #
@@ -62,6 +64,7 @@
       state: permissive
     notify:
       - restart firewalld
+      - restart fail2ban
 
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
     when: ansible_distribution_major_version is version('7', '>=')
@@ -72,6 +75,7 @@
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
+      - restart fail2ban
 
   - name: Copy ipsets of abusive IPs
     when: ansible_distribution_major_version is version('7', '>=')
@@ -83,6 +87,7 @@
       - { src: "abusers-ipv6.xml", force: "yes" }
     notify:
       - restart firewalld
+      - restart fail2ban
 
   - name: Copy Spamhaus firewalld update script
     when: ansible_distribution_major_version is version('7', '>=')
@@ -106,6 +111,7 @@
     systemd: name=update-spamhaus-lists.timer state=started enabled=yes
     notify:
       - restart firewalld
+      - restart fail2ban
 
   - include_tasks: fail2ban.yml
     when: ansible_distribution_major_version is version('7', '>=')

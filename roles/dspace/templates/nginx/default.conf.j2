@@ -441,6 +441,11 @@ map $http_user_agent $limit_bots {
 
     # 2021-06-27 user agent for some MSN bot (DNS is always msnbot-x-x-x-x.search.msn.com.)
     'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko' 1;
+
+    # 2021-10-05 user agent of bots making hundreds of thousands of requests,
+    # seems to be used by hundreds of different bots actually. The user agent
+    # is laughably old and cannot possibly be a human user.
+    'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)' 1;
 }
 
 # Zone for limiting "bad bot" requests with a hard limit of 1 per minute. Uses

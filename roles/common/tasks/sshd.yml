@@ -13,6 +13,33 @@
   when: ansible_distribution == 'Ubuntu'
   notify: reload sshd
 
+# See: WeakDH (2015): https://weakdh.org/sysadmin.html
+- name: Remove small Diffie-Hellman SSH moduli
+  block:
+    - name: Check unsafe Diffie-Hellman SSH moduli
+      ansible.builtin.shell:
+        cmd: awk '$5 < 3071' moduli
+        chdir: /etc/ssh
+        creates: moduli.safe
+      register: check_unsafe_moduli
+
+    - name: Extract safe Diffie-Hellman SSH moduli
+      ansible.builtin.shell:
+        cmd: awk '$5 >= 3071' moduli > moduli.safe
+        chdir: /etc/ssh
+        creates: moduli.safe
+      when: check_unsafe_moduli.stdout | length > 0
+      register: extract_safe_moduli
+
+    - name: Replace unsafe Diffie-Hellman SSH moduli
+      ansible.builtin.command:
+        cmd: mv moduli.safe moduli
+        chdir: /etc/ssh
+      register: replace_small_moduli
+      when: extract_safe_moduli is changed
+      notify: reload sshd
+
+
 # CentOS's sshd.service regenerates these, so don't bother removing them. Also,
 # we are ignoring these host keys in sshd_config anyways...
 - name: Remove DSA and ECDSA host keys

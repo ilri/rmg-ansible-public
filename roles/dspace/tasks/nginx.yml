@@ -42,6 +42,11 @@
   notify:
     - reload nginx
 
+- name: Generate self-signed TLS cert
+  command: openssl req -x509 -nodes -sha256 -days 365 -subj "/C=SO/ST=SO/L=snakeoil/O=snakeoil/CN=snakeoil" -newkey rsa:2048 -keyout /etc/ssl/private/nginx-snakeoil.key -out /etc/ssl/certs/nginx-snakeoil.crt -extensions v3_ca creates=/etc/ssl/certs/nginx-snakeoil.crt
+  notify:
+    - reload nginx
+
 - name: Download 4096-bit RFC 7919 dhparams
   get_url:
     url: https://raw.githubusercontent.com/internetstandards/dhe_groups/master/ffdhe4096.pem

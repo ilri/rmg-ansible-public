@@ -23,7 +23,11 @@
 
 - name: Copy slurm.conf
   template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
-  notify: restart slurmd
+  register: slurm_conf
+  notify:
+    - restart slurmdbd
+    - restart slurmctld
+    - restart slurmd
 
 - name: Configure logrotate for slurm
   template: src=etc/logrotate.d/slurm.j2 dest=/etc/logrotate.d/slurm owner=root group=root mode=0644
@@ -33,19 +37,28 @@
   loop:
     - { src: 'etc/pam.d/slurm', dest: '/etc/pam.d/slurm'}
     - { src: 'etc/slurm/cgroup.conf', dest: '/etc/slurm/cgroup.conf'}
-  notify: restart slurmd
+  notify:
+    - restart slurmdbd
+    - restart slurmctld
+    - restart slurmd
 
 - name: Copy gres.conf on compute06
   when: inventory_hostname == 'compute06'
   copy: src=etc/slurm/gres.conf dest=/etc/slurm/gres.conf owner=root group=root mode=0644
-  notify: restart slurmd
+  notify:
+    - restart slurmdbd
+    - restart slurmctld
+    - restart slurmd
 
 - name: Create slurm directories
   file: path={{ item }} owner=slurm group=slurm mode=0755 state=directory
   loop:
     - /var/log/slurm
     - /var/spool/slurmd
-  notify: restart slurmd
+  notify:
+    - restart slurmdbd
+    - restart slurmctld
+    - restart slurmd
 
 - name: Create slurmctld directory on head node
   file: path=/var/spool/slurmctld owner=slurm group=slurm mode=0755 state=directory

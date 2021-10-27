@@ -1,6 +1,17 @@
 ---
 # file: roles/slurm/handlers/main.yml
 
+# This handler should only run on the head node, and it needs to be defined here
+# at the top because handlers are run in the order they are defined, not in the
+# order they are notified!
+- name: restart slurmdbd
+  systemd: name=slurmdbd state=restarted
+  when: inventory_hostname == slurm_head_node
+
+- name: restart slurmctld
+  systemd: name=slurmctld state=restarted
+  when: inventory_hostname == slurm_head_node
+
 - name: restart slurmd
   systemd: name=slurmd state=restarted
 

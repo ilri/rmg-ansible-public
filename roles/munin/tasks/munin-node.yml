@@ -9,6 +9,47 @@
   yum: name=munin-node state=present
   tags: packages
 
+# Enable sensors support if this is a bare metal machine. The way we check this
+# is to consult ansible_virtualization_role, which always returns "host" if the
+# host is bare metal.
+- name: Set sensor packages (Red Hat)
+  set_fact:
+    sensor_packages_redhat:
+      - lm_sensors # for CPU package and PCI card temperatures
+      - hddtemp    # for hard drive temperatures
+  when: ansible_virtualization_role == "host" and
+        ansible_os_family == "RedHat"
+  tags: packages
+
+- name: Set sensor packages (Debian)
+  set_fact:
+    sensor_packages_debian:
+      - lm-sensors
+      - hddtemp
+  when: ansible_virtualization_role == "host" and
+        ansible_os_family == "Debian"
+  tags: packages
+
+- name: Install sensor packages (Red Hat)
+  yum: name={{ sensor_packages_redhat }} state=present
+  when: sensor_packages_redhat is defined
+  tags: packages
+
+- name: Install sensor packages (Debian)
+  apt: name={{ sensor_packages_debian }} state=present
+  when: sensor_packages_debian is defined
+  tags: packages
+
+- name: Enable Munin temperature and fan plugins
+  ansible.builtin.file:
+    src: /usr/share/munin/plugins/sensors_
+    dest: "{{ item }}"
+    state: link
+  loop:
+    - /etc/munin/plugins/sensors_fan
+    - /etc/munin/plugins/sensors_temp
+  when: ansible_virtualization_role == "host"
+
 # some nice things to have for munin-node on Ubuntu (12.04 and 14.04 right now)
 # libwww-perl for munin's nginx_status check
 - name: Install munin-node deps

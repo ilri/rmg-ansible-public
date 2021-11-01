@@ -59,7 +59,7 @@
     - restart munin-node
 
 - name: Configure munin-node
-  shell: munin-node-configure --shell --families=contrib,auto | sh -x
+  shell: munin-node-configure --shell --families=contrib,auto --remove-also | sh -x
   notify:
     - restart munin-node
 

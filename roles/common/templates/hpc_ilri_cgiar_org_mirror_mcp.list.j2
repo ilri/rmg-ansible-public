@@ -1,0 +1,13 @@
+{{ ansible_managed | comment }}
+
+{% if ansible_distribution == 'Ubuntu' -%}
+{%   if ansible_product_name is search('.*Gen9.*') or ansible_product_name is search('.*Gen8.*') -%}
+# ILRI mirror of HPE MCP repository for Gen9 and earlier
+# See: https://downloads.linux.hpe.com/SDR/project/mcp/
+deb [arch=amd64] https://hpc.ilri.cgiar.org/mirror/mcp {{ ansible_distribution_release }}/current-gen9 non-free
+{%   elif ansible_product_name is search('.*Gen10.*') -%}
+# ILRI mirror of HPE MCP repository for Gen10
+# See: https://downloads.linux.hpe.com/SDR/project/mcp/
+deb [arch=amd64] https://hpc.ilri.cgiar.org/mirror/mcp {{ ansible_distribution_release }}/current-gen10 non-free
+{%-  endif %}
+{%- endif %}

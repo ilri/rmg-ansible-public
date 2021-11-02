@@ -31,7 +31,7 @@
     when: hw_raid_vendor is defined
 
   - name: Add ILRI mirror of Debian-based HPE MCP repository
-    apt_repository: repo='deb https://hpc.ilri.cgiar.org/mirror/mcp {{ ansible_distribution_release }}/current non-free' state=present
+    template: src=hpc_ilri_cgiar_org_mirror_mcp.list.j2 dest=/etc/apt/sources.list.d/hpc_ilri_cgiar_org_mirror_mcp.list mode=0644 owner=root group=root
     when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor
 
   - name: Import HPE MCP repo's signing key
@@ -49,7 +49,7 @@
     when: "ansible_distribution == 'CentOS' and 'lsi' in hw_raid_vendor"
 
   - name: Configure ILRI mirror of HPE MCP repository
-    copy: src=hpe-mcp.repo dest=/etc/yum.repos.d/hpe-mcp.repo owner=root group=root mode=0644
+    template: src=hpe-mcp.repo.j2 dest=/etc/yum.repos.d/hpe-mcp.repo owner=root group=root mode=0644
     when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('7','==') and 'hp' in hw_raid_vendor
 
   - name: Install HPE Smart Storage Administrator CLI

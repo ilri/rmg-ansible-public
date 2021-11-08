@@ -97,11 +97,11 @@ Waittime=0
 #SchedulerTimeSlice=30
 SchedulerType=sched/backfill
 SchedulerPort=7321
-# use consumable resources (ie, we’re not allocating entire nodes, merely CPUs)
-SelectType=select/cons_res
-# CR_CPU treats threads as CPUs
-SelectTypeParameters=CR_CPU
-#SelectTypeParameters=
+# use consumable resources (ie, we're not allocating entire nodes, merely CPUs, memory, GPUs, etc)
+SelectType=select/cons_tres
+# CR_Core treats cores as a consumable resource, but multiple jobs are not
+# allocated threads on the same core.
+SelectTypeParameters=CR_Core
 #
 #
 # JOB PRIORITY

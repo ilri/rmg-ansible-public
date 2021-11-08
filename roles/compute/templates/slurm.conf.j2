@@ -4,13 +4,7 @@
 #
 ControlMachine={{ slurm_head_node }}
 ControlAddr={{ hostvars[slurm_head_node].ansible_host }}
-#BackupController=
-#BackupAddr=
 #
-AuthType=auth/munge
-CacheGroups=0
-#CheckpointType=checkpoint/none
-CryptoType=crypto/munge
 #DisableRootJobs=NO
 #EnforcePartLimits=NO
 #Epilog=
@@ -20,13 +14,11 @@ CryptoType=crypto/munge
 GresTypes=gpu
 #GroupUpdateForce=0
 #GroupUpdateTime=600
-#JobCheckpointDir=/var/slurm/checkpoint
-#JobCredentialPrivateKey=
-#JobCredentialPublicCertificate=
 #JobFileAppend=0
 #JobRequeue=1
 #JobSubmitPlugins=1
 #KillOnBadExit=0
+#LaunchType=launch/slurm
 #Licenses=foo*4,bar
 MailProg=/bin/mail
 MaxJobCount=100000
@@ -37,17 +29,15 @@ MpiDefault=none
 #PluginDir=
 #PlugStackConfig=
 #PrivateData=jobs
-#ProctrackType=proctrack/pgid
-# ProctrackType must be cgroup to work with X11 as of SLURM 19.05
 ProctrackType=proctrack/cgroup
 #Prolog=
-#PrologSlurmctld=
 PrologFlags=x11
+#PrologSlurmctld=
 #PropagatePrioProcess=0
 PropagateResourceLimits=NONE
 #PropagateResourceLimitsExcept=
+RebootProgram=/usr/sbin/reboot
 ReturnToService=1
-#SallocDefaultCommand=
 SlurmctldPidFile=/var/run/slurmctld.pid
 SlurmctldPort=6817
 SlurmdPidFile=/var/run/slurmd.pid
@@ -61,14 +51,14 @@ StateSaveLocation=/var/spool/slurmctld
 SwitchType=switch/none
 #TaskEpilog=
 TaskPlugin=task/affinity,task/cgroup
-#TaskPluginParam=
 #TaskProlog=
 #TopologyPlugin=topology/tree
-#TmpFs=/tmp
+#TmpFS=/tmp
 #TrackWCKey=no
 #TreeWidth=
 #UnkillableStepProgram=
 UsePAM=1
+#
 #
 # TIMERS
 #BatchStartTimeout=10
@@ -133,13 +123,11 @@ ClusterName=ilri_kenya
 #DebugFlags=
 #JobCompHost=
 #JobCompLoc=
-JobCompLoc=/var/log/slurm/slurm.job.log
 #JobCompPass=
 #JobCompPort=
 JobCompType=jobcomp/none
 #JobCompUser=
 JobAcctGatherFrequency=30
-#JobAcctGatherType=jobacct_gather/none
 JobAcctGatherType=jobacct_gather/cgroup
 #SlurmctldDebug=3
 SlurmctldDebug=info
@@ -162,7 +150,6 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 #SuspendExcParts=
 #SuspendRate=
 #SuspendTime=
-RebootProgram=/sbin/reboot
 #
 #
 # COMPUTE NODES (Output based on slurmd -C)

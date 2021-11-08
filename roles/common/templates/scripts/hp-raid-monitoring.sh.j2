@@ -48,4 +48,9 @@ for slot in $SLOTS; do
     checkPhysicalDisks $slot
 done
 
+# test if email is working
+if [[ $1 == 'test' ]]; then
+    $HP_CLI_BIN ctrl slot=$slot pd all show | ${BIN_MAIL} ${MAIL_ARGS} -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
+fi
+
 # vim: set ts=4 sw=4:

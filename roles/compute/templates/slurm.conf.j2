@@ -144,7 +144,8 @@ SlurmdLogFile=/var/log/slurm/slurmd.log
 #SuspendProgram=
 #ResumeProgram=
 #SuspendTimeout=
-#ResumeTimeout=
+# Default is to wait 60 seconds after `scontrol reboot <node>`
+ResumeTimeout=500
 #ResumeRate=
 #SuspendExcNodes=
 #SuspendExcParts=

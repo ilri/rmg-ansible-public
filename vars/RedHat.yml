@@ -4,6 +4,10 @@
 # `sshd` on CentOS
 sshd_service_name: sshd
 
+# logpath string for fail2ban's Apache HTTPD jail (the daemon name is `httpd` on
+# CentOS, but `apache2` on Debian)
+fail2ban_httpd_logpath: /var/log/httpd/*access.log
+
 # LDAP config directory
 ldap_conf_dir: /etc/openldap
 

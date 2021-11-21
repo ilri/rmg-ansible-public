@@ -1,0 +1,20 @@
+[apache]
+enabled   = true
+# See: /etc/fail2ban/filter.d/apache-botsearch.conf
+filter    = apache-botsearch
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
+# Integrate with nftables
+banaction=nftables[type=allports]
+{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
+# Integrate with nftables
+banaction=nftables-allports
+{% else %}
+# Integrate with firewalld and ipsets
+banaction = firewallcmd-ipset
+{% endif %}
+logpath   = {{ fail2ban_httpd_logpath }}
+# Try to find a non-existent wp-login.php once and get banned. Tough luck.
+maxretry  = 1
+findtime  = {{ fail2ban_findtime }}
+bantime   = {{ fail2ban_bantime }}
+ignoreip  = {{ fail2ban_ignoreip }}

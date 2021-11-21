@@ -9,6 +9,11 @@
   template: src=etc/fail2ban/jail.d/nginx.local.j2 dest=/etc/fail2ban/jail.d/nginx.local owner=root mode=0644
   notify: restart fail2ban
 
+- name: Configure fail2ban apache filter
+  when: "extra_fail2ban_filters is defined and 'apache' in extra_fail2ban_filters"
+  template: src=etc/fail2ban/jail.d/apache.local.j2 dest=/etc/fail2ban/jail.d/apache.local owner=root mode=0644
+  notify: restart fail2ban
+
 - name: Create fail2ban service override directory
   file: path=/etc/systemd/system/fail2ban.service.d state=directory owner=root mode=0755
 

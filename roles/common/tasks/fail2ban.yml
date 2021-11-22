@@ -9,9 +9,20 @@
   template: src=etc/fail2ban/jail.d/nginx.local.j2 dest=/etc/fail2ban/jail.d/nginx.local owner=root mode=0644
   notify: restart fail2ban
 
+# Only run this on hosts with newer fail2ban (>0.10.0?), which basically just
+# excludes Ubuntu 16.04. The when logic here is not ideal, but I prefer to do
+# it this way rather than making it much longer and more verbose. In my brief
+# testing it seems older fail2ban versions restart slowly and have slightly
+# different configuration semantics, so I'll just restrict to newer versions.
+# Anyways, Ubuntu 16.04 is not even supported as of 2021-04 so there's no big
+# deal really.
 - name: Configure fail2ban apache filter
-  when: "extra_fail2ban_filters is defined and 'apache' in extra_fail2ban_filters"
-  template: src=etc/fail2ban/jail.d/apache.local.j2 dest=/etc/fail2ban/jail.d/apache.local owner=root mode=0644
+  when: (extra_fail2ban_filters is defined and 'apache' in extra_fail2ban_filters) and
+        ansible_distribution_version is version('16.04', '!=')
+  template: src={{ item.src }} dest={{ item.dest }} owner=root mode=0644
+  loop:
+    - { src: 'etc/fail2ban/jail.d/apache.local.j2', dest: '/etc/fail2ban/jail.d/apache.local' }
+    - { src: 'etc/fail2ban/filter.d/apache-botsearch.local.j2', dest: '/etc/fail2ban/filter.d/apache-botsearch.local' }
   notify: restart fail2ban
 
 - name: Create fail2ban service override directory

@@ -1,0 +1,42 @@
+{{ ansible_managed | comment }}
+
+# Based on fail2ban's apache-botsearch.conf, but overridden to support Apache
+# access_log format instead of the outdated error_log parsing behavior that
+# has been broken for several years.
+#
+# See: https://github.com/fail2ban/fail2ban/issues/2378
+
+[INCLUDES]
+
+# Load regexes for filtering from botsearch-common.conf
+before = botsearch-common.conf
+
+[Definition]
+
+# We have to manually set the datepattern when overriding apache-botsearch.conf.
+# The stock config includes apache-common.conf in the "before" above, which we
+# don't do here, and thus we don't have the datepattern. In any case, this will
+# match the date format in recent Apache HTTPD, eg:
+#
+#   1.2.3.4 - - [21/Nov/2021:22:20:19 +0100] "GET /wp-login.php HTTP/1.1" 404 19136 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0"'
+#
+# Note that we have to use percents twice to get literals in Python's re.
+datepattern = %%d/%%b/%%Y:%%H:%%M:%%S %%z
+
+# Leave pre-filter regex unset so we can just rely on the failregex to match
+# requests to non-existent (HTTP 404) scripts defined by the <block> pattern in
+# botsearch-common.conf. I wonder if there is any benefit to pre-filtering
+# the 404s before checking with failregex? Best would be to write 404s to a
+# separate log just for fail2ban as in this nginx example:
+#
+# See: https://github.com/fail2ban/fail2ban/wiki/Best-practice
+prefregex =
+
+# regex pattern indicating a failure
+failregex = ^<ADDR> - - \[[^\]]*\] ".*<block>.*" 404\s
+
+ignoreregex =
+
+# DEV Notes:
+#
+# Author: Alan Orth

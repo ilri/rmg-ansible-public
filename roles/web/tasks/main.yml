@@ -15,14 +15,20 @@
       - /etc/letsencrypt/renewal-hooks/pre
       - /etc/letsencrypt/renewal-hooks/post
 
+  - name: Remove old Let's Encrypt pre/post hooks
+    file: path={{ item }} state=absent
+    loop:
+      - /etc/letsencrypt/renewal-hooks/pre/stop-apache2.sh
+      - /etc/letsencrypt/renewal-hooks/post/start-apache2.sh
+
 # Eventually this should be parameterized so we only copy scripts we need, for
 # example we might use nginx instead of apache2, or the service name could be
 # different (httpd instead of apache2 on CentOS).
   - name: Copy Let's Encrypt pre/post hooks
-    copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
+    template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
     with_items:
-      - { src: 'stop-apache2.sh', dest: '/etc/letsencrypt/renewal-hooks/pre/stop-apache2.sh' }
-      - { src: 'start-apache2.sh', dest: '/etc/letsencrypt/renewal-hooks/post/start-apache2.sh' }
+      - { src: 'stop-webserver.sh.j2', dest: '/etc/letsencrypt/renewal-hooks/pre/stop-webserver.sh' }
+      - { src: 'start-webserver.sh.j2', dest: '/etc/letsencrypt/renewal-hooks/post/start-webserver.sh' }
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '==')
   tags: letsencrypt
 

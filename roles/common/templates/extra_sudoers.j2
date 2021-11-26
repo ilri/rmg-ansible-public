@@ -1,13 +1,13 @@
 {% if extra_sudo_users is defined %}
-{% for user in extra_sudo_users %}
+{%   for user in extra_sudo_users %}
 {{ user }}   ALL=(ALL)  ALL
-{% endfor %}
+{%   endfor %}
 {% endif %}
 
 {% if extra_nopasswd_sudo_users is defined %}
-{% for user in extra_nopasswd_sudo_users %}
+{%   for user in extra_nopasswd_sudo_users %}
 {{ user }}   ALL=(ALL)  NOPASSWD:ALL
-{% endfor %}
+{%   endfor %}
 {% endif %}
 
 {% if 'dspace' in group_names %}

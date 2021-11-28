@@ -1,3 +1,4 @@
+{{ ansible_managed | comment }}
 {% if extra_sudo_users is defined %}
 {%   for user in extra_sudo_users %}
 {{ user }}   ALL=(ALL)  ALL

@@ -83,10 +83,8 @@ Waittime=0
 # SCHEDULING
 #DefMemPerCPU=0
 #MaxMemPerCPU=0
-#SchedulerRootFilter=1
 #SchedulerTimeSlice=30
 SchedulerType=sched/backfill
-SchedulerPort=7321
 # use consumable resources (ie, we're not allocating entire nodes, merely CPUs, memory, GPUs, etc)
 SelectType=select/cons_tres
 # CR_Core treats cores as a consumable resource, but multiple jobs are not
@@ -118,7 +116,7 @@ AccountingStorageType=accounting_storage/slurmdbd
 #AccountingStorageUser=
 # You must use limits for the accounting limits to be enforced!
 AccountingStorageEnforce=limits,qos
-AccountingStoreJobComment=YES
+AccountingStoreFlags=job_comment
 ClusterName=ilri_kenya
 #DebugFlags=
 #JobCompHost=

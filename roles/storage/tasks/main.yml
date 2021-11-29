@@ -5,12 +5,13 @@
       - centos-release-gluster5
       - centos-release-gluster6
       - centos-release-gluster7
+      - centos-release-gluster8
 
 - name: Remove old GlusterFS package repositories
   yum: name={{ old_glusterfs_package_repositories }} state=absent
 
 - name: Enable GlusterFS packages from CentOS SIG
-  yum: name=centos-release-gluster8 state=present
+  yum: name=centos-release-gluster9 state=present
 
 - name: Configure Mellanox network cards
   include_tasks: mellanox.yml

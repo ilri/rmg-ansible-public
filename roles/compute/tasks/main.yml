@@ -195,10 +195,6 @@
   template: src=90-ilri.conf.j2 dest=/etc/security/limits.d/90-ilri.conf owner=root group=root mode=0644
   tags: limits
 
-- name: Set sticky bit on local scratch
-  file: path={{ local_scratch }} group=root owner=root mode=01777 state=directory
-  tags: scratch
-
 - name: Remove irqbalance
   yum: name=irqbalance state=absent
   tags: irqbalance
@@ -206,6 +202,10 @@
 - name: Configure global ssh_config on compute nodes
   template: src=ssh_config.j2 dest=/etc/ssh/ssh_config owner=root group=root mode=0644
   tags: ssh-config
+
+- name: Set sticky bit on local scratch
+  file: path={{ local_scratch }} group=root owner=root mode=01777 state=directory
+  tags: scratch
 
 # TODO: convert to systemd timer
 - name: Add cron job to clean up scratch space

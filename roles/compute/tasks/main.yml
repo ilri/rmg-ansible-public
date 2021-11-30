@@ -196,7 +196,6 @@
   tags: limits
 
 - name: Set sticky bit on local scratch
-  when: inventory_hostname != "hpc"
   file: path={{ local_scratch }} group=root owner=root mode=01777 state=directory
   tags: scratch
 
@@ -210,7 +209,6 @@
 
 # TODO: convert to systemd timer
 - name: Add cron job to clean up scratch space
-  when: inventory_hostname != "hpc"
   template: src=cron/cleanup-scratch-space.j2 dest=/etc/cron.d/2cleanup-scratch-space owner=root group=root mode=0644
   tags: scratch
 

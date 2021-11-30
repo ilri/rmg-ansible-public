@@ -2,10 +2,10 @@ SHELL=/bin/bash
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 # Clean up local scratch (tmpwatch will not cross a filesystem boundary so we
 # don't have to worry about it going into /var/scratch/global).
-00 00 * * * root tmpwatch --mtime --dirmtime --all 90d {{ local_scratch }}
+00 00 * * * root tmpwatch --mtime --dirmtime -l 90d {{ local_scratch }}
 
 {% if inventory_hostname == slurm_head_node %}
 # Only clean up global scratch from hpc so that nodes don't all try to delete
 # files at the same time.
-10 00 * * * root tmpwatch --mtime --dirmtime --all 90d {{ local_scratch }}/global
+10 00 * * * root tmpwatch --mtime --dirmtime -l 90d {{ local_scratch }}/global
 {% endif %}

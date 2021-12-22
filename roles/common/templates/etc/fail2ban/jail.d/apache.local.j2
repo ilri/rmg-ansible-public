@@ -9,7 +9,7 @@ filter    = apache-botsearch
 banaction = nftables[type=allports]
 {% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
 # Integrate with nftables
-banaction=nftables-allports
+banaction = nftables-allports
 {% else %}
 # Integrate with firewalld and ipsets
 banaction = firewallcmd-ipset

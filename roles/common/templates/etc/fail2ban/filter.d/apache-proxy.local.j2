@@ -1,0 +1,21 @@
+{{ ansible_managed | comment }}
+
+# Fail2Ban configuration file
+#
+# Author: James Roe
+# See: https://www.fail2ban.org/wiki/index.php/HOWTO_apache_proxy_filter
+#
+[Definition]
+# Matches requests that *do not* start with the method and a forward slash:
+#
+#   51.15.9.77 - - [22/Dec/2021:00:10:14 +0000] "GET http://azenv.net/ HTTP/1.1" 200 6929 "-" "Go-http-client/1.1"
+#   20.124.103.169 - - [22/Dec/2021:00:10:14 +0000] "CONNECT my-win.avast.com:443 HTTP/1.1" 400 491 "-" "-"
+#   37.1.205.13 - - [22/Dec/2021:00:12:14 +0000] "POST http://5.188.211.72/check.php HTTP/1.1" 404 31466 "-" "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)"
+#
+# Will not match requests for resources relative to the virtual host's root that
+# begin with a slash, for example:
+#
+#   44.238.39.62 - - [22/Dec/2021:11:08:34 +0000] "GET /css/select2.min.css HTTP/1.1" 304 4877 "https://feastdata.ilri.org/" "Mozilla/5.0 (X11; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0"
+#
+failregex = ^(?:(?![0-9\.]* - .*? \[.*\] "([A-Z]* /.* HTTP/1\.[0-9]|-)")<HOST>)
+ignoreregex =

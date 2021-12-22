@@ -6,7 +6,7 @@ enabled   = true
 filter    = apache-botsearch
 {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
 # Integrate with nftables
-banaction=nftables[type=allports]
+banaction = nftables[type=allports]
 {% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
 # Integrate with nftables
 banaction=nftables-allports

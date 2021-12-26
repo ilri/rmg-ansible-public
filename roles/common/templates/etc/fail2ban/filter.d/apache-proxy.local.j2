@@ -17,5 +17,5 @@
 #
 #   44.238.39.62 - - [22/Dec/2021:11:08:34 +0000] "GET /css/select2.min.css HTTP/1.1" 304 4877 "https://feastdata.ilri.org/" "Mozilla/5.0 (X11; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0"
 #
-failregex = ^(?:(?![0-9\.]* - .*? \[.*\] "([A-Z]* /.* HTTP/1\.[0-9]|-)")<HOST>)
+failregex = ^(?:(?![0-9\.]* - .*? \[.*\] "([A-Z]* /.* HTTP/[12]\.[0-9]|-)")<HOST>)
 ignoreregex =

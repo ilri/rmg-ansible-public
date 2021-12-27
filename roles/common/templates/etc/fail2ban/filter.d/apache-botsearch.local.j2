@@ -18,7 +18,7 @@ before = botsearch-common.conf
 # don't do here, and thus we don't have the datepattern. In any case, this will
 # match the date format in recent Apache HTTPD, eg:
 #
-#   1.2.3.4 - - [21/Nov/2021:22:20:19 +0100] "GET /wp-login.php HTTP/1.1" 404 19136 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0"'
+#   1.2.3.4 - - [21/Nov/2021:22:20:19 +0100] "GET /wp-login.php HTTP/1.1" 404 19136 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0"
 #
 # Note that we have to use percents twice to get literals in Python's re.
 datepattern = %%d/%%b/%%Y:%%H:%%M:%%S %%z

@@ -2,6 +2,7 @@
 
 [apache-botsearch]
 enabled   = true
+usedns    = no
 # See: /etc/fail2ban/filter.d/apache-botsearch.conf
 filter    = apache-botsearch
 {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
@@ -23,6 +24,7 @@ ignoreip  = {{ fail2ban_ignoreip }}
 
 [apache-proxy]
 enabled   = true
+usedns    = no
 # See: /etc/fail2ban/filter.d/apache-proxy.local
 filter    = apache-proxy
 {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}

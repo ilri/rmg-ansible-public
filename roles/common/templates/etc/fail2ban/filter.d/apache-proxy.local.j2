@@ -15,9 +15,10 @@
 # Will not match requests for resources relative to the virtual host's root that
 # begin with a slash or a literal "-", for example:
 #
+#   104.227.50.189 - - [31/Dec/2021:18:34:34 +0000] "GET / HTTP/1.1" 200 8257 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0"
 #   44.238.39.62 - - [22/Dec/2021:11:08:34 +0000] "GET /css/select2.min.css HTTP/1.1" 304 4877 "https://feastdata.ilri.org/" "Mozilla/5.0 (X11; Linux x86_64; rv:96.0) Gecko/20100101 Firefox/96.0"
 #
 # Note: failregex only needs to match the line *after* the time and date have
 # been removed, so we only match a literal "[]" here.
-failregex = ^<ADDR> - .+? \[\] "(?!([A-Z]+? /.+? HTTP/[12]\.[0-9]|-)")
+failregex = ^<ADDR> - .+? \[\] "(?!([A-Z]+? /.*? HTTP/[12]\.[0-9]|-)")
 ignoreregex =

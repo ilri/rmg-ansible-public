@@ -1,0 +1,26 @@
+{{ ansible_managed | comment }}
+
+# Generic configuration file for -botsearch filters
+
+[Init]
+
+# Block is the actual non-found directories to block
+block = \/?(<webmail>|<phpmyadmin>|<wordpress>|cgi-bin|mysqladmin)[^,]*
+
+# These are just convenient definitions that assist the blocking of stuff that
+# isn't installed
+webmail = roundcube|(ext)?mail|horde|(v-?)?webmail
+
+phpmyadmin = (typo3/|xampp/|admin/|)(php)?[Mm]y[Aa]dmin
+
+wordpress = wp-(login|signup|admin)\.php
+
+# DEV Notes:
+# Taken from apache-botsearch filter.
+#
+# Author: Frantisek Sumsal
+#
+# Modified by Alan Orth to exclude the phpmyadmin pattern from the main block
+# pattern because it causes false positives. For example, Googlebot requested
+# a file called "coopman.pdf" that returned an HTTP 404, which caused f2b to
+# ban it.

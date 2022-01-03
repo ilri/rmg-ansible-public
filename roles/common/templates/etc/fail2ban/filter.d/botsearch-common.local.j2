@@ -20,7 +20,6 @@ wordpress = wp-(login|signup|admin)\.php
 #
 # Author: Frantisek Sumsal
 #
-# Modified by Alan Orth to exclude the phpmyadmin pattern from the main block
-# pattern because it causes false positives. For example, Googlebot requested
-# a file called "coopman.pdf" that returned an HTTP 404, which caused f2b to
-# ban it.
+# Modifications by Alan Orth to reduce false positives:
+#   - remove "pma" from the phpmyadmin pattern
+#   - use "extmail" instead of "(ext)?mail" in the webmail pattern

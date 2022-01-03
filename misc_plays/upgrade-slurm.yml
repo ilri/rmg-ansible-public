@@ -5,6 +5,9 @@
 # 2. Restart slurmdbd, then slurmd
 # 3. Upgrade SLURM on HPC compute nodes
 # 4. Restart slurmd on HPC compute nodes
+#
+# Note: this playbook is only recommended for minor version increments. For
+# major versions you should check for config changes and update manually.
 
 - hosts: compute
   become: yes

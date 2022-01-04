@@ -19,6 +19,7 @@ banaction = firewallcmd-ipset
 # fail2ban-firewalld package, see: /etc/fail2ban/jail.d/00-firewalld.conf.
 banaction = firewallcmd-rich-rules[actiontype=<allports>]
 {% endif %}
+backend   = pyinotify
 logpath   = {{ fail2ban_httpd_logpath }}
 # Try to find a non-existent wp-login.php once and get banned. Tough luck.
 maxretry  = 1
@@ -45,6 +46,7 @@ banaction = firewallcmd-ipset
 # fail2ban-firewalld package, see: /etc/fail2ban/jail.d/00-firewalld.conf.
 banaction = firewallcmd-rich-rules[actiontype=<allports>]
 {% endif %}
+backend   = pyinotify
 logpath   = {{ fail2ban_httpd_logpath }}
 # Make a proxy request once and get banned. Tough luck.
 maxretry  = 1

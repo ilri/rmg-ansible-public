@@ -3,13 +3,6 @@
   <option name="family" value="inet6" />
   <short>abusers-ipv6</short>
   <description>A list of abusive IPv6 addresses.</description>
-  <entry>2001:470:1:332::7</entry>
-  <entry>2001:470:1:c84::15</entry>
-  <entry>2001:470:1:c84::22</entry>
-  <entry>2001:470:1:c84::23</entry>
-  <entry>2001:470:1:c84::25</entry>
-  <entry>2a00:d680:20:50::3292</entry>
-  <entry>2a00:d680:20:50::4a10</entry>
-  <entry>2a02:c206:2062:6450::1</entry>
-  <entry>2a03:b0c0:2:f0::34d:c001</entry>
+  <entry>2001:41d0:a:1ac3::</entry>
+  <entry>2604:2dc0:200:1378::</entry>
 </ipset>

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Purpose
+# backup-libvirt-xml.sh
 #
 # Backup XML domains for libvirt VMs.
 #

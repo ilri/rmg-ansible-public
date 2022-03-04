@@ -195,6 +195,11 @@
   template: src=90-ilri.conf.j2 dest=/etc/security/limits.d/90-ilri.conf owner=root group=root mode=0644
   tags: limits
 
+- name: Copy systemd user.slice override
+  copy: src=etc/systemd/system/user.slice.d/override.conf dest=/etc/systemd/system/user.slice.d/override.conf owner=root group=root mode=0644
+  when: inventory_hostname == slurm_head_node
+  tags: limits
+
 - name: Remove irqbalance
   yum: name=irqbalance state=absent
   tags: irqbalance

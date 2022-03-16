@@ -8,7 +8,7 @@ victoriametrics_group: victoriametrics
 # The location of the main VictoriaMetrics data store
 victoriametrics_data_path: /var/lib/victoriametrics/data
 # The default retention period is 1 month
-victoriametrics_data_retention: 1
+victoriametrics_data_retention: 3
 
 # remoteWrite.url for vmagent on clients (perhaps this should this be private,
 # but if we use include_vars in the playbook then it is not possible to over-

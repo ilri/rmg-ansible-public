@@ -5,11 +5,13 @@
   become: yes
   vars_files:
     - private/vars/common.yml
+    - private/vars/metrics.yml
     - private/vars/ipsets.yml
   roles:
     - common
     - sssd
     - munin
+    - { role: metrics, when: ansible_service_mgr == 'systemd', tags: metrics }
     - { role: ganglia, when: ansible_distribution == 'CentOS', tags: ganglia }
     - { role: storage, when: ansible_distribution == 'CentOS', tags: storage }
 

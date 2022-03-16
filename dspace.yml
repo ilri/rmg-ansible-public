@@ -6,11 +6,13 @@
   vars_files:
     - private/vars/common.yml
     - private/vars/dspace.yml
+    - private/vars/metrics.yml
     - private/vars/ipsets.yml
   roles:
     - common
     - postgres
     - munin
+    - { role: metrics, when: ansible_service_mgr == 'systemd', tags: metrics }
     - { role: dspace, when: ansible_os_family == 'Debian', tags: dspace }
 
 # vim: set sw=2 ts=2:

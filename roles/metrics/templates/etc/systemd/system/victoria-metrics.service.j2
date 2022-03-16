@@ -1,0 +1,24 @@
+[Unit]
+Description=High-performance, cost-effective and scalable time series database, long-term remote storage for Prometheus
+After=network.target
+ConditionFileIsExecutable={{ victoriametrics_binary_path }}
+
+[Service]
+Type=simple
+User={{ victoriametrics_user }}
+Group={{ victoriametrics_group }}
+StartLimitBurst=5
+StartLimitInterval=0
+Restart=on-failure
+RestartSec=1
+ExecStart={{ victoriametrics_binary_path }} \
+          -storageDataPath={{ victoriametrics_data_path }} \
+          -httpListenAddr=127.0.0.1:8428 \
+          -retentionPeriod={{ victoriametrics_data_retention }}
+ExecStop=/bin/kill -s SIGTERM $MAINPID
+ExecReload=/bin/kill -s SIGHUP $MAINPID
+LimitNOFILE=65536
+LimitNPROC=32000
+
+[Install]
+WantedBy=multi-user.target

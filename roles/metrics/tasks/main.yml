@@ -1,0 +1,21 @@
+---
+# file: roles/metrics/tasks/main.yml
+# 
+# Configure VictoriaMetrics server and clients. We only run this on hosts
+# that have systemd (which should be everything after CentOS 7 and Ubuntu
+# 16.04). It is expected that one host has victoriametrics_role "server"
+# in their host_vars.
+#
+
+- name: Configure VictoriaMetrics common
+  import_tasks: common.yml
+
+- name: Configure VictoriaMetrics clients
+  import_tasks: client.yml
+
+- name: Configure VictoriaMetrics server
+  include_tasks: server.yml
+  when: victoriametrics_role is defined and
+        victoriametrics_role == 'server'
+
+# vim: set sw=2 ts=2:

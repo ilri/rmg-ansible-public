@@ -1,0 +1,20 @@
+[Unit]
+Description=Exporter for machine metrics
+After=network.target
+
+[Service]
+Type=simple
+User={{ victoriametrics_user }}
+Group={{ victoriametrics_group }}
+StartLimitBurst=5
+StartLimitInterval=0
+Restart=on-failure
+RestartSec=1
+ExecStart={{ node_exporter_binary_path }} \
+         --collector.systemd \
+         --collector.processes \
+         --web.listen-address=127.0.0.1:9100
+ExecStop=/bin/kill -s SIGTERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

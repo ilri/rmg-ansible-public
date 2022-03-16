@@ -1,0 +1,15 @@
+---
+# file: roles/metrics/tasks/client.yml
+#
+# Setup for clients. Configures exporters and vmagent. All hosts should run the
+# node_exporter and vmagent. Others may run mysqld_exporter, etc. We configure
+# the exporters before vmagent so that it can start scraping them immediately
+# after it starts up.
+
+- name: Configure node_exporter
+  import_tasks: node_exporter.yml
+
+- name: Configure vmutils
+  import_tasks: vmutils.yml
+
+# vim: set sw=2 ts=2:

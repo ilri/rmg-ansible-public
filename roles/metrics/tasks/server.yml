@@ -1,0 +1,74 @@
+---
+# file: roles/metrics/tasks/server.yml
+
+- name: Check VictoriaMetrics version
+  ansible.builtin.stat:
+    path: "/usr/local/bin/{{ victoriametrics_tarball }}"
+  register: victoriametrics_stat
+
+- name: Download VictoriaMetrics
+  ansible.builtin.get_url:
+    url: "{{ victoriametrics_url }}"
+    dest: "/usr/local/bin/{{ victoriametrics_tarball }}"
+    checksum: "sha256:{{ victoriametrics_url_checksum }}"
+  register: victoriametrics_download
+  when: not victoriametrics_stat.stat.exists
+
+- name: Unzip VictoriaMetrics
+  ansible.builtin.unarchive:
+    src: "/usr/local/bin/{{ victoriametrics_tarball }}"
+    remote_src: yes
+    dest: /usr/local/bin
+  when: victoriametrics_download is changed
+
+- name: Remove old VictoriaMetrics tarballs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/usr/local/bin/victoria-metrics-amd64-v1.73.0.tar.gz"
+
+- name: Configure vmauth.yml
+  ansible.builtin.template:
+    src: etc/victoriametrics/vmauth.yml.j2
+    dest: "{{ victoriametrics_vmauth_config_path }}"
+    owner: "{{ victoriametrics_user }}"
+    group: "{{ victoriametrics_group }}"
+    mode: 0600
+  notify: reload vmauth
+
+- name: Create VictoriaMetrics data directory
+  ansible.builtin.file:
+    path: "{{ victoriametrics_data_path }}"
+    state: directory
+    owner: "{{ victoriametrics_user }}"
+    group: "{{ victoriametrics_group }}"
+    mode: 0770
+
+- name: Copy VictoriaMetrics server service units
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  loop:
+    - {'src': 'etc/systemd/system/victoria-metrics.service.j2', 'dest': '/etc/systemd/system/victoria-metrics.service'}
+    - {'src': 'etc/systemd/system/victoria-metrics-vmauth.service.j2', 'dest': '/etc/systemd/system/victoria-metrics-vmauth.service'}
+  notify:
+    - restart victoria-metrics
+    - restart vmauth
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Start and enable VictoriaMetrics server services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - victoria-metrics.service
+    - victoria-metrics-vmauth.service
+
+# vim: set sw=2 ts=2:

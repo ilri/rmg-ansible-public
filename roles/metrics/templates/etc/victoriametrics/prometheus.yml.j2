@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+- job_name: node
+  static_configs:
+  - targets: ['127.0.0.1:9100']
+  relabel_configs:
+  - source_labels: [instance]
+    regex: '.*'
+    target_label: instance
+    replacement: '{{ inventory_hostname }}'

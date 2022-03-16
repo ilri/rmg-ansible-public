@@ -1,0 +1,80 @@
+---
+# file: roles/metrics/tasks/vmutils.yml
+#
+# Download the vmutils tarball to /usr/local/bin. The binaries in the tarball do
+# not have versions in their names and I don't want to parse CLI output, so the
+# only thing we can do is check if the tarball for the current version exists at
+# the expected place.
+#
+
+- name: Check vmutils version
+  ansible.builtin.stat:
+    path: "/usr/local/bin/{{ victoriametrics_vmutils_tarball }}"
+  register: vmutils_stat
+
+- name: Download vmutils
+  ansible.builtin.get_url:
+    url: "{{ victoriametrics_vmutils_url }}"
+    dest: "/usr/local/bin/{{ victoriametrics_vmutils_tarball }}"
+    checksum: "sha256:{{ victoriametrics_vmutils_url_checksum }}"
+  register: vmutils_download
+  when: not vmutils_stat.stat.exists
+
+- name: Unzip vmutils
+  ansible.builtin.unarchive:
+    src: "/usr/local/bin/{{ victoriametrics_vmutils_tarball }}"
+    remote_src: yes
+    dest: /usr/local/bin
+  when: vmutils_download is changed
+
+- name: Remove old vmutils tarballs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/usr/local/bin/vmutils-amd64-v1.73.0.tar.gz"
+
+- name: Create vmagent tmpData directory
+  ansible.builtin.file:
+    path: "{{ victoriametrics_vmagent_data_path }}"
+    state: directory
+    owner: "{{ victoriametrics_user }}"
+    group: "{{ victoriametrics_group }}"
+    mode: 0770
+
+- name: Configure vmagent prometheus.yml
+  ansible.builtin.template:
+    src: etc/victoriametrics/prometheus.yml.j2
+    dest: "{{ victoriametrics_vmagent_config_path }}"
+    owner: "{{ victoriametrics_user }}"
+    group: "{{ victoriametrics_group }}"
+    mode: 0644
+  notify: reload vmagent
+
+# Note that anyone on the system can read the service unit via `systemctl show`
+# so we may want to use an environment file for sensitive stuff instead.
+- name: Configure vmagent systemd service
+  ansible.builtin.template:
+    src: etc/systemd/system/victoria-metrics-vmagent.service.j2
+    dest: /etc/systemd/system/victoria-metrics-vmagent.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload systemd
+    - restart vmagent
+
+# This is not perfect, because on the first run the service will "restart" and
+# then "reload" when we flush the handlers (due to the order they are defined
+# in the handlers file), but for successive runs it will do mostly the right
+# thing: config changes → reload, service changes → restart.
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Start and enable vmagent
+  ansible.builtin.systemd:
+    name: victoria-metrics-vmagent.service
+    state: started
+    enabled: yes
+
+# vim: set sw=2 ts=2:

@@ -1,0 +1,45 @@
+---
+# file: roles/metrics/handlers/main.yml
+
+# Remember, Ansible handlers are run in the order they are defined here, not
+# the order they are listed in the task's notify.
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+# Reload is use when the config file changes
+- name: restart victoria-metrics
+  ansible.builtin.systemd:
+    name: victoria-metrics.service
+    state: restarted
+
+# Restart is used when the service file changes
+- name: restart vmagent
+  ansible.builtin.systemd:
+    name: victoria-metrics-vmagent.service
+    state: restarted
+
+# Reload is use when the config file changes
+- name: reload vmagent
+  ansible.builtin.systemd:
+    name: victoria-metrics-vmagent.service
+    state: reloaded
+
+# Restart is used when the service file changes
+- name: restart vmauth
+  ansible.builtin.systemd:
+    name: victoria-metrics-vmauth.service
+    state: restarted
+
+# Reload is use when the config file changes
+- name: reload vmauth
+  ansible.builtin.systemd:
+    name: victoria-metrics-vmauth.service
+    state: reloaded
+
+- name: restart node-exporter
+  ansible.builtin.systemd:
+    name: node-exporter.service
+    state: restarted
+
+# vim: set sw=2 ts=2:

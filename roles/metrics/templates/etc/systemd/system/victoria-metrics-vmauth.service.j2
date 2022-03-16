@@ -1,0 +1,26 @@
+[Unit]
+Description=Simple auth proxy, router and load balancer for VictoriaMetrics
+After=network.target
+ConditionFileIsExecutable={{ victoriametrics_vmauth_binary_path }}
+
+[Service]
+Type=simple
+User={{ victoriametrics_user }}
+Group={{ victoriametrics_group }}
+StartLimitBurst=5
+StartLimitInterval=0
+Restart=on-failure
+RestartSec=1
+ExecStart={{ victoriametrics_vmauth_binary_path }} \
+          -auth.config=/etc/victoriametrics/vmauth.yml \
+          -tls=true \
+          -tlsCertFile={{ victoriametrics_tls_crt_path }} \
+          -tlsKeyFile={{ victoriametrics_tls_key_path }} \
+          -httpListenAddr=0.0.0.0:8427
+ExecStop=/bin/kill -s SIGTERM $MAINPID
+ExecReload=/bin/kill -s SIGHUP $MAINPID
+LimitNOFILE=65536
+LimitNPROC=32000
+
+[Install]
+WantedBy=multi-user.target

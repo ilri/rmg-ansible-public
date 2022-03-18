@@ -1,10 +1,6 @@
 ---
 # file: roles/metrics/tasks/node_exporter.yml
 #
-# Download the vmutils tarball to /usr/local/bin. The binary in the tarball does
-# not have a version in its name and I don't want to parse CLI output, so all we
-# we can do is check if the tarball for the current version exists.
-#
 
 - name: Check node_exporter version
   ansible.builtin.stat:
@@ -19,6 +15,7 @@
   register: node_exporter_download
   when: not node_exporter_stat.stat.exists
 
+# Unzip the tarball and extract only the node_exporter file
 - name: Unzip node_exporter
   ansible.builtin.unarchive:
     src: "/usr/local/bin/{{ node_exporter_tarball }}"
@@ -27,7 +24,7 @@
     extra_opts:
       - --strip-components
       - 1
-      - node_exporter-1.3.1.linux-amd64/node_exporter
+      - "{{ node_exporter_tarball | replace('.tar.gz', '') }}/node_exporter"
   when: node_exporter_download is changed
 
 - name: Remove old node_exporter tarballs

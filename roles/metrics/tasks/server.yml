@@ -20,6 +20,9 @@
     remote_src: yes
     dest: /usr/local/bin
   when: victoriametrics_download is changed
+  notify:
+    - restart victoria-metrics
+    - restart vmauth
 
 - name: Remove old VictoriaMetrics tarballs
   ansible.builtin.file:
@@ -35,7 +38,8 @@
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
     mode: 0600
-  notify: reload vmauth
+  notify:
+    - reload vmauth
 
 - name: Create VictoriaMetrics data directory
   ansible.builtin.file:
@@ -56,6 +60,7 @@
     - {'src': 'etc/systemd/system/victoria-metrics.service.j2', 'dest': '/etc/systemd/system/victoria-metrics.service'}
     - {'src': 'etc/systemd/system/victoria-metrics-vmauth.service.j2', 'dest': '/etc/systemd/system/victoria-metrics-vmauth.service'}
   notify:
+    - reload systemd
     - restart victoria-metrics
     - restart vmauth
 

@@ -26,6 +26,8 @@
     remote_src: yes
     dest: /usr/local/bin
   when: vmutils_download is changed
+  notify:
+    - restart vmagent
 
 - name: Remove old vmutils tarballs
   ansible.builtin.file:
@@ -49,7 +51,8 @@
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
     mode: 0644
-  notify: reload vmagent
+  notify:
+    - reload vmagent
 
 # Note that anyone on the system can read the service unit via `systemctl show`
 # so we may want to use an environment file for sensitive stuff instead.

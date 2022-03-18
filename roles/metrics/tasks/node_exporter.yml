@@ -26,6 +26,8 @@
       - 1
       - "{{ node_exporter_tarball | replace('.tar.gz', '') }}/node_exporter"
   when: node_exporter_download is changed
+  notify:
+    - restart node-exporter
 
 - name: Remove old node_exporter tarballs
   ansible.builtin.file:

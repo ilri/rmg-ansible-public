@@ -5,7 +5,6 @@
   become: yes
   vars_files:
     - private/vars/common.yml
-    - private/vars/metrics.yml
     - private/vars/ipsets.yml
   roles:
     - common

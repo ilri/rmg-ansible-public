@@ -10,3 +10,13 @@ scrape_configs:
     regex: '.*'
     target_label: instance
     replacement: '{{ inventory_hostname }}'
+{% if 'mysqld' in extra_victoriametrics_exporters %}
+- job_name: mysqld
+  static_configs:
+  - targets: ['127.0.0.1:9104']
+  relabel_configs:
+  - source_labels: [instance]
+    regex: '.*'
+    target_label: instance
+    replacement: '{{ inventory_hostname }}'
+{% endif %}

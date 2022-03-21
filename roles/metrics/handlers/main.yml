@@ -42,4 +42,16 @@
     name: node-exporter.service
     state: restarted
 
+# Restart is used when the service file changes
+- name: restart mysqld-exporter
+  ansible.builtin.systemd:
+    name: mysqld-exporter.service
+    state: restarted
+
+# Reload is use when the config file changes
+- name: reload mysqld-exporter
+  ansible.builtin.systemd:
+    name: mysqld-exporter.service
+    state: reloaded
+
 # vim: set sw=2 ts=2:

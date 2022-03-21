@@ -1,0 +1,69 @@
+---
+# file: roles/metrics/tasks/mysqld_exporter.yml
+#
+
+- name: Check mysqld_exporter version
+  ansible.builtin.stat:
+    path: "/usr/local/bin/{{ mysqld_exporter_tarball }}"
+  register: mysqld_exporter_stat
+
+- name: Download mysqld_exporter
+  ansible.builtin.get_url:
+    url: "{{ mysqld_exporter_url }}"
+    dest: "/usr/local/bin/{{ mysqld_exporter_tarball }}"
+    checksum: "sha256:{{ mysqld_exporter_url_checksum }}"
+  register: mysqld_exporter_download
+  when: not mysqld_exporter_stat.stat.exists
+
+# Unzip the tarball and extract only the mysqld_exporter file
+- name: Unzip mysqld_exporter
+  ansible.builtin.unarchive:
+    src: "/usr/local/bin/{{ mysqld_exporter_tarball }}"
+    remote_src: yes
+    dest: /usr/local/bin
+    extra_opts:
+      - --strip-components
+      - 1
+      - "{{ mysqld_exporter_tarball | replace('.tar.gz', '') }}/mysqld_exporter"
+  when: mysqld_exporter_download is changed
+  notify:
+    - restart mysqld-exporter
+
+- name: Remove old mysqld_exporter tarballs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/usr/local/bin/mysqld_exporter-0.13.0.linux-amd64.tar.gz"
+
+- name: Configure mysqld_exporter config
+  ansible.builtin.template:
+    src: etc/victoriametrics/mysqld_exporter.yml.j2
+    dest: "{{ mysqld_exporter_config_path }}"
+    owner: "{{ victoriametrics_user }}"
+    group: "{{ victoriametrics_group }}"
+    mode: 0640
+  notify:
+    - reload mysqld-exporter
+
+- name: Configure mysqld-exporter systemd service
+  ansible.builtin.template:
+    src: etc/systemd/system/mysqld-exporter.service.j2
+    dest: /etc/systemd/system/mysqld-exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload systemd
+    - restart mysqld-exporter
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Start and enable mysqld-exporter
+  ansible.builtin.systemd:
+    name: mysqld-exporter.service
+    state: started
+    enabled: yes
+
+# vim: set sw=2 ts=2:

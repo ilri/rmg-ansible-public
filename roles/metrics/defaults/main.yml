@@ -63,4 +63,17 @@ node_exporter_url: https://github.com/prometheus/node_exporter/releases/download
 node_exporter_url_checksum: 68f3802c2dd3980667e4ba65ea2e1fb03f4a4ba026cca375f15a0390ff850949
 node_exporter_binary_path: /usr/local/bin/node_exporter
 
+# See: https://github.com/prometheus/mysqld_exporter/releases
+mysqld_exporter_version: 0.14.0
+# URL for mysqld_exporter tarball
+mysqld_exporter_tarball: mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64.tar.gz
+mysqld_exporter_url: https://github.com/prometheus/mysqld_exporter/releases/download/v{{ mysqld_exporter_version }}/{{ mysqld_exporter_tarball }}
+# sha256sum from sha256sums.txt on GitHub releases page or manually
+mysqld_exporter_url_checksum: c17402137a4e9745f593127f162c1003298910cb8aa7d05bee3384738de094ae
+mysqld_exporter_binary_path: /usr/local/bin/mysqld_exporter
+mysqld_exporter_config_path: /etc/victoriametrics/mysqld_exporter.cnf
+# Override in host or group vars
+mysqld_exporter_user: "{{ lookup('file', 'private/vars/metrics/mysqld_exporter_user') }}"
+mysqld_exporter_pass: "{{ lookup('file', 'private/vars/metrics/mysqld_exporter_pass') }}"
+
 # vim: set ts=2 sw=2:

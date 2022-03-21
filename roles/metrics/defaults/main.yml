@@ -10,10 +10,13 @@ victoriametrics_data_path: /var/lib/victoriametrics/data
 # The default retention period is 1 month
 victoriametrics_data_retention: 3
 
-# remoteWrite.url for vmagent on clients (perhaps this should this be private,
-# but if we use include_vars in the playbook then it is not possible to over-
-# ride in host_vars due to precedence rules).
-victoriametrics_remotewrite_url: https://41.204.190.7:8427/api/v1/write
+# remoteWrite.url for vmagent on clients. We use a lookup to read the value
+# from a text file instead of including it from private vars with vars_files
+# because then it is not possible to override in host_vars due to the Ansible
+# variable precedence rules.
+#
+# See: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html
+victoriametrics_remotewrite_url: "{{ lookup('file', 'private/vars/metrics/victoriametrics_remotewrite_url') }}"
 
 victoriametrics_tls_crt_path: /etc/victoriametrics/victoria-metrics.crt
 victoriametrics_tls_key_path: /etc/victoriametrics/victoria-metrics.key
@@ -37,8 +40,9 @@ victoriametrics_vmutils_url_checksum: f1e7b73d553557a3c962dc5140436651b690f57f84
 victoriametrics_vmauth_binary_path: /usr/local/bin/vmauth-prod
 victoriametrics_vmauth_config_path: /etc/victoriametrics/vmauth.yml
 # Credentials for clients connecting to vmauth (overridden in private vars)
-victoriametrics_vmauth_user: victoriametrics
-victoriametrics_vmauth_pass: password
+victoriametrics_vmauth_user: "{{ lookup('file', 'private/vars/metrics/victoriametrics_vmauth_user') }}"
+victoriametrics_vmauth_pass: "{{ lookup('file', 'private/vars/metrics/victoriametrics_vmauth_pass') }}"
+
 
 victoriametrics_vmagent_binary_path: /usr/local/bin/vmagent-prod
 # This is the path to the directory where vmagent stores its local buffer, for

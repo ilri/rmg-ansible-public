@@ -105,6 +105,11 @@ server {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 
+        # It seems some requests are coming with a literal "-" as the user agent
+        if ($http_user_agent = '-') {
+            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
+        }
+
         try_files $uri @tomcat;
 
         location ~* \.(?:ico|css|js|gif|jpe?g|png|woff|svg)$ {
@@ -116,6 +121,11 @@ server {
     # users (see the definition for the dynamicpages limit_req_zone later).
     location ~ /(browse|discover|search-filter|most-popular) {
         if ($http_user_agent = '') {
+            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
+        }
+
+        # It seems some requests are coming with a literal "-" as the user agent
+        if ($http_user_agent = '-') {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 
@@ -150,6 +160,11 @@ server {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 
+        # It seems some requests are coming with a literal "-" as the user agent
+        if ($http_user_agent = '-') {
+            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
+        }
+
         # rate limit for dynamic pages
         limit_req zone=dynamicpages burst=5;
 
@@ -175,6 +190,11 @@ server {
 
     location / {
         if ($http_user_agent = '') {
+            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
+        }
+
+        # It seems some requests are coming with a literal "-" as the user agent
+        if ($http_user_agent = '-') {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 
@@ -231,6 +251,11 @@ server {
     # log rest requests
     location /rest {
         if ($http_user_agent = '') {
+            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
+        }
+
+        # It seems some requests are coming with a literal "-" as the user agent
+        if ($http_user_agent = '-') {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 

@@ -230,7 +230,7 @@ server {
 
     # log rest requests
     location /rest {
-        if ($ua = '') {
+        if ($http_user_agent = '') {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 

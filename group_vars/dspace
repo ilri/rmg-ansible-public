@@ -91,4 +91,7 @@ pg_confd_vars:
 extra_fail2ban_filters:
   - nginx
 
+# Currently only used for the Let's Encrypt certbot renewal hooks
+webserver: nginx
+
 # vim: set ts=2 sw=2:

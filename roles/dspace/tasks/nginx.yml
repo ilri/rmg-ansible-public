@@ -59,7 +59,8 @@
   systemd: name=nginx state=started enabled=yes
 
 # for now this playbook only installs certbot and systemd renewal scripts
-- include_tasks: letsencrypt.yml
+- include_role:
+    name: web
   when: use_letsencrypt is defined and
         use_letsencrypt and
         ansible_service_mgr == 'systemd'

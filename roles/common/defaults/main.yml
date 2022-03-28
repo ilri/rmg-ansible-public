@@ -20,6 +20,7 @@ timezone: Etc/UTC
 # See: https://github.com/restic/restic/releases
 restic_version: 0.13.0
 restic_url: https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2
+# sha256sum
 restic_url_checksum: 514d0711317427f45d3ca23e66cf66e9f98caef660314d843f59b38511e94a2c
 restic_binary_path: /usr/local/bin/restic
 # list of restic backup paths

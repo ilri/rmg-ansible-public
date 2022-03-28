@@ -94,10 +94,4 @@ tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 # True unless you're in development and using "localhost" + snakeoil certs
 use_letsencrypt: True
 
-# Directory root for Let's Encrypt certs
-letsencrypt_root: /etc/letsencrypt/live
-
-# Location of Let's Encrypt's certbot script
-letsencrypt_certbot_path: /opt/certbot-auto
-
 # vim: set sw=2 ts=2:

@@ -5,53 +5,6 @@
 # To use it, add `use_letsencrypt: True` to a host's variables and run the
 # "letsencrypt" tag.
 
-- block:
-  - name: Copy systemd service to renew Let's Encrypt certs
-    template: src=renew-letsencrypt.service.j2 dest=/etc/systemd/system/renew-letsencrypt.service mode=0644 owner=root group=root
-    register: letsencrypt_service
-
-  - name: Copy systemd timer to renew Let's Encrypt certs
-    copy: src=renew-letsencrypt.timer dest=/etc/systemd/system/renew-letsencrypt.timer mode=0644 owner=root group=root
-    register: letsencrypt_timer
-
-  # need to reload to pick up service/timer changes
-  - name: Reload systemd daemon
-    systemd: daemon_reload=yes
-    when: letsencrypt_service is changed or letsencrypt_timer is changed
-
-  - name: Start and enable systemd timer to renew Let's Encrypt certs
-    systemd: name=renew-letsencrypt.timer state=started enabled=yes
-
-  - name: Download certbot
-    get_url: dest={{ letsencrypt_certbot_path }} url=https://dl.eff.org/certbot-auto mode=700
-
-  # Dependencies certbot checks for on its first run. I set them in a fact so that
-  # I can pass the list directly to the apt module to install in one transaction.
-  - name: Set certbot dependencies (Ubuntu 18.04)
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==')
-    set_fact:
-      certbot_dependencies:
-        - augeas-doc
-        - augeas-tools
-        - libexpat1-dev
-        - libpython-dev
-        - libpython2.7
-        - libpython2.7-dev
-        - libssl-dev
-        - python-dev
-        - python-pip-whl
-        - python-pkg-resources
-        - python-setuptools
-        - python-virtualenv
-        - python2.7-dev
-        - python3-virtualenv
-        - virtualenv
-
-  - name: Install certbot dependencies
-    apt: name={{ certbot_dependencies }} state=present cache_valid_time=3600
-  when: ansible_distribution != 'Ubuntu' and ansible_distribution_major_version is version('20.04', '!=')
-  tags: letsencrypt
-
 # On Ubuntu 20.04 it is no longer recommended/supported to use the standalone
 # certbot-auto so I guess we need to use the one from the repositories.
 - block:

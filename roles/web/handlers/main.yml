@@ -1,0 +1,10 @@
+---
+# file: roles/web/handlers/main.yml
+
+# When the nginx binary changes
+- name: restart nginx
+  systemd: name=nginx state=restarted
+
+# When configs or TLS certificates change
+- name: reload nginx
+  systemd: name=nginx state=reloaded

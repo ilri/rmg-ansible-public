@@ -1,6 +1,6 @@
 ---
 # This role currently only installs and does basic configuration of the Let's
-# Encrypt certbot client. See letsencrypt.yml for more information.
+# Encrypt certbot client and some auxiliary nginx configuration.
 
 - name: Configure Let's Encrypt
   include_tasks: letsencrypt.yml
@@ -8,5 +8,12 @@
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version is version('20.04', '==')
   tags: letsencrypt
+
+- name: Configure nginx
+  include_tasks: nginx.yml
+  when:
+    - webserver is defined
+    - webserver == 'nginx'
+  tags: nginx
 
 # vim: set ts=2 sw=2:

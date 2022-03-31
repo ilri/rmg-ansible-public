@@ -29,11 +29,8 @@
   notify:
     - reload nginx
 
-- name: Configure nginx vhosts
-  template: src=nginx/{{ item }} dest=/etc/nginx/conf.d/{{ item | replace(".j2", "") }} mode=0644 owner=root group=root
-  loop:
-    - blank-vhost.conf.j2
-    - default.conf.j2
+- name: Configure nginx dspace vhost
+  template: src=nginx/dspace.conf.j2 dest=/etc/nginx/conf.d/dspace.conf mode=0644 owner=root group=root
   notify:
     - reload nginx
 
@@ -42,28 +39,13 @@
   notify:
     - reload nginx
 
-- name: Generate self-signed TLS cert
-  command: openssl req -x509 -nodes -sha256 -days 365 -subj "/C=SO/ST=SO/L=snakeoil/O=snakeoil/CN=snakeoil" -newkey rsa:2048 -keyout /etc/ssl/private/nginx-snakeoil.key -out /etc/ssl/certs/nginx-snakeoil.crt -extensions v3_ca creates=/etc/ssl/certs/nginx-snakeoil.crt
-  notify:
-    - reload nginx
-
-- name: Download 4096-bit RFC 7919 dhparams
-  get_url:
-    url: https://raw.githubusercontent.com/internetstandards/dhe_groups/master/ffdhe4096.pem
-    checksum: sha256:64852d6890ff9e62eecd1ee89c72af9af244dfef5b853bcedea3dfd7aade22b3
-    dest: "{{ nginx_ssl_dhparam }}"
-  notify:
-    - reload nginx
+# Run some common things from the web role, like installing certbot and configu-
+# ring nginx TLS settings, default vhost, etc.
+- include_role:
+    name: web
+  tags: letsencrypt
 
 - name: Start & enable nginx service
   systemd: name=nginx state=started enabled=yes
-
-# for now this playbook only installs certbot and systemd renewal scripts
-- include_role:
-    name: web
-  when: use_letsencrypt is defined and
-        use_letsencrypt and
-        ansible_service_mgr == 'systemd'
-  tags: letsencrypt
 
 # vim: set sw=2 ts=2:

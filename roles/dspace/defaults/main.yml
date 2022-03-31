@@ -28,10 +28,6 @@ nginx_tls_key: /etc/letsencrypt/live/{{ nginx_server_name }}/privkey.pem
 # 301 on production, 302 on development!
 nginx_redirect_type: 301
 
-# Enable HTTP Strict Transport Security?
-# True on production, False on development!
-nginx_enable_hsts: True
-
 # where to install DSpace
 dspace_root: /home/dspace-install
 

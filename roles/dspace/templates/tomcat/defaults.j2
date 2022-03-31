@@ -1,7 +1,16 @@
 {{ ansible_managed | comment }}
 
+GCLOG_OPTS=" \
+-verbose:gc \
+-Xloggc:{{ tomcat_user_home }}/gc.log \
+-XX:+PrintGCDateStamps \
+-XX:+PrintGCDetails \
+-XX:+PrintAdaptiveSizePolicy \
+-XX:+PrintReferenceGC
+"
+
 {% if dspace_java_opts is defined %}
-CATALINA_OPTS="{{ dspace_java_opts }}"
+CATALINA_OPTS="{{ dspace_java_opts }} $GCLOG_OPTS"
 {% else %}
 JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
 {% endif %}

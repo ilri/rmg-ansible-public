@@ -95,19 +95,7 @@ server {
     ssl_certificate /etc/letsencrypt/live/library.cgiar.org/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/library.cgiar.org/privkey.pem;
 
-    ssl_session_timeout {{ nginx_ssl_session_timeout }};
-    ssl_session_cache {{ nginx_ssl_session_cache }};
-    ssl_buffer_size {{ nginx_ssl_buffer_size }};
-    ssl_dhparam {{ nginx_ssl_dhparam }};
-    ssl_protocols {{ nginx_ssl_protocols }};
-    ssl_ciphers "{{ tls_cipher_suite }}";
-    ssl_prefer_server_ciphers on;
-
-    {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '>=') %}
-    ssl_stapling on;
-    ssl_stapling_verify on;
-    resolver {{ nginx_ssl_stapling_resolver }};
-    {% endif %}
+    include /etc/nginx/intermediate-tls.conf;
 
     # Hardcode an alias for the Google Search Console's verification file
     # test: https://library.cgiar.org/google31ea257b2e1fdfeb.html

@@ -15,4 +15,8 @@ nginx_ssl_port: 443
 # See: https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling
 nginx_ssl_stapling_resolver: '1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001]'
 
+# Enable HTTP Strict Transport Security? Generally we want this everywhere, but
+# since the price of undoing this is so high let's keep it off for now.
+nginx_enable_hsts: False
+
 # vim: set sw=2 ts=2:

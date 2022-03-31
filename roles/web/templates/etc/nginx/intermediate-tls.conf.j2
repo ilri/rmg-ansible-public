@@ -20,3 +20,8 @@ resolver {{ nginx_ssl_stapling_resolver }};
 # Note that you'll have to define and rotate the keys securely by yourself. In absence
 # of such infrastructure, consider turning off session tickets:
 ssl_session_tickets off;
+
+{% if nginx_enable_hsts == True %}
+# Enable this if you want HSTS (recommended, but be careful)
+add_header Strict-Transport-Security max-age=15768000;
+{% endif %} {# end: nginx_enable_hsts #}

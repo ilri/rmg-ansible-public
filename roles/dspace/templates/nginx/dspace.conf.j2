@@ -66,38 +66,10 @@ server {
     add_header X-Robots-Tag "none";
     {% endif %}
 
-    {% if nginx_tls_cert is defined %}
     ssl_certificate {{ nginx_tls_cert }};
     ssl_certificate_key {{ nginx_tls_key }};
 
-    ssl_session_timeout {{ nginx_ssl_session_timeout }};
-    ssl_session_cache {{ nginx_ssl_session_cache }};
-    ssl_buffer_size {{ nginx_ssl_buffer_size }};
-    ssl_dhparam {{ nginx_ssl_dhparam }};
-    ssl_protocols {{ nginx_ssl_protocols }};
-    ssl_ciphers "{{ tls_cipher_suite }}";
-    ssl_prefer_server_ciphers on;
-
-    {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '>=') %}
-    ssl_stapling on;
-    ssl_stapling_verify on;
-    resolver {{ nginx_ssl_stapling_resolver }};
-    {% endif %}
-
-    # nginx does not auto-rotate session ticket keys: only a HUP / restart will do so and
-    # when a restart is performed the previous key is lost, which resets all previous
-    # sessions. The fix for this is to setup a manual rotation mechanism:
-    # http://trac.nginx.org/nginx/changeset/1356a3b9692441e163b4e78be4e9f5a46c7479e9/nginx
-    #
-    # Note that you'll have to define and rotate the keys securely by yourself. In absence
-    # of such infrastructure, consider turning off session tickets:
-    ssl_session_tickets off;
-
-    {% if nginx_enable_hsts == True %}
-    # Enable this if you want HSTS (recommended, but be careful)
-    add_header Strict-Transport-Security max-age=15768000;
-    {% endif %} {# end: nginx_enable_hsts #}
-    {% endif %} {# end: nginx_tls_cert #}
+    include /etc/nginx/intermediate-tls.conf;
 
     # static assets we can load from the file system directly with nginx
     location ~ /(themes|aspects/ReportingSuite|aspects/Statistics) {

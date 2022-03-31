@@ -56,22 +56,7 @@ server {
     ssl_certificate {{ nginx_ilri_tls_cert }};
     ssl_certificate_key {{ nginx_ilri_tls_key }};
 
-    ssl_session_timeout {{ nginx_ssl_session_timeout }};
-    ssl_session_cache {{ nginx_ssl_session_cache }};
-    ssl_buffer_size {{ nginx_ssl_buffer_size }};
-    ssl_dhparam {{ nginx_ssl_dhparam }};
-    ssl_protocols {{ nginx_ssl_protocols }};
-    ssl_ciphers "{{ tls_cipher_suite }}";
-    ssl_prefer_server_ciphers on;
-
-    # nginx does not auto-rotate session ticket keys: only a HUP / restart will do so and
-    # when a restart is performed the previous key is lost, which resets all previous
-    # sessions. The fix for this is to setup a manual rotation mechanism:
-    # http://trac.nginx.org/nginx/changeset/1356a3b9692441e163b4e78be4e9f5a46c7479e9/nginx
-    #
-    # Note that you'll have to define and rotate the keys securely by yourself. In absence
-    # of such infrastructure, consider turning off session tickets:
-    ssl_session_tickets off;
+    include /etc/nginx/intermediate-tls.conf;
 
     # Add header to forbid robots to index
     # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag

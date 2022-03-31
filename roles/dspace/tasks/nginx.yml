@@ -34,7 +34,7 @@
   notify:
     - reload nginx
 
-- name: Configure munin vhost
+- name: Configure nginx munin vhost
   copy: src=nginx/munin.conf dest=/etc/nginx/conf.d/munin.conf mode=0644 owner=root group=root
   notify:
     - reload nginx

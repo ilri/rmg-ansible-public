@@ -1,0 +1,33 @@
+---
+# file: roles/metrics/tasks/jmx_exporter.yml
+
+- name: Check jmx_exporter version
+  ansible.builtin.stat:
+    path: "{{ jmx_exporter_jar_path }}"
+  register: jmx_exporter_stat
+
+- name: Download jmx_exporter
+  ansible.builtin.get_url:
+    url: "{{ jmx_exporter_url }}"
+    dest: "{{ jmx_exporter_jar_path }}"
+    checksum: "sha256:{{ jmx_exporter_url_checksum }}"
+  when: not jmx_exporter_stat.stat.exists
+
+- name: Remove old jmx_exporter jars
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/victoriametrics/jmx_prometheus_javaagent-0.16.0.jar"
+
+- name: Configure jmx_exporter
+  ansible.builtin.copy:
+    src: etc/victoriametrics/jmx_exporter.yml
+    dest: "{{ jmx_exporter_config_path }}"
+    owner: "{{ victoriametrics_user }}"
+    group: "{{ victoriametrics_group }}"
+    mode: 0644
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
+
+# vim: set sw=2 ts=2:

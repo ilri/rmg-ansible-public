@@ -9,8 +9,11 @@ GCLOG_OPTS=" \
 -XX:+PrintReferenceGC
 "
 
+{# Note: these variables come from the metrics role! #}
+JMX_EXPORTER="-javaagent:{{ jmx_exporter_jar_path }}=127.0.0.1:9180:{{ jmx_exporter_config_path }}"
+
 {% if dspace_java_opts is defined %}
-CATALINA_OPTS="{{ dspace_java_opts }} $GCLOG_OPTS"
+CATALINA_OPTS="{{ dspace_java_opts }} $GCLOG_OPTS $JMX_EXPORTER"
 {% else %}
 JAVA_OPTS="-Djava.awt.headless=true -Xmx128m -XX:+UseConcMarkSweepGC"
 {% endif %}

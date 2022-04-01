@@ -1,5 +1,5 @@
 ---
-# file: tasks/ubuntu.yml
+# file: roles/postgres/tasks/ubuntu.yml
 
 - block:
   - name: Add PGDG apt list file
@@ -29,25 +29,28 @@
   - name: Install PostgreSQL packages
     apt: name={{ postgresql_packages }} cache_valid_time=3600 state=present
     notify:
-      - restart postgres
+      - restart postgresql
     tags: packages
 
-  - name: Create additional postgresql configs. directory
+  - name: Create additional PostgreSQL config directory
     file: path={{ pg_conf_dir }}/conf.d mode=0755 owner=postgres group=postgres state=directory
 
-  - name: Set custom postgresql variables
+  - name: Set custom PostgreSQL variables
     template: src=pg_confd_vars.conf.j2 dest={{ pg_conf_dir }}/conf.d/custom_vars.conf mode=0644 owner=postgres group=postgres
     when: pg_confd_vars is defined
-    notify: restart postgres
+    notify:
+      - restart postgresql
 
-  - name: Copy postgres configs
+  - name: Copy PostgreSQL configs
     template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
     loop:
       - { src: 'postgresql-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/postgresql.conf', mode: '0644', owner: 'postgres', group: 'postgres' }
       - { src: 'pg_hba-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/pg_hba.conf', mode: '0640', owner: 'postgres', group: 'postgres' }
-    notify: restart postgres
+    notify:
+      - restart postgresql
 
-  - name: start & enable postgres
+  - name: Start and enable PostgreSQL
     systemd: name=postgresql state=started enabled=true
   tags: postgresql
+
 # vim: set sw=2 ts=2:

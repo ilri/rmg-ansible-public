@@ -1,8 +1,7 @@
 ---
-# file: handlers/main.yml
+# file: roles/postgres/handlers/main.yml
 
-- name: restart postgres
+- name: restart postgresql
   systemd: name=postgresql state=restarted
-  when: ansible_distribution == 'Ubuntu'
 
 # vim: set sw=2 ts=2:

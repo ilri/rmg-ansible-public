@@ -13,8 +13,5 @@
 - name: restart tomcat8
   systemd: name=tomcat8 state=restarted
 
-- name: reload postgresql
-  systemd: name=postgresql state=reloaded
-
 - name: restart dspace-statistics-api
   systemd: name=dspace-statistics-api state=restarted

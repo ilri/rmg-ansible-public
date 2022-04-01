@@ -332,7 +332,7 @@
   template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=root group=root
   loop:
     - { 'src': dspace-statistics-api.j2, 'dest': /etc/dspace-statistics-api }
-    - { 'src': 'tomcat/defaults.j2', 'dest': '/etc/default/tomcat{{ tomcat_version_major }}' }
+    - { 'src': tomcat/defaults.j2, 'dest': '/etc/default/tomcat{{ tomcat_version_major }}' }
   register: dspace_systemd_environment
 
 # need to reload to pick up service/timer/environment changes

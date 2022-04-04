@@ -18,6 +18,10 @@ echo 'Starting restic backup of {{ restic_backup_paths|join(" ") }}'
 # like a grandfather, father, son scheme. It will still work if you do backups
 # more sporadically, but it's just a bit harder to define what a "day" is.
 echo 'Starting repository prune'
-{{ restic_binary_path }} forget --keep-daily 7 --keep-weekly 4 --keep-monthly 1 --prune
+{{ restic_binary_path }} forget
+                         --keep-daily 7   \
+                         --keep-weekly 4  \
+                         --keep-monthly 1 \
+                         --prune
 
 exit 0

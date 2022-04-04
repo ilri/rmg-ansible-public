@@ -11,4 +11,6 @@ Nice=19
 IOSchedulingClass=2
 IOSchedulingPriority=7
 
+# Remove stale locks
+ExecStartPre=/usr/local/bin/restic unlock
 ExecStart=/opt/ilri/scripts/restic-backup.sh

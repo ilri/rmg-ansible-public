@@ -14,3 +14,5 @@ IOSchedulingPriority=7
 # Remove stale locks
 ExecStartPre=/usr/local/bin/restic unlock
 ExecStart=/opt/ilri/scripts/restic-backup.sh
+# Prune backups according to policy
+ExecStartPost=/opt/ilri/scripts/restic-prune.sh

@@ -78,8 +78,11 @@
       - "{{ restic_binary_path }}-0.11.0"
       - "{{ restic_binary_path }}-0.12.0"
 
-  - name: Copy restic-backup.sh
-    template: src=scripts/restic-backup.sh.j2 dest=/opt/ilri/scripts/restic-backup.sh owner=root group=root mode=0755
+  - name: Copy restic scripts
+    template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
+    loop:
+      - { 'src': scripts/restic-backup.sh.j2, 'dest': '/opt/ilri/scripts/restic-backup.sh' }
+      - { 'src': scripts/restic-prune.sh.j2, 'dest': '/opt/ilri/scripts/restic-prune.sh' }
 
   - name: Copy restic systemd service unit
     template: src=restic-backup.service.j2 dest=/etc/systemd/system/restic-backup.service mode=0644 owner=root group=root

@@ -81,7 +81,7 @@
   - name: Copy restic-backup.sh
     template: src=scripts/restic-backup.sh.j2 dest=/opt/ilri/scripts/restic-backup.sh owner=root group=root mode=0755
 
-  - name: Copy restic systemd service units
+  - name: Copy restic systemd service unit
     template: src=restic-backup.service.j2 dest=/etc/systemd/system/restic-backup.service mode=0644 owner=root group=root
     register: restic_systemd_service
 

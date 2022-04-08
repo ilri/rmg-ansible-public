@@ -51,6 +51,8 @@
       - sysstat
       - tmux
       - vim-enhanced
+      - unzip
+      - pciutils
 
   - name: Install base packages
     yum: name={{ centos_base_packages }} state=present

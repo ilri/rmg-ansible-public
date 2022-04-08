@@ -44,7 +44,6 @@
       - tmpwatch.x86_64
       - htop
       - nano
-      - unzip
       - wget
       - perl-Text-Soundex.x86_64 # for RepeatMasker
       - firefox # Dedan swears that he needs this
@@ -173,7 +172,6 @@
       - tbb-devel.x86_64 # for flexbar
       - tmpwatch.x86_64
       - udunits2-devel.x86_64 # for some R libraries
-      - unzip.x86_64
       - wget.x86_64
       - xorg-x11-xauth.x86_64 # or else X11 forwarding doesn't work
       - graphviz

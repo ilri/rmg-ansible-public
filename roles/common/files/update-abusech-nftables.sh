@@ -59,5 +59,4 @@ NFT_HEAD
 fi
 
 echo "Reloading nftables"
-# The abusech nftables sets are included by nftables.conf
-/usr/sbin/nft -f /etc/nftables.conf
+/usr/bin/systemctl reload nftables.service

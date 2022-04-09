@@ -85,7 +85,6 @@ NFT_HEAD
 fi
 
 echo "Reloading nftables"
-# The spamhaus nftables sets are included by nftables.conf
-/usr/sbin/nft -f /etc/nftables.conf
+/usr/bin/systemctl reload nftables.service
 
 rm -v drop.txt edrop.txt dropv6.txt

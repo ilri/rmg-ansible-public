@@ -1,0 +1,95 @@
+---
+# Common nftables tasks for Ubuntu 18.04, Ubuntu 20.04, and CentOS 8 Stream.
+
+- name: Copy nftables.conf
+  ansible.builtin.template:
+    src: nftables.conf.j2
+    dest: "{{ nftables_conf_path }}"
+    owner: root
+    mode: 0644
+  notify:
+    - restart nftables
+    - restart fail2ban
+
+# Ubuntu does not have /etc/nftables directory by default
+- name: Create /etc/nftables extra config directory
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - ansible_distribution_version is version('18.04', '>=')
+  ansible.builtin.file:
+    path: /etc/nftables
+    state: directory
+    owner: root
+    mode: 0755
+
+# Only overwrite static sets that are updated on the control machine and stored
+# in git. The others are updated daily by systemd timers on the host so we only
+# want to copy them if they don't already exist (ie, the host is new).
+- name: Copy nftables sets
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "/etc/nftables/{{ item.src }}"
+    owner: root
+    group: root
+    mode: 0644
+    force: "{{ item.force }}"
+  loop:
+    - { src: "spamhaus-ipv4.nft", force: "no" }
+    - { src: "spamhaus-ipv6.nft", force: "no" }
+    - { src: "abusech-ipv4.nft", force: "no" }
+    - { src: "abuseipdb-ipv4.nft", force: "yes" }
+    - { src: "abuseipdb-ipv6.nft", force: "yes" }
+    - { src: "russian-ddos-networks-ipv4.nft", force: "yes" }
+    - { src: "russian-ddos-networks-ipv6.nft", force: "yes" }
+  notify:
+    - restart nftables
+    - restart fail2ban
+
+- name: Copy nftables update scripts
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    mode: 0755
+    owner: root
+    group: root
+  loop:
+    - update-spamhaus-nftables.sh
+    - aggregate-cidr-addresses.pl
+    - update-abusech-nftables.sh
+
+- name: Copy nftables systemd units
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+      - update-spamhaus-nftables.service
+      - update-spamhaus-nftables.timer
+      - update-abusech-nftables.service
+      - update-abusech-nftables.timer
+  register: nftables_systemd_units
+
+# need to reload to pick up service/timer/environment changes
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  when: nftables_systemd_units is changed
+
+- name: Start and enable nftables update timers
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  loop:
+    - update-spamhaus-nftables.timer
+    - update-abusech-nftables.timer
+
+- name: Start and enable nftables service
+  ansible.builtin.systemd:
+    name: nftables.service
+    state: started
+    enabled: yes
+
+# vim: set sw=2 ts=2:

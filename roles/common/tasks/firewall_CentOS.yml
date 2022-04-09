@@ -56,48 +56,8 @@
       - restart nftables
       - restart fail2ban
 
-  - name: Copy nftables.conf
+  - include_tasks: nftables.yml
     when: ansible_distribution_major_version is version('8', '==')
-    template: src=nftables.conf.j2 dest={{ nftables_conf_path }} owner=root mode=0644
-    notify:
-      - restart nftables
-      - restart fail2ban
-
-  # Only overwrite static sets that are updated on the control machine and stored
-  # in git. The others are updated daily by systemd timers on the host so we only
-  # want to copy them if they don't already exist (ie, the host is new).
-  - name: Copy nftables sets
-    when: ansible_distribution_major_version is version('8', '==')
-    copy: src={{ item.src }} dest=/etc/nftables/{{ item.src }} owner=root group=root mode=0644 force={{ item.force }}
-    loop:
-      - { src: "spamhaus-ipv4.nft", force: "no" }
-      - { src: "spamhaus-ipv6.nft", force: "no" }
-      - { src: "abusech-ipv4.nft", force: "no" }
-      - { src: "abuseipdb-ipv4.nft", force: "yes" }
-      - { src: "abuseipdb-ipv6.nft", force: "yes" }
-      - { src: "russian-ddos-networks-ipv4.nft", force: "yes" }
-      - { src: "russian-ddos-networks-ipv6.nft", force: "yes" }
-    notify:
-      - restart nftables
-      - restart fail2ban
-
-  - name: Copy nftables update scripts
-    when: ansible_distribution_major_version is version('8', '==')
-    copy: src={{ item }} dest=/usr/local/bin/{{ item }} mode=0755 owner=root group=root
-    loop:
-      - update-spamhaus-nftables.sh
-      - aggregate-cidr-addresses.pl
-      - update-abusech-nftables.sh
-
-  - name: Copy nftables systemd units
-    when: ansible_distribution_major_version is version('8', '==')
-    copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
-    loop:
-        - update-spamhaus-nftables.service
-        - update-spamhaus-nftables.timer
-        - update-abusech-nftables.service
-        - update-abusech-nftables.timer
-    register: nftables_systemd_units
 
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
     when: ansible_distribution_major_version is version('7', '==')
@@ -137,19 +97,7 @@
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
     systemd: daemon_reload=yes
-    when: spamhaus_firewalld_systemd_units is changed or
-          nftables_systemd_units is changed
-
-  - name: Start and enable nftables update timers
-    when: ansible_distribution_major_version is version('8', '==')
-    systemd: name={{ item }} state=started enabled=yes
-    loop:
-      - update-spamhaus-nftables.timer
-      - update-abusech-nftables.timer
-
-  - name: Start and enable nftables
-    when: ansible_distribution_major_version is version('8', '==')
-    systemd: name=nftables state=started enabled=yes
+    when: spamhaus_firewalld_systemd_units is changed
 
   - name: Start and enable Spamhaus firewalld update timer
     when: ansible_distribution_major_version is version('7', '==')

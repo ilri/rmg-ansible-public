@@ -1,6 +1,7 @@
 ---
 # Use iptables service on CentOS 6
-# Use firewalld on CentOS >= 7
+# Use firewalld on CentOS 7
+# Use nftables on CentOS 8
 
 - block:
   - name: Copy /etc/sysconfig/iptables
@@ -16,6 +17,7 @@
       - restart ip6tables
 
   - name: Set CentOS firewall packages
+    when: ansible_distribution_major_version is version('7', '==')
     set_fact:
       centos_firewall_packages:
         - tidy
@@ -24,64 +26,92 @@
         - fail2ban-selinux
         - python-inotify
 
+  - name: Set CentOS firewall packages
+    when: ansible_distribution_major_version is version('8', '==')
+    set_fact:
+      centos_firewall_packages:
+        - fail2ban
+        - fail2ban-systemd
+        - fail2ban-selinux
+        - python3-inotify
+        - perl-Net-IP # for aggregate-cidr-addresses.pl
+
   - name: Install firewall packages
     when: ansible_distribution_major_version is version('7', '>=')
     yum: name={{ centos_firewall_packages }} state=present
     tags: packages
 
-# firewalld developers only claim nftables support with nftables >= 0.9.3
-# See: https://firewalld.org/2019/09/libnftables-JSON
-  - name: Use iptables backend in firewalld
-    when: ansible_distribution_major_version is version('8', '==')
-    lineinfile:
-      dest: /etc/firewalld/firewalld.conf
-      regexp: '^FirewallBackend=nftables$'
-      line: 'FirewallBackend=iptables'
-    notify:
-      - restart firewalld
-      - restart fail2ban
-
-# firewalld seems to have an issue with iptables 1.8.2. Using individual calls
-# seems to work around it.
-# See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=931722
-  - name: Use individual iptables calls
-    when: ansible_distribution_major_version is version('8', '==')
-    lineinfile:
-      dest: /etc/firewalld/firewalld.conf
-      regexp: '^IndividualCalls=no$'
-      line: 'IndividualCalls=yes'
-    notify:
-      - restart firewalld
-      - restart fail2ban
-
-# 2019-12-10: fail2ban does not currently work with SELinux on CentOS 8, ie:
+# 2022-04-09: fail2ban does not currently work with SELinux on CentOS 8 Stream:
 #
-#   SELinux is preventing /usr/lib/systemd/systemd from mounton access on the directory /run/systemd/unit-root/var/lib/fail2ban.
-#   SELinux is preventing /usr/libexec/platform-python3.6 from using the nnp_transition access on a process.
+#   SELinux is preventing /usr/libexec/platform-python3.6 from append access on the file fail2ban.pid.
+#   SELinux is preventing /usr/libexec/platform-python3.6 from append access on the file fail2ban.log.
 #
-# Set SELinux to permissive for now.
+# See: https://bugzilla.redhat.com/show_bug.cgi?id=2073606
   - name: Disable selinux on CentOS 8
     when: ansible_distribution_major_version is version('8', '==')
     selinux:
       policy: targeted
       state: permissive
     notify:
-      - restart firewalld
+      - restart nftables
       - restart fail2ban
 
+  - name: Copy nftables.conf
+    when: ansible_distribution_major_version is version('8', '==')
+    template: src=nftables.conf.j2 dest=/etc/sysconfig/nftables.conf owner=root mode=0644
+    notify:
+      - restart nftables
+      - restart fail2ban
+
+  # Only overwrite static sets that are updated on the control machine and stored
+  # in git. The others are updated daily by systemd timers on the host so we only
+  # want to copy them if they don't already exist (ie, the host is new).
+  - name: Copy nftables sets
+    when: ansible_distribution_major_version is version('8', '==')
+    copy: src={{ item.src }} dest=/etc/nftables/{{ item.src }} owner=root group=root mode=0644 force={{ item.force }}
+    loop:
+      - { src: "spamhaus-ipv4.nft", force: "no" }
+      - { src: "spamhaus-ipv6.nft", force: "no" }
+      - { src: "abusech-ipv4.nft", force: "no" }
+      - { src: "abuseipdb-ipv4.nft", force: "yes" }
+      - { src: "abuseipdb-ipv6.nft", force: "yes" }
+      - { src: "russian-ddos-networks-ipv4.nft", force: "yes" }
+      - { src: "russian-ddos-networks-ipv6.nft", force: "yes" }
+    notify:
+      - restart nftables
+      - restart fail2ban
+
+  - name: Copy nftables update scripts
+    when: ansible_distribution_major_version is version('8', '==')
+    copy: src={{ item }} dest=/usr/local/bin/{{ item }} mode=0755 owner=root group=root
+    loop:
+      - update-spamhaus-nftables.sh
+      - aggregate-cidr-addresses.pl
+      - update-abusech-nftables.sh
+
+  - name: Copy nftables systemd units
+    when: ansible_distribution_major_version is version('8', '==')
+    copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
+    loop:
+        - update-spamhaus-nftables.service
+        - update-spamhaus-nftables.timer
+        - update-abusech-nftables.service
+        - update-abusech-nftables.timer
+    register: nftables_systemd_units
+
   - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
-    when: ansible_distribution_major_version is version('7', '>=')
+    when: ansible_distribution_major_version is version('7', '==')
     template: src=public.xml.j2 dest=/etc/firewalld/zones/public.xml owner=root mode=0600
 
   - name: Format public.xml firewalld zone file
-    when: ansible_distribution_major_version is version('7', '>=')
+    when: ansible_distribution_major_version is version('7', '==')
     command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
     notify:
       - restart firewalld
       - restart fail2ban
 
   - name: Copy ipsets of abusive IPs
-    when: ansible_distribution_major_version is version('7', '>=')
+    when: ansible_distribution_major_version is version('7', '==')
     copy: src={{ item.src }} dest=/etc/firewalld/ipsets/{{ item.src }} owner=root group=root mode=0600 force={{ item.force }}
     loop:
       - { src: "spamhaus-ipv4.xml", force: "no" }
@@ -93,11 +123,11 @@
       - restart fail2ban
 
   - name: Copy Spamhaus firewalld update script
-    when: ansible_distribution_major_version is version('7', '>=')
+    when: ansible_distribution_major_version is version('7', '==')
     copy: src=update-spamhaus-lists.sh dest=/usr/local/bin/update-spamhaus-lists.sh mode=0755 owner=root group=root
 
   - name: Copy Spamhaus firewalld systemd units
-    when: ansible_distribution_major_version is version('7', '>=')
+    when: ansible_distribution_major_version is version('7', '==')
     copy: src={{ item }} dest=/etc/systemd/system/{{ item }} mode=0644 owner=root group=root
     loop:
         - update-spamhaus-lists.service
@@ -107,10 +137,22 @@
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
     systemd: daemon_reload=yes
-    when: spamhaus_firewalld_systemd_units is changed
+    when: spamhaus_firewalld_systemd_units is changed or
+          nftables_systemd_units is changed
+
+  - name: Start and enable nftables update timers
+    when: ansible_distribution_major_version is version('8', '==')
+    systemd: name={{ item }} state=started enabled=yes
+    loop:
+      - update-spamhaus-nftables.timer
+      - update-abusech-nftables.timer
+
+  - name: Start and enable nftables
+    when: ansible_distribution_major_version is version('8', '==')
+    systemd: name=nftables state=started enabled=yes
 
   - name: Start and enable Spamhaus firewalld update timer
-    when: ansible_distribution_major_version is version('7', '>=')
+    when: ansible_distribution_major_version is version('7', '==')
     systemd: name=update-spamhaus-lists.timer state=started enabled=yes
     notify:
       - restart firewalld

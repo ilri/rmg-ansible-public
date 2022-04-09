@@ -58,7 +58,7 @@
 
   - name: Copy nftables.conf
     when: ansible_distribution_major_version is version('8', '==')
-    template: src=nftables.conf.j2 dest=/etc/sysconfig/nftables.conf owner=root mode=0644
+    template: src=nftables.conf.j2 dest={{ nftables_conf_path }} owner=root mode=0644
     notify:
       - restart nftables
       - restart fail2ban

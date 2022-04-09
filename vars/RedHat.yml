@@ -8,6 +8,8 @@ sshd_service_name: sshd
 # CentOS, but `apache2` on Debian)
 fail2ban_httpd_logpath: /var/log/httpd/*access.log
 
+nftables_conf_path: /etc/sysconfig/nftables.conf
+
 # LDAP config directory
 ldap_conf_dir: /etc/openldap
 

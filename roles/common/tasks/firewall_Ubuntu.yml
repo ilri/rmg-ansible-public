@@ -52,7 +52,9 @@
   #
   # See: https://bugs.launchpad.net/ubuntu/+source/linux-kvm/+bug/1881346
   - name: Install Ubuntu LTS kernel package
-    when: ansible_distribution_version is version('18.04', '==') and ansible_virtualization_role == 'guest'
+    when:
+      - ansible_distribution_version is version('18.04', '==')
+      - ansible_virtualization_role == 'guest'
     apt: pkg=linux-virtual-hwe-18.04 state=present cache_valid_time=3600
 
   - name: Remove ufw

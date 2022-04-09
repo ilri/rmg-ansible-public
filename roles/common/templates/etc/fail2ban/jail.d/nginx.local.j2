@@ -2,7 +2,10 @@
 enabled   = true
 # See: /etc/fail2ban/filter.d/nginx-botsearch.conf
 filter    = nginx-botsearch
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
+{% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==') %}
+# Integrate with nftables
+banaction=nftables[type=allports]
+{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
 # Integrate with nftables
 banaction=nftables[type=allports]
 {% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}

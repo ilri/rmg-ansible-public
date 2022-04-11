@@ -53,9 +53,8 @@
     - reload sysctl
   tags: sysctl
 
-# I'm not aware of any tuning advice for CentOS 8 so let's use the defaults.
 - name: Reconfigure /etc/sysctl.conf on CentOS
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version is version('7', '<=')
+  when: ansible_distribution == "CentOS"
   template: src=sysctl_CentOS-{{ ansible_distribution_major_version }}.j2 dest=/etc/sysctl.conf owner=root group=root mode=0644
   notify:
     - reload sysctl

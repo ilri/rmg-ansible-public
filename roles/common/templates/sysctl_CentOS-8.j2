@@ -1,0 +1,30 @@
+# For a host with a 10G NIC optimized for network paths up to 200ms RTT, and
+# for friendliness to single and parallel stream tools, or a 40G NIC up on
+# paths up to 50ms RTT.
+#
+# See: https://fasterdata.es.net/host-tuning/linux/
+
+# allow testing with buffers up to 128MB
+net.core.rmem_max = 134217728 
+net.core.wmem_max = 134217728 
+# increase Linux autotuning TCP buffer limit to 64MB
+net.ipv4.tcp_rmem = 4096 87380 67108864
+net.ipv4.tcp_wmem = 4096 65536 67108864
+# recommended default congestion control is htcp 
+net.ipv4.tcp_congestion_control=htcp
+# recommended for hosts with jumbo frames enabled
+net.ipv4.tcp_mtu_probing=1
+# recommended to enable 'fair queueing'
+net.core.default_qdisc = fq
+
+{% if 'storage' in group_names %}
+# discourage swapping of application pages to disk
+# see comments by Ben England: https://www.gluster.org/community/documentation/index.php/Linux_Kernel_Tuning
+# and: http://blog.syszone.co.kr/3087
+vm.swappiness = 10
+
+# 2021-03-28 from the rhgs-random-io tuned profile
+# see: ftp.redhat.com:/redhat/linux/enterprise/7Server/en/RHS/SRPMS/redhat-storage-server-3.5.0.0-7.el7rhgs.src.rpm
+vm.dirty_ratio = 5
+vm.dirty_background_ratio = 2
+{% endif %}

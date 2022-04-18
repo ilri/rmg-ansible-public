@@ -41,6 +41,8 @@
     - { src: "abuseipdb-ipv6.nft", force: "yes" }
     - { src: "russian-ddos-networks-ipv4.nft", force: "yes" }
     - { src: "russian-ddos-networks-ipv6.nft", force: "yes" }
+    - { src: "chinese-ddos-networks-ipv4.nft", force: "yes" }
+    - { src: "chinese-ddos-networks-ipv6.nft", force: "yes" }
   notify:
     - restart nftables
     - restart fail2ban

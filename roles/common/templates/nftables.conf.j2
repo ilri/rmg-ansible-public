@@ -20,6 +20,10 @@ include "/etc/nftables/abusech-ipv4.nft"
 include "/etc/nftables/russian-ddos-networks-ipv4.nft"
 include "/etc/nftables/russian-ddos-networks-ipv6.nft"
 
+# List of networks belonging to Chinese DDoS operator
+include "/etc/nftables/chinese-ddos-networks-ipv4.nft"
+include "/etc/nftables/chinese-ddos-networks-ipv6.nft"
+
 # Notes:
 #   - tables hold chains, chains hold rules
 #   - inet is for both ipv4 and ipv6
@@ -64,6 +68,18 @@ table inet filter {
         elements = $RUSSIAN_DDOS_NETWORKS_IPV6
     }
 
+    set chinese-ddos-ipv4 {
+        type ipv4_addr
+        flags interval
+        elements = $CHINESE_DDOS_NETWORKS_IPV4
+    }
+
+    set chinese-ddos-ipv6 {
+        type ipv6_addr
+        flags interval
+        elements = $CHINESE_DDOS_NETWORKS_IPV6
+    }
+
     chain input {
         type filter hook input priority 0;
 
@@ -81,6 +97,9 @@ table inet filter {
 
         ip saddr @russian-ddos-ipv4 counter drop comment "Early drop of incoming packets matching russian-ddos-ipv4 list"
         ip6 saddr @russian-ddos-ipv6 counter drop comment "Early drop of incoming packets matching russian-ddos-ipv6 list"
+
+        ip saddr @chinese-ddos-ipv4 counter drop comment "Early drop of incoming packets matching chinese-ddos-ipv4 list"
+        ip6 saddr @chinese-ddos-ipv6 counter drop comment "Early drop of incoming packets matching chinese-ddos-ipv6 list"
 
         iifname lo accept comment "Allow from loopback"
 
@@ -150,5 +169,8 @@ table inet filter {
 
         ip daddr @russian-ddos-ipv4 counter drop comment "Drop outgoing packets matching russian-ddos-ipv4 list"
         ip6 daddr @russian-ddos-ipv6 counter drop comment "Drop outgoing packets matching russian-ddos-ipv6 list"
+
+        ip daddr @chinese-ddos-ipv4 counter drop comment "Drop outgoing packets matching chinese-ddos-ipv4 list"
+        ip6 daddr @chinese-ddos-ipv6 counter drop comment "Drop outgoing packets matching chinese-ddos-ipv6 list"
     }
 }

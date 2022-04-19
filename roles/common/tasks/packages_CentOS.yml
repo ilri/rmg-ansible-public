@@ -4,16 +4,32 @@
   # Add the CentOS package signing key just in case, as it seems to be missing on
   # some installs (like from ISO).
   - name: Add CentOS package signing key
-    rpm_key: state=present key=/etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
+    rpm_key:
+      state: present
+      key: /etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
     when: ansible_distribution_major_version is version('7','==')
 
   - name: Configure ILRI CentOS mirror
-    copy: src=CentOS-Base-7.repo dest=/etc/yum.repos.d/CentOS-Base.repo owner=root group=root mode=0644
-    when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
+    copy:
+      src: CentOS-Base-7.repo
+      dest: /etc/yum.repos.d/CentOS-Base.repo
+      owner: root
+      group: root
+      mode: 0644
+    when:
+      - ansible_distribution_major_version is version('7','==')
+      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Configure ILRI CentOS Stream mirror
-    copy: src={{ item }} dest=/etc/yum.repos.d/{{ item | basename }} owner=root group=root mode=0644
-    when: (ansible_distribution_release == 'Stream' and 'compute' in group_names)
+    copy:
+      src: "{{ item }}"
+      dest: /etc/yum.repos.d/{{ item | basename }}
+      owner: root
+      group: root
+      mode: 0644
+    when:
+      - ansible_distribution_release == 'Stream'
+      - "'compute' in group_names"
     with_fileglob:
       - CentOS-Stream-*.repo
 
@@ -26,21 +42,41 @@
       regexp: '^enabled=1$'
       line: "enabled=0"
       state: present
-    when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
+    when:
+      - ansible_distribution_major_version is version('7','==')
+      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Install EPEL
-    yum: name=epel-release state=present
+    yum:
+      name: epel-release
+      state: present
 
   - name: Configure ILRI EPEL mirror
-    copy: src=epel-{{ ansible_distribution_major_version }}.repo dest=/etc/yum.repos.d/epel.repo owner=root group=root mode=0644
-    when: (ansible_distribution_major_version is version('7','>=') and ('compute' in group_names or 'storage' in group_names))
+    copy:
+      src: epel-{{ ansible_distribution_major_version }}.repo
+      dest: /etc/yum.repos.d/epel.repo
+      owner: root
+      group: root
+      mode: 0644
+    when:
+      - ansible_distribution_major_version is version('7','>=')
+      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Add EPEL RPM package signing key
-    rpm_key: state=present key=/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
+    rpm_key:
+      state: present
+      key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
 
   - name: Configure repository of ILRI CentOS packages
-    copy: src=ilri.repo dest=/etc/yum.repos.d/ilri.repo owner=root group=root mode=0644
-    when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
+    copy:
+      src: ilri.repo
+      dest: /etc/yum.repos.d/ilri.repo
+      owner: root
+      group: root
+      mode: 0644
+    when:
+      - ansible_distribution_major_version is version('7','==')
+      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Set CentOS base packages
     set_fact:
@@ -55,11 +91,15 @@
       - pciutils
 
   - name: Install base packages
-    yum: name={{ centos_base_packages }} state=present
+    yum:
+      name: "{{ centos_base_packages }}"
+      state: present
   tags: packages
 
 - name: Disable annoying cockpit notice in MOTD
-  file: path=/etc/motd.d/cockpit state=absent
+  file:
+    path: /etc/motd.d/cockpit
+    state: absent
   when: ansible_distribution_major_version is version('8','==')
 
 # vim: set ts=2 sw=2:

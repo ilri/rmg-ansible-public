@@ -1,19 +1,19 @@
 ---
 
 - name: Install mailx on CentOS hosts
-  yum: name=mailx state=present
+  ansible.builtin.package: name=mailx state=present
   when: ansible_distribution == 'CentOS'
   tags: packages
 
 - name: Install heirloom-mailx
-  apt: name=heirloom-mailx state=present
+  ansible.builtin.package: name=heirloom-mailx state=present
   when:
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version is version('16.04', '<')
   tags: packages
 
 - name: Install s-nail
-  apt: name=s-nail state=present
+  ansible.builtin.package: name=s-nail state=present
   when:
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version is version('16.04', '>=')

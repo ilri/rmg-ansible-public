@@ -38,7 +38,7 @@
 
   - name: Install firewall packages
     when: ansible_distribution_major_version is version('7', '>=')
-    yum: name={{ centos_firewall_packages }} state=present
+    ansible.builtin.package: name={{ centos_firewall_packages }} state=present
     tags: packages
 
 # 2022-04-09: fail2ban does not currently work with SELinux on CentOS 8 Stream:

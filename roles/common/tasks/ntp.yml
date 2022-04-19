@@ -25,11 +25,11 @@
   systemd: name=systemd-timesyncd state=started enabled=yes
 
 - name: Uninstall ntp on modern Ubuntu/Debian
-  apt: name=ntp state=absent cache_valid_time=3600
+  ansible.builtin.package: name=ntp state=absent cache_valid_time=3600
   when: ansible_os_family == 'Debian' and ansible_service_mgr == 'systemd'
 
 - name: Install ntp on old Ubuntu/Debian
-  apt: name=ntp state=present cache_valid_time=3600
+  ansible.builtin.package: name=ntp state=present cache_valid_time=3600
   when: ansible_os_family == 'Debian' and ansible_service_mgr != 'systemd'
 
 # 2018-02-19: Make sure ntp is stopped and removed from CentOS machines before
@@ -41,11 +41,11 @@
   ignore_errors: yes
 
 - name: Uninstall ntp on CentOS
-  yum: name=ntp state=absent
+  ansible.builtin.package: name=ntp state=absent
   when: ansible_distribution == 'CentOS'
 
 - name: Install chrony on CentOS
-  yum: name=chrony state=present
+  ansible.builtin.package: name=chrony state=present
   when: ansible_distribution == 'CentOS'
 
 - name: Start and enable chrony on CentOS

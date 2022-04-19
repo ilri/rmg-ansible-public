@@ -47,7 +47,7 @@
       - ('compute' in group_names or 'storage' in group_names)
 
   - name: Install EPEL
-    yum:
+    ansible.builtin.package:
       name: epel-release
       state: present
 
@@ -91,7 +91,7 @@
       - pciutils
 
   - name: Install base packages
-    yum:
+    ansible.builtin.package:
       name: "{{ centos_base_packages }}"
       state: present
   tags: packages

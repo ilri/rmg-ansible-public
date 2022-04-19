@@ -26,13 +26,13 @@
       - software-properties-common
 
   - name: Update apt cache
-    apt:
+    ansible.builtin.package:
       update_cache: yes
     when:
       configure_apt_mirror is changed
 
   - name: Install base packages
-    apt: name={{ debian_base_packages }} state=present cache_valid_time=3600
+    ansible.builtin.package: name={{ debian_base_packages }} state=present cache_valid_time=3600
 
   - name: Configure cron-apt
     import_tasks: cron-apt.yml

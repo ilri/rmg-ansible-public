@@ -7,7 +7,7 @@
 - block:
   - name: Install iptables-persistent
     when: ansible_distribution_version is version('14.04', '==')
-    apt: name=iptables-persistent state=present cache_valid_time=3600
+    ansible.builtin.package: name=iptables-persistent state=present cache_valid_time=3600
     tags: packages
 
   - name: Copy /etc/iptables/rules.v4
@@ -43,7 +43,7 @@
 
   - name: Install firewall packages
     when: ansible_distribution_version is version('16.04', '>=')
-    apt: pkg={{ ubuntu_firewall_packages }} state=present cache_valid_time=3600
+    ansible.builtin.package: pkg={{ ubuntu_firewall_packages }} state=present cache_valid_time=3600
 
   # Ubuntu 18.04's linux-virtual and linux-kvm kernels don't support nftables.
   # For virtual machines we need to either install the generic kernel, which
@@ -55,11 +55,11 @@
     when:
       - ansible_distribution_version is version('18.04', '==')
       - ansible_virtualization_role == 'guest'
-    apt: pkg=linux-virtual-hwe-18.04 state=present cache_valid_time=3600
+    ansible.builtin.package: pkg=linux-virtual-hwe-18.04 state=present cache_valid_time=3600
 
   - name: Remove ufw
     when: ansible_distribution_version is version('16.04', '>=')
-    apt: pkg=ufw state=absent
+    ansible.builtin.package: pkg=ufw state=absent
     tags: packages
 
   - include_tasks: nftables.yml

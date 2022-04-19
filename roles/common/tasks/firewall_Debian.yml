@@ -4,7 +4,7 @@
 - block:
   - name: Install iptables-persistent
     when: ansible_distribution_major_version is version('7', '==')
-    apt: name=iptables-persistent state=present cache_valid_time=3600
+    ansible.builtin.package: name=iptables-persistent state=present cache_valid_time=3600
     tags:
       - packages
 
@@ -22,7 +22,7 @@
 
   - name: Install firewalld
     when: ansible_distribution_major_version is version('8', '==')
-    apt: name={{ item }} state=present
+    ansible.builtin.package: name={{ item }} state=present
     loop:
       - firewalld
       - tidy
@@ -40,7 +40,7 @@
 
   - name: Remove iptables-persistent
     when: ansible_distribution_major_version is version('8', '==')
-    apt: name=iptables-persistent state=absent
+    ansible.builtin.package: name=iptables-persistent state=absent
     tags: packages
 
   # remove old iptables rules and restart new firewall service to make sure its

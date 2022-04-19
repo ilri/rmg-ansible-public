@@ -27,9 +27,7 @@
       owner: root
       group: root
       mode: 0644
-    when:
-      - ansible_distribution_release == 'Stream'
-      - "'compute' in group_names"
+    when: ansible_distribution_release == 'Stream'
     with_fileglob:
       - CentOS-Stream-*.repo
 

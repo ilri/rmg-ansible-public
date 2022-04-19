@@ -48,6 +48,15 @@
     ansible.builtin.package:
       name: epel-release
       state: present
+    when: ansible_distribution_major_version is version('7','==')
+
+# Fedora docs recommends enabling EPEL and EPEL Next on CentOS Stream
+# See: https://docs.fedoraproject.org/en-US/epel/#_el8
+  - name: Install EPEL
+    ansible.builtin.package:
+      name: ['epel-release', 'epel-next-release']
+      state: present
+    when: ansible_distribution_release == 'Stream'
 
   - name: Configure ILRI EPEL mirror
     copy:
@@ -56,9 +65,16 @@
       owner: root
       group: root
       mode: 0644
-    when:
-      - ansible_distribution_major_version is version('7','>=')
-      - ('compute' in group_names or 'storage' in group_names)
+    when: ansible_distribution_major_version is version('7','>=')
+
+  - name: Configure ILRI EPEL Next mirror
+    copy:
+      src: epel-8-next.repo
+      dest: /etc/yum.repos.d/epel-next.repo
+      owner: root
+      group: root
+      mode: 0644
+    when: ansible_distribution_release == 'Stream'
 
   - name: Add EPEL RPM package signing key
     rpm_key:

@@ -1,14 +1,5 @@
 ---
-- name: Install munin on Debian-based distros
-  when: ansible_os_family == "Debian"
-  ansible.builtin.package:
-    name: munin
-    state: present
-    cache_valid_time: 3600
-  tags: packages
-
-- name: Install munin on RedHat-based distros
-  when: ansible_os_family == "RedHat"
+- name: Install munin
   ansible.builtin.package:
     name: munin
     state: present

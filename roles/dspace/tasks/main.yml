@@ -4,7 +4,11 @@
 # apt's dependency resolution that causes maven to pull in Java 10+ in Ubuntu
 # 18.04 currently.
 - name: Install OpenJDK 8
-  apt: pkg=openjdk-8-jdk-headless state=present install_recommends=no cache_valid_time=3600
+  ansible.builtin.apt:
+    pkg: openjdk-8-jdk-headless
+    state: present
+    install_recommends: no
+    cache_valid_time: 3600
   when: java_distribution == 'openjdk'
 
 - name: Set OpenJDK 8 as default java
@@ -15,7 +19,7 @@
 # 2020-02-23: Fix issue with JFreeChart in Atmire CUA
 # see https://code-maven.com/slides/jenkins-intro/no-graph-error
 - name: Disable OpenJDK assistive technologies
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/java-8-openjdk/accessibility.properties
     regexp: '^assistive_technologies=org.GNOME.Accessibility.AtkWrapper$'
     line: '#assistive_technologies=org.GNOME.Accessibility.AtkWrapper'
@@ -24,14 +28,14 @@
 # 2021-06-30: Fix slow Tomcat startup due to blocking /dev/random
 # tomcat7[30294]: WARNING: Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [111,733] milliseconds.
 - name: Use /dev/urandom for JVM SecureRandom
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/java-8-openjdk/security/java.security
     regexp: '^securerandom.source=file:/dev/random$'
     line: 'securerandom.source=file:/dev/urandom'
     state: present
 
 - name: Set DSpace system dependencies
-  set_fact:
+  ansible.builtin.set_fact:
     dspace_system_dependencies:
       - ant
       - maven
@@ -47,63 +51,93 @@
       - acl # for using template with unprivileged become_user
 
 - name: Install DSpace system dependencies
-  apt: pkg={{ dspace_system_dependencies }} state=present install_recommends=no cache_valid_time=3600
+  ansible.builtin.apt:
+    pkg: "{{ dspace_system_dependencies }}"
+    state: present
+    install_recommends: no
+    cache_valid_time: 3600
 
 # 2018-10-11: See https://usn.ubuntu.com/3785-1
 - name: Enable PDF support in ImageMagick
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /etc/ImageMagick-6/policy.xml
     regexp: 'pattern="PDF"'
     state: absent
 
 - name: Add dspace group
-  group: name={{ tomcat_group }} system=yes
+  ansible.builtin.group:
+    name: "{{ tomcat_group }}"
+    system: yes
   tags: tomcat
 
 - name: Add dspace user
-  user: name={{ tomcat_user }} group={{ tomcat_group }} system=yes create_home=yes home={{ tomcat_user_home }} shell=/bin/bash
+  ansible.builtin.user:
+    name: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    system: yes
+    create_home: yes
+    home: "{{ tomcat_user_home }}"
+    shell: /bin/bash
   tags: tomcat
 
 - block:
   # Use Node.js repository instead of Ubuntu's due to libssl conflicts
   # See: https://bugs.launchpad.net/ubuntu/+source/nodejs/+bug/1794589
   - name: Add Node.js apt signing key
-    apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
+    ansible.builtin.apt_key:
+      url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+      state: present
     register: add_nodejs_apt_key
 
   - name: Add Node.js 12 LTS repository
-    template: src=nodesource.list.j2 dest=/etc/apt/sources.list.d/nodesource.list mode=0644 owner=root group=root
+    ansible.builtin.template:
+      src: nodesource.list.j2
+      dest: /etc/apt/sources.list.d/nodesource.list
+      mode: 0644
+      owner: root
+      group: root
     register: add_nodejs_apt_repository
 
   - name: Update apt cache
-    apt:
+    ansible.builtin.apt:
       update_cache: yes
     when:
       add_nodejs_apt_key is changed or
       add_nodejs_apt_repository is changed
 
   - name: Set DSpace Mirage 2 system build dependencies
-    set_fact:
+    ansible.builtin.set_fact:
       dspace_mirage2_system_build_dependencies:
         - build-essential
         - nodejs
 
   - name: Install DSpace Mirage 2 system build dependencies
-    apt: pkg={{ dspace_mirage2_system_build_dependencies }} state=present install_recommends=no cache_valid_time=3600
+    ansible.builtin.apt:
+      pkg: "{{ dspace_mirage2_system_build_dependencies }}"
+      state: present
+      install_recommends: no
+      cache_valid_time: 3600
 
   - name: Configure npm environment
-    template: src=npmrc.j2 dest={{ tomcat_user_home }}/.npmrc owner={{ tomcat_user }} group={{ tomcat_group }} mode=0644
+    ansible.builtin.template:
+      src: npmrc.j2
+      dest: "{{ tomcat_user_home }}/.npmrc"
+      owner: "{{ tomcat_user }}"
+      group: "{{ tomcat_group }}"
+      mode: 0644
     become_user: '{{ tomcat_user }}'
 
   - name: Install DSpace Mirage 2 Node.js build dependencies
-    npm: name={{ item }} global=yes
+    community.general.npm:
+      name: "{{ item }}"
+      global: yes
     loop:
       - grunt-cli
       - yarn
     become_user: '{{ tomcat_user }}'
 
   - name: Add npm packages to PATH
-    lineinfile:
+    ansible.builtin.lineinfile:
       dest: '{{ tomcat_user_home }}/.profile'
       regexp: '^export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin$'
       line: 'export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin'
@@ -114,13 +148,24 @@
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
 - block:
   - name: Add GPG key for GoAccess repo
-    apt_key: id=0x97BD1A0133449C3D url=https://deb.goaccess.io/gnugpg.key state=present
+    ansible.builtin.apt_key:
+      id: 0x97BD1A0133449C3D
+      url: https://deb.goaccess.io/gnugpg.key
+      state: present
   - name: Add new GoAccess repository
-    apt_repository: repo='deb [arch=amd64] https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess state=present
+    ansible.builtin.apt_repository:
+      repo: 'deb [arch=amd64] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+      filename: goaccess
+      state: present
   - name: Remove old GoAccess repository
-    apt_repository: repo='deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main' filename=goaccess state=absent
+    ansible.builtin.apt_repository:
+      repo: 'deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+      filename: goaccess
+      state: absent
   - name: Install GoAccess
-    apt: pkg=goaccess state=present
+    ansible.builtin.apt:
+      pkg: goaccess
+      state: present
   when: ansible_distribution_version is version('20.04', '<=')
 
 - name: Configure nginx
@@ -128,13 +173,13 @@
   tags: nginx
 
 - name: Check installed Tomcat version
-  stat:
+  ansible.builtin.stat:
     path: "{{ tomcat_path }}"
   register: tomcat_stat
   tags: tomcat
 
 - name: Download Tomcat
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ tomcat_url }}"
     dest: "{{ tomcat_path }}.tar.gz"
     checksum: "sha512:{{ tomcat_url_checksum }}"
@@ -143,7 +188,7 @@
   tags: tomcat
 
 - name: Unzip Tomcat
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ tomcat_path }}.tar.gz"
     dest: "{{ tomcat_path_prefix }}"
     remote_src: yes
@@ -153,7 +198,7 @@
 
 # The Tomcat user only needs to read its configuration and write logs / work
 - name: Fix Tomcat ownership
-  file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
@@ -170,7 +215,7 @@
 
 # The Tomcat user only needs to read its configuration and write logs/temp/work
 - name: Fix Tomcat permissions
-  file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     mode: "{{ item.mode }}"
   loop:
@@ -185,7 +230,7 @@
   tags: tomcat
 
 - name: Remove old Tomcat versions
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   loop:
@@ -196,7 +241,12 @@
   tags: tomcat
 
 - name: Copy Tomcat server configs
-  template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
   loop:
     - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '{{ tomcat_path }}/conf/server.xml', owner: 'root', group: '{{ tomcat_group }}', mode: '0640' }
     - { src: 'tomcat/tomcat-users.xml.j2', dest: '{{ tomcat_path }}/conf/tomcat-users.xml', owner: 'root', group: '{{ tomcat_group }}', mode: '0640' }
@@ -206,13 +256,20 @@
 
 # From upstream: https://jdbc.postgresql.org/download.html
 - name: Copy PostgreSQL JDBC library
-  copy: src=postgresql-42.3.3.jar dest={{ tomcat_path }}/lib/postgresql-42.3.3.jar mode=0644 owner=root group=root
+  ansible.builtin.copy:
+    src: postgresql-42.3.3.jar
+    dest: "{{ tomcat_path }}/lib/postgresql-42.3.3.jar"
+    mode: 0644
+    owner: root
+    group: root
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
 - name: Remove old PostgreSQL JDBC libraries
-  file: path={{ tomcat_path }}/lib/{{ item }} state=absent
+  ansible.builtin.file:
+    path: "{{ tomcat_path }}/lib/{{ item }}"
+    state: absent
   loop:
     - postgresql-42.2.22.jar
     - postgresql-42.2.24.jar
@@ -222,11 +279,21 @@
   tags: tomcat
 
 - name: Create Tomcat context directory
-  file: path={{ tomcat_path }}/conf/Catalina/localhost state=directory owner=root group={{ tomcat_group }} mode=0770
+  ansible.builtin.file:
+    path: "{{ tomcat_path }}/conf/Catalina/localhost"
+    state: directory
+    owner: root
+    group: "{{ tomcat_group }}"
+    mode: 0770
   tags: tomcat
 
 - name: Prepare Tomcat web application contexts
-  template: src=tomcat/context.xml.j2 dest={{ item.context_path }} owner=root group={{ tomcat_group }} mode=0640
+  ansible.builtin.template:
+    src: tomcat/context.xml.j2
+    dest: "{{ item.context_path }}"
+    owner: root
+    group: "{{ tomcat_group }}"
+    mode: 0640
   loop: "{{ dspace_webapps }}"
   when: dspace_webapps is defined
   notify:
@@ -234,7 +301,9 @@
   tags: tomcat
 
 - name: Remove unneccessary default Tomcat web applications
-  file: path={{ tomcat_path }}/webapps/{{ item }} state=absent
+  ansible.builtin.file:
+    path: "{{ tomcat_path }}/webapps/{{ item }}"
+    state: absent
   loop:
     - docs
     - examples
@@ -244,33 +313,70 @@
   tags: tomcat
 
 - name: Prepare tomcat user's home folder
-  file: dest={{ item.dest }} state={{ item.state }} owner={{ item.owner }} group={{ item.group }} mode={{ item.mode }}
+  ansible.builtin.file:
+    dest: "{{ item.dest }}"
+    state: "{{ item.state }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
   loop:
     - { dest: '{{ tomcat_user_home }}/.m2', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '750' }
     - { dest: '{{ tomcat_user_home }}/src/git/DSpace', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '755' }
   tags: tomcat
 
 - name: Configure rotation for Tomcat server's access logs
-  template: src=tomcat/logrotate-access_logs.j2 dest=/etc/logrotate.d/tomcat-access_logs owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: tomcat/logrotate-access_logs.j2
+    dest: /etc/logrotate.d/tomcat-access_logs
+    owner: root
+    group: root
+    mode: 0644
   tags: tomcat
 
 - name: Set open file limits for tomcat user
-  template: src=tomcat/limits.conf.j2 dest=/etc/security/limits.d/90-tomcat.conf owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: tomcat/limits.conf.j2
+    dest: /etc/security/limits.d/90-tomcat.conf
+    owner: root
+    group: root
+    mode: 0644
   tags: tomcat
 
 - name: Copy maven settings
-  template: src=m2/settings.xml.j2 dest={{ tomcat_user_home }}/.m2/settings.xml owner={{ tomcat_user }} group={{ tomcat_group }} mode=0640
-  when: maven_username is defined and maven_password is defined
+  ansible.builtin.template:
+    src: m2/settings.xml.j2
+    dest: "{{ tomcat_user_home }}/.m2/settings.xml"
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    mode: 0640
+  when:
+    - maven_username is defined
+    - maven_password is defined
 
 - name: Clone DSpace repository
-  git: repo={{ dspace_git_repo }} dest={{ tomcat_user_home }}/src/git/DSpace version={{ dspace_git_branch }} force=yes depth=1
+  ansible.builtin.git:
+    repo: "{{ dspace_git_repo }}"
+    dest: "{{ tomcat_user_home }}/src/git/DSpace"
+    version: "{{ dspace_git_branch }}"
+    force: yes
+    depth: 1
   become_user: '{{ tomcat_user }}'
 
 - name: Copy DSpace local.cfg
-  template: src=local.cfg.j2 dest={{ tomcat_user_home }}/src/git/DSpace/local.cfg owner={{ tomcat_user }} group={{ tomcat_group }} mode=0640
+  ansible.builtin.template:
+    src: local.cfg.j2
+    dest: "{{ tomcat_user_home }}/src/git/DSpace/local.cfg"
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    mode: 0640
 
 - name: Copy GeoIP.conf
-  template: src=GeoIP.conf.j2 dest=/etc/GeoIP.conf owner=root group=root mode=0640
+  ansible.builtin.template:
+    src: GeoIP.conf.j2
+    dest: /etc/GeoIP.conf
+    owner: root
+    group: root
+    mode: 0640
 
 - name: Create postgres users
   postgresql_user: name={{ item.name }} password={{ item.password }}
@@ -298,17 +404,36 @@
   tags: postgresql
 
 - name: Clone DSpace statistics API repository
-  git: repo={{ dspace_statistics_api_git_repo }} dest={{ dspace_statistics_api_dir }} version={{ dspace_statistics_api_git_version }} depth=1
+  ansible.builtin.git:
+    repo: "{{ dspace_statistics_api_git_repo }}"
+    dest: "{{ dspace_statistics_api_dir }}"
+    version: "{{ dspace_statistics_api_git_version }}"
+    depth: 1
 
 - name: Install DSpace statistics API dependencies
-  pip: requirements=requirements.txt chdir={{ dspace_statistics_api_dir }} virtualenv=venv virtualenv_command={{ pyvenv_command }} state=forcereinstall
+  ansible.builtin.pip:
+    requirements: requirements.txt
+    chdir: "{{ dspace_statistics_api_dir }}"
+    virtualenv: venv
+    virtualenv_command: "{{ pyvenv_command }}"
+    state: forcereinstall
   notify: restart dspace-statistics-api
 
 - name: Set up cron jobs
-  template: src=dspace-maintenance-tasks.j2 dest=/etc/cron.d/dspace-maintenance-tasks owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: dspace-maintenance-tasks.j2
+    dest: /etc/cron.d/dspace-maintenance-tasks
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Copy systemd service units
-  template: src={{ item.src }} dest=/etc/systemd/system/{{ item.name }} mode=0644 owner=root group=root
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "/etc/systemd/system/{{ item.name }}"
+    mode: 0644
+    owner: root
+    group: root
   loop:
     - { 'src': dspace-handle-server.service.j2, 'name': dspace-handle-server.service }
     - { 'src': dspace-statistics-api.service.j2, 'name': dspace-statistics-api.service }
@@ -319,7 +444,12 @@
   register: dspace_systemd_services
 
 - name: Copy systemd timer units
-  copy: src={{ item.src }} dest=/etc/systemd/system/{{ item.name }} mode=0644 owner=root group=root
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "/etc/systemd/system/{{ item.name }}"
+    mode: 0644
+    owner: root
+    group: root
   loop:
     - { 'src': dspace-statistics-indexer.timer, 'name': dspace-statistics-indexer.timer }
     - { 'src': cgspace-country-code-tagger.timer, 'name': cgspace-country-code-tagger.timer }
@@ -329,27 +459,41 @@
 # We have two separate tasks for copying these environments because we need to
 # be able to notify the relevant services individually.
 - name: Copy dspace-statistics-api environment
-  template: src=dspace-statistics-api.j2 dest=/etc/dspace-statistics-api mode=0640 owner=root group=root
+  ansible.builtin.template:
+    src: dspace-statistics-api.j2
+    dest: /etc/dspace-statistics-api
+    mode: 0640
+    owner: root
+    group: root
   register: dspace_systemd_environment1
   notify:
     - restart dspace-statistics-api
 
 - name: Copy Tomcat environment
-  template: src=tomcat/defaults.j2 dest=/etc/default/tomcat{{ tomcat_version_major }} mode=0640 owner=root group=root
+  ansible.builtin.template:
+    src: tomcat/defaults.j2
+    dest: "/etc/default/tomcat{{ tomcat_version_major }}"
+    mode: 0640
+    owner: root
+    group: root
   register: dspace_systemd_environment2
   notify:
     - restart tomcat{{ tomcat_version_major }}
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  systemd: daemon_reload=yes
+  ansible.builtin.systemd:
+    daemon_reload: yes
   when: dspace_systemd_services is changed
         or dspace_systemd_timers is changed
         or dspace_systemd_environment1 is changed
         or dspace_systemd_environment2 is changed
 
 - name: Start and enable systemd units
-  systemd: name={{ item }} state=started enabled=yes
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
   loop:
     - dspace-handle-server.service
     - dspace-statistics-api.service
@@ -359,9 +503,19 @@
     - dspace-iwmi-exporter.timer
 
 - name: Create DSpace install directory
-  file: path={{ dspace_root }} owner={{ tomcat_user }} group={{ tomcat_group }} mode=0755 state=directory
+  ansible.builtin.file:
+    path: "{{ dspace_root }}"
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    mode: 0755
+    state: directory
 
 - name: Add DSpace bin directory to PATH
-  template: src=dspace.sh.j2 dest=/etc/profile.d/dspace.sh owner=root group=root mode=0755
+  ansible.builtin.template:
+    src: dspace.sh.j2
+    dest: /etc/profile.d/dspace.sh
+    owner: root
+    group: root
+    mode: 0755
 
 # vim: set sw=2 ts=2:

@@ -1,27 +1,42 @@
 ---
 
 - name: Add nginx.org apt signing key
-  apt_key: url=https://nginx.org/keys/nginx_signing.key state=present
+  ansible.builtin.apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
   register: add_nginx_apt_key
   tags: packages
 
 - name: Add nginx.org repository
-  template: src=nginx_org_packages_ubuntu.list.j2 dest=/etc/apt/sources.list.d/nginx_org_packages_ubuntu.list mode=0644 owner=root group=root
+  ansible.builtin.template:
+    src: nginx_org_packages_ubuntu.list.j2
+    dest: /etc/apt/sources.list.d/nginx_org_packages_ubuntu.list
+    mode: 0644
+    owner: root
+    group: root
   register: add_nginx_apt_repository
 
 - name: Update apt cache
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
   when:
     add_nginx_apt_key is changed or
     add_nginx_apt_repository is changed
 
 - name: Install nginx
-  apt: pkg=nginx cache_valid_time=3600 state=present
+  ansible.builtin.apt:
+    pkg: nginx
+    cache_valid_time: 3600
+    state: present
   tags: packages
 
 - name: Copy nginx configs
-  copy: src=nginx/{{ item }} dest=/etc/nginx/{{ item }} mode=0644 owner=root group=root
+  ansible.builtin.copy:
+    src: "nginx/{{ item }}"
+    dest: "/etc/nginx/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
   loop:
     - extra-security.conf
     - nginx.conf
@@ -30,12 +45,22 @@
     - reload nginx
 
 - name: Configure nginx dspace vhost
-  template: src=nginx/dspace.conf.j2 dest=/etc/nginx/conf.d/dspace.conf mode=0644 owner=root group=root
+  ansible.builtin.template:
+    src: nginx/dspace.conf.j2
+    dest: /etc/nginx/conf.d/dspace.conf
+    mode: 0644
+    owner: root
+    group: root
   notify:
     - reload nginx
 
 - name: Configure nginx munin vhost
-  copy: src=nginx/munin.conf dest=/etc/nginx/conf.d/munin.conf mode=0644 owner=root group=root
+  ansible.builtin.copy:
+    src: nginx/munin.conf
+    dest: /etc/nginx/conf.d/munin.conf
+    mode: 0644
+    owner: root
+    group: root
   notify:
     - reload nginx
 
@@ -45,7 +70,10 @@
     name: web
   tags: letsencrypt
 
-- name: Start & enable nginx service
-  systemd: name=nginx state=started enabled=yes
+- name: Start and enable nginx service
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+    enabled: yes
 
 # vim: set sw=2 ts=2:

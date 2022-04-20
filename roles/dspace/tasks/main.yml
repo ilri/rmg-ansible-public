@@ -149,7 +149,7 @@
 - block:
   - name: Add GPG key for GoAccess repo
     ansible.builtin.apt_key:
-      id: 0x97BD1A0133449C3D
+      id: C03B48887D5E56B046715D3297BD1A0133449C3D
       url: https://deb.goaccess.io/gnugpg.key
       state: present
   - name: Add new GoAccess repository

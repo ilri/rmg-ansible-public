@@ -34,8 +34,9 @@
 - name: Read TLS key
   ansible.builtin.set_fact:
     tls_key_content: "{{ lookup('file', 'private/data/metrics/victoria-metrics.key') }}"
-  when: victoriametrics_role is defined and
-        victoriametrics_role == 'server'
+  when:
+    - victoriametrics_role is defined
+    - victoriametrics_role == 'server'
 
 - name: Copy TLS key
   ansible.builtin.copy:

@@ -15,7 +15,8 @@
 
 - name: Configure VictoriaMetrics server
   include_tasks: server.yml
-  when: victoriametrics_role is defined and
-        victoriametrics_role == 'server'
+  when:
+    - victoriametrics_role is defined
+    - victoriametrics_role == 'server'
 
 # vim: set sw=2 ts=2:

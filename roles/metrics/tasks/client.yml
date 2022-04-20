@@ -11,8 +11,9 @@
 
 - name: Configure mysqld_exporter
   include_tasks: mysqld_exporter.yml
-  when: extra_victoriametrics_exporters is defined and
-        "mysqld" in extra_victoriametrics_exporters
+  when:
+    - extra_victoriametrics_exporters is defined
+    - '"mysqld" in extra_victoriametrics_exporters'
 
 # Currently only run on DSpace hosts, with some dependent stuff configured in
 # the dspace role.

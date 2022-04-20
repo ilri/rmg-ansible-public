@@ -1,14 +1,5 @@
 ---
 - name: Install munin-node
-  when: ansible_os_family == "Debian"
-  ansible.builtin.package:
-    name: munin-node
-    state: present
-    cache_valid_time: 3600
-  tags: packages
-
-- name: Install munin-node
-  when: ansible_os_family == "RedHat"
   ansible.builtin.package:
     name: munin-node
     state: present

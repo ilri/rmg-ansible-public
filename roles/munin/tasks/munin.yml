@@ -1,15 +1,25 @@
 ---
 - name: Install munin on Debian-based distros
   when: ansible_os_family == "Debian"
-  apt: name=munin state=present cache_valid_time=3600
+  ansible.builtin.package:
+    name: munin
+    state: present
+    cache_valid_time: 3600
   tags: packages
 
 - name: Install munin on RedHat-based distros
   when: ansible_os_family == "RedHat"
-  yum: name=munin state=present
+  ansible.builtin.package:
+    name: munin
+    state: present
   tags: packages
 
 - name: Create munin configuration file
-  template: src=munin.conf.j2 dest=/etc/munin/munin.conf mode=0644 owner=root group=root
+  ansible.builtin.template:
+    src: munin.conf.j2
+    dest: /etc/munin/munin.conf
+    mode: 0644
+    owner: root
+    group: root
 
 # vim: set sw=2 ts=2:

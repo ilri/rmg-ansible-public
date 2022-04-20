@@ -1,12 +1,17 @@
 ---
 - name: Install munin-node
   when: ansible_os_family == "Debian"
-  apt: name=munin-node state=present cache_valid_time=3600
+  ansible.builtin.package:
+    name: munin-node
+    state: present
+    cache_valid_time: 3600
   tags: packages
 
 - name: Install munin-node
   when: ansible_os_family == "RedHat"
-  yum: name=munin-node state=present
+  ansible.builtin.package:
+    name: munin-node
+    state: present
   tags: packages
 
 # Enable sensors support if this is a bare metal machine. The way we check this
@@ -14,30 +19,29 @@
 # host is bare metal.
 - name: Set sensor packages (Red Hat)
   set_fact:
-    sensor_packages_redhat:
+    sensor_packages:
       - lm_sensors # for CPU package and PCI card temperatures
       - hddtemp    # for hard drive temperatures
-  when: ansible_virtualization_role == "host" and
-        ansible_os_family == "RedHat"
+  when:
+    - ansible_virtualization_role == "host"
+    - ansible_os_family == "RedHat"
   tags: packages
 
 - name: Set sensor packages (Debian)
   set_fact:
-    sensor_packages_debian:
+    sensor_packages:
       - lm-sensors
       - hddtemp
-  when: ansible_virtualization_role == "host" and
-        ansible_os_family == "Debian"
+  when:
+    - ansible_virtualization_role == "host"
+    - ansible_os_family == "Debian"
   tags: packages
 
-- name: Install sensor packages (Red Hat)
-  yum: name={{ sensor_packages_redhat }} state=present
-  when: sensor_packages_redhat is defined
-  tags: packages
-
-- name: Install sensor packages (Debian)
-  apt: name={{ sensor_packages_debian }} state=present
-  when: sensor_packages_debian is defined
+- name: Install sensor packages
+  ansible.builtin.package:
+    name: "{{ sensor_packages }}"
+    state: present
+  when: sensor_packages is defined
   tags: packages
 
 - name: Enable Munin temperature and fan plugins
@@ -53,8 +57,10 @@
 # some nice things to have for munin-node on Ubuntu (12.04 and 14.04 right now)
 # libwww-perl for munin's nginx_status check
 - name: Install munin-node deps
+  ansible.builtin.package:
+    name: libwww-perl
+    state: present
   when: ansible_distribution == "Ubuntu"
-  apt: name=libwww-perl state=present
   tags: packages
 
 # explicitly install the JRE before munin-plugins-java so it doesn't pull in
@@ -62,13 +68,17 @@
 - name: Install Java 8 JRE
   when: ((ansible_distribution == "Ubuntu" and ansible_distribution_version is version('18.04', '=='))
         and ("dspace" in group_names or "solr" in group_names))
-  apt: name=openjdk-8-jre-headless state=present
+  ansible.builtin.package:
+    name: openjdk-8-jre-headless
+    state: present
   tags: packages
 
 # some nice things to have on Ubuntu Tomcat servers
 - name: Install munin-node Tomcat deps
   when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names or "postgres" in group_names))
-  apt: name={{ item }} state=present
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
   loop:
     - ruby # for munin's tomcat checks
     - libxml-simple-perl # for munin's tomcat checks
@@ -78,24 +88,43 @@
 
 - name: Configure munin Tomcat plugin
   when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names))
-  template: src=tomcat.conf.j2 dest=/etc/munin/plugin-conf.d/tomcat owner=root group=root mode=0640
+  ansible.builtin.template:
+    src: tomcat.conf.j2
+    dest: /etc/munin/plugin-conf.d/tomcat
+    owner: root
+    group: root
+    mode: 0640
   notify:
     - restart munin-node
 
 - name: Configure munin DSpace Sessions plugin
-  when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names))
-  copy: src=jmx_dspace_sessions dest=/etc/munin/plugins/jmx_dspace_sessions owner=root group=root mode=0755
+  ansible.builtin.copy:
+    src: jmx_dspace_sessions
+    dest: /etc/munin/plugins/jmx_dspace_sessions
+    owner: root
+    group: root
+    mode: 0755
+  when:
+    - ansible_distribution == "Ubuntu"
+    - '"dspace" in group_names'
   notify:
     - restart munin-node
 
 - name: Enable munin JMX dbpools plugin
-  when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names))
-  file: src=/usr/share/munin/plugins/jmx_tomcat_dbpools dest=/etc/munin/plugins/jmx_tomcat_dbpools state=link
+  ansible.builtin.file:
+    src: /usr/share/munin/plugins/jmx_tomcat_dbpools
+    dest: /etc/munin/plugins/jmx_tomcat_dbpools
+    state: link
+  when:
+    - ansible_distribution == "Ubuntu"
+    - '"dspace" in group_names'
   notify:
     - restart munin-node
 
 - name: Create munin-node.conf
-  template: src=munin-node.conf.j2 dest=/etc/munin/munin-node.conf
+  ansible.builtin.template:
+    src: munin-node.conf.j2
+    dest: /etc/munin/munin-node.conf
   notify:
     - restart munin-node
 
@@ -105,6 +134,9 @@
     - restart munin-node
 
 - name: Start munin-node
-  service: name=munin-node state=started enabled=true
+  service:
+    name: munin-node
+    state: started
+    enabled: true
 
 # vim: set sw=2 ts=2:

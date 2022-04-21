@@ -1,10 +1,20 @@
 ---
 
 - name: Create slurm group
-  group: name=slurm system=yes state=present gid=490
+  ansible.builtin.group:
+    name: slurm
+    system: yes
+    state: present
+    gid: 490
 
 - name: Create slurm user
-  user: name=slurm system=yes state=present createhome=no uid=490 group=slurm
+  ansible.builtin.user:
+    name: slurm
+    system: yes
+    state: present
+    createhome: no
+    uid: 490
+    group: slurm
 
 - name: Set slurm packages
   set_fact:
@@ -18,11 +28,18 @@
   tags: packages
 
 - name: Install slurm
-  yum: name={{ slurm_packages }} state=present
+  ansible.builtin.package:
+    name: "{{ slurm_packages }}"
+    state: present
   tags: packages
 
 - name: Copy slurm.conf
-  template: src=slurm.conf.j2 dest=/etc/slurm/slurm.conf owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: slurm.conf.j2
+    dest: /etc/slurm/slurm.conf
+    owner: root
+    group: root
+    mode: 0644
   register: slurm_conf
   notify:
     - restart slurmdbd
@@ -30,10 +47,20 @@
     - restart slurmd
 
 - name: Configure logrotate for slurm
-  template: src=etc/logrotate.d/slurm.j2 dest=/etc/logrotate.d/slurm owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: etc/logrotate.d/slurm.j2
+    dest: /etc/logrotate.d/slurm
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Copy extra slurm configs
-  copy: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0644
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
   loop:
     - { src: 'etc/pam.d/slurm', dest: '/etc/pam.d/slurm'}
     - { src: 'etc/slurm/cgroup.conf', dest: '/etc/slurm/cgroup.conf'}
@@ -43,15 +70,25 @@
     - restart slurmd
 
 - name: Copy gres.conf on compute06
+  ansible.builtin.copy:
+    src: etc/slurm/gres.conf
+    dest: /etc/slurm/gres.conf
+    owner: root
+    group: root
+    mode: 0644
   when: inventory_hostname == 'compute06'
-  copy: src=etc/slurm/gres.conf dest=/etc/slurm/gres.conf owner=root group=root mode=0644
   notify:
     - restart slurmdbd
     - restart slurmctld
     - restart slurmd
 
 - name: Create slurm directories
-  file: path={{ item }} owner=slurm group=slurm mode=0755 state=directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: slurm
+    group: slurm
+    mode: 0755
+    state: directory
   loop:
     - /var/log/slurm
     - /var/spool/slurmd
@@ -61,21 +98,37 @@
     - restart slurmd
 
 - name: Create slurmctld directory on head node
-  file: path=/var/spool/slurmctld owner=slurm group=slurm mode=0755 state=directory
-  notify: restart slurmctld
+  ansible.builtin.file:
+    path: /var/spool/slurmctld
+    owner: slurm
+    group: slurm
+    mode: 0755
+    state: directory
   when: inventory_hostname == slurm_head_node
+  notify: restart slurmctld
 
 - name: Copy munge key
-  copy: src=munge.key dest=/etc/munge/munge.key mode=0600 owner=munge group=munge
+  ansible.builtin.copy:
+    src: munge.key
+    dest: /etc/munge/munge.key
+    mode: 0600
+    owner: munge
+    group: munge
   notify: restart munge
 
 - name: Start and enable munge
-  systemd: name=munge state=started enabled=yes
+  ansible.builtin.systemd:
+    name: munge
+    state: started
+    enabled: yes
 
 # don't start slurmd on the head node just yet, because it technically needs to
 # have the slurmdbd service started first and we don't check that.
 - name: Start and enable slurmd
+  ansible.builtin.systemd:
+    name: slurmd
+    state: started
+    enabled: yes
   when: inventory_hostname != slurm_head_node
-  systemd: name=slurmd state=started enabled=yes
 
 # vim: set sw=2 ts=2:

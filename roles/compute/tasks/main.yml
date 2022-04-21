@@ -6,7 +6,9 @@
 
 # needed for newer compilers, etc
 - name: Enable Red Hat software collections
-  yum: name=centos-release-scl state=present
+  ansible.builtin.package:
+    name: centos-release-scl
+    state: present
   when: ansible_distribution_major_version is version('7','==')
   tags: packages
 
@@ -178,41 +180,78 @@
   tags: packages
 
 - name: Install extra packages
-  yum: name={{ extra_packages }} state=present
+  ansible.builtin.package:
+    name: "{{ extra_packages }}"
+    state: present
   tags: packages
 
 - name: Clone environment modules
-  git: repo=https://github.com/ilri/hpc-environment-modules.git dest=/etc/modulefiles/ilri version=master
+  ansible.builtin.git:
+    repo: https://github.com/ilri/hpc-environment-modules.git
+    dest: /etc/modulefiles/ilri
+    version: master
   tags: modules
 
 - name: Copy ilri profile script
-  template: src=z-ilri.sh.j2 dest=/etc/profile.d/z-ilri.sh owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: z-ilri.sh.j2
+    dest: /etc/profile.d/z-ilri.sh
+    owner: root
+    group: root
+    mode: 0644
   tags: profile
 
 - name: Copy limits configuration
-  template: src=90-ilri.conf.j2 dest=/etc/security/limits.d/90-ilri.conf owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: 90-ilri.conf.j2
+    dest: /etc/security/limits.d/90-ilri.conf
+    owner: root
+    group: root
+    mode: 0644
   tags: limits
 
 - name: Copy systemd user.slice override
-  copy: src=etc/systemd/system/user.slice.d/override.conf dest=/etc/systemd/system/user.slice.d/override.conf owner=root group=root mode=0644
+  ansible.builtin.copy:
+    src: etc/systemd/system/user.slice.d/override.conf
+    dest: /etc/systemd/system/user.slice.d/override.conf
+    owner: root
+    group: root
+    mode: 0644
   when: inventory_hostname == slurm_head_node
   tags: limits
 
 - name: Remove irqbalance
-  yum: name=irqbalance state=absent
+  ansible.builtin.package:
+    name: irqbalance
+    state: absent
   tags: irqbalance
 
 - name: Configure global ssh_config on compute nodes
-  template: src=ssh_config.j2 dest=/etc/ssh/ssh_config owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: ssh_config.j2
+    dest: /etc/ssh/ssh_config
+    owner: root
+    group: root
+    mode: 0644
   tags: ssh-config
 
 - name: Set sticky bit on local scratch
-  file: path={{ local_scratch }} group=root owner=root mode=01777 state=directory
+  ansible.builtin.file:
+    path: "{{ local_scratch }}"
+    group: root
+    owner: root
+    mode: 01777
+    state: directory
   tags: scratch
 
 # TODO: convert to systemd timer
 - name: Add cron job to clean up scratch space
-  template: src=cron/cleanup-scratch-space.j2 dest=/etc/cron.d/2cleanup-scratch-space owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: cron/cleanup-scratch-space.j2
+    dest: /etc/cron.d/2cleanup-scratch-space
+    owner: root
+    group: root
+    mode: 0644
   tags: scratch
 
 # vim: set sw=2 ts=2:

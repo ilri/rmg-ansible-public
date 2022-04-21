@@ -1,5 +1,5 @@
 ---
-# Common nftables tasks for Ubuntu 18.04, Ubuntu 20.04, and CentOS 8 Stream.
+# Common nftables tasks for Ubuntu 18.04, Ubuntu 20.04, and CentOS Stream 8.
 
 - name: Copy nftables.conf
   ansible.builtin.template:

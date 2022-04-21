@@ -41,7 +41,7 @@
     ansible.builtin.package: name={{ centos_firewall_packages }} state=present
     tags: packages
 
-# 2022-04-09: fail2ban does not currently work with SELinux on CentOS 8 Stream:
+# 2022-04-09: fail2ban does not currently work with SELinux on CentOS Stream 8:
 #
 #   SELinux is preventing /usr/libexec/platform-python3.6 from append access on the file fail2ban.pid.
 #   SELinux is preventing /usr/libexec/platform-python3.6 from append access on the file fail2ban.log.

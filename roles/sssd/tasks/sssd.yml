@@ -31,7 +31,7 @@
     regexp: "^TLS_CACERTDIR"
     state: absent
 
-- name: Configure sssd on CentOS 8 Stream
+- name: Configure sssd on CentOS Stream 8
   when:
     - ansible_distribution == 'CentOS'
     - ansible_distribution_release == 'Stream'

@@ -86,13 +86,11 @@
     state: started
     enabled: true
 
-- name: Start and enable oddjob service
+- name: Start and enable oddjobd service
   ansible.builtin.systemd:
-    name: oddjob
+    name: oddjobd
     state: started
     enabled: true
-  when:
-    - ansible_distribution == 'CentOS'
-    - ansible_distribution_release == 'Stream'
+  when: ansible_distribution == 'CentOS'
 
 # vim: set ts=2 sw=2:

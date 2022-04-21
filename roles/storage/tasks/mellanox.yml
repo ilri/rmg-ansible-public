@@ -5,9 +5,6 @@
     ansible.builtin.rpm_key:
       key: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
       state: present
-    when:
-      - ansible_distribution == 'CentOS'
-      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Configure Mellanox yum repository (CentOS 7)
     ansible.builtin.yum_repository:
@@ -16,9 +13,7 @@
       baseurl: https://linux.mellanox.com/public/repo/mlnx_en/5.1-1.0.4.0/rhel7.9/x86_64
       gpgkey: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
       gpgcheck: yes
-    when:
-      - ansible_distribution_major_version is version('7','==')
-      - ('compute' in group_names or 'storage' in group_names)
+    when: ansible_distribution_major_version is version('7','==')
 
   - name: Configure Mellanox yum repository (CentOS 8)
     ansible.builtin.yum_repository:
@@ -27,9 +22,7 @@
       baseurl: https://linux.mellanox.com/public/repo/mlnx_en/5.1-1.0.4.0/rhel8.2/x86_64
       gpgkey: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
       gpgcheck: yes
-    when:
-      - ansible_distribution_major_version is version('8','==')
-      - ('compute' in group_names or 'storage' in group_names)
+    when: ansible_distribution_major_version is version('8','==')
 
 # Install an updated Mellanox Ethernet driver (newer than the upstream kernel
 # driver in CentOS 7) as well as some utilities like set_irq_affinity.sh. We
@@ -44,9 +37,6 @@
     ansible.builtin.package:
       name: mlnx-en-eth-only
       state: present
-    when:
-      - ansible_distribution == 'CentOS'
-      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Configure Mellanox IRQ affinity service
     ansible.builtin.template:

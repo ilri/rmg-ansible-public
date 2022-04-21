@@ -2,28 +2,34 @@
 - block:
 # see: https://www.mellanox.com/support/mlnx-ofed-public-repository
   - name: Add Mellanox package signing key
-    rpm_key:
+    ansible.builtin.rpm_key:
       key: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
       state: present
-    when: (ansible_distribution == 'CentOS' and ('compute' in group_names or 'storage' in group_names))
+    when:
+      - ansible_distribution == 'CentOS'
+      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Configure Mellanox yum repository (CentOS 7)
-    yum_repository:
+    ansible.builtin.yum_repository:
       name: mellanox_mlnx_en
       description: Mellanox Ethernet drivers
       baseurl: https://linux.mellanox.com/public/repo/mlnx_en/5.1-1.0.4.0/rhel7.9/x86_64
       gpgkey: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
       gpgcheck: yes
-    when: (ansible_distribution_major_version is version('7','==') and ('compute' in group_names or 'storage' in group_names))
+    when:
+      - ansible_distribution_major_version is version('7','==')
+      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Configure Mellanox yum repository (CentOS 8)
-    yum_repository:
+    ansible.builtin.yum_repository:
       name: mellanox_mlnx_en
       description: Mellanox Ethernet drivers
       baseurl: https://linux.mellanox.com/public/repo/mlnx_en/5.1-1.0.4.0/rhel8.2/x86_64
       gpgkey: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
       gpgcheck: yes
-    when: (ansible_distribution_major_version is version('8','==') and ('compute' in group_names or 'storage' in group_names))
+    when:
+      - ansible_distribution_major_version is version('8','==')
+      - ('compute' in group_names or 'storage' in group_names)
 
 # Install an updated Mellanox Ethernet driver (newer than the upstream kernel
 # driver in CentOS 7) as well as some utilities like set_irq_affinity.sh. We
@@ -35,29 +41,50 @@
 # might switch to only using the CentOS kernel's driver and only install the
 # mlnx-en-utils for the set_irq_affinity.sh script.
   - name: Install Mellanox drivers/tools
-    yum: name=mlnx-en-eth-only state=present
-    when: (ansible_distribution == 'CentOS' and ('compute' in group_names or 'storage' in group_names))
+    ansible.builtin.package:
+      name: mlnx-en-eth-only
+      state: present
+    when:
+      - ansible_distribution == 'CentOS'
+      - ('compute' in group_names or 'storage' in group_names)
 
   - name: Configure Mellanox IRQ affinity service
-    template: src=set-mellanox-irq-affinity.service.j2 dest=/etc/systemd/system/set-mellanox-irq-affinity.service mode=0644 owner=root group=root
+    ansible.builtin.template:
+      src: set-mellanox-irq-affinity.service.j2
+      dest: /etc/systemd/system/set-mellanox-irq-affinity.service
+      mode: 0644
+      owner: root
+      group: root
     register: mellanox_irq_affinity_systemd_service
 
   - name: Configure Mellanox rx/tx descriptors service
-    template: src=set-mellanox-descriptors.service.j2 dest=/etc/systemd/system/set-mellanox-descriptors.service mode=0644 owner=root group=root
+    ansible.builtin.template:
+      src: set-mellanox-descriptors.service.j2
+      dest: /etc/systemd/system/set-mellanox-descriptors.service
+      mode: 0644
+      owner: root
+      group: root
     register: mellanox_descriptors_systemd_service
 
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
-    systemd: daemon_reload=yes
+    ansible.builtin.systemd:
+      daemon_reload: yes
     when: mellanox_irq_affinity_systemd_service is changed
           or mellanox_descriptors_systemd_service is changed
 
   - name: Start and enable Mellanox IRQ affinity service
-    systemd: name=set-mellanox-irq-affinity.service state=started enabled=yes
+    ansible.builtin.systemd:
+      name: set-mellanox-irq-affinity.service
+      state: started
+      enabled: yes
     when: mellanox_irq_affinity_systemd_service is changed
 
   - name: Start and enable Mellanox rx/tx descriptors service
-    systemd: name=set-mellanox-descriptors.service state=started enabled=yes
+    ansible.builtin.systemd:
+      name: set-mellanox-descriptors.service
+      state: started
+      enabled: yes
     when: mellanox_descriptors_systemd_service is changed
   tags: mellanox
 

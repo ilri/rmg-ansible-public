@@ -1,9 +1,23 @@
 ---
 
 - block:
-  - name: Install GlusterFS and dependencies
+  - name: Set GlusterFS client packages
+    ansible.builtin.set_fact:
+      glusterfs_client_packages:
+        - glusterfs-fuse
+        - libsemanage-python # required by Ansible's seboolean module
+      when: ansible_distribution_major_version is version('7','==')
+
+  - name: Set GlusterFS client packages
+    ansible.builtin.set_fact:
+      glusterfs_client_packages:
+        - glusterfs-fuse
+        - python3-libselinux.x86_64 # required by Ansible's seboolean module
+      when: ansible_distribution_major_version is version('8','==')
+
+  - name: Install GlusterFS client packages
     ansible.builtin.package:
-      name: ['glusterfs-fuse', 'libsemanage-python']
+      name: "{{ glusterfs_client_packages }}"
       state: present
 
   - name: Create mount points

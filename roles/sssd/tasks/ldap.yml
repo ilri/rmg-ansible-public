@@ -1,9 +1,16 @@
 ---
 - name: Copy ldap.conf
-  template: src=ldap.conf.j2 dest={{ ldap_conf_dir }}/ldap.conf owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: ldap.conf.j2
+    dest: "{{ ldap_conf_dir }}/ldap.conf"
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Remove old CA certificates
-  file: path={{ item }} state=absent
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
   loop:
     - "{{ local_ca_certs_dir }}/hpc-ca.asc"
     - "{{ ldap_conf_dir }}/cacerts/hpc-ca.asc"
@@ -13,19 +20,30 @@
     - /etc/pki/ca-trust/source/anchors/hpc-ca-2017.crt
 
 - name: Copy HPC CA certificate to trust store
-  copy: src=hpc-ca-2017.pem dest={{ local_ca_certs_dir }}/hpc-ca-2017.pem owner=root group=root mode=0644
+  ansible.builtin.copy:
+    src: hpc-ca-2017.pem
+    dest: "{{ local_ca_certs_dir }}/hpc-ca-2017.pem"
+    owner: root
+    group: root
+    mode: 0644
   register: update_cert_bundle
 
 - name: update trusted ca-certificates bundle
-  when: ansible_distribution == 'Ubuntu' and update_cert_bundle is changed
-  command: /usr/sbin/update-ca-certificates --fresh
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - update_cert_bundle is changed
+  ansible.builtin.command: /usr/sbin/update-ca-certificates --fresh
 
 - name: update trusted ca-certificates bundle
-  when: ansible_distribution == 'CentOS' and update_cert_bundle is changed
-  shell: /usr/bin/update-ca-trust enable && /usr/bin/update-ca-trust extract
+  when:
+    - ansible_distribution == 'CentOS'
+    - update_cert_bundle is changed
+  ansible.builtin.shell: /usr/bin/update-ca-trust enable && /usr/bin/update-ca-trust extract
 
 - name: Install OpenLDAP utils
-  yum: name=openldap-clients state=present
+  ansible.builtin.package:
+    name: openldap-clients
+    state: present
   when: ansible_distribution == 'CentOS'
   tags: packages
 

@@ -1,16 +1,21 @@
 ---
 - name: Install sssd package
-  yum: name={{ item }} state=present
-  when: ansible_distribution == 'CentOS'
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
   loop:
    - sssd
    - sssd-tools
    - sssd-ldap
    - oddjob-mkhomedir
+  when: ansible_distribution == 'CentOS'
   tags: packages
 
 - name: Install sssd package
-  apt: name={{ item }} state=present cache_valid_time=3600
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+    cache_valid_time: 3600
   when: ansible_distribution == 'Ubuntu'
   loop:
    - sssd
@@ -18,48 +23,84 @@
   tags: packages
 
 - name: Configure sssd on CentOS 7
-  when: ansible_distribution == 'CentOS' and ansible_distribution_release != 'Stream'
-  command: authconfig --enablesssd --enablesssdauth --enableldap --enableldapauth --enablemkhomedir --ldapserver=ldaps://hpc.ilri.cgiar.org --ldapbasedn=dc=ilri,dc=cgiar,dc=org --disablerfc2307bis --disableldaptls --disablekrb5 --disablekrb5kdcdns --disablekrb5realmdns --updateall
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_release != 'Stream'
+  ansible.builtin.command: authconfig --enablesssd --enablesssdauth --enableldap --enableldapauth --enablemkhomedir --ldapserver=ldaps://hpc.ilri.cgiar.org --ldapbasedn=dc=ilri,dc=cgiar,dc=org --disablerfc2307bis --disableldaptls --disablekrb5 --disablekrb5kdcdns --disablekrb5realmdns --updateall
 
 # authconfig updates ldap.conf & adds TLS_CACERTDIR which overrides TLS_CACERT
 # so we'll need to remove it from ldap.conf
 - name: remove TLS_CACERTDIR in ldap.conf
-  when: ansible_distribution == 'CentOS' != ansible_distribution_release == 'Stream'
-  lineinfile: dest={{ ldap_conf_dir }}/ldap.conf regexp="^TLS_CACERTDIR" state=absent
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_release == 'Stream'
+  ansible.builtin.lineinfile:
+    dest: "{{ ldap_conf_dir }}/ldap.conf"
+    regexp: "^TLS_CACERTDIR"
+    state: absent
 
 - name: Configure sssd on CentOS 8 Stream
-  when: ansible_distribution == 'CentOS' and ansible_distribution_release == 'Stream'
-  command: authselect select sssd with-mkhomedir
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_release == 'Stream'
+  ansible.builtin.command: authselect select sssd with-mkhomedir
 
 - name: Configure sssd
-  template: src=sssd.conf.j2 dest=/etc/sssd/sssd.conf owner=root group=root mode=0600
+  ansible.builtin.template:
+    src: sssd.conf.j2
+    dest: /etc/sssd/sssd.conf
+    owner: root
+    group: root
+    mode: 0600
   notify: restart sssd
 
 - name: Enable pam_mkhomedir
-  copy: src=pam_mkhomedir dest=/usr/share/pam-configs/pam_mkhomedir owner=root group=root mode=0644
+  ansible.builtin.copy:
+    src: pam_mkhomedir
+    dest: /usr/share/pam-configs/pam_mkhomedir
+    owner: root
+    group: root
+    mode: 0644
   when: ansible_distribution == 'Ubuntu'
 
 - name: Regenerate pam config
-  command: pam-auth-update --package
+  ansible.builtin.command: pam-auth-update --package
   when: ansible_distribution == 'Ubuntu'
 
 - name: Change minimum PAM UID for SSH logins
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('7', '==')
-  replace: dest={{ item }} regexp='1000' replace='500'
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_major_version is version('7', '==')
+  ansible.builtin.replace:
+    dest: "{{ item }}"
+    regexp: '1000'
+    replace: '500'
   loop:
    - /etc/pam.d/system-auth-ac
    - /etc/pam.d/password-auth-ac
 
 - name: Add hpc ip & hostname in /etc/hosts
   when: ansible_distribution == 'Ubuntu'
-  lineinfile: dest=/etc/hosts insertafter=EOF line='{{ hostvars['hpc'].ansible_host }}     hpc.ilri.cgiar.org hpc' state=present
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    insertafter: EOF
+    line: "{{ hostvars['hpc'].ansible_host }}     hpc.ilri.cgiar.org hpc"
+    state: present
   tags: hosts
 
 - name: Start and enable sssd service
-  service: name=sssd state=started enabled=true
+  ansible.builtin.service:
+    name: sssd
+    state: started
+    enabled: true
 
 - name: Start and enable oddjob service
-  systemd: name=oddjob state=started enabled=true
-  when: ansible_distribution == 'CentOS' != ansible_distribution_release == 'Stream'
+  ansible.builtin.systemd:
+    name: oddjob
+    state: started
+    enabled: true
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_release == 'Stream'
 
 # vim: set ts=2 sw=2:

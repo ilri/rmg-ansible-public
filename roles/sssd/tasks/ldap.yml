@@ -1,4 +1,13 @@
 ---
+# After running this role you should be able to query HPC's LDAP, ie:
+#
+# ldapsearch -x
+# ...
+# result: 0 Success
+#
+# # numResponses: 448
+# # numEntries: 447
+
 - name: Copy ldap.conf
   ansible.builtin.template:
     src: ldap.conf.j2

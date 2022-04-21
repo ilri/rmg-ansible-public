@@ -111,7 +111,6 @@
       - boost-devel.x86_64 # for augustus
       - boost-iostreams.x86_64 # for augustus
       - cairo-devel.x86_64 # for genometools and others
-      - compat-libgfortran-48.x86_64 # for R compiled on CentOS 7
       - emacs.x86_64
       - environment-modules.x86_64
       - fftw-devel.x86_64 # for gromacs
@@ -131,6 +130,7 @@
       - libXtst.x86_64 # for some X apps like CLC Genomics
       - libcurl-devel.x86_64 # for some R libraries
       - libgfortran.x86_64 # for R
+      - libgfortran4-8.3.1-2.1.1.el7.x86_64 # for R compiled on CentOS 7 (in ILRI repo)
       - libgomp.x86_64 # for R
       - libicu.x86_64 # for R
       - libpng12.x86_64 # for pre-compiled blat binary

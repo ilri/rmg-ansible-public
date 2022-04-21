@@ -5,17 +5,25 @@
 # at the top because handlers are run in the order they are defined, not in the
 # order they are notified!
 - name: restart slurmdbd
-  systemd: name=slurmdbd state=restarted
+  ansible.builtin.systemd:
+    name: slurmdbd
+    state: restarted
   when: inventory_hostname == slurm_head_node
 
 - name: restart slurmctld
-  systemd: name=slurmctld state=restarted
+  ansible.builtin.systemd:
+    name: slurmctld
+    state: restarted
   when: inventory_hostname == slurm_head_node
 
 - name: restart slurmd
-  systemd: name=slurmd state=restarted
+  ansible.builtin.systemd:
+    name: slurmd
+    state: restarted
 
 - name: restart munge
-  systemd: name=munge state=restarted
+  ansible.builtin.systemd:
+    name: munge
+    state: restarted
 
 # vim: set sw=2 ts=2:

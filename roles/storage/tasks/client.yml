@@ -23,7 +23,7 @@
       state: true
       persistent: true
 
-  - name: Mount glusterfs volumes
+  - name: Mount GlusterFS volumes
     when: glusterfs_mounts is defined
     ansible.posix.mount:
       name: "{{ item.mount_point }}"

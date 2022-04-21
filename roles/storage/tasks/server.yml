@@ -6,7 +6,7 @@
       name: ['gdisk', 'xfsprogs', 'nfs-utils', 'htop', 'glusterfs-server']
       state: present
 
-  - name: Start & enable glusterd service
+  - name: Start and enable glusterd service
     ansible.builtin.systemd:
       name: glusterd
       state: started

@@ -3,11 +3,8 @@
 - block:
   - name: Install GlusterFS and dependencies
     ansible.builtin.package:
-      name: "{{ item }}"
+      name: ['glusterfs-fuse', 'libsemanage-python']
       state: present
-    loop:
-      - glusterfs-fuse
-      - libsemanage-python
 
   - name: Create mount points
     when: glusterfs_mounts is defined

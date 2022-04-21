@@ -3,14 +3,8 @@
 - block:
   - name: Install disk utilities and glusterfs-server
     ansible.builtin.package:
-      name: "{{ item }}"
+      name: ['gdisk', 'xfsprogs', 'nfs-utils', 'htop', 'glusterfs-server']
       state: present
-    loop:
-      - gdisk
-      - xfsprogs
-      - nfs-utils
-      - htop
-      - glusterfs-server
 
   - name: Start & enable glusterd service
     ansible.builtin.systemd:

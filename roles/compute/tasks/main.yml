@@ -107,16 +107,9 @@
       - xz-compat-libs.x86_64 # for samtools/1.5 compiled on CentOS 6
   tags: packages
 
-# 2019-12-09: currently missing from CentOS 8:
+# 2022-04-21: currently missing from CentOS 8:
 #   - compat-libstdc++-33.x86_64
-#   - gdal.x86_64 #for libgdal.so.1
-#   - pandoc.x86_64
 #   - argtable.x86_64 # for clustalo
-#   - perl-Clone.x86_64 # for circos, see: https://hpc.ilri.cgiar.org/circos-software
-#   - perl-Config-General.noarch # for circos
-#   - perl-Font-TTF.noarch # for circos
-#   - perl-Readonly.noarch # for circos
-#   - gdal-devel.x86_64 # for some R libraries
 #   - proj-epsg.x86_64 # for some R libraries
 - name: Set extra packages fact for CentOS 8
   when: ansible_distribution_major_version is version('8','==')
@@ -131,6 +124,8 @@
       - fftw-devel.x86_64 # for gromacs
       - firefox.x86_64
       - gcc-c++.x86_64 # for some R libraries
+      - gdal-devel.x86_64 # for some R libraries
+      - gdal.x86_64 #for libgdal.so.1
       - geos-devel.x86_64 # for some R libraries
       - glib2.x86_64 # for wise / Cegma
       - gnuplot.x86_64
@@ -155,13 +150,18 @@
       - nano.x86_64
       - openblas.x86_64 #for scipy
       - openmpi.x86_64 # optional for abyss
+      - pandoc.x86_64
       - pango-devel.x86_64 # for genometools and others
+      - perl-Clone.x86_64 # for circos, see: https://hpc.ilri.cgiar.org/circos-software
+      - perl-Config-General.noarch # for circos
       - perl-DBD-MySQL.x86_64 # for vep
       - perl-DBI.x86_64 # for vep, see: https://hpc.ilri.cgiar.org/vep-software
       - perl-Env.noarch # for masurca
+      - perl-Font-TTF.noarch # for circos
       - perl-JSON.noarch # for vep
       - perl-LWP-Protocol-https.noarch # so perl can use https
       - perl-PerlIO-gzip.x86_64 # for vep
+      - perl-Readonly.noarch # for circos
       - perl-Text-Soundex.x86_64 # for RepeatMasker
       - perl-parent.noarch # for some BioPerl scripts
       - pigz.x86_64 # for SeqKit

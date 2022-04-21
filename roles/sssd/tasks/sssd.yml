@@ -1,25 +1,17 @@
 ---
 - name: Install sssd package
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: ['sssd', 'sssd-tools', 'sssd-ldap', 'oddjob-mkhomedir']
     state: present
-  loop:
-   - sssd
-   - sssd-tools
-   - sssd-ldap
-   - oddjob-mkhomedir
   when: ansible_distribution == 'CentOS'
   tags: packages
 
 - name: Install sssd package
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: ['sssd', 'sssd-tools']
     state: present
     cache_valid_time: 3600
   when: ansible_distribution == 'Ubuntu'
-  loop:
-   - sssd
-   - sssd-tools
   tags: packages
 
 - name: Configure sssd on CentOS 7

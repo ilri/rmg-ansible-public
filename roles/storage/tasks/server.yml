@@ -2,7 +2,9 @@
 
 - block:
   - name: Install disk utilities and glusterfs-server
-    yum: name={{ item }} state=present
+    ansible.builtin.package:
+      name: "{{ item }}"
+      state: present
     loop:
       - gdisk
       - xfsprogs
@@ -11,11 +13,16 @@
       - glusterfs-server
 
   - name: Start & enable glusterd service
-    systemd: name=glusterd state=started enabled=true
+    ansible.builtin.systemd:
+      name: glusterd
+      state: started
+      enabled: true
 
   # belongs in a proper "storage" role, but this will have to do for now
   - name: Remove irqbalance
-    yum: name=irqbalance state=absent
+    ansible.builtin.package:
+      name: irqbalance
+      state: absent
     tags: irqbalance
   tags: glusterfs-server
 

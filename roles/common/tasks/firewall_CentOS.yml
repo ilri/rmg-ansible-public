@@ -35,6 +35,7 @@
         - fail2ban-selinux
         - python3-inotify
         - perl-Net-IP # for aggregate-cidr-addresses.pl
+        - wget # for updating blocklists
 
   - name: Install firewall packages
     when: ansible_distribution_major_version is version('7', '>=')

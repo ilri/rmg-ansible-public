@@ -133,6 +133,24 @@ table inet filter {
         {%     endfor -%}
         {% endif %}
 
+        {# Compute rules #}
+        {% if 'compute' in group_names %}
+        {%   if ghetto_ipsets[slurm_head_node].src is defined %}
+        ip saddr {{ ghetto_ipsets[slurm_head_node].src }} ct state new tcp dport {{ slurm_slurmd_port }} counter accept comment "Allow SLURM head node to slurmd"
+        {%     if ganglia_master_host is defined %}
+        ip saddr {{ ghetto_ipsets[ganglia_master_host].src }} ct state new tcp dport {{ ganglia_gmond_port }} counter accept comment "Allow Ganglia master to gmond"
+        ip saddr {{ ghetto_ipsets[ganglia_master_host].src }} ct state new udp dport {{ ganglia_gmond_port }} counter accept comment "Allow Ganglia master to gmond"
+        {%     endif %}
+        {%   endif %}
+        ip daddr 239.2.11.71/32 ct state new udp dport {{ ganglia_gmond_port }} counter accept comment "Allow multicast to Ganglia gmond"
+
+        {%   for host in groups['compute'] %}
+        {%     if host != inventory_hostname and host != 'hpc' %}
+        ip saddr {{ hostvars[host]['ansible_host'] }} ct state new counter accept comment "Allow from {{ host }}"
+        {%     endif %}
+        {%   endfor %}
+        {% endif %} {# if 'compute' in group_names #}
+
         {# Mosh ports, we only need these on publicly facing servers #}
         {% if 'compute' not in group_names and 'storage' not in group_names %}
         ip saddr 0.0.0.0/0 ct state new udp dport 60001-60003 counter accept comment "Allow mosh"

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+readonly _api_key={{ abuseipdb_api_key }}
+readonly _ssh_log=$(mktemp)
+readonly _report=$(mktemp)
+# Ghetto, but works
+readonly _ilri_ips="172\.26\. 172\.27\. 192\.168\.5\. 41\.204\.190\.18 213\.55\.99\.121 77\.70\.156\.1 196\.189\.58\.113"
+
+# Lazy way to get OS information
+source /etc/os-release
+
+# Only include failures from yesterday (00:00:00 to 23:59:59). Depending on the
+# OS type we check the sshd or ssh systemd service unit.
+if [[ $ID_LIKE =~ rhel ]]; then
+    journalctl --since=yesterday --until=today -u sshd > "$_ssh_log"
+else
+    journalctl --since=yesterday --until=today -u ssh > "$_ssh_log"
+fi
+
+# Parse the SSH log to extract failures
+/opt/ilri/scripts/parse_logs.py "$_ssh_log" -o "$_report"
+
+# Strip some known ILRI IPs
+for ip in $_ilri_ips; do
+    sed -i "/$ip/d" "$_report"
+done
+
+# Report
+curl https://api.abuseipdb.com/api/v2/bulk-report -F csv=@"$_report" -H "Key: $_api_key"
+
+rm "$_ssh_log" "$_report"

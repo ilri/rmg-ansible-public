@@ -18,12 +18,15 @@
   when: ansible_distribution == 'CentOS'
   tags: firewall
 
-- name: Copy AbuseIPDB.com script
+- name: Copy AbuseIPDB.com scripts
   template:
-    src: scripts/parse_logs.py.j2
-    dest: /opt/ilri/scripts/parse_logs.py
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     owner: root
     group: root
     mode: 0755
+  loop:
+    - { 'src': scripts/parse_logs.py.j2, 'dest': /opt/ilri/scripts/parse_logs.py }
+    - { 'src': scripts/report-ssh-abuseipdb.sh.j2, 'dest': /opt/ilri/scripts/report-ssh-abuseipdb.sh }
 
 # vim: set sw=2 ts=2:

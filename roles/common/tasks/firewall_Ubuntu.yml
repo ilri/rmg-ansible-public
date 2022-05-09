@@ -40,6 +40,7 @@
         - nftables
         - python3-systemd
         - curl # for nftables update scripts
+        - python3-tz # for report-ssh-abuseipdb.sh
 
   - name: Install firewall packages
     when: ansible_distribution_version is version('16.04', '>=')

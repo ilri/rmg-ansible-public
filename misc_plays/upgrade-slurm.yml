@@ -14,18 +14,27 @@
   tasks:
     - name: Clear yum cache
       command: yum clean all
+      when: ansible_distribution_major_version is version('7','==')
 
     - name: Update yum cache
       command: yum makecache fast
+      when: ansible_distribution_major_version is version('7','==')
+
+    - name: Clear dnf cache
+      command: dnf clean all
+      when: ansible_distribution_major_version is version('8','==')
+
+    - name: Update dnf cache
+      command: dnf makecache
+      when: ansible_distribution_major_version is version('8','==')
 
 - hosts: hpc
   become: yes
   tasks:
     - name: Upgrade SLURM on HPC
-      yum:
+      ansible.builtin.package:
         name: 'slurm-*'
         state: latest
-        update_cache: yes
 
     - name: Reload systemd daemon definitions
       systemd:
@@ -45,10 +54,9 @@
   become: yes
   tasks:
     - name: Upgrade SLURM on compute nodes
-      yum:
+      ansible.builtin.package:
         name: 'slurm-*'
         state: latest
-        update_cache: yes
 
     - name: Restart slurmd on compute nodes
       systemd:

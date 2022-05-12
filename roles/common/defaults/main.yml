@@ -32,6 +32,6 @@ fail2ban_maxretry: 6
 fail2ban_findtime: 3600
 # 2 weeks in seconds
 fail2ban_bantime: 1209600
-fail2ban_ignoreip: 172.26.0.0/16 172.27.0.0/16 192.168.5.0/24 41.204.190.18/32 213.55.99.121/32
+fail2ban_ignoreip: 172.26.0.0/16 172.27.0.0/16 192.168.5.0/24 41.204.190.18/32 213.55.99.121/32 213.55.99.121/32
 
 # vim: set ts=2 sw=2:

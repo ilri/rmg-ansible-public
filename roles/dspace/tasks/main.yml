@@ -89,7 +89,7 @@
       state: present
     register: add_nodejs_apt_key
 
-  - name: Add Node.js 12 LTS repository
+  - name: Add Node.js 14 LTS repository
     ansible.builtin.template:
       src: nodesource.list.j2
       dest: /etc/apt/sources.list.d/nodesource.list

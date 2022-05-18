@@ -50,7 +50,7 @@
 
   - name: Configure ILRI mirror of HPE MCP repository
     template: src=hpe-mcp.repo.j2 dest=/etc/yum.repos.d/hpe-mcp.repo owner=root group=root mode=0644
-    when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('7','==') and 'hp' in hw_raid_vendor
+    when: ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor
 
   - name: Install HPE Smart Storage Administrator CLI
     ansible.builtin.package: name=ssacli state=present

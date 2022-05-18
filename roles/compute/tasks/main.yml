@@ -138,13 +138,16 @@
       - libtool-ltdl.x86_64 # for pandaseq/2.7
       - libwebp-devel.x86_64 # for some R libraries
       - libxml2-devel.x86_64 # for some R libraries
+      - libXt-devel.x86_64 # for R/4.2.0 (X11/Intrinsic.h)
       - libzstd-devel.x86_64 # for some R libraries
+      - make.x86_64
       - mesa-libGLU-devel.x86_64 # for some R libraries
       - nano.x86_64
       - openblas.x86_64 #for scipy
       - openmpi.x86_64 # optional for abyss
       - pandoc.x86_64
       - pango-devel.x86_64 # for genometools and others
+      - pcre2-devel.x86_64 # needed as of R/4.0
       - perl-Clone.x86_64 # for circos, see: https://hpc.ilri.cgiar.org/circos-software
       - perl-Config-General.noarch # for circos
       - perl-DBD-MySQL.x86_64 # for vep
@@ -163,6 +166,7 @@
       - python3-numpy.x86_64 # for Trinity as of v2.6.6
       - python3-setuptools.noarch # needed by some Python scripts to load entrypoint
       - python36.x86_64
+      - readline-devel.x86_64 # for R/4.2.0
       - screen.x86_64
       - singularity # from EPEL, for viralrecon pipeline
       - sqlite-devel.x86_64 # for some R libraries

@@ -123,6 +123,7 @@
       - gnuplot.x86_64
       - graphviz
       - gsl.x86_64 # for fastSTRUCTURE
+      - gsl-devel.x86_64 # needed for some R packages like HiCeekR
       - hdf5-devel.x86_64 # for some R libraries
       - htop.x86_64
       - java-1.8.0-openjdk.x86_64 # for lots of stuff
@@ -133,6 +134,7 @@
       - libgfortran4-8.3.1-2.1.1.el7.x86_64 # for R compiled on CentOS 7 (in ILRI repo)
       - libgomp.x86_64 # for R
       - libicu.x86_64 # for R
+      - libjpeg-turbo-devel.x86_64 # needed for some R packages like HiCeekR
       - libpng12.x86_64 # for pre-compiled blat binary
       - libstdc++.i686 # for 32-bit binaries
       - libtool-ltdl.x86_64 # for pandaseq/2.7

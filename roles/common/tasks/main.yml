@@ -36,7 +36,8 @@
   import_tasks: ntp.yml
   tags: ntp
 
-# this should work on CentOS 7+ and Ubuntu 16.04+
+# This should work on CentOS 7+ and Ubuntu 16.04+. As of CentOS Stream 8 the
+# persistent journal is still not enabled by default.
 - block:
   - name: Create systemd-journald drop-in config directory
     ansible.builtin.file:

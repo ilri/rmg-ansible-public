@@ -1,39 +1,49 @@
 ---
 - name: Import OS-specific variables
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   loop:
     - "vars/{{ ansible_os_family }}.yml"
     - "private/vars/{{ ansible_os_family }}.yml"
   tags: always
 
 - name: Include tasks to update /etc/hosts
-  import_tasks: hosts.yml
+  ansible.builtin.import_tasks: hosts.yml
   tags: hosts
 
 - name: Install common packages
-  import_tasks: packages.yml
+  ansible.builtin.import_tasks: packages.yml
   tags: packages
 
 - name: Create ILRI scripts directory
-  file: path=/opt/ilri/scripts owner=root group=root mode=0755 state=directory
+  ansible.builtin.file:
+    path: opt/ilri/scripts
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
   tags: scripts
 
 - name: Copy ILRI scripts
-  copy: src={{ item }} dest=/opt/ilri/scripts/ owner=root group=root mode=0755
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: /opt/ilri/scripts
+    owner: root
+    group: root
+    mode: 0755
   with_fileglob:
     - scripts/*.sh
   tags: scripts
 
 - name: Configure firewall
-  import_tasks: firewall.yml
+  ansible.builtin.import_tasks: firewall.yml
   tags: firewall
 
 - name: Configure secure shell daemon
-  import_tasks: sshd.yml
+  ansible.builtin.import_tasks: sshd.yml
   tags: sshd
 
 - name: Configure network time
-  import_tasks: ntp.yml
+  ansible.builtin.import_tasks: ntp.yml
   tags: ntp
 
 # This should work on CentOS 7+ and Ubuntu 16.04+. As of CentOS Stream 8 the
@@ -59,43 +69,58 @@
 
 - name: Reconfigure /etc/sysctl.conf on Debian and Ubuntu
   when: ansible_distribution != "CentOS"
-  template: src=sysctl_{{ ansible_distribution }}.j2 dest=/etc/sysctl.conf owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: "sysctl_{{ ansible_distribution }}.j2"
+    dest: /etc/sysctl.conf
+    owner: root
+    group: root
+    mode: 0644
   notify:
     - reload sysctl
   tags: sysctl
 
 - name: Reconfigure /etc/sysctl.conf on CentOS
   when: ansible_distribution == "CentOS"
-  template: src=sysctl_CentOS-{{ ansible_distribution_major_version }}.j2 dest=/etc/sysctl.conf owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: "sysctl_CentOS-{{ ansible_distribution_major_version }}.j2"
+    dest: /etc/sysctl.conf
+    owner: root
+    group: root
+    mode: 0644
   notify:
     - reload sysctl
   tags: sysctl
 
 - name: Set I/O scheduler
-  template: src=etc/udev/rules.d/60-scheduler.rules.j2 dest=/etc/udev/rules.d/60-scheduler.rules owner=root group=root mode=0644
+  ansible.builtin.template:
+    src: etc/udev/rules.d/60-scheduler.rules.j2
+    dest: /etc/udev/rules.d/60-scheduler.rules
+    owner: root
+    group: root
+    mode: 0644
   tags: udev
 
 - name: Configure tuned
-  include_tasks: tuned.yml
+  ansible.builtin.include_tasks: tuned.yml
   when: ansible_distribution == 'CentOS'
   tags: tuned
 
 - name: Copy admin SSH keys
-  include_tasks: ssh-keys.yml
+  ansible.builtin.include_tasks: ssh-keys.yml
   when: provisioning_user is defined
   tags: ssh-keys
 
 - name: Configure sudoers
-  import_tasks: sudoersd.yml
+  ansible.builtin.import_tasks: sudoersd.yml
   tags: sudoers
 
 - name: Configure RAID monitoring
-  include_tasks: raid-monitoring.yml
+  ansible.builtin.include_tasks: raid-monitoring.yml
   when: hw_raid_vendor is defined
   tags: raid-monitoring
 
 - name: Configure backup scripts
-  import_tasks: backups.yml
+  ansible.builtin.import_tasks: backups.yml
   tags: backups
 
 # vim: set sw=2 ts=2:

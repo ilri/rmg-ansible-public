@@ -49,7 +49,7 @@
     community.general.snap:
       name: lxd
       state: absent
-    when: ansible_distribution_version is version('20.04', '==')
+    when: ansible_distribution_version is version('20.04', '>=')
     ignore_errors: true
 
   - name: Remove core18 snap
@@ -59,11 +59,18 @@
     when: ansible_distribution_version is version('20.04', '==')
     ignore_errors: true
 
+  - name: Remove core20 snap
+    community.general.snap:
+      name: core20
+      state: absent
+    when: ansible_distribution_version is version('22.04', '==')
+    ignore_errors: true
+
   - name: Remove snapd snap
     community.general.snap:
       name: snapd
       state: absent
-    when: ansible_distribution_version is version('20.04', '==')
+    when: ansible_distribution_version is version('20.04', '>=')
     ignore_errors: true
 
   - name: Remove annoying packages
@@ -84,7 +91,7 @@
       purge: true
     when: ansible_distribution_version is version('18.04', '<=')
 
-  - name: Remove annoying packages
+  - name: Remove packages (Ubuntu 20.04+)
     ansible.builtin.package:
       name:
         - whoopsie # security (CIS 4.1)
@@ -96,7 +103,7 @@
         - lxd-agent-loader # annoying (Ubuntu 20.04)
       state: absent
       purge: true
-    when: ansible_distribution_version is version('20.04', '==')
+    when: ansible_distribution_version is version('20.04', '>=')
 
   - name: Disable annoying Canonical spam in MOTD
     ansible.builtin.file:

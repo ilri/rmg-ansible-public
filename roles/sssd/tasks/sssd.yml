@@ -27,7 +27,7 @@
     - ansible_distribution == 'CentOS'
     - ansible_distribution_release == 'Stream'
   ansible.builtin.lineinfile:
-    dest: "{{ ldap_conf_dir }}/ldap.conf"
+    path: "{{ ldap_conf_dir }}/ldap.conf"
     regexp: "^TLS_CACERTDIR"
     state: absent
 
@@ -68,8 +68,8 @@
     regexp: '1000'
     replace: '500'
   loop:
-   - /etc/pam.d/system-auth-ac
-   - /etc/pam.d/password-auth-ac
+    - /etc/pam.d/system-auth-ac
+    - /etc/pam.d/password-auth-ac
 
 # Allow LDAP users with UIDs less than 1000 to log in.
 # See: https://bugzilla.redhat.com/show_bug.cgi?id=1773567
@@ -90,7 +90,7 @@
 - name: Add hpc ip & hostname in /etc/hosts
   when: ansible_distribution == 'Ubuntu'
   ansible.builtin.lineinfile:
-    dest: /etc/hosts
+    path: /etc/hosts
     insertafter: EOF
     line: "{{ hostvars['hpc'].ansible_host }}     hpc.ilri.cgiar.org hpc"
     state: present

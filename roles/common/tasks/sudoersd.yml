@@ -40,4 +40,13 @@
     validate: 'visudo -cf %s'
   when: (extra_sudo_users is defined or extra_nopasswd_sudo_users is defined) and ansible_os_family != "Debian"
 
+# cloud-init adds sudo users for us, but for now I would prefer to remove that
+# so we can have a consistent sudo on all our hosts (some of which do not use
+# cloud-init). We have to do this at the end so we don't lose sudo access in
+# the middle of our playbook.
+- name: Remove cloud-init sudoers
+  ansible.builtin.file:
+    path: /etc/sudoers.d/90-cloud-init-users
+    state: absent
+
 # vim: set ts=2 sw=2:

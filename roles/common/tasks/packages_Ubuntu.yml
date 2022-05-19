@@ -30,12 +30,12 @@
         - debian-goodies
         - mosh
         - python-pycurl # for ansible's apt_repository
-        - lzop
         - vim
         - acpid
         - debconf
         - debconf-utils
         - software-properties-common
+        - zstd
 
   - name: Install base packages
     ansible.builtin.package: pkg={{ ubuntu_base_packages }} state=present cache_valid_time=3600

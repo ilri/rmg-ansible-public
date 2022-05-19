@@ -71,6 +71,22 @@
    - /etc/pam.d/system-auth-ac
    - /etc/pam.d/password-auth-ac
 
+# Allow LDAP users with UIDs less than 1000 to log in.
+# See: https://bugzilla.redhat.com/show_bug.cgi?id=1773567
+- name: Change minimum PAM UID for SSH logins
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_release == 'Stream'
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - {'regexp': '^UID_MIN', 'line': 'UID_MIN 600'}
+    - {'regexp': '^SYS_UID_MAX', 'line': 'SYS_UID_MAX 599'}
+    - {'regexp': '^GID_MIN', 'line': 'GID_MIN 600'}
+    - {'regexp': '^SYS_GID_MAX', 'line': 'SYS_GID_MAX 599'}
+
 - name: Add hpc ip & hostname in /etc/hosts
   when: ansible_distribution == 'Ubuntu'
   ansible.builtin.lineinfile:

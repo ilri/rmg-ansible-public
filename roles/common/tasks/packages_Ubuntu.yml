@@ -25,7 +25,7 @@
         - safe-rm
         - debian-goodies
         - mosh
-        - python-pycurl # for ansible's apt_repository
+        - python3-pycurl # for ansible's apt_repository
         - vim
         - acpid
         - debconf

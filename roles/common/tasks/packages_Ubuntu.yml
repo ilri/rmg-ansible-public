@@ -5,10 +5,6 @@
     template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
     register: ubuntu_apt_mirror
 
-  - name: Add GPG key for Extras repo
-    apt_key: id=0x3E5C1192 url=https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x16126D3A3E5C1192 state=present
-    when: ansible_distribution_version is version('14.04', '==')
-
   - name: Update apt cache
     ansible.builtin.package: update_cache=yes
     when: ubuntu_apt_mirror is changed

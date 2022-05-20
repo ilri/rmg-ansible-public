@@ -3,23 +3,27 @@
 # Glaring fucking hack: skip the firewall on linode20 and linode31 because they
 # run Docker and Docker doesn't work with nftables. We also ignore holstein be-
 # cause it is running libvirtd, which has a hard depend on iptables.
-- include_tasks: firewall_Ubuntu.yml
-  when: ansible_distribution == 'Ubuntu' and
-        inventory_hostname != 'linode20' and
-        inventory_hostname != 'linode31' and
-        inventory_hostname != 'holstein'
+- name: Configure firewall on Ubuntu
+  ansible.builtin.include_tasks: firewall_Ubuntu.yml
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - inventory_hostname != 'linode20'
+    - inventory_hostname != 'linode31'
+    - inventory_hostname != 'holstein'
   tags: firewall
 
-- include_tasks: firewall_Debian.yml
+- name: Configure firewall on Debian
+  ansible.builtin.include_tasks: firewall_Debian.yml
   when: ansible_distribution == 'Debian'
   tags: firewall
 
-- include_tasks: firewall_CentOS.yml
+- name: Configure firewall on CentOS
+  ansible.builtin.include_tasks: firewall_CentOS.yml
   when: ansible_distribution == 'CentOS'
   tags: firewall
 
 - name: Copy AbuseIPDB.com scripts
-  template:
+  ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root

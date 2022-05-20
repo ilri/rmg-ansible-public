@@ -62,6 +62,6 @@
   ansible.builtin.systemd:
     name: fail2ban
     state: started
-    enabled: yes
+    enabled: True
 
 # vim: set sw=2 ts=2:

@@ -2,14 +2,24 @@
 
 # SSH configs don't change in Debian / CentOS minor versions
 - name: Reconfigure /etc/ssh/sshd_config
-  template: src=sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0600
-  when: (ansible_distribution == 'Debian' or ansible_distribution == 'CentOS')
+  ansible.builtin.template:
+    src: "sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2"
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0600
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'CentOS'
   notify: reload sshd
 
 # Ubuntu is the only distro we have where SSH version is very different from 14.04 -> 14.10,
 # ie with new ciphers supported etc.
 - name: Reconfigure /etc/ssh/sshd_config
-  template: src=sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2 dest=/etc/ssh/sshd_config owner=root group=root mode=0600
+  ansible.builtin.template:
+    src: "sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2"
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0600
   when: ansible_distribution == 'Ubuntu'
   notify: reload sshd
 
@@ -38,11 +48,12 @@
       when: extract_safe_moduli is changed
       notify: reload sshd
 
-
 # CentOS's sshd.service regenerates these, so don't bother removing them. Also,
 # we are ignoring these host keys in sshd_config anyways...
 - name: Remove DSA and ECDSA host keys
-  file: name=/etc/ssh/{{ item }} state=absent
+  ansible.builtin.file:
+    name: "/etc/ssh/{{ item }}"
+    state: absent
   loop:
     - ssh_host_dsa_key
     - ssh_host_dsa_key.pub

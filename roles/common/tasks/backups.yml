@@ -1,26 +1,37 @@
 ---
 
 - name: Install mailx on CentOS hosts
-  ansible.builtin.package: name=mailx state=present
+  ansible.builtin.package:
+    name: mailx
+    state: present
   when: ansible_distribution == 'CentOS'
   tags: packages
 
 - name: Install heirloom-mailx
-  ansible.builtin.package: name=heirloom-mailx state=present
+  ansible.builtin.package:
+    name: heirloom-mailx
+    state: present
   when:
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version is version('16.04', '<')
   tags: packages
 
 - name: Install s-nail
-  ansible.builtin.package: name=s-nail state=present
+  ansible.builtin.package:
+    name: s-nail
+    state: present
   when:
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version is version('16.04', '>=')
   tags: packages
 
 - name: Copy backup script templates
-  template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0755
   loop:
     - { src: "scripts/backup_mysql.py.j2", dest: "/opt/ilri/scripts/backup_mysql.py" }
     - { src: "scripts/backup_postgresql.py.j2", dest: "/opt/ilri/scripts/backup_postgresql.py" }
@@ -31,12 +42,12 @@
 # they will use in the future).
 - block:
   - name: Check restic version
-    stat:
+    ansible.builtin.stat:
       path: "{{ restic_binary_path }}-{{ restic_version }}"
     register: restic_stat
 
   - name: Download restic
-    get_url:
+    ansible.builtin.get_url:
       url: "{{ restic_url }}"
       dest: "{{ restic_binary_path }}-{{ restic_version }}.bz2"
       checksum: "sha256:{{ restic_url_checksum }}"
@@ -45,7 +56,7 @@
 
   # The Ansible unarchive module expects a tarred archive so we must use bunzip2
   - name: Unzip restic
-    command:
+    ansible.builtin.command:
     args:
       argv:
         - bunzip2
@@ -55,7 +66,7 @@
     register: restic_binary
 
   - name: Make restic binary executable
-    file:
+    ansible.builtin.file:
       path: "{{ restic_binary_path }}-{{ restic_version }}"
       owner: root
       group: root
@@ -63,7 +74,7 @@
     when: restic_binary is changed
 
   - name: Configure restic symlink
-    file:
+    ansible.builtin.file:
       src: "{{ restic_binary_path }}-{{ restic_version }}"
       dest: "{{ restic_binary_path }}"
       owner: root
@@ -73,7 +84,7 @@
     when: restic_binary is changed
 
   - name: Remove old restic versions
-    file:
+    ansible.builtin.file:
       path: "{{ item }}"
       state: absent
     loop:
@@ -83,32 +94,56 @@
       - "{{ restic_binary_path }}-0.12.0"
 
   - name: Copy restic scripts
-    template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
+    ansible.builtin.template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: root
+      group: root
+      mode: 0755
     loop:
-      - { 'src': scripts/restic-backup.sh.j2, 'dest': '/opt/ilri/scripts/restic-backup.sh' }
-      - { 'src': scripts/restic-prune.sh.j2, 'dest': '/opt/ilri/scripts/restic-prune.sh' }
+      - { 'src': scripts/restic-backup.sh.j2, 'dest': /opt/ilri/scripts/restic-backup.sh }
+      - { 'src': scripts/restic-prune.sh.j2, 'dest': /opt/ilri/scripts/restic-prune.sh }
 
   - name: Copy restic systemd service unit
-    template: src=restic-backup.service.j2 dest=/etc/systemd/system/restic-backup.service mode=0644 owner=root group=root
+    ansible.builtin.template:
+      src: restic-backup.service.j2
+      dest: /etc/systemd/system/restic-backup.service
+      mode: 0644
+      owner: root
+      group: root
     register: restic_systemd_service
 
   - name: Copy restic systemd timer unit
-    copy: src=restic-backup.timer dest=/etc/systemd/system/restic-backup.timer mode=0644 owner=root group=root
+    ansible.builtin.copy:
+      src: restic-backup.timer
+      dest: /etc/systemd/system/restic-backup.timer
+      mode: 0644
+      owner: root
+      group: root
     register: restic_systemd_timer
 
   - name: Copy restic-backup environment
-    template: src=restic-backup-environment.j2 dest=/etc/restic-backup mode=0660 owner=root group=root
+    ansible.builtin.template:
+      src: restic-backup-environment.j2
+      dest: /etc/restic-backup
+      mode: 0660
+      owner: root
+      group: root
     register: restic_systemd_environment
 
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
-    systemd: daemon_reload=true
+    ansible.builtin.systemd:
+      daemon_reload: true
     when: restic_systemd_service is changed
           or restic_systemd_timer is changed
           or restic_systemd_environment is changed
 
   - name: Start and enable restic systemd timer
-    systemd: name=restic-backup.timer state=started enabled=true
+    ansible.builtin.systemd:
+      name: restic-backup.timer
+      state: started
+      enabled: true
 
   when: restic_password is defined
   tags: restic

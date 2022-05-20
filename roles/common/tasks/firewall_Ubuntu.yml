@@ -1,4 +1,5 @@
 ---
+# Ubuntu 22.04 will use nftables directly, with no firewalld.
 # Ubuntu 20.04 will use nftables directly, with no firewalld.
 # Ubuntu 18.04 will use nftables directly, with no firewalld.
 # Ubuntu 16.04 will use firewalld with the iptables backend.

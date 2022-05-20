@@ -2,7 +2,7 @@
 # file: nomads.yml
 
 - hosts: nomads
-  become: yes
+  become: true
   vars_files:
     - private/vars/common.yml
     - private/vars/ipsets.yml

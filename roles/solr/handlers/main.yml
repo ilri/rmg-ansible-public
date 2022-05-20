@@ -2,6 +2,8 @@
 # file: roles/dspace/handlers/main.yml
 
 - name: restart solr
-  service: name=solr state=restarted
+  ansible.builtin.service:
+    name: solr
+    state: restarted
 
 # vim: set sw=2 ts=2:

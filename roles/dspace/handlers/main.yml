@@ -2,16 +2,26 @@
 # file: roles/dspace/handlers/main.yml
 
 - name: restart nginx
-  systemd: name=nginx state=restarted
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
 
 - name: reload nginx
-  systemd: name=nginx state=reloaded
+  ansible.builtin.systemd:
+    name: nginx
+    state: reloaded
 
 - name: restart tomcat7
-  systemd: name=tomcat7 state=restarted
+  ansible.builtin.systemd:
+    name: tomcat7
+    state: restarted
 
 - name: restart tomcat8
-  systemd: name=tomcat8 state=restarted
+  ansible.builtin.systemd:
+    name: tomcat8
+    state: restarted
 
 - name: restart dspace-statistics-api
-  systemd: name=dspace-statistics-api state=restarted
+  ansible.builtin.systemd:
+    name: dspace-statistics-api
+    state: restarted

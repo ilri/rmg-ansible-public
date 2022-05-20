@@ -1,6 +1,8 @@
 ---
 # file: roles/sssd/handlers/main.yml
 - name: restart sssd
-  service: name=sssd state=restarted
+  ansible.builtin.service:
+    name: sssd
+    state: restarted
 
 # vim: set sw=2 ts=2:

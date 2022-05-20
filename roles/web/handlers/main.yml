@@ -3,8 +3,12 @@
 
 # When the nginx binary changes
 - name: restart nginx
-  systemd: name=nginx state=restarted
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted
 
 # When configs or TLS certificates change
 - name: reload nginx
-  systemd: name=nginx state=reloaded
+  ansible.builtin.systemd:
+    name: nginx
+    state: reloaded

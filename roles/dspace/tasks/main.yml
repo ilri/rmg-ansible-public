@@ -483,7 +483,7 @@
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
   ansible.builtin.systemd:
-    daemon_reload: yes
+    daemon_reload: true
   when: dspace_systemd_services is changed
         or dspace_systemd_timers is changed
         or dspace_systemd_environment1 is changed
@@ -493,7 +493,7 @@
   ansible.builtin.systemd:
     name: "{{ item }}"
     state: started
-    enabled: yes
+    enabled: true
   loop:
     - dspace-handle-server.service
     - dspace-statistics-api.service

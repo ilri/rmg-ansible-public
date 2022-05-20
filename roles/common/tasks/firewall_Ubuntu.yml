@@ -82,10 +82,10 @@
       mode: 0600
       force: "{{ item.force }}"
     loop:
-      - { src: spamhaus-ipv4.xml, force: False }
-      - { src: spamhaus-ipv6.xml, force: False }
-      - { src: abusers-ipv4.xml, force: True }
-      - { src: abusers-ipv6.xml, force: True }
+      - { src: spamhaus-ipv4.xml, force: false }
+      - { src: spamhaus-ipv6.xml, force: false }
+      - { src: abusers-ipv4.xml, force: true }
+      - { src: abusers-ipv6.xml, force: true }
     notify:
       - restart firewalld
       - restart fail2ban
@@ -115,7 +115,7 @@
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
     ansible.builtin.systemd:
-      daemon_reload: True
+      daemon_reload: true
     when: spamhaus_firewalld_systemd_units is changed
 
   - name: Start and enable Spamhaus firewalld update timer
@@ -123,7 +123,7 @@
     ansible.builtin.systemd:
       name: update-spamhaus-lists.timer
       state: started
-      enabled: True
+      enabled: true
     notify:
       - restart firewalld
       - restart fail2ban

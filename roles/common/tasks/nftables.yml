@@ -34,15 +34,15 @@
     mode: 0644
     force: "{{ item.force }}"
   loop:
-    - { src: spamhaus-ipv4.nft, force: False }
-    - { src: spamhaus-ipv6.nft, force: False }
-    - { src: abusech-ipv4.nft, force: False }
-    - { src: abuseipdb-ipv4.nft, force: True }
-    - { src: abuseipdb-ipv6.nft, force: True }
-    - { src: russian-ddos-networks-ipv4.nft, force: True }
-    - { src: russian-ddos-networks-ipv6.nft, force: True }
-    - { src: chinese-ddos-networks-ipv4.nft, force: True }
-    - { src: chinese-ddos-networks-ipv6.nft, force: True }
+    - { src: spamhaus-ipv4.nft, force: false }
+    - { src: spamhaus-ipv6.nft, force: false }
+    - { src: abusech-ipv4.nft, force: false }
+    - { src: abuseipdb-ipv4.nft, force: true }
+    - { src: abuseipdb-ipv6.nft, force: true }
+    - { src: russian-ddos-networks-ipv4.nft, force: true }
+    - { src: russian-ddos-networks-ipv6.nft, force: true }
+    - { src: chinese-ddos-networks-ipv4.nft, force: true }
+    - { src: chinese-ddos-networks-ipv6.nft, force: true }
   notify:
     - restart nftables
     - restart fail2ban
@@ -76,14 +76,14 @@
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
   ansible.builtin.systemd:
-    daemon_reload: True
+    daemon_reload: true
   when: nftables_systemd_units is changed
 
 - name: Start and enable nftables update timers
   ansible.builtin.systemd:
     name: "{{ item }}"
     state: started
-    enabled: True
+    enabled: true
   loop:
     - update-spamhaus-nftables.timer
     - update-abusech-nftables.timer
@@ -92,6 +92,6 @@
   ansible.builtin.systemd:
     name: nftables.service
     state: started
-    enabled: True
+    enabled: true
 
 # vim: set sw=2 ts=2:

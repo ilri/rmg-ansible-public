@@ -3,7 +3,7 @@
 - name: Create system group to run Solr daemon
   ansible.builtin.group:
     name: "{{ solr_group }}"
-    system: yes
+    system: true
 
 - name: Create system user account to run Solr daemon
   ansible.builtin.user: name={{ solr_user }} group={{ solr_group }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
@@ -29,7 +29,7 @@
     creates: "{{ solr_install_dir }}"
     owner: "{{ solr_user }}"
     group: "{{ solr_group }}"
-    remote_src: yes
+    remote_src: true
   when: get_url_result is changed
 
 - name: Create Solr data & log dirs
@@ -65,7 +65,7 @@
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
   ansible.builtin.systemd:
-    daemon_reload: yes
+    daemon_reload: true
   when: solr_systemd_service is changed
 
 - name: Copy solr.xml config files
@@ -97,7 +97,7 @@
   ansible.builtin.service:
     name: solr
     state: started
-    enabled: yes
+    enabled: true
 
 - name: Configure Solr cores
   ansible.builtin.include_tasks:

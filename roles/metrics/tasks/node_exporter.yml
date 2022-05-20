@@ -54,6 +54,6 @@
   ansible.builtin.systemd:
     name: node-exporter.service
     state: started
-    enabled: yes
+    enabled: true
 
 # vim: set sw=2 ts=2:

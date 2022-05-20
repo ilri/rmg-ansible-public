@@ -22,7 +22,7 @@
 
 - name: Enable systemd's NTP client
   when: ansible_service_mgr == 'systemd' and ansible_distribution != 'CentOS'
-  systemd: name=systemd-timesyncd state=started enabled=yes
+  systemd: name=systemd-timesyncd state=started enabled=true
 
 - name: Uninstall ntp on modern Ubuntu/Debian
   ansible.builtin.package: name=ntp state=absent cache_valid_time=3600
@@ -36,7 +36,7 @@
 # installing chrony (just in case). Chrony is now preferred in favor of ntp:
 # https://www.coreinfrastructure.org/news/blogs/2017/09/securing-network-time
 - name: Stop and disable ntp on CentOS
-  systemd: name=ntpd state=stopped enabled=no
+  systemd: name=ntpd state=stopped enabled=false
   when: ansible_distribution == 'CentOS' and ansible_service_mgr == 'systemd'
   ignore_errors: yes
 
@@ -49,7 +49,7 @@
   when: ansible_distribution == 'CentOS'
 
 - name: Start and enable chrony on CentOS
-  service: name=chronyd state=started enabled=yes
+  service: name=chronyd state=started enabled=true
   when: ansible_distribution == 'CentOS'
 
 # vim: set ts=2 sw=2:

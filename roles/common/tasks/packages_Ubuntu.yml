@@ -120,7 +120,7 @@
     ansible.builtin.systemd:
       name: "{{ item }}"
       state: stopped
-      enabled: no
+      enabled: false
     when: ansible_service_mgr == 'systemd'
     loop:
       - motd-news.service

@@ -125,12 +125,12 @@
 
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
-    systemd: daemon_reload=yes
+    systemd: daemon_reload=true
     when: spamhaus_firewalld_systemd_units is changed
 
   - name: Start and enable Spamhaus firewalld update timer
     when: ansible_distribution_major_version is version('7', '==')
-    systemd: name=update-spamhaus-lists.timer state=started enabled=yes
+    systemd: name=update-spamhaus-lists.timer state=started enabled=true
     notify:
       - restart firewalld
       - restart fail2ban

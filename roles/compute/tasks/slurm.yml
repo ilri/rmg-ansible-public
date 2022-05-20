@@ -120,7 +120,7 @@
   ansible.builtin.systemd:
     name: munge
     state: started
-    enabled: yes
+    enabled: true
 
 # don't start slurmd on the head node just yet, because it technically needs to
 # have the slurmdbd service started first and we don't check that.
@@ -128,7 +128,7 @@
   ansible.builtin.systemd:
     name: slurmd
     state: started
-    enabled: yes
+    enabled: true
   when: inventory_hostname != slurm_head_node
 
 # vim: set sw=2 ts=2:

@@ -59,7 +59,7 @@
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
     ansible.builtin.systemd:
-      daemon_reload: yes
+      daemon_reload: true
     when: mellanox_irq_affinity_systemd_service is changed
           or mellanox_descriptors_systemd_service is changed
 
@@ -67,14 +67,14 @@
     ansible.builtin.systemd:
       name: set-mellanox-irq-affinity.service
       state: started
-      enabled: yes
+      enabled: true
     when: mellanox_irq_affinity_systemd_service is changed
 
   - name: Start and enable Mellanox rx/tx descriptors service
     ansible.builtin.systemd:
       name: set-mellanox-descriptors.service
       state: started
-      enabled: yes
+      enabled: true
     when: mellanox_descriptors_systemd_service is changed
   tags: mellanox
 

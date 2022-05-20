@@ -69,7 +69,7 @@
       owner: root
       group: root
       state: link
-      force: yes
+      force: true
     when: restic_binary is changed
 
   - name: Remove old restic versions
@@ -102,13 +102,13 @@
 
   # need to reload to pick up service/timer/environment changes
   - name: Reload systemd daemon
-    systemd: daemon_reload=yes
+    systemd: daemon_reload=true
     when: restic_systemd_service is changed
           or restic_systemd_timer is changed
           or restic_systemd_environment is changed
 
   - name: Start and enable restic systemd timer
-    systemd: name=restic-backup.timer state=started enabled=yes
+    systemd: name=restic-backup.timer state=started enabled=true
 
   when: restic_password is defined
   tags: restic

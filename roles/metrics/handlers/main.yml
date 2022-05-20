@@ -1,12 +1,6 @@
 ---
 # file: roles/metrics/handlers/main.yml
 
-# Remember, Ansible handlers are run in the order they are defined here, not
-# the order they are listed in the task's notify.
-- name: reload systemd
-  ansible.builtin.systemd:
-    daemon_reload: yes
-
 # Reload is use when the config file changes
 - name: restart victoria-metrics
   ansible.builtin.systemd:

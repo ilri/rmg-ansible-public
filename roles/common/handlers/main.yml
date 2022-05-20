@@ -1,6 +1,12 @@
 ---
 # file: roles/common/handlers/main.yml
 
+# Remember, Ansible handlers are run in the order they are defined globally, not
+# the order they are listed in the task's notify.
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
 - name: restart iptables
   service: name=iptables state=restarted
 
@@ -21,9 +27,6 @@
 
 - name: restart firewalld
   service: name=firewalld state=restarted
-
-- name: reload systemd
-  systemd: daemon_reload=yes
 
 - name: restart nftables
   systemd: name=nftables state=restarted

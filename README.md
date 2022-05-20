@@ -1,14 +1,14 @@
-# Ansible scripts for ILRI research-computing infrastructure
+# Ansible Scripts for ILRI Research-Computing Infrastructure
 In order for these playbooks to work, your host must:
 
-- have finished installation, have working networking, and an SSH daemon running
-- have added a `provisioning` user via kickstart / preseed
+- have finished installation, have working networking, have an SSH daemon running
+- have added a `provisioning` user via kickstart, preseed, or cloud-init
 - have an entry in the `private/hosts`
-- have a var file in `host_vars/` which defines _at least_ an `ansible_host` variable
+- have a vars file in `host_vars/` which defines _at least_ an `ansible_host` variable
 
 Assuming the above are true, you should be able to run these playbooks successfully.
 
-## Post-install Ansible invocation
+## Post-install Ansible Invocation
 Take note that the first-ever invocation after the clean installation of a machine is different than subsequent invocations due to the way SSH public keys are copied to the host.
 
 On the first run, you need to use `-k --ask-become-pass` to prompt for the SSH/sudo password of the provisioning user:

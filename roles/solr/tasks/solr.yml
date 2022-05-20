@@ -1,18 +1,20 @@
 ---
 
 - name: Create system group to run Solr daemon
-  group: name={{ solr_group }} system=yes
+  ansible.builtin.group:
+    name: "{{ solr_group }}"
+    system: yes
 
 - name: Create system user account to run Solr daemon
-  user: name={{ solr_user }} group={{ solr_group }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
+  ansible.builtin.user: name={{ solr_user }} group={{ solr_group }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
 
 - name: Check installed Solr version
-  stat:
+  ansible.builtin.stat:
     path: "{{ solr_install_dir }}"
   register: solr_stat
 
 - name: Get Solr tarball
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ solr_mirror_url }}"
     dest: "{{ solr_prefix_dir }}/{{ solr_tarball }}"
     checksum: "sha256:{{ solr_sha256sum }}"
@@ -20,7 +22,7 @@
   register: get_url_result
 
 - name: Unpack Solr tarball
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ solr_prefix_dir }}/{{ solr_tarball }}"
     dest: "{{ solr_prefix_dir }}"
     creates: "{{ solr_install_dir }}"
@@ -30,42 +32,72 @@
   when: get_url_result is changed
 
 - name: Create Solr data & log dirs
-  file: path={{ item }} owner={{ solr_user }} group={{ solr_group }} state=directory
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ solr_user }}"
+    group: "{{ solr_group }}"
+    state: directory
   loop:
     - "{{ solr_home_dir }}/data"
     - "{{ solr_home_dir }}/logs"
 
 - name: Copy Solr init.d service file
-  template: src=init.d-solr.j2 dest=/etc/init.d/solr owner=root group=root mode=0755
+  ansible.builtin.template:
+    src: init.d-solr.j2
+    dest: /etc/init.d/solr
+    owner: root
+    group: root
+    mode: 0755
   when: ansible_service_mgr != 'systemd'
 
 - name: Copy systemd service unit
-  template: src=solr.service.j2 dest=/etc/systemd/system/solr.service mode=0644 owner=root group=root
+  ansible.builtin.template:
+    src: solr.service.j2
+    dest: /etc/systemd/system/solr.service
+    mode: 0644
+    owner: root
+    group: root
   when: ansible_service_mgr == 'systemd'
   register: solr_systemd_service
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  systemd: daemon_reload=yes
+  ansible.builtin.systemd:
+    daemon_reload: yes
   when: solr_systemd_service is changed
 
 - name: Copy solr.xml config files
-  command: /usr/bin/rsync -a "{{ solr_install_dir }}/server/solr/solr.xml" "{{ solr_home_dir }}/data/" creates="{{ solr_home_dir }}/data/solr.xml"
+  ansible.builtin.command:
+    cmd: /usr/bin/rsync -a "{{ solr_install_dir }}/server/solr/solr.xml" "{{ solr_home_dir }}/data/"
+    creates: "{{ solr_home_dir }}/data/solr.xml"
 
 # TODO: Update this (Solr 6+ have different GC_TUNE settings)
 - name: Copy Solr environment
-  template: src=solr.in.sh.j2 dest={{ solr_home_dir }}/solr.in.sh owner={{ solr_user }} group={{ solr_group }} mode=0755
+  ansible.builtin.template:
+    src: solr.in.sh.j2
+    dest: "{{ solr_home_dir }}/solr.in.sh"
+    owner: "{{ solr_user }}"
+    group: "{{ solr_group }}"
+    mode: 0755
   notify: restart solr
 
 - name: Reconfigure Solr logging
-  copy: src=log4j.properties dest="{{ solr_home_dir }}/log4j.properties" owner={{ solr_user }} group={{ solr_group }} mode=0644
+  ansible.builtin.copy:
+    src: log4j.properties
+    dest: "{{ solr_home_dir }}/log4j.properties"
+    owner: "{{ solr_user }}"
+    group: "{{ solr_group }}"
+    mode: 0644
   notify: restart solr
 
-- name: Start & enable Solr service
-  service: name=solr state=started enabled=yes
+- name: Start and enable Solr service
+  ansible.builtin.service:
+    name: solr
+    state: started
+    enabled: yes
 
 - name: Configure Solr cores
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: solr-cores.yml
     apply:
       become_user: "{{ solr_user }}"

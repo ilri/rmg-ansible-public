@@ -1,23 +1,14 @@
 ---
 - name: Install Ansible unarchive dependencies
-  apt: name={{ item }} state=present install_recommends=no cache_valid_time=3600
-  loop:
-    - unzip
-    - tar
-  tags: packages
-
-- name: Install OpenJDK 7
-  apt:
-    name: openjdk-7-jre-headless
+  ansible.builtin.package:
+    name: ['unzip', 'tar']
     state: present
     install_recommends: no
-  when: ansible_distribution_version is version('14.04', '==')
-  tags:
-    - java
-    - packages
+    cache_valid_time: 3600
+  tags: packages
 
 - name: Install OpenJDK 8
-  apt:
+  ansible.builtin.package:
     name: openjdk-8-jre-headless
     state: present
     install_recommends: no
@@ -27,7 +18,7 @@
     - packages
 
 - name: Configure Solr
-  import_tasks: solr.yml
+  ansible.builtin.import_tasks: solr.yml
   tags: solr
 
 # vim: set ts=2 sw=2:

@@ -13,11 +13,13 @@
   check_mode: false
   register: __systemd_version
   when: ansible_service_mgr == 'systemd'
+  tags: always
 
 - name: Set systemd version fact
   ansible.builtin.set_fact:
     __systemd_version_int: "{{ __systemd_version.stdout_lines[0] | regex_replace('^systemd\\s(\\d+).*$', '\\1') }}"
   when: __systemd_version is defined
+  tags: always
 
 - name: Include tasks to update /etc/hosts
   ansible.builtin.import_tasks: hosts.yml

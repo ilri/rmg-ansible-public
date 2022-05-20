@@ -6,6 +6,19 @@
     - "private/vars/{{ ansible_os_family }}.yml"
   tags: always
 
+- name: Get systemd version
+  ansible.builtin.command:
+    cmd: systemctl --version
+  changed_when: false
+  check_mode: false
+  register: __systemd_version
+  when: ansible_service_mgr == 'systemd'
+
+- name: Set systemd version fact
+  ansible.builtin.set_fact:
+    __systemd_version_int: "{{ __systemd_version.stdout_lines[0] | regex_replace('^systemd\\s(\\d+).*$', '\\1') }}"
+  when: __systemd_version is defined
+
 - name: Include tasks to update /etc/hosts
   ansible.builtin.import_tasks: hosts.yml
   tags: hosts

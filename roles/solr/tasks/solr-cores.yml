@@ -20,9 +20,10 @@
     notify: restart solr
 
   - name: Populate Solr core configuration directory
-    ansible.builtin.command:
-      cmd: "/usr/bin/rsync -a {{ solr_install_dir }}/server/solr/configsets/basic_configs/conf/ {{ solr_home_dir }}/data/{{ item }}/conf/"
-      creates: "{{ solr_home_dir }}/data/{{ item }}/conf/solrconfig.xml"
+    ansible.posix.synchronize:
+      src: "{{ solr_install_dir }}/server/solr/configsets/basic_configs/conf/"
+      dest: "{{ solr_home_dir }}/data/{{ item }}/conf/"
+      delegate_to: localhost
     loop: "{{ solr_cores }}"
     notify: restart solr
 

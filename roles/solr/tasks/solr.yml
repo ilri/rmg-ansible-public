@@ -18,6 +18,7 @@
     url: "{{ solr_mirror_url }}"
     dest: "{{ solr_prefix_dir }}/{{ solr_tarball }}"
     checksum: "sha256:{{ solr_sha256sum }}"
+    mode: 0644
   when: not solr_stat.stat.exists
   register: get_url_result
 
@@ -37,6 +38,7 @@
     owner: "{{ solr_user }}"
     group: "{{ solr_group }}"
     state: directory
+    mode: 0770
   loop:
     - "{{ solr_home_dir }}/data"
     - "{{ solr_home_dir }}/logs"
@@ -67,9 +69,10 @@
   when: solr_systemd_service is changed
 
 - name: Copy solr.xml config files
-  ansible.builtin.command:
-    cmd: /usr/bin/rsync -a "{{ solr_install_dir }}/server/solr/solr.xml" "{{ solr_home_dir }}/data/"
-    creates: "{{ solr_home_dir }}/data/solr.xml"
+  ansible.posix.synchronize:
+    src: "{{ solr_install_dir }}/server/solr/solr.xml"
+    dest: "{{ solr_home_dir }}/data/"
+    delegate_to: localhost
 
 # TODO: Update this (Solr 6+ have different GC_TUNE settings)
 - name: Copy Solr environment

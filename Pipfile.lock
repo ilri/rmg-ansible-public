@@ -18,10 +18,10 @@
     "default": {
         "ansible": {
             "hashes": [
-                "sha256:90a09a34510d194d63556895a225a89e4a8b748b9ae215b55e517a37de063a61"
+                "sha256:fa056476201f40625fb36d95c5041ef463880be18be5c73b998b57b401967863"
             ],
             "index": "pypi",
-            "version": "==5.7.1"
+            "version": "==5.8.0"
         },
         "ansible-compat": {
             "hashes": [
@@ -40,11 +40,11 @@
         },
         "ansible-lint": {
             "hashes": [
-                "sha256:34491240d3e5405eee26471f3a00ab0d54724eb60a359e2424864a544e6097d4",
-                "sha256:fc598efca691f56da3d272959409d7b14ed16cf545fdd97b61288697ada73ce7"
+                "sha256:06eb5c97a2f847a6cf8db74269a749bb67df1da429e0e9a51efc84ef3b6ed1fa",
+                "sha256:ca0deee5835cbfaf9bba182758688a88a0b9c6852b32b15e77e4b0376c21bc1f"
             ],
             "index": "pypi",
-            "version": "==6.1.0"
+            "version": "==6.2.1"
         },
         "attrs": {
             "hashes": [
@@ -422,11 +422,11 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:512dfeb3cca6747fd9074f91d8cd4714b50d0d8726b3f6a25f8c33ee9ad22b5a",
-                "sha256:d4eebe23c2ed4d73fa69d4f78e4b59b9648cbd22c43018ee2e8b911866535463"
+                "sha256:68e45d17c9281ba25dc0104eadd2647172b3472d9e01f911efa57965e8d51a36",
+                "sha256:a43bdedf853c670e5fed28e5623403bad2f73cf02f9a2774e91def6bda8265a7"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==62.3.0"
+            "version": "==62.3.2"
         },
         "subprocess-tee": {
             "hashes": [
@@ -478,11 +478,11 @@
         },
         "ansible-lint": {
             "hashes": [
-                "sha256:34491240d3e5405eee26471f3a00ab0d54724eb60a359e2424864a544e6097d4",
-                "sha256:fc598efca691f56da3d272959409d7b14ed16cf545fdd97b61288697ada73ce7"
+                "sha256:06eb5c97a2f847a6cf8db74269a749bb67df1da429e0e9a51efc84ef3b6ed1fa",
+                "sha256:ca0deee5835cbfaf9bba182758688a88a0b9c6852b32b15e77e4b0376c21bc1f"
             ],
             "index": "pypi",
-            "version": "==6.1.0"
+            "version": "==6.2.1"
         },
         "attrs": {
             "hashes": [
@@ -852,11 +852,11 @@
         },
         "setuptools": {
             "hashes": [
-                "sha256:512dfeb3cca6747fd9074f91d8cd4714b50d0d8726b3f6a25f8c33ee9ad22b5a",
-                "sha256:d4eebe23c2ed4d73fa69d4f78e4b59b9648cbd22c43018ee2e8b911866535463"
+                "sha256:68e45d17c9281ba25dc0104eadd2647172b3472d9e01f911efa57965e8d51a36",
+                "sha256:a43bdedf853c670e5fed28e5623403bad2f73cf02f9a2774e91def6bda8265a7"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==62.3.0"
+            "version": "==62.3.2"
         },
         "subprocess-tee": {
             "hashes": [

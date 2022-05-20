@@ -20,7 +20,6 @@
       ansible.builtin.shell:
         cmd: awk '$5 < 3071' moduli
         chdir: /etc/ssh
-        creates: moduli.safe
       register: check_unsafe_moduli
 
     - name: Extract safe Diffie-Hellman SSH moduli

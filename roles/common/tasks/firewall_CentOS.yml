@@ -82,7 +82,7 @@
         chdir: /tmp
     # Note: this `when` is for the entire block of CentOS Stream 8 tasks!
     when:
-      - 'semodule_list is defined'
+      - not semodule_list.skipped
       - '"my-fail2banserver" not in semodule_list.stdout_lines'
 
   - include_tasks: nftables.yml

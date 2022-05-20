@@ -38,7 +38,7 @@
 - name: Stop and disable ntp on CentOS
   systemd: name=ntpd state=stopped enabled=false
   when: ansible_distribution == 'CentOS' and ansible_service_mgr == 'systemd'
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Uninstall ntp on CentOS
   ansible.builtin.package: name=ntp state=absent

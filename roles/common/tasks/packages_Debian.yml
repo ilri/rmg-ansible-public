@@ -27,7 +27,7 @@
 
   - name: Update apt cache
     ansible.builtin.package:
-      update_cache: yes
+      update_cache: true
     when:
       configure_apt_mirror is changed
 

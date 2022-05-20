@@ -2,26 +2,8 @@
 # Ubuntu 20.04 will use nftables directly, with no firewalld.
 # Ubuntu 18.04 will use nftables directly, with no firewalld.
 # Ubuntu 16.04 will use firewalld with the iptables backend.
-# Ubuntu 14.04 will use iptables-persistent.
 
 - block:
-  - name: Install iptables-persistent
-    when: ansible_distribution_version is version('14.04', '==')
-    ansible.builtin.package: name=iptables-persistent state=present cache_valid_time=3600
-    tags: packages
-
-  - name: Copy /etc/iptables/rules.v4
-    when: ansible_distribution_version is version('14.04', '==')
-    template: src=iptables.j2 dest=/etc/iptables/rules.v4 owner=root group=root mode=0600
-    notify:
-      - restart iptables-persistent
-
-  - name: Copy /etc/iptables/rules.v6
-    when: ansible_distribution_version is version('14.04', '==')
-    template: src=ip6tables.j2 dest=/etc/iptables/rules.v6 owner=root group=root mode=0600
-    notify:
-      - restart iptables-persistent
-
   - name: Set Ubuntu firewall packages
     when: ansible_distribution_version is version('16.04', '==')
     set_fact:

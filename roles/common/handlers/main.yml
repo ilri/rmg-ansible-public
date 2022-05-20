@@ -7,9 +7,6 @@
 - name: restart ip6tables
   service: name=ip6tables state=restarted
 
-- name: restart iptables-persistent
-  service: name=iptables-persistent state=restarted
-
 - name: reload sshd
   service: name={{ sshd_service_name }} state=reloaded
 

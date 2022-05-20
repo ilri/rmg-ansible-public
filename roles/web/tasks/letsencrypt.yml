@@ -7,16 +7,26 @@
 
 - block:
   - name: Install certbot (Ubuntu 20.04)
-    apt: name=certbot state=present update_cache=yes
+    ansible.builtin.apt:
+      name: certbot
+      state: present
+      update_cache: true
 
   - name: Create Let's Encrypt hooks pre/post directories
-    file: path={{ item }} state=directory owner=root group=root mode=0755
-    with_items:
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+    loop:
       - /etc/letsencrypt/renewal-hooks/pre
       - /etc/letsencrypt/renewal-hooks/post
 
   - name: Remove old Let's Encrypt pre/post hooks
-    file: path={{ item }} state=absent
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
     loop:
       - /etc/letsencrypt/renewal-hooks/pre/stop-apache2.sh
       - /etc/letsencrypt/renewal-hooks/post/start-apache2.sh
@@ -27,8 +37,13 @@
   # example we might use nginx instead of apache2, or the service name could be
   # different (httpd instead of apache2 on CentOS).
   - name: Copy Let's Encrypt pre/post hooks
-    template: src={{ item.src }} dest={{ item.dest }} owner=root group=root mode=0755
-    with_items:
+    ansible.builtin.template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      owner: root
+      group: root
+      mode: 0755
+    loop:
       - { src: 'stop-webserver.sh.j2', dest: '/etc/letsencrypt/renewal-hooks/pre/stop-webserver.sh' }
       - { src: 'start-webserver.sh.j2', dest: '/etc/letsencrypt/renewal-hooks/post/start-webserver.sh' }
 

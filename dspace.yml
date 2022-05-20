@@ -2,7 +2,7 @@
 # file: dspace.yml
 
 - hosts: dspace
-  become: yes
+  become: true
   vars_files:
     - private/vars/common.yml
     - private/vars/dspace.yml

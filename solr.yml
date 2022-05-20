@@ -1,7 +1,7 @@
 ---
 
 - hosts: solr
-  become: yes
+  become: true
   vars_files:
     - private/vars/common.yml
     - private/vars/ipsets.yml

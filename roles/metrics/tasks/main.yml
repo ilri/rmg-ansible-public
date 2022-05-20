@@ -1,6 +1,6 @@
 ---
 # file: roles/metrics/tasks/main.yml
-# 
+#
 # Configure VictoriaMetrics server and clients. We only run this on hosts
 # that have systemd (which should be everything after CentOS 7 and Ubuntu
 # 16.04). It is expected that one host has victoriametrics_role "server"

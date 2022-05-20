@@ -67,10 +67,10 @@
     owner: root
     group: root
   loop:
-      - update-spamhaus-nftables.service
-      - update-spamhaus-nftables.timer
-      - update-abusech-nftables.service
-      - update-abusech-nftables.timer
+    - update-spamhaus-nftables.service
+    - update-spamhaus-nftables.timer
+    - update-abusech-nftables.service
+    - update-abusech-nftables.timer
   register: nftables_systemd_units
 
 # need to reload to pick up service/timer/environment changes

@@ -108,8 +108,8 @@
       owner: root
       group: root
     loop:
-        - update-spamhaus-lists.service
-        - update-spamhaus-lists.timer
+      - update-spamhaus-lists.service
+      - update-spamhaus-lists.timer
     register: spamhaus_firewalld_systemd_units
 
   # need to reload to pick up service/timer/environment changes

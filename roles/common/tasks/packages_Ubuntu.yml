@@ -83,7 +83,7 @@
         - lxd-client # annoying (Ubuntu >= 16.04)
         - liblxc1 # annoying (Ubuntu >= 16.04)
         - lxc-common # annoying (Ubuntu >= 16.04)
-        - lxcfs #annoying (Ubuntu >= 16.04)
+        - lxcfs # annoying (Ubuntu >= 16.04)
     when: ansible_distribution_version is version('18.04', '<=')
 
   - name: Set fact for packages to remove (Ubuntu 20.04)

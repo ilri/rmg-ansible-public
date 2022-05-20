@@ -93,14 +93,14 @@
   - name: Set CentOS base packages
     set_fact:
       centos_base_packages:
-      - git
-      - acpid
-      - lsof
-      - sysstat
-      - tmux
-      - vim-enhanced
-      - unzip
-      - pciutils
+        - git
+        - acpid
+        - lsof
+        - sysstat
+        - tmux
+        - vim-enhanced
+        - unzip
+        - pciutils
 
   - name: Install base packages
     ansible.builtin.package:

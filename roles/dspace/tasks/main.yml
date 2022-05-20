@@ -204,12 +204,12 @@
     group: "{{ item.group }}"
     recurse: true
   loop:
-    - { path: "{{ tomcat_path }}/conf", owner: root , group: "{{ tomcat_group }}" }
-    - { path: "{{ tomcat_path }}/logs", owner: root , group: "{{ tomcat_group }}" }
-    - { path: "{{ tomcat_path }}/temp", owner: root , group: "{{ tomcat_group }}" }
-    - { path: "{{ tomcat_path }}/work", owner: root , group: "{{ tomcat_group }}" }
-    - { path: "{{ tomcat_path }}/bin", owner: root , group: "{{ tomcat_group }}" }
-    - { path: "{{ tomcat_path }}/lib", owner: root , group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/conf", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/logs", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/temp", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/work", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/bin", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/lib", owner: root, group: "{{ tomcat_group }}" }
   when: tomcat_unzip is changed
   tags: tomcat
 

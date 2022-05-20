@@ -22,9 +22,9 @@
   - name: Set PostgreSQL packages fact
     set_fact:
       postgresql_packages:
-      - postgresql-{{ pg_version }}
-      - postgresql-client-{{ pg_version }}
-      - postgresql-contrib-{{ pg_version }}
+        - postgresql-{{ pg_version }}
+        - postgresql-client-{{ pg_version }}
+        - postgresql-contrib-{{ pg_version }}
 
   - name: Install PostgreSQL packages
     apt: name={{ postgresql_packages }} cache_valid_time=3600 state=present

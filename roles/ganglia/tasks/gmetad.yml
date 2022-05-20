@@ -7,7 +7,7 @@
   - name: Create gmetad configuration file
     copy: src=gmetad.conf dest=/etc/ganglia/gmetad.conf
     notify:
-    - restart gmetad
+      - restart gmetad
 
   - name: Start gmetad service
     when: ansible_service_mgr == 'systemd'

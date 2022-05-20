@@ -1,5 +1,5 @@
 ---
-#file - roles/common/defaults/main.yml
+# file - roles/common/defaults/main.yml
 
 
 # list of sysadmin(s) email addresses used by lsi & hp RAID monitoring scripts,
@@ -14,7 +14,7 @@ mailrc_from_email: mwangi@example.co.ke
 mailrc_auth_user: mwangi@example.co.ke
 mailrc_auth_pass: A2YtYma2i1D1
 
-## use UTC as the default timezone
+# use UTC as the default timezone
 timezone: Etc/UTC
 
 # See: https://github.com/restic/restic/releases

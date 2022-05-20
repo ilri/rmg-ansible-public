@@ -8,22 +8,22 @@
   - name: Set Debian base packages
     set_fact:
       debian_base_packages:
-      - git
-      - tmux
-      - iotop
-      - htop
-      - strace
-      - s3cmd
-      - cron-apt
-      - safe-rm
-      - debian-goodies
-      - lzop
-      - vim
-      - acpid
-      - debconf
-      - debconf-utils
-      - sysstat
-      - software-properties-common
+        - git
+        - tmux
+        - iotop
+        - htop
+        - strace
+        - s3cmd
+        - cron-apt
+        - safe-rm
+        - debian-goodies
+        - lzop
+        - vim
+        - acpid
+        - debconf
+        - debconf-utils
+        - sysstat
+        - software-properties-common
 
   - name: Update apt cache
     ansible.builtin.package:

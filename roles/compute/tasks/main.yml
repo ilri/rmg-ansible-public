@@ -14,7 +14,7 @@
       - boost-iostreams.x86_64 # for augustus
       - cairo-devel.x86_64 # for genometools and others
       - centos-release-scl # needed for newer compilers, etc
-      - compat-libstdc++-33.x86_64 #for libstdc++.so.5
+      - compat-libstdc++-33.x86_64 # for libstdc++.so.5
       - devtoolset-7-gcc # some software wants a newer gcc
       - devtoolset-7-gcc-c++ # some software wants a newer gcc
       - devtoolset-7-gcc-gfortran # some software wants a newer gcc
@@ -25,7 +25,7 @@
       - firefox # Dedan swears that he needs this
       - gcc-c++ # for some R libraries
       - gdal-devel.x86_64 # for some R libraries
-      - gdal.x86_64 #for libgdal.so.1
+      - gdal.x86_64 # for libgdal.so.1
       - geos-devel # for some R libraries
       - glib.x86_64 # for wise / Cegma
       - gnuplot.x86_64
@@ -55,7 +55,7 @@
       - mpich-3.2-devel.x86_64 # for maker
       - nano
       - numpy # for Trinity as of v2.6.6
-      - openblas.x86_64 #for scipy
+      - openblas.x86_64 # for scipy
       - openmpi3 # optional for abyss
       - pandoc.x86_64
       - pango-devel.x86_64 # for genometools and others
@@ -84,11 +84,11 @@
       - pigz # for SeqKit
       - proj-devel.x86_64 # for some R libraries
       - proj-epsg.x86_64 # for some R libraries
-      - proj.x86_64 #for libproj.so.0
+      - proj.x86_64 # for libproj.so.0
       - python3
       - python3-setuptools # needed by some Python scripts to load entrypoint
       - rh-nodejs12-nodejs.x86_64 # needed by nextclade
-      - screen #terminal window manager
+      - screen # terminal window manager
       - singularity # from EPEL, for viralrecon pipeline
       - sqlite-devel # for some R libraries
       - tbb-devel.x86_64 # for flexbar
@@ -117,7 +117,7 @@
       - firefox.x86_64
       - gcc-c++.x86_64 # for some R libraries
       - gdal-devel.x86_64 # for some R libraries
-      - gdal.x86_64 #for libgdal.so.1
+      - gdal.x86_64 # for libgdal.so.1
       - geos-devel.x86_64 # for some R libraries
       - glib2.x86_64 # for wise / Cegma
       - gnuplot.x86_64
@@ -145,7 +145,7 @@
       - make.x86_64
       - mesa-libGLU-devel.x86_64 # for some R libraries
       - nano.x86_64
-      - openblas.x86_64 #for scipy
+      - openblas.x86_64 # for scipy
       - openmpi.x86_64 # optional for abyss
       - openssl-devel.x86_64 # for R
       - pandoc.x86_64
@@ -165,7 +165,7 @@
       - perl-parent.noarch # for some BioPerl scripts
       - pigz.x86_64 # for SeqKit
       - proj-devel.x86_64 # for some R libraries
-      - proj.x86_64 #for libproj.so.0
+      - proj.x86_64 # for libproj.so.0
       - python3-numpy.x86_64 # for Trinity as of v2.6.6
       - python3-setuptools.noarch # needed by some Python scripts to load entrypoint
       - python36.x86_64

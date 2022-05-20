@@ -6,14 +6,14 @@
 - name: Add VictoriaMetrics group
   ansible.builtin.group:
     name: "{{ victoriametrics_group }}"
-    system: yes
+    system: true
 
 - name: Add VictoriaMetrics user
   ansible.builtin.user:
     name: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
-    system: yes
-    create_home: no
+    system: true
+    create_home: false
 
 - name: Create /etc/victoriametrics directory
   ansible.builtin.file:

@@ -19,7 +19,7 @@
 - name: Unzip mysqld_exporter
   ansible.builtin.unarchive:
     src: "/usr/local/bin/{{ mysqld_exporter_tarball }}"
-    remote_src: yes
+    remote_src: true
     dest: /usr/local/bin
     extra_opts:
       - --strip-components

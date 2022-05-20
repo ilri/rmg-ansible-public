@@ -3,7 +3,7 @@
   ansible.builtin.package:
     name: ['unzip', 'tar']
     state: present
-    install_recommends: no
+    install_recommends: false
     cache_valid_time: 3600
   tags: packages
 
@@ -11,7 +11,7 @@
   ansible.builtin.package:
     name: openjdk-8-jre-headless
     state: present
-    install_recommends: no
+    install_recommends: false
   when: ansible_distribution_version is version('16.04', '>=')
   tags:
     - java

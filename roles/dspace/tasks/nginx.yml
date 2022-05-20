@@ -18,7 +18,7 @@
 
 - name: Update apt cache
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
   when:
     add_nginx_apt_key is changed or
     add_nginx_apt_repository is changed

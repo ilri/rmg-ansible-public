@@ -14,7 +14,7 @@
 
   - name: Update apt cache
     apt:
-      update_cache: yes
+      update_cache: true
     when:
       add_postgresql_apt_key is changed or
       add_postgresql_apt_repository is changed

@@ -17,6 +17,6 @@ nginx_ssl_stapling_resolver: '1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:
 
 # Enable HTTP Strict Transport Security? Generally we want this everywhere, but
 # since the price of undoing this is so high let's keep it off for now.
-nginx_enable_hsts: False
+nginx_enable_hsts: false
 
 # vim: set sw=2 ts=2:

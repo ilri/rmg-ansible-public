@@ -17,7 +17,7 @@
 - name: Unzip VictoriaMetrics
   ansible.builtin.unarchive:
     src: "/usr/local/bin/{{ victoriametrics_tarball }}"
-    remote_src: yes
+    remote_src: true
     dest: /usr/local/bin
   when: victoriametrics_download is changed
   notify:

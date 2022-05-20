@@ -3,7 +3,7 @@
 
 # Forbid search bots via the "X-Robots-Tag" HTTP header?
 # False on production, True on development!
-nginx_forbid_robots: False
+nginx_forbid_robots: false
 
 # default assumes letsencrypt on primary domain, override in hostvars if using
 # self-signed certificates, etc.
@@ -77,6 +77,6 @@ tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 
 # install certbot + dependencies?
 # True unless you're in development and using "localhost" + snakeoil certs
-use_letsencrypt: True
+use_letsencrypt: true
 
 # vim: set sw=2 ts=2:

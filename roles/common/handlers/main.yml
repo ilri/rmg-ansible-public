@@ -22,7 +22,7 @@
 # check if NX/XD is enabled in the BIOS
 # $ dmesg | grep '[NX|DX]*protection'
 - name: reload sysctl
-  ignore_errors: yes
+  ignore_errors: true
   command: sysctl -p /etc/sysctl.conf
 
 - name: restart firewalld
@@ -39,12 +39,12 @@
 
 # ignore_errors: at times fails on some compute nodes
 - name: start tuned
-  ignore_errors: yes
+  ignore_errors: true
   service: name=tuned state=started
 
 # ignore_errors: at times fails on some compute nodes
 - name: start cpuspeed
-  ignore_errors: yes
+  ignore_errors: true
   service: name=cpuspeed state=started
 
 # vim: set sw=2 ts=2:

@@ -3,16 +3,16 @@
 - name: Create slurm group
   ansible.builtin.group:
     name: slurm
-    system: yes
+    system: true
     state: present
     gid: 490
 
 - name: Create slurm user
   ansible.builtin.user:
     name: slurm
-    system: yes
+    system: true
     state: present
-    createhome: no
+    createhome: false
     uid: 490
     group: slurm
 

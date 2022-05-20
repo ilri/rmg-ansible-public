@@ -23,7 +23,7 @@
 - name: Unzip vmutils
   ansible.builtin.unarchive:
     src: "/usr/local/bin/{{ victoriametrics_vmutils_tarball }}"
-    remote_src: yes
+    remote_src: true
     dest: /usr/local/bin
   when: vmutils_download is changed
   notify:

@@ -7,7 +7,7 @@
   ansible.builtin.apt:
     pkg: openjdk-8-jdk-headless
     state: present
-    install_recommends: no
+    install_recommends: false
     cache_valid_time: 3600
   when: java_distribution == 'openjdk'
 
@@ -54,7 +54,7 @@
   ansible.builtin.apt:
     pkg: "{{ dspace_system_dependencies }}"
     state: present
-    install_recommends: no
+    install_recommends: false
     cache_valid_time: 3600
 
 # 2018-10-11: See https://usn.ubuntu.com/3785-1
@@ -67,15 +67,15 @@
 - name: Add dspace group
   ansible.builtin.group:
     name: "{{ tomcat_group }}"
-    system: yes
+    system: true
   tags: tomcat
 
 - name: Add dspace user
   ansible.builtin.user:
     name: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
-    system: yes
-    create_home: yes
+    system: true
+    create_home: true
     home: "{{ tomcat_user_home }}"
     shell: /bin/bash
   tags: tomcat
@@ -100,7 +100,7 @@
 
   - name: Update apt cache
     ansible.builtin.apt:
-      update_cache: yes
+      update_cache: true
     when:
       add_nodejs_apt_key is changed or
       add_nodejs_apt_repository is changed
@@ -115,7 +115,7 @@
     ansible.builtin.apt:
       pkg: "{{ dspace_mirage2_system_build_dependencies }}"
       state: present
-      install_recommends: no
+      install_recommends: false
       cache_valid_time: 3600
 
   - name: Configure npm environment
@@ -130,7 +130,7 @@
   - name: Install DSpace Mirage 2 Node.js build dependencies
     community.general.npm:
       name: "{{ item }}"
-      global: yes
+      global: true
     loop:
       - grunt-cli
       - yarn
@@ -191,7 +191,7 @@
   ansible.builtin.unarchive:
     src: "{{ tomcat_path }}.tar.gz"
     dest: "{{ tomcat_path_prefix }}"
-    remote_src: yes
+    remote_src: true
   when: tomcat_download is changed
   register: tomcat_unzip
   tags: tomcat
@@ -202,7 +202,7 @@
     path: "{{ item.path }}"
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
-    recurse: yes
+    recurse: true
   loop:
     - { path: "{{ tomcat_path }}/conf", owner: root , group: "{{ tomcat_group }}" }
     - { path: "{{ tomcat_path }}/logs", owner: root , group: "{{ tomcat_group }}" }
@@ -358,7 +358,7 @@
     repo: "{{ dspace_git_repo }}"
     dest: "{{ tomcat_user_home }}/src/git/DSpace"
     version: "{{ dspace_git_branch }}"
-    force: yes
+    force: true
     depth: 1
   become_user: '{{ tomcat_user }}'
 

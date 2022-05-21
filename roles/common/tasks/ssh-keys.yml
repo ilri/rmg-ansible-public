@@ -1,10 +1,12 @@
 ---
 - name: Zero .ssh/authorized_keys for provisioning user
-  file: dest={{ provisioning_user.home }}/.ssh/authorized_keys state=absent
+  ansible.builtin.file:
+    dest: "{{ provisioning_user.home }}/.ssh/authorized_keys"
+    state: absent
   tags: ssh-keys
 
 - name: Add public keys to authorized_keys
-  authorized_key: { user: '{{ provisioning_user.name }}', key: "{{ lookup('file',item) }}" }
+  ansible.posix.authorized_key: { user: '{{ provisioning_user.name }}', key: "{{ lookup('file',item) }}" }
   with_fileglob:
     # use descriptive names for keys, like: aorth-mzito-rsa.pub
     - ssh-pub-keys/*.pub

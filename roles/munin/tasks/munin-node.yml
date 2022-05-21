@@ -9,7 +9,7 @@
 # is to consult ansible_virtualization_role, which always returns "host" if the
 # host is bare metal.
 - name: Set sensor packages (Red Hat)
-  set_fact:
+  ansible.builtin.set_fact:
     sensor_packages:
       - lm_sensors # for CPU package and PCI card temperatures
       - hddtemp    # for hard drive temperatures
@@ -19,7 +19,7 @@
   tags: packages
 
 - name: Set sensor packages (Debian)
-  set_fact:
+  ansible.builtin.set_fact:
     sensor_packages:
       - lm-sensors
       - hddtemp
@@ -64,17 +64,16 @@
     state: present
   tags: packages
 
-# some nice things to have on Ubuntu Tomcat servers
+# Some nice things to have on Ubuntu Tomcat servers:
+#   - ruby for munin's tomcat checks
+#   - libxml-simple-perl for munin's tomcat checks
+#   - libdbd-pg-perl for munin's postgres check
+#   - munin-plugins-java to monitor Tomcat via JMX
 - name: Install munin-node Tomcat deps
   when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names or "postgres" in group_names))
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: ['ruby', 'libxml-simple-perl', 'libdbd-pg-perl', 'munin-plugins-java']
     state: present
-  loop:
-    - ruby # for munin's tomcat checks
-    - libxml-simple-perl # for munin's tomcat checks
-    - libdbd-pg-perl # for munin's postgres check
-    - munin-plugins-java # to monitor Tomcat via JMX
   tags: packages
 
 - name: Configure munin Tomcat plugin
@@ -120,12 +119,12 @@
     - restart munin-node
 
 - name: Configure munin-node
-  shell: munin-node-configure --shell --families=contrib,auto --remove-also | sh -x
+  ansible.builtin.shell: munin-node-configure --shell --families=contrib,auto --remove-also | sh -x
   notify:
     - restart munin-node
 
 - name: Start munin-node
-  service:
+  ansible.builtin.service:
     name: munin-node
     state: started
     enabled: true

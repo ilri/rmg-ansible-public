@@ -2,7 +2,7 @@
 # file: tasks/main.yml
 
 - name: Configure PostgreSQL
-  include_tasks: ubuntu.yml
+  ansible.builtin.include_tasks: ubuntu.yml
   when: ansible_distribution == 'Ubuntu'
   tags: postgresql
 

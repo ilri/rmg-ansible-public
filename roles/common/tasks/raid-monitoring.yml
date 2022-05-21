@@ -3,19 +3,28 @@
   # MegaCLI binaries are statically compiled, so just use the same repo for all
   # Debian-family hosts
   - name: Add Debian-family HWRaid repo
-    apt_repository: repo='deb http://hwraid.le-vert.net/debian wheezy main' state=present
+    ansible.builtin.apt_repository:
+      repo: 'deb http://hwraid.le-vert.net/debian wheezy main'
+      state: present
     when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
   - name: Import HWRaid repo's signing key
-    apt_key: url=https://hwraid.le-vert.net/debian/hwraid.le-vert.net.gpg.key state=present
+    ansible.builtin.apt_key:
+      url: https://hwraid.le-vert.net/debian/hwraid.le-vert.net.gpg.key
+      state: present
     when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
   - name: Install LSI MegaCLI tools
-    ansible.builtin.package: name=megacli state=present cache_valid_time=3600
+    ansible.builtin.package:
+      name: megacli
+      state: present
+      cache_valid_time: 3600
     when: "ansible_os_family == 'Debian' and 'lsi' in hw_raid_vendor"
 
   - name: Remove old Debian-based HPE MCP repos
-    apt_repository: repo='deb {{ item }} {{ ansible_distribution_release }}/current non-free' state=absent
+    ansible.builtin.apt_repository:
+      repo: 'deb {{ item }} {{ ansible_distribution_release }}/current non-free'
+      state: absent
     loop:
       - http://downloads.linux.hpe.com/SDR/repo/mcp
       - https://downloads.linux.hpe.com/SDR/repo/mcp
@@ -23,7 +32,7 @@
 
   # Add HPC IP to nodes that are using its mirrors for HW RAID utilities
   - name: Add HPC to /etc/hosts
-    lineinfile:
+    ansible.builtin.lineinfile:
       dest: /etc/hosts
       regexp: '{{ hostvars["hpc"].ansible_host }}.*hpc.*hpc\.ilri\.cgiar\.org$'
       line: "{{ hostvars['hpc'].ansible_host }} hpc hpc.ilri.cgiar.org"
@@ -31,63 +40,109 @@
     when: hw_raid_vendor is defined
 
   - name: Add ILRI mirror of Debian-based HPE MCP repository
-    template: src=hpc_ilri_cgiar_org_mirror_mcp.list.j2 dest=/etc/apt/sources.list.d/hpc_ilri_cgiar_org_mirror_mcp.list mode=0644 owner=root group=root
+    ansible.builtin.template:
+      src: hpc_ilri_cgiar_org_mirror_mcp.list.j2
+      dest: /etc/apt/sources.list.d/hpc_ilri_cgiar_org_mirror_mcp.list
+      mode: 0644
+      owner: root
+      group: root
     when: ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor
 
   - name: Import HPE MCP repo's signing key
-    apt_key: url=https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub state=present
+    ansible.builtin.apt_key:
+      url: https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub
+      state: present
     when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
 
   - name: Install HPE Smart Storage Administrator CLI
-    ansible.builtin.package: name=ssacli state=present cache_valid_time=3600
+    ansible.builtin.package:
+      name: ssacli
+      state: present
+      cache_valid_time: 3600
     when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
 
   # In ILRI CentOS repo, from:
   # http://sarepos.cpanel.net/centos
   - name: Install LSI MegaCLI tools
-    ansible.builtin.package: name=MegaCli state=present
+    ansible.builtin.package:
+      name: MegaCli
+      state: present
     when: "ansible_distribution == 'CentOS' and 'lsi' in hw_raid_vendor"
 
   - name: Configure ILRI mirror of HPE MCP repository
-    template: src=hpe-mcp.repo.j2 dest=/etc/yum.repos.d/hpe-mcp.repo owner=root group=root mode=0644
+    ansible.builtin.template:
+      src: hpe-mcp.repo.j2
+      dest: /etc/yum.repos.d/hpe-mcp.repo
+      owner: root
+      group: root
+      mode: 0644
     when: ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor
 
   - name: Install HPE Smart Storage Administrator CLI
-    ansible.builtin.package: name=ssacli state=present
+    ansible.builtin.package:
+      name: ssacli
+      state: present
     when: "ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor"
 
   # HPE Array tools were replaced by the Smart Storate Administrator CLI
   - name: Remove HPE Array tools
-    ansible.builtin.package: name=hpacucli state=absent
+    ansible.builtin.package:
+      name: hpacucli
+      state: absent
     when: "ansible_distribution == 'CentOS' and 'hp' in hw_raid_vendor"
 
   # HPE Array tools were replaced by the Smart Storate Administrator CLI
   - name: Remove HPE Array tools
-    ansible.builtin.package: name=hpssacli state=absent
+    ansible.builtin.package:
+      name: hpssacli
+      state: absent
     when: "ansible_os_family == 'Debian' and 'hp' in hw_raid_vendor"
 
   - name: Install mailx
-    ansible.builtin.package: name=mailx state=present
+    ansible.builtin.package:
+      name: mailx
+      state: present
     when: ansible_distribution == 'CentOS'
 
   - name: Install heirloom-mailx
-    ansible.builtin.package: name=heirloom-mailx state=present
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '<')
+    ansible.builtin.package:
+      name: heirloom-mailx
+      state: present
+    when:
+      - ansible_distribution == 'Ubuntu'
+      - ansible_distribution_version is version('16.04', '<')
 
   - name: Install s-nail
     ansible.builtin.package: name=s-nail state=present
-    when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '>=')
+    when:
+      - ansible_distribution == 'Ubuntu'
+      - ansible_distribution_version is version('16.04', '>=')
 
   - name: Copy LSI RAID monitoring script
-    template: src=scripts/lsi-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/lsi-raid-monitoring.sh owner=root group=root mode=0750
+    ansible.builtin.template:
+      src: scripts/lsi-raid-monitoring.sh.j2
+      dest: /opt/ilri/scripts/lsi-raid-monitoring.sh
+      owner: root
+      group: root
+      mode: 0750
     when: "'lsi' in hw_raid_vendor"
 
   - name: Copy HPE RAID monitoring script
-    template: src=scripts/hp-raid-monitoring.sh.j2 dest=/opt/ilri/scripts/hp-raid-monitoring.sh owner=root group=root mode=0750
+    ansible.builtin.template:
+      src: scripts/hp-raid-monitoring.sh.j2
+      dest: /opt/ilri/scripts/hp-raid-monitoring.sh
+      owner: root
+      group: root
+      mode: 0750
     when: "'hp' in hw_raid_vendor"
 
   - name: Configure RAID monitoring cron job
-    template: src=cron/raid-monitoring.j2 dest=/etc/cron.d/1raid-monitoring owner=root group=root mode=0644
+    ansible.builtin.template:
+      src: cron/raid-monitoring.j2
+      dest: /etc/cron.d/1raid-monitoring
+      owner: root
+      group: root
+      mode: 0644
   tags: raid-monitoring
 
 # vim: set sw=2 ts=2:

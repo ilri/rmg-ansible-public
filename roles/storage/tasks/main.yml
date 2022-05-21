@@ -1,6 +1,6 @@
 ---
 - name: Set fact for old GlusterFS package repositories
-  set_fact:
+  ansible.builtin.set_fact:
     old_glusterfs_package_repositories:
       - centos-release-gluster5
       - centos-release-gluster6
@@ -18,16 +18,16 @@
     state: present
 
 - name: Configure Mellanox network cards
-  include_tasks: mellanox.yml
+  ansible.builtin.include_tasks: mellanox.yml
   tags: mellanox
 
 - name: Configure GlusterFS client
-  include_tasks: client.yml
+  ansible.builtin.include_tasks: client.yml
   when: glusterfs_role == 'client'
   tags: glusterfs-client
 
 - name: Configure GlusterFS server
-  include_tasks: server.yml
+  ansible.builtin.include_tasks: server.yml
   when: glusterfs_role == 'server'
   tags: glusterfs-server
 

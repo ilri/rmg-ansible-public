@@ -2,11 +2,16 @@
 
 - block:
   - name: Configure apt mirror
-    template: src=sources.list.j2 dest=/etc/apt/sources.list owner=root group=root mode=0644
+    ansible.builtin.template:
+      src: sources.list.j2
+      dest: /etc/apt/sources.list
+      owner: root
+      group: root
+      mode: 0644
     register: configure_apt_mirror
 
   - name: Set Debian base packages
-    set_fact:
+    ansible.builtin.set_fact:
       debian_base_packages:
         - git
         - tmux
@@ -32,10 +37,13 @@
       configure_apt_mirror is changed
 
   - name: Install base packages
-    ansible.builtin.package: name={{ debian_base_packages }} state=present cache_valid_time=3600
+    ansible.builtin.package:
+      name: "{{ debian_base_packages }}"
+      state: present
+      cache_valid_time: 3600
 
   - name: Configure cron-apt
-    import_tasks: cron-apt.yml
+    ansible.builtin.import_tasks: cron-apt.yml
     tags: cron-apt
   tags: packages
 

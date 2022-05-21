@@ -7,13 +7,18 @@
     tags: packages
 
   - name: Create gmetad configuration file
-    copy: src=gmetad.conf dest=/etc/ganglia/gmetad.conf
+    ansible.builtin.copy:
+      src: gmetad.conf
+      dest: /etc/ganglia/gmetad.conf
     notify:
       - restart gmetad
 
   - name: Start gmetad service
     when: ansible_service_mgr == 'systemd'
-    systemd: name=gmetad state=started enabled=true
+    ansible.builtin.systemd:
+      name: gmetad
+      state: started
+      enabled: true
   tags: gmetad
 
 # vim: set sw=2 ts=2:

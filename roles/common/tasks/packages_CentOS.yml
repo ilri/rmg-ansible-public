@@ -4,13 +4,13 @@
   # Add the CentOS package signing key just in case, as it seems to be missing on
   # some installs (like from ISO).
   - name: Add CentOS package signing key
-    rpm_key:
+    ansible.builtin.rpm_key:
       state: present
       key: /etc/pki/rpm-gpg/RPM-GPG-KEY-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}
     when: ansible_distribution_major_version is version('7','==')
 
   - name: Configure ILRI CentOS mirror
-    copy:
+    ansible.builtin.copy:
       src: CentOS-Base-7.repo
       dest: /etc/yum.repos.d/CentOS-Base.repo
       owner: root
@@ -21,7 +21,7 @@
       - ('compute' in group_names or 'storage' in group_names)
 
   - name: Configure ILRI CentOS Stream mirror
-    copy:
+    ansible.builtin.copy:
       src: "{{ item }}"
       dest: /etc/yum.repos.d/{{ item | basename }}
       owner: root
@@ -35,7 +35,7 @@
     # several minutes for every yum invocation. Let's limit to storage and
     # compute hosts for now. Only seems to exist on CentOS 7.
   - name: Disable yum fastestmirror plugin
-    lineinfile:
+    ansible.builtin.lineinfile:
       dest: /etc/yum/pluginconf.d/fastestmirror.conf
       regexp: '^enabled=1$'
       line: "enabled=0"
@@ -59,7 +59,7 @@
     when: ansible_distribution_release == 'Stream'
 
   - name: Configure ILRI EPEL mirror
-    copy:
+    ansible.builtin.copy:
       src: epel-{{ ansible_distribution_major_version }}.repo
       dest: /etc/yum.repos.d/epel.repo
       owner: root
@@ -68,7 +68,7 @@
     when: ansible_distribution_major_version is version('7','>=')
 
   - name: Configure ILRI EPEL Next mirror
-    copy:
+    ansible.builtin.copy:
       src: epel-8-next.repo
       dest: /etc/yum.repos.d/epel-next.repo
       owner: root
@@ -77,12 +77,12 @@
     when: ansible_distribution_release == 'Stream'
 
   - name: Add EPEL RPM package signing key
-    rpm_key:
+    ansible.builtin.rpm_key:
       state: present
       key: /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
 
   - name: Configure repository of ILRI CentOS packages
-    copy:
+    ansible.builtin.copy:
       src: ilri.repo
       dest: /etc/yum.repos.d/ilri.repo
       owner: root
@@ -91,7 +91,7 @@
     when: "'compute' in group_names or 'storage' in group_names"
 
   - name: Set CentOS base packages
-    set_fact:
+    ansible.builtin.set_fact:
       centos_base_packages:
         - git
         - acpid
@@ -109,7 +109,7 @@
   tags: packages
 
 - name: Disable annoying cockpit notice in MOTD
-  file:
+  ansible.builtin.file:
     path: /etc/motd.d/cockpit
     state: absent
   when: ansible_distribution_major_version is version('8','==')

@@ -17,7 +17,7 @@
     group: slurm
 
 - name: Set slurm packages
-  set_fact:
+  ansible.builtin.set_fact:
     slurm_packages:
       - slurm
       - slurm-slurmd

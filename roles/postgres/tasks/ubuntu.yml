@@ -3,46 +3,71 @@
 
 - block:
   - name: Add PGDG apt list file
-    template: src=pgdg.list.j2 dest=/etc/apt/sources.list.d/pgdg.list owner=root group=root mode=0644
+    ansible.builtin.template:
+      src: pgdg.list.j2
+      dest: /etc/apt/sources.list.d/pgdg.list
+      owner: root
+      group: root
+      mode: 0644
     register: add_postgresql_apt_repository
     tags: packages
 
   - name: Import PGDG repo keys
-    apt_key: url="https://www.postgresql.org/media/keys/ACCC4CF8.asc" state=present
+    ansible.builtin.apt_key:
+      url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+      state: present
     register: add_postgresql_apt_key
     tags: packages
 
   - name: Update apt cache
-    apt:
+    ansible.builtin.apt:
       update_cache: true
     when:
       add_postgresql_apt_key is changed or
       add_postgresql_apt_repository is changed
 
   - name: Set PostgreSQL packages fact
-    set_fact:
+    ansible.builtin.set_fact:
       postgresql_packages:
         - postgresql-{{ pg_version }}
         - postgresql-client-{{ pg_version }}
         - postgresql-contrib-{{ pg_version }}
 
   - name: Install PostgreSQL packages
-    apt: name={{ postgresql_packages }} cache_valid_time=3600 state=present
+    ansible.builtin.apt:
+      name: "{{ postgresql_packages }}"
+      cache_valid_time: 3600
+      state: present
     notify:
       - restart postgresql
     tags: packages
 
   - name: Create additional PostgreSQL config directory
-    file: path={{ pg_conf_dir }}/conf.d mode=0755 owner=postgres group=postgres state=directory
+    ansible.builtin.file:
+      path: "{{ pg_conf_dir }}/conf.d"
+      mode: 0755
+      owner: postgres
+      group: postgres
+      state: directory
 
   - name: Set custom PostgreSQL variables
-    template: src=pg_confd_vars.conf.j2 dest={{ pg_conf_dir }}/conf.d/custom_vars.conf mode=0644 owner=postgres group=postgres
+    ansible.builtin.template:
+      src: pg_confd_vars.conf.j2
+      dest: "{{ pg_conf_dir }}/conf.d/custom_vars.conf"
+      mode: 0644
+      owner: postgres
+      group: postgres
     when: pg_confd_vars is defined
     notify:
       - restart postgresql
 
   - name: Copy PostgreSQL configs
-    template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode }} owner={{ item.owner }} group={{ item.group }}
+    ansible.builtin.template:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      mode: "{{ item.mode }}"
+      owner: "{{ item.owner }}"
+      group: "{{ item.group }}"
     loop:
       - { src: 'postgresql-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/postgresql.conf', mode: '0644', owner: 'postgres', group: 'postgres' }
       - { src: 'pg_hba-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/pg_hba.conf', mode: '0640', owner: 'postgres', group: 'postgres' }
@@ -50,7 +75,10 @@
       - restart postgresql
 
   - name: Start and enable PostgreSQL
-    systemd: name=postgresql state=started enabled=true
+    ansible.builtin.systemd:
+      name: postgresql
+      state: started
+      enabled: true
   tags: postgresql
 
 # vim: set sw=2 ts=2:

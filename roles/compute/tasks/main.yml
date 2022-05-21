@@ -1,12 +1,12 @@
 ---
 
 - name: Configure SLURM
-  import_tasks: slurm.yml
+  ansible.builtin.import_tasks: slurm.yml
   tags: slurm
 
 - name: Set extra packages fact for CentOS 7
   when: ansible_distribution_major_version is version('7','==')
-  set_fact:
+  ansible.builtin.set_fact:
     extra_packages:
       - argtable.x86_64 # for clustalo
       - bcl2fastq2 # from Illumina, in ILRI repo
@@ -106,7 +106,7 @@
 #   - proj-epsg.x86_64 # for some R libraries
 - name: Set extra packages fact for CentOS 8
   when: ansible_distribution_major_version is version('8','==')
-  set_fact:
+  ansible.builtin.set_fact:
     extra_packages:
       - boost-devel.x86_64 # for augustus
       - boost-iostreams.x86_64 # for augustus

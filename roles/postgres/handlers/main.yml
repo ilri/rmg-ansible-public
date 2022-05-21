@@ -2,6 +2,8 @@
 # file: roles/postgres/handlers/main.yml
 
 - name: restart postgresql
-  systemd: name=postgresql state=restarted
+  ansible.builtin.systemd:
+    name: postgresql
+    state: restarted
 
 # vim: set sw=2 ts=2:

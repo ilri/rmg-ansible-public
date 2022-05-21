@@ -6,12 +6,17 @@
   tags: packages
 
 - name: Create gmond.conf
-  template: src=gmond.conf.j2 dest=/etc/ganglia/gmond.conf
+  ansible.builtin.template:
+    src: gmond.conf.j2
+    dest: /etc/ganglia/gmond.conf
   notify:
-  - restart gmond
+    - restart gmond
 
 - name: Start gmond
   when: ansible_service_mgr == 'systemd'
-  systemd: name=gmond state=started enabled=true
+  ansible.builtin.systemd:
+    name: gmond
+    state: started
+    enabled: true
 
 # vim: set sw=2 ts=2:

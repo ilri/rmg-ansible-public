@@ -1,9 +1,14 @@
 ---
 # file: roles/ganglia/handlers/main.yml
+
 - name: restart gmond
-  systemd: name=gmond state=restarted
+  ansible.builtin.systemd:
+    name: gmond
+    state: restarted
 
 - name: restart gmetad
-  systemd: name=gmetad state=restarted
+  ansible.builtin.systemd:
+    name: gmetad
+    state: restarted
 
 # vim: set sw=2 ts=2:

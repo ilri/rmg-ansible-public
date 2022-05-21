@@ -8,13 +8,19 @@
     daemon_reload: true
 
 - name: restart iptables
-  service: name=iptables state=restarted
+  ansible.builtin.service:
+    name: iptables
+    state: restarted
 
 - name: restart ip6tables
-  service: name=ip6tables state=restarted
+  ansible.builtin.service:
+    name: ip6tables
+    state: restarted
 
 - name: reload sshd
-  service: name={{ sshd_service_name }} state=reloaded
+  ansible.builtin.service:
+    name: "{{ sshd_service_name }}"
+    state: reloaded
 
 # if NX(No eXecute (AMD)) or XD(eXecute Disable (Intel)) is already
 # enabled in the BIOS, then you can't enable ExecShield using sysctl's
@@ -23,28 +29,39 @@
 # $ dmesg | grep '[NX|DX]*protection'
 - name: reload sysctl
   ignore_errors: true
-  command: sysctl -p /etc/sysctl.conf
+  ansible.builtin.command:
+    cmd: sysctl -p /etc/sysctl.conf
 
 - name: restart firewalld
-  service: name=firewalld state=restarted
+  ansible.builtin.service:
+    name: firewalld
+    state: restarted
 
 - name: restart nftables
-  systemd: name=nftables state=restarted
+  ansible.builtin.systemd:
+    name: nftables
+    state: restarted
 
 # 2021-09-28: note to self, this should be defined after the firewalld and
 # nftables handlers, as handlers are run in the order they are defined, not
 # the order they are listed in the task's notify.
 - name: restart fail2ban
-  systemd: name=fail2ban state=restarted
+  ansible.builtin.systemd:
+    name: fail2ban
+    state: restarted
 
 # ignore_errors: at times fails on some compute nodes
 - name: start tuned
   ignore_errors: true
-  service: name=tuned state=started
+  ansible.builtin.service:
+    name: tuned
+    state: started
 
 # ignore_errors: at times fails on some compute nodes
 - name: start cpuspeed
   ignore_errors: true
-  service: name=cpuspeed state=started
+  ansible.builtin.service:
+    name: cpuspeed
+    state: started
 
 # vim: set sw=2 ts=2:

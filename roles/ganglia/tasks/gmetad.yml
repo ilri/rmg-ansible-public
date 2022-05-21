@@ -1,7 +1,9 @@
 ---
 - block:
   - name: Install ganglia-gmetad package
-    yum: name=ganglia-gmetad state=present
+    ansible.builtin.package:
+      name: ganglia-gmetad
+      state: present
     tags: packages
 
   - name: Create gmetad configuration file

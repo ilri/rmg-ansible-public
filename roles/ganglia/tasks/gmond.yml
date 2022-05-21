@@ -1,6 +1,8 @@
 ---
 - name: Install ganglia-gmond
-  yum: name=ganglia-gmond state=present
+  ansible.builtin.package:
+    name: ganglia-gmond
+    state: present
   tags: packages
 
 - name: Create gmond.conf

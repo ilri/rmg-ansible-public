@@ -5,48 +5,50 @@
 # httpd in order to bind to TCP 80 when certbot runs.
 #
 
-- block:
-  - name: Install certbot (Ubuntu 20.04)
-    ansible.builtin.apt:
-      name: certbot
-      state: present
-      update_cache: true
-
-  - name: Create Let's Encrypt hooks pre/post directories
-    ansible.builtin.file:
-      path: "{{ item }}"
-      state: directory
-      owner: root
-      group: root
-      mode: 0755
-    loop:
-      - /etc/letsencrypt/renewal-hooks/pre
-      - /etc/letsencrypt/renewal-hooks/post
-
-  - name: Remove old Let's Encrypt pre/post hooks
-    ansible.builtin.file:
-      path: "{{ item }}"
-      state: absent
-    loop:
-      - /etc/letsencrypt/renewal-hooks/pre/stop-apache2.sh
-      - /etc/letsencrypt/renewal-hooks/post/start-apache2.sh
-      - /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh
-      - /etc/letsencrypt/renewal-hooks/post/start-nginx.sh
-
-  # Eventually this should be parameterized so we only copy scripts we need, for
-  # example we might use nginx instead of apache2, or the service name could be
-  # different (httpd instead of apache2 on CentOS).
-  - name: Copy Let's Encrypt pre/post hooks
-    ansible.builtin.template:
-      src: "{{ item.src }}"
-      dest: "{{ item.dest }}"
-      owner: root
-      group: root
-      mode: 0755
-    loop:
-      - { src: 'stop-webserver.sh.j2', dest: '/etc/letsencrypt/renewal-hooks/pre/stop-webserver.sh' }
-      - { src: 'start-webserver.sh.j2', dest: '/etc/letsencrypt/renewal-hooks/post/start-webserver.sh' }
-
+- name: Install certbot (Ubuntu 20.04)
+  ansible.builtin.apt:
+    name: certbot
+    state: present
+    update_cache: true
   tags: letsencrypt
+
+- name: Create Let's Encrypt hooks pre/post directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - /etc/letsencrypt/renewal-hooks/pre
+    - /etc/letsencrypt/renewal-hooks/post
+  tags: letsencrypt
+
+- name: Remove old Let's Encrypt pre/post hooks
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/letsencrypt/renewal-hooks/pre/stop-apache2.sh
+    - /etc/letsencrypt/renewal-hooks/post/start-apache2.sh
+    - /etc/letsencrypt/renewal-hooks/pre/stop-nginx.sh
+    - /etc/letsencrypt/renewal-hooks/post/start-nginx.sh
+  tags: letsencrypt
+
+# Eventually this should be parameterized so we only copy scripts we need, for
+# example we might use nginx instead of apache2, or the service name could be
+# different (httpd instead of apache2 on CentOS).
+- name: Copy Let's Encrypt pre/post hooks
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+    - { src: 'stop-webserver.sh.j2', dest: '/etc/letsencrypt/renewal-hooks/pre/stop-webserver.sh' }
+    - { src: 'start-webserver.sh.j2', dest: '/etc/letsencrypt/renewal-hooks/post/start-webserver.sh' }
+  tags: letsencrypt
+
 
 # vim: set ts=2 sw=2:

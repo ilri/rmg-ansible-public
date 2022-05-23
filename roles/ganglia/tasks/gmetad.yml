@@ -1,24 +1,26 @@
 ---
-- block:
-  - name: Install ganglia-gmetad package
-    ansible.builtin.package:
-      name: ganglia-gmetad
-      state: present
-    tags: packages
+- name: Install ganglia-gmetad package
+  ansible.builtin.package:
+    name: ganglia-gmetad
+    state: present
+  tags:
+    - packages
+    - gmetad
 
-  - name: Create gmetad configuration file
-    ansible.builtin.copy:
-      src: gmetad.conf
-      dest: /etc/ganglia/gmetad.conf
-    notify:
-      - restart gmetad
+- name: Create gmetad configuration file
+  ansible.builtin.copy:
+    src: gmetad.conf
+    dest: /etc/ganglia/gmetad.conf
+  notify:
+    - restart gmetad
+  tags: gmetad
 
-  - name: Start gmetad service
-    when: ansible_service_mgr == 'systemd'
-    ansible.builtin.systemd:
-      name: gmetad
-      state: started
-      enabled: true
+- name: Start gmetad service
+  when: ansible_service_mgr == 'systemd'
+  ansible.builtin.systemd:
+    name: gmetad
+    state: started
+    enabled: true
   tags: gmetad
 
 # vim: set sw=2 ts=2:

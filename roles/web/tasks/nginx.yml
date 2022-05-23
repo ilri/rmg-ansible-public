@@ -4,51 +4,54 @@
 # to worry about a lot more specifics. At the very least we are now able to m-
 # anage some of the basic SSL settings and the default vhost.
 
-- block:
-  # See: https://docs.ansible.com/ansible/latest/collections/community/crypto/docsite/guide_selfsigned.html
-  - name: Create private key (RSA, 4096 bits)
-    community.crypto.openssl_privatekey:
-      path: /etc/ssl/private/nginx-snakeoil.key
-
-  - name: Generate self-signed TLS cert1
-    community.crypto.x509_certificate:
-      path: /etc/ssl/certs/nginx-snakeoil.crt
-      privatekey_path: /etc/ssl/private/nginx-snakeoil.key
-      provider: selfsigned
-    notify:
-      - reload nginx
-
-  - name: Download 4096-bit RFC 7919 dhparams
-    ansible.builtin.get_url:
-      url: https://raw.githubusercontent.com/internetstandards/dhe_groups/master/ffdhe4096.pem
-      checksum: sha256:64852d6890ff9e62eecd1ee89c72af9af244dfef5b853bcedea3dfd7aade22b3
-      dest: "{{ nginx_ssl_dhparam }}"
-      mode: 0644
-      owner: root
-      group: root
-    notify:
-      - reload nginx
-
-  - name: Remove default nginx vhost
-    ansible.builtin.file:
-      path: /etc/nginx/conf.d/default.conf
-      state: absent
-    notify:
-      - reload nginx
-
-  - name: Copy extra nginx configs
-    ansible.builtin.template:
-      src: "{{ item.src }}"
-      dest: "{{ item.dest }}"
-      mode: 0644
-      owner: root
-      group: root
-    loop:
-      - { 'src': etc/nginx/intermediate-tls.conf.j2, 'dest': /etc/nginx/intermediate-tls.conf }
-      - { 'src': etc/nginx/conf.d/blank-vhost.conf.j2, 'dest': /etc/nginx/conf.d/blank-vhost.conf }
-    notify:
-      - reload nginx
-
+# See: https://docs.ansible.com/ansible/latest/collections/community/crypto/docsite/guide_selfsigned.html
+- name: Create private key (RSA, 4096 bits)
+  community.crypto.openssl_privatekey:
+    path: /etc/ssl/private/nginx-snakeoil.key
   tags: nginx
+
+- name: Generate self-signed TLS cert1
+  community.crypto.x509_certificate:
+    path: /etc/ssl/certs/nginx-snakeoil.crt
+    privatekey_path: /etc/ssl/private/nginx-snakeoil.key
+    provider: selfsigned
+  notify:
+    - reload nginx
+  tags: nginx
+
+- name: Download 4096-bit RFC 7919 dhparams
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/internetstandards/dhe_groups/master/ffdhe4096.pem
+    checksum: sha256:64852d6890ff9e62eecd1ee89c72af9af244dfef5b853bcedea3dfd7aade22b3
+    dest: "{{ nginx_ssl_dhparam }}"
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - reload nginx
+  tags: nginx
+
+- name: Remove default nginx vhost
+  ansible.builtin.file:
+    path: /etc/nginx/conf.d/default.conf
+    state: absent
+  notify:
+    - reload nginx
+  tags: nginx
+
+- name: Copy extra nginx configs
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - { 'src': etc/nginx/intermediate-tls.conf.j2, 'dest': /etc/nginx/intermediate-tls.conf }
+    - { 'src': etc/nginx/conf.d/blank-vhost.conf.j2, 'dest': /etc/nginx/conf.d/blank-vhost.conf }
+  notify:
+    - reload nginx
+  tags: nginx
+
 
 # vim: set sw=2 ts=2:

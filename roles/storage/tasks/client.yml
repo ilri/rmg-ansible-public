@@ -1,51 +1,55 @@
 ---
 
-- block:
-  - name: Set GlusterFS client packages
-    ansible.builtin.set_fact:
-      glusterfs_client_packages:
-        - glusterfs-fuse
-        - libsemanage-python # required by Ansible's seboolean module
-      when: ansible_distribution_major_version is version('7','==')
+- name: Set GlusterFS client packages
+  ansible.builtin.set_fact:
+    glusterfs_client_packages:
+      - glusterfs-fuse
+      - libsemanage-python # required by Ansible's seboolean module
+    when: ansible_distribution_major_version is version('7','==')
+  tags: glusterfs-client
 
-  - name: Set GlusterFS client packages
-    ansible.builtin.set_fact:
-      glusterfs_client_packages:
-        - glusterfs-fuse
-        - python3-libselinux.x86_64 # required by Ansible's seboolean module
-      when: ansible_distribution_major_version is version('8','==')
+- name: Set GlusterFS client packages
+  ansible.builtin.set_fact:
+    glusterfs_client_packages:
+      - glusterfs-fuse
+      - python3-libselinux.x86_64 # required by Ansible's seboolean module
+    when: ansible_distribution_major_version is version('8','==')
+  tags: glusterfs-client
 
-  - name: Install GlusterFS client packages
-    ansible.builtin.package:
-      name: "{{ glusterfs_client_packages }}"
-      state: present
+- name: Install GlusterFS client packages
+  ansible.builtin.package:
+    name: "{{ glusterfs_client_packages }}"
+    state: present
+  tags: glusterfs-client
 
-  - name: Create mount points
-    when: glusterfs_mounts is defined
-    ansible.builtin.file:
-      dest: "{{ item.mount_point }}"
-      owner: "{{ item.owner }}"
-      group: "{{ item.group }}"
-      mode: "{{ item.mode }}"
-      state: "{{ item.state }}"
-    loop: "{{ glusterfs_mounts }}"
+- name: Create mount points
+  when: glusterfs_mounts is defined
+  ansible.builtin.file:
+    dest: "{{ item.mount_point }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: "{{ item.state }}"
+  loop: "{{ glusterfs_mounts }}"
+  tags: glusterfs-client
 
-  - name: Set SELinux boolean
-    when: glusterfs_mounts is defined
-    ansible.posix.seboolean:
-      name: use_fusefs_home_dirs
-      state: true
-      persistent: true
+- name: Set SELinux boolean
+  when: glusterfs_mounts is defined
+  ansible.posix.seboolean:
+    name: use_fusefs_home_dirs
+    state: true
+    persistent: true
+  tags: glusterfs-client
 
-  - name: Mount GlusterFS volumes
-    when: glusterfs_mounts is defined
-    ansible.posix.mount:
-      name: "{{ item.mount_point }}"
-      src: "{{ item.mount_src }}"
-      fstype: "{{ item.mount_fs }}"
-      opts: "{{ item.mount_opts }}"
-      state: "{{ item.mount_state }}"
-    loop: "{{ glusterfs_mounts }}"
+- name: Mount GlusterFS volumes
+  when: glusterfs_mounts is defined
+  ansible.posix.mount:
+    name: "{{ item.mount_point }}"
+    src: "{{ item.mount_src }}"
+    fstype: "{{ item.mount_fs }}"
+    opts: "{{ item.mount_opts }}"
+    state: "{{ item.mount_state }}"
+  loop: "{{ glusterfs_mounts }}"
   tags: glusterfs-client
 
 # vim: set ts=2 sw=2:

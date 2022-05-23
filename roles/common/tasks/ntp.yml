@@ -16,9 +16,11 @@
 # See: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/using-chrony-to-configure-ntp
 
 - name: Set timezone
-  when: timezone is defined and ansible_service_mgr == 'systemd'
-  ansible.builtin.command:
-    cmd: "/usr/bin/timedatectl set-timezone {{ timezone }}"
+  when:
+    - timezone is defined
+    - ansible_service_mgr == 'systemd'
+  community.general.timezone:
+    name: "{{ timezone }}"
   tags: timezone
 
 - name: Enable systemd's NTP client

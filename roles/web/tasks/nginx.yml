@@ -5,10 +5,16 @@
 # anage some of the basic SSL settings and the default vhost.
 
 - block:
-  - name: Generate self-signed TLS cert
-    ansible.builtin.command:
-      cmd: openssl req -x509 -nodes -sha256 -days 365 -subj "/C=SO/ST=SO/L=snakeoil/O=snakeoil/CN=snakeoil" -newkey rsa:2048 -keyout /etc/ssl/private/nginx-snakeoil.key -out /etc/ssl/certs/nginx-snakeoil.crt -extensions v3_ca
-      creates: /etc/ssl/certs/nginx-snakeoil.crt
+  # See: https://docs.ansible.com/ansible/latest/collections/community/crypto/docsite/guide_selfsigned.html
+  - name: Create private key (RSA, 4096 bits)
+    community.crypto.openssl_privatekey:
+      path: /etc/ssl/private/nginx-snakeoil.key
+
+  - name: Generate self-signed TLS cert1
+    community.crypto.x509_certificate:
+      path: /etc/ssl/certs/nginx-snakeoil.crt
+      privatekey_path: /etc/ssl/private/nginx-snakeoil.key
+      provider: selfsigned
     notify:
       - reload nginx
 

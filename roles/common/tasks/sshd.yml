@@ -1,9 +1,8 @@
 ---
-
 # SSH configs don't change in Debian / CentOS minor versions
 - name: Reconfigure /etc/ssh/sshd_config
   ansible.builtin.template:
-    src: "sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2"
+    src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2
     dest: /etc/ssh/sshd_config
     owner: root
     group: root
@@ -15,7 +14,7 @@
 # ie with new ciphers supported etc.
 - name: Reconfigure /etc/ssh/sshd_config
   ansible.builtin.template:
-    src: "sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2"
+    src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2
     dest: /etc/ssh/sshd_config
     owner: root
     group: root
@@ -52,7 +51,7 @@
 # we are ignoring these host keys in sshd_config anyways...
 - name: Remove DSA and ECDSA host keys
   ansible.builtin.file:
-    name: "/etc/ssh/{{ item }}"
+    name: /etc/ssh/{{ item }}
     state: absent
   loop:
     - ssh_host_dsa_key

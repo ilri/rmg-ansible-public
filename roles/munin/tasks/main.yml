@@ -1,11 +1,11 @@
 ---
 
 - name: Configure munin scraper
-  import_tasks: munin.yml
+  ansible.builtin.import_tasks: munin.yml
   tags: munin
 
 - name: Configure munin listener
-  import_tasks: munin-node.yml
+  ansible.builtin.import_tasks: munin-node.yml
   tags: munin-node
 
 # vim: set sw=2 ts=2:

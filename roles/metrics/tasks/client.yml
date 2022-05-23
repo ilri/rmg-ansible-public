@@ -7,10 +7,10 @@
 # after it starts up.
 
 - name: Configure node_exporter
-  import_tasks: node_exporter.yml
+  ansible.builtin.import_tasks: node_exporter.yml
 
 - name: Configure mysqld_exporter
-  include_tasks: mysqld_exporter.yml
+  ansible.builtin.include_tasks: mysqld_exporter.yml
   when:
     - extra_victoriametrics_exporters is defined
     - '"mysqld" in extra_victoriametrics_exporters'
@@ -18,10 +18,10 @@
 # Currently only run on DSpace hosts, with some dependent stuff configured in
 # the dspace role.
 - name: Configure jmx_exporter
-  include_tasks: jmx_exporter.yml
+  ansible.builtin.include_tasks: jmx_exporter.yml
   when: '"dspace" in group_names'
 
 - name: Configure vmutils
-  import_tasks: vmutils.yml
+  ansible.builtin.import_tasks: vmutils.yml
 
 # vim: set sw=2 ts=2:

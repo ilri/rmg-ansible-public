@@ -1,14 +1,14 @@
 ---
 - name: Configure LDAP client
-  import_tasks: ldap.yml
+  ansible.builtin.import_tasks: ldap.yml
   tags: ldap
 
 - name: Configure SSSD
-  import_tasks: sssd.yml
+  ansible.builtin.import_tasks: sssd.yml
   tags: sssd
 
 - name: Configure sudoers
-  import_tasks: sudoersd.yml
+  ansible.builtin.import_tasks: sudoersd.yml
   tags: sudoers
 
 # vim: set ts=2 sw=2:

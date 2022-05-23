@@ -169,7 +169,7 @@
   when: ansible_distribution_version is version('20.04', '<=')
 
 - name: Configure nginx
-  import_tasks: nginx.yml
+  ansible.builtin.import_tasks: nginx.yml
   tags: nginx
 
 - name: Check installed Tomcat version

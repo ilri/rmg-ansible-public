@@ -8,13 +8,13 @@
 #
 
 - name: Configure VictoriaMetrics common
-  import_tasks: common.yml
+  ansible.builtin.import_tasks: common.yml
 
 - name: Configure VictoriaMetrics clients
-  import_tasks: client.yml
+  ansible.builtin.import_tasks: client.yml
 
 - name: Configure VictoriaMetrics server
-  include_tasks: server.yml
+  ansible.builtin.include_tasks: server.yml
   when:
     - victoriametrics_role is defined
     - victoriametrics_role == 'server'

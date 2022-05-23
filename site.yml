@@ -1,12 +1,12 @@
 ---
 # file: site.yml
 
-- import_playbook: compute.yml
-- import_playbook: dspace.yml
-- import_playbook: nomads.yml
-- import_playbook: solr.yml
-- import_playbook: storage.yml
-- import_playbook: web.yml
-- import_playbook: postgres.yml
+- ansible.builtin.import_playbook: compute.yml
+- ansible.builtin.import_playbook: dspace.yml
+- ansible.builtin.import_playbook: nomads.yml
+- ansible.builtin.import_playbook: solr.yml
+- ansible.builtin.import_playbook: storage.yml
+- ansible.builtin.import_playbook: web.yml
+- ansible.builtin.import_playbook: postgres.yml
 
 # vim: set sw=2 ts=2:

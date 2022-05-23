@@ -1,5 +1,4 @@
 ---
-
 - name: Configure fail2ban sshd filter
   ansible.builtin.template:
     src: etc/fail2ban/jail.d/sshd.local.j2
@@ -9,7 +8,9 @@
   notify: restart fail2ban
 
 - name: Configure fail2ban nginx filter
-  when: "extra_fail2ban_filters is defined and 'nginx' in extra_fail2ban_filters"
+  when:
+    - extra_fail2ban_filters is defined
+    - "'nginx' in extra_fail2ban_filters"
   ansible.builtin.template:
     src: etc/fail2ban/jail.d/nginx.local.j2
     dest: /etc/fail2ban/jail.d/nginx.local
@@ -26,7 +27,8 @@
 # deal really.
 - name: Configure fail2ban apache filter
   when:
-    - "(extra_fail2ban_filters is defined and 'apache' in extra_fail2ban_filters)"
+    - extra_fail2ban_filters is defined
+    - "'apache' in extra_fail2ban_filters"
     - ansible_distribution_version is version('16.04', '!=')
   ansible.builtin.template:
     src: "{{ item.src }}"
@@ -34,10 +36,10 @@
     owner: root
     mode: 0644
   loop:
-    - { src: 'etc/fail2ban/jail.d/apache.local.j2', dest: '/etc/fail2ban/jail.d/apache.local' }
-    - { src: 'etc/fail2ban/filter.d/botsearch-common.local.j2', dest: '/etc/fail2ban/filter.d/botsearch-common.local' }
-    - { src: 'etc/fail2ban/filter.d/apache-botsearch.local.j2', dest: '/etc/fail2ban/filter.d/apache-botsearch.local' }
-    - { src: 'etc/fail2ban/filter.d/apache-proxy.local.j2', dest: '/etc/fail2ban/filter.d/apache-proxy.local' }
+    - { src: etc/fail2ban/jail.d/apache.local.j2, dest: /etc/fail2ban/jail.d/apache.local }
+    - { src: etc/fail2ban/filter.d/botsearch-common.local.j2, dest: /etc/fail2ban/filter.d/botsearch-common.local }
+    - { src: etc/fail2ban/filter.d/apache-botsearch.local.j2, dest: /etc/fail2ban/filter.d/apache-botsearch.local }
+    - { src: etc/fail2ban/filter.d/apache-proxy.local.j2, dest: /etc/fail2ban/filter.d/apache-proxy.local }
   notify: restart fail2ban
 
 - name: Create fail2ban service override directory

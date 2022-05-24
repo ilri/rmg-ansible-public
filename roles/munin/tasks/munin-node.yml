@@ -118,8 +118,18 @@
   notify:
     - restart munin-node
 
+# It is not possible to determine if munin-node-configure plans to enable or
+# disable any plugins based on its return code. We can only look for lines like
+# these in stderr:
+#
+#   + ln -s /usr/share/munin/plugins/nginx_request /etc/munin/plugins/nginx_request
+#   + rm -f /etc/munin/plugins/nginx_status
+#
+# If we see those then we know something changed and we can notify the handler.
 - name: Configure munin-node
   ansible.builtin.shell: munin-node-configure --shell --families=contrib,auto --remove-also | sh -x
+  register: munin_node_configure
+  changed_when: munin_node_configure.stderr is regex("\+ (ln -s|rm -f).*")
   notify:
     - restart munin-node
 

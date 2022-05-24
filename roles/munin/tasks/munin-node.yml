@@ -115,6 +115,7 @@
   ansible.builtin.template:
     src: munin-node.conf.j2
     dest: /etc/munin/munin-node.conf
+    mode: 0644
   notify:
     - restart munin-node
 

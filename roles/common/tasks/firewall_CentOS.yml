@@ -127,10 +127,10 @@
       mode: 0600
       force: "{{ item.force }}"
     loop:
-      - { src: "spamhaus-ipv4.xml", force: "no" }
-      - { src: "spamhaus-ipv6.xml", force: "no" }
-      - { src: "abusers-ipv4.xml", force: "yes" }
-      - { src: "abusers-ipv6.xml", force: "yes" }
+      - { src: "spamhaus-ipv4.xml", force: false }
+      - { src: "spamhaus-ipv6.xml", force: false }
+      - { src: "abusers-ipv4.xml", force: true }
+      - { src: "abusers-ipv6.xml", force: true }
     notify:
       - restart firewalld
       - restart fail2ban

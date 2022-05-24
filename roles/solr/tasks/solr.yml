@@ -6,7 +6,14 @@
     system: true
 
 - name: Create system user account to run Solr daemon
-  ansible.builtin.user: name={{ solr_user }} group={{ solr_group }} createhome=yes home={{ solr_user_homedir }} shell=/bin/bash system=yes state=present
+  ansible.builtin.user:
+    name: "{{ solr_user }}"
+    group: "{{ solr_group }}"
+    createhome: true
+    home: "{{ solr_user_homedir }}"
+    shell: /bin/bash
+    system: true
+    state: present
 
 - name: Check installed Solr version
   ansible.builtin.stat:

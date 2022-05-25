@@ -131,7 +131,11 @@
   tags: sudoers
 
 - name: Configure RAID monitoring
-  ansible.builtin.include_tasks: raid-monitoring.yml
+  ansible.builtin.include_tasks:
+    file: raid-monitoring.yml
+    apply:
+      tags:
+        - raid-monitoring
   when: hw_raid_vendor is defined
   tags: raid-monitoring
 

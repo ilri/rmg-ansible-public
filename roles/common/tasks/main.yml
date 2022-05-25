@@ -63,22 +63,23 @@
 
 # This should work on CentOS 7+ and Ubuntu 16.04+. As of CentOS Stream 8 the
 # persistent journal is still not enabled by default.
-- block:
-  - name: Create systemd-journald drop-in config directory
-    ansible.builtin.file:
-      path: /etc/systemd/journald.conf.d
-      owner: root
-      group: root
-      mode: 0755
-      state: directory
+- name: Configure persistent systemd journal
+  block:
+    - name: Create systemd-journald drop-in config directory
+      ansible.builtin.file:
+        path: /etc/systemd/journald.conf.d
+        owner: root
+        group: root
+        mode: 0755
+        state: directory
 
-  - name: Enable persistent systemd journal
-    ansible.builtin.copy:
-      src: 00-persistent-journal.conf
-      dest: /etc/systemd/journald.conf.d/00-persistent-journal.conf
-      owner: root
-      group: root
-      mode: 0644
+    - name: Enable persistent systemd journal
+      ansible.builtin.copy:
+        src: 00-persistent-journal.conf
+        dest: /etc/systemd/journald.conf.d/00-persistent-journal.conf
+        owner: root
+        group: root
+        mode: 0644
   when: ansible_service_mgr == 'systemd'
   tags: systemd-journald
 

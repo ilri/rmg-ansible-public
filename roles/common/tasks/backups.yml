@@ -40,110 +40,111 @@
 # I can then just test if my expected version exists rather than trying to parse
 # the output of `restic version` (especially since I don't know what versioning
 # they will use in the future).
-- block:
-  - name: Check restic version
-    ansible.builtin.stat:
-      path: "{{ restic_binary_path }}-{{ restic_version }}"
-    register: restic_stat
+- name: Configure restic
+  block:
+    - name: Check restic version
+      ansible.builtin.stat:
+        path: "{{ restic_binary_path }}-{{ restic_version }}"
+      register: restic_stat
 
-  - name: Download restic
-    ansible.builtin.get_url:
-      url: "{{ restic_url }}"
-      dest: "{{ restic_binary_path }}-{{ restic_version }}.bz2"
-      checksum: "sha256:{{ restic_url_checksum }}"
-    register: restic_download
-    when: not restic_stat.stat.exists
+    - name: Download restic
+      ansible.builtin.get_url:
+        url: "{{ restic_url }}"
+        dest: "{{ restic_binary_path }}-{{ restic_version }}.bz2"
+        checksum: "sha256:{{ restic_url_checksum }}"
+      register: restic_download
+      when: not restic_stat.stat.exists
 
-  # The Ansible unarchive module expects a tarred archive so we must use bunzip2
-  - name: Unzip restic
-    ansible.builtin.command:
-    args:
-      argv:
-        - bunzip2
-        - -f
-        - "{{ restic_binary_path }}-{{ restic_version }}.bz2"
-    when: restic_download is changed
-    register: restic_binary
+    # The Ansible unarchive module expects a tarred archive so we must use bunzip2
+    - name: Unzip restic
+      ansible.builtin.command:
+      args:
+        argv:
+          - bunzip2
+          - -f
+          - "{{ restic_binary_path }}-{{ restic_version }}.bz2"
+      when: restic_download is changed
+      register: restic_binary
 
-  - name: Make restic binary executable
-    ansible.builtin.file:
-      path: "{{ restic_binary_path }}-{{ restic_version }}"
-      owner: root
-      group: root
-      mode: 0755
-    when: restic_binary is changed
+    - name: Make restic binary executable
+      ansible.builtin.file:
+        path: "{{ restic_binary_path }}-{{ restic_version }}"
+        owner: root
+        group: root
+        mode: 0755
+      when: restic_binary is changed
 
-  - name: Configure restic symlink
-    ansible.builtin.file:
-      src: "{{ restic_binary_path }}-{{ restic_version }}"
-      dest: "{{ restic_binary_path }}"
-      owner: root
-      group: root
-      state: link
-      force: true
-    when: restic_binary is changed
+    - name: Configure restic symlink
+      ansible.builtin.file:
+        src: "{{ restic_binary_path }}-{{ restic_version }}"
+        dest: "{{ restic_binary_path }}"
+        owner: root
+        group: root
+        state: link
+        force: true
+      when: restic_binary is changed
 
-  - name: Remove old restic versions
-    ansible.builtin.file:
-      path: "{{ item }}"
-      state: absent
-    loop:
-      - "{{ restic_binary_path }}-0.9.6"
-      - "{{ restic_binary_path }}-0.10.0"
-      - "{{ restic_binary_path }}-0.11.0"
-      - "{{ restic_binary_path }}-0.12.0"
+    - name: Remove old restic versions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ restic_binary_path }}-0.9.6"
+        - "{{ restic_binary_path }}-0.10.0"
+        - "{{ restic_binary_path }}-0.11.0"
+        - "{{ restic_binary_path }}-0.12.0"
 
-  - name: Copy restic scripts
-    ansible.builtin.template:
-      src: "{{ item.src }}"
-      dest: "{{ item.dest }}"
-      owner: root
-      group: root
-      mode: 0755
-    loop:
-      - { 'src': scripts/restic-backup.sh.j2, 'dest': /opt/ilri/scripts/restic-backup.sh }
-      - { 'src': scripts/restic-prune.sh.j2, 'dest': /opt/ilri/scripts/restic-prune.sh }
+    - name: Copy restic scripts
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: 0755
+      loop:
+        - { 'src': scripts/restic-backup.sh.j2, 'dest': /opt/ilri/scripts/restic-backup.sh }
+        - { 'src': scripts/restic-prune.sh.j2, 'dest': /opt/ilri/scripts/restic-prune.sh }
 
-  - name: Copy restic systemd service unit
-    ansible.builtin.template:
-      src: restic-backup.service.j2
-      dest: /etc/systemd/system/restic-backup.service
-      mode: 0644
-      owner: root
-      group: root
-    register: restic_systemd_service
+    - name: Copy restic systemd service unit
+      ansible.builtin.template:
+        src: restic-backup.service.j2
+        dest: /etc/systemd/system/restic-backup.service
+        mode: 0644
+        owner: root
+        group: root
+      register: restic_systemd_service
 
-  - name: Copy restic systemd timer unit
-    ansible.builtin.copy:
-      src: restic-backup.timer
-      dest: /etc/systemd/system/restic-backup.timer
-      mode: 0644
-      owner: root
-      group: root
-    register: restic_systemd_timer
+    - name: Copy restic systemd timer unit
+      ansible.builtin.copy:
+        src: restic-backup.timer
+        dest: /etc/systemd/system/restic-backup.timer
+        mode: 0644
+        owner: root
+        group: root
+      register: restic_systemd_timer
 
-  - name: Copy restic-backup environment
-    ansible.builtin.template:
-      src: restic-backup-environment.j2
-      dest: /etc/restic-backup
-      mode: 0660
-      owner: root
-      group: root
-    register: restic_systemd_environment
+    - name: Copy restic-backup environment
+      ansible.builtin.template:
+        src: restic-backup-environment.j2
+        dest: /etc/restic-backup
+        mode: 0660
+        owner: root
+        group: root
+      register: restic_systemd_environment
 
-  # need to reload to pick up service/timer/environment changes
-  - name: Reload systemd daemon
-    ansible.builtin.systemd:
-      daemon_reload: true
-    when: restic_systemd_service is changed
-          or restic_systemd_timer is changed
-          or restic_systemd_environment is changed
+    # need to reload to pick up service/timer/environment changes
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: true
+      when: restic_systemd_service is changed
+            or restic_systemd_timer is changed
+            or restic_systemd_environment is changed
 
-  - name: Start and enable restic systemd timer
-    ansible.builtin.systemd:
-      name: restic-backup.timer
-      state: started
-      enabled: true
+    - name: Start and enable restic systemd timer
+      ansible.builtin.systemd:
+        name: restic-backup.timer
+        state: started
+        enabled: true
 
   when: restic_password is defined
   tags: restic

@@ -86,9 +86,13 @@
         chdir: /tmp
 
     - name: Clean up custom fail2ban SELinux policy files
-      ansible.builtin.command:
-        cmd: rm my-fail2banserver.te my-fail2banserver.mod my-fail2banserver.pp
-        chdir: /tmp
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+        loop:
+          - /tmp/my-fail2banserver.te
+          - /tmp/my-fail2banserver.mod
+          - /tmp/my-fail2banserver.pp
     # Note: this `when` is for the entire block of CentOS Stream 8 tasks!
     when:
       - not semodule_list.skipped

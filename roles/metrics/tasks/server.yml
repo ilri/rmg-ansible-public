@@ -11,6 +11,7 @@
     url: "{{ victoriametrics_url }}"
     dest: "/usr/local/bin/{{ victoriametrics_tarball }}"
     checksum: "sha256:{{ victoriametrics_url_checksum }}"
+    mode: 0640
   register: victoriametrics_download
   when: not victoriametrics_stat.stat.exists
 

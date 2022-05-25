@@ -67,6 +67,7 @@
       ansible.builtin.copy:
         src: my-fail2banserver.te
         dest: /tmp/my-fail2banserver.te
+        mode: 0640
 
     - name: Compile custom fail2ban SELinux module
       ansible.builtin.command:

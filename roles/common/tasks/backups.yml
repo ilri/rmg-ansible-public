@@ -52,6 +52,7 @@
         url: "{{ restic_url }}"
         dest: "{{ restic_binary_path }}-{{ restic_version }}.bz2"
         checksum: "sha256:{{ restic_url_checksum }}"
+        mode: 0640
       register: restic_download
       when: not restic_stat.stat.exists
 

@@ -12,6 +12,7 @@
     url: "{{ node_exporter_url }}"
     dest: "/usr/local/bin/{{ node_exporter_tarball }}"
     checksum: "sha256:{{ node_exporter_url_checksum }}"
+    mode: 0640
   register: node_exporter_download
   when: not node_exporter_stat.stat.exists
 

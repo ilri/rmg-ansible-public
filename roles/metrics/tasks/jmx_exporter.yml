@@ -11,6 +11,7 @@
     url: "{{ jmx_exporter_url }}"
     dest: "{{ jmx_exporter_jar_path }}"
     checksum: "sha256:{{ jmx_exporter_url_checksum }}"
+    mode: 0640
   when: not jmx_exporter_stat.stat.exists
 
 - name: Remove old jmx_exporter jars

@@ -12,6 +12,7 @@
     url: "{{ mysqld_exporter_url }}"
     dest: "/usr/local/bin/{{ mysqld_exporter_tarball }}"
     checksum: "sha256:{{ mysqld_exporter_url_checksum }}"
+    mode: 0640
   register: mysqld_exporter_download
   when: not mysqld_exporter_stat.stat.exists
 

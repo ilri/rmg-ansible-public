@@ -17,6 +17,7 @@
     url: "{{ victoriametrics_vmutils_url }}"
     dest: "/usr/local/bin/{{ victoriametrics_vmutils_tarball }}"
     checksum: "sha256:{{ victoriametrics_vmutils_url_checksum }}"
+    mode: 0640
   register: vmutils_download
   when: not vmutils_stat.stat.exists
 

@@ -80,92 +80,96 @@
     shell: /bin/bash
   tags: tomcat
 
-- block:
-  # Use Node.js repository instead of Ubuntu's due to libssl conflicts
-  # See: https://bugs.launchpad.net/ubuntu/+source/nodejs/+bug/1794589
-  - name: Add Node.js apt signing key
-    ansible.builtin.apt_key:
-      url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-      state: present
-    register: add_nodejs_apt_key
+- name: Configure Node.js
+  block:
+    # Use Node.js repository instead of Ubuntu's due to libssl conflicts
+    # See: https://bugs.launchpad.net/ubuntu/+source/nodejs/+bug/1794589
+    - name: Add Node.js apt signing key
+      ansible.builtin.apt_key:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        state: present
+      register: add_nodejs_apt_key
 
-  - name: Add Node.js 14 LTS repository
-    ansible.builtin.template:
-      src: nodesource.list.j2
-      dest: /etc/apt/sources.list.d/nodesource.list
-      mode: 0644
-      owner: root
-      group: root
-    register: add_nodejs_apt_repository
+    - name: Add Node.js 14 LTS repository
+      ansible.builtin.template:
+        src: nodesource.list.j2
+        dest: /etc/apt/sources.list.d/nodesource.list
+        mode: 0644
+        owner: root
+        group: root
+      register: add_nodejs_apt_repository
 
-  - name: Update apt cache
-    ansible.builtin.apt:
-      update_cache: true
-    when:
-      add_nodejs_apt_key is changed or
-      add_nodejs_apt_repository is changed
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+      when:
+        add_nodejs_apt_key is changed or
+        add_nodejs_apt_repository is changed
 
-  - name: Set DSpace Mirage 2 system build dependencies
-    ansible.builtin.set_fact:
-      dspace_mirage2_system_build_dependencies:
-        - build-essential
-        - nodejs
+    - name: Set DSpace Mirage 2 system build dependencies
+      ansible.builtin.set_fact:
+        dspace_mirage2_system_build_dependencies:
+          - build-essential
+          - nodejs
 
-  - name: Install DSpace Mirage 2 system build dependencies
-    ansible.builtin.apt:
-      pkg: "{{ dspace_mirage2_system_build_dependencies }}"
-      state: present
-      install_recommends: false
-      cache_valid_time: 3600
+    - name: Install DSpace Mirage 2 system build dependencies
+      ansible.builtin.apt:
+        pkg: "{{ dspace_mirage2_system_build_dependencies }}"
+        state: present
+        install_recommends: false
+        cache_valid_time: 3600
 
-  - name: Configure npm environment
-    ansible.builtin.template:
-      src: npmrc.j2
-      dest: "{{ tomcat_user_home }}/.npmrc"
-      owner: "{{ tomcat_user }}"
-      group: "{{ tomcat_group }}"
-      mode: 0644
-    become_user: '{{ tomcat_user }}'
+    - name: Configure npm environment
+      ansible.builtin.template:
+        src: npmrc.j2
+        dest: "{{ tomcat_user_home }}/.npmrc"
+        owner: "{{ tomcat_user }}"
+        group: "{{ tomcat_group }}"
+        mode: 0644
+      become_user: '{{ tomcat_user }}'
 
-  - name: Install DSpace Mirage 2 Node.js build dependencies
-    community.general.npm:
-      name: "{{ item }}"
-      global: true
-    loop:
-      - grunt-cli
-      - yarn
-    become_user: '{{ tomcat_user }}'
+    - name: Install DSpace Mirage 2 Node.js build dependencies
+      community.general.npm:
+        name: "{{ item }}"
+        global: true
+      loop:
+        - grunt-cli
+        - yarn
+      become_user: '{{ tomcat_user }}'
 
-  - name: Add npm packages to PATH
-    ansible.builtin.lineinfile:
-      dest: '{{ tomcat_user_home }}/.profile'
-      regexp: '^export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin$'
-      line: 'export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin'
-      state: present
-    become_user: '{{ tomcat_user }}'
+    - name: Add npm packages to PATH
+      ansible.builtin.lineinfile:
+        dest: '{{ tomcat_user_home }}/.profile'
+        regexp: '^export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin$'
+        line: 'export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin'
+        state: present
+      become_user: '{{ tomcat_user }}'
   when: ansible_distribution_version is version('18.04', '>=')
 
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
-- block:
-  - name: Add GPG key for GoAccess repo
-    ansible.builtin.apt_key:
-      id: C03B48887D5E56B046715D3297BD1A0133449C3D
-      url: https://deb.goaccess.io/gnugpg.key
-      state: present
-  - name: Add new GoAccess repository
-    ansible.builtin.apt_repository:
-      repo: 'deb [arch=amd64] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
-      filename: goaccess
-      state: present
-  - name: Remove old GoAccess repository
-    ansible.builtin.apt_repository:
-      repo: 'deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
-      filename: goaccess
-      state: absent
-  - name: Install GoAccess
-    ansible.builtin.apt:
-      pkg: goaccess
-      state: present
+- name: Configure GoAccess
+  block:
+    - name: Add GPG key for GoAccess repo
+      ansible.builtin.apt_key:
+        id: C03B48887D5E56B046715D3297BD1A0133449C3D
+        url: https://deb.goaccess.io/gnugpg.key
+        state: present
+
+    - name: Add new GoAccess repository
+      ansible.builtin.apt_repository:
+        repo: 'deb [arch=amd64] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+        filename: goaccess
+        state: present
+
+    - name: Remove old GoAccess repository
+      ansible.builtin.apt_repository:
+        repo: 'deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+        filename: goaccess
+        state: absent
+    - name: Install GoAccess
+      ansible.builtin.apt:
+        pkg: goaccess
+        state: present
   when: ansible_distribution_version is version('20.04', '<=')
 
 - name: Configure nginx

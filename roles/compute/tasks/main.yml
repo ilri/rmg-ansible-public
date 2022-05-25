@@ -4,10 +4,9 @@
   ansible.builtin.import_tasks: slurm.yml
   tags: slurm
 
-- name: Set extra packages fact for CentOS 7
-  when: ansible_distribution_major_version is version('7','==')
-  ansible.builtin.set_fact:
-    extra_packages:
+- name: Install extra packages (CentOS 7)
+  ansible.builtin.package:
+    name:
       - argtable.x86_64 # for clustalo
       - bcl2fastq2 # from Illumina, in ILRI repo
       - boost-devel.x86_64 # for augustus
@@ -98,16 +97,17 @@
       - xauth # or else X11 forwarding doesn't work
       - xeyes # to test x11 :)
       - xz-compat-libs.x86_64 # for samtools/1.5 compiled on CentOS 6
+    state: present
+  when: ansible_distribution_major_version is version('7','==')
   tags: packages
 
 # 2022-04-21: currently missing from CentOS 8:
 #   - compat-libstdc++-33.x86_64
 #   - argtable.x86_64 # for clustalo
 #   - proj-epsg.x86_64 # for some R libraries
-- name: Set extra packages fact for CentOS 8
-  when: ansible_distribution_major_version is version('8','==')
-  ansible.builtin.set_fact:
-    extra_packages:
+- name: Install extra packages (CentOS Stream 8)
+  ansible.builtin.package:
+    name:
       - boost-devel.x86_64 # for augustus
       - boost-iostreams.x86_64 # for augustus
       - cairo-devel.x86_64 # for genometools and others
@@ -178,12 +178,8 @@
       - udunits2-devel.x86_64 # for some R libraries
       - wget.x86_64
       - xorg-x11-xauth.x86_64 # or else X11 forwarding doesn't work
-  tags: packages
-
-- name: Install extra packages
-  ansible.builtin.package:
-    name: "{{ extra_packages }}"
     state: present
+  when: ansible_distribution_major_version is version('8','==')
   tags: packages
 
 - name: Clone environment modules

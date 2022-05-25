@@ -25,31 +25,28 @@
     notify:
       - restart ip6tables
 
-  - name: Set CentOS firewall packages
+  - name: Install firewall packages (CentOS 7)
     when: ansible_distribution_major_version is version('7', '==')
-    ansible.builtin.set_fact:
-      centos_firewall_packages:
+    ansible.builtin.package:
+      name:
         - tidy
         - fail2ban
         - fail2ban-firewalld
         - fail2ban-selinux
         - python-inotify
+      state: present
+    tags: packages
 
-  - name: Set CentOS firewall packages
+  - name: Install firewall packages (CentOS Stream 8)
     when: ansible_distribution_major_version is version('8', '==')
-    ansible.builtin.set_fact:
-      centos_firewall_packages:
+    ansible.builtin.package:
+      name:
         - fail2ban
         - fail2ban-systemd
         - fail2ban-selinux
         - python3-inotify
         - perl-Net-IP # for aggregate-cidr-addresses.pl
         - wget # for updating blocklists
-
-  - name: Install firewall packages
-    when: ansible_distribution_major_version is version('7', '>=')
-    ansible.builtin.package:
-      name: "{{ centos_firewall_packages }}"
       state: present
     tags: packages
 

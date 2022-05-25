@@ -32,17 +32,12 @@
     - packages
     - postgresql
 
-- name: Set PostgreSQL packages fact
-  ansible.builtin.set_fact:
-    postgresql_packages:
+- name: Install PostgreSQL packages
+  ansible.builtin.apt:
+    name:
       - postgresql-{{ pg_version }}
       - postgresql-client-{{ pg_version }}
       - postgresql-contrib-{{ pg_version }}
-  tags: postgresql
-
-- name: Install PostgreSQL packages
-  ansible.builtin.apt:
-    name: "{{ postgresql_packages }}"
     cache_valid_time: 3600
     state: present
   notify:

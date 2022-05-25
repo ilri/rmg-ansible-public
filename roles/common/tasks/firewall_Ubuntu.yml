@@ -4,30 +4,27 @@
 # Ubuntu 16.04 will use firewalld with the iptables backend.
 
 - block:
-  - name: Set Ubuntu firewall packages
+  - name: Install firewall packages (Ubuntu 16.04)
     when: ansible_distribution_version is version('16.04', '==')
-    ansible.builtin.set_fact:
-      ubuntu_firewall_packages:
+    ansible.builtin.package:
+      name:
         - firewalld
         - tidy
         - fail2ban
         - python3-systemd # for fail2ban systemd backend
+      state: present
+      cache_valid_time: 3600
 
-  - name: Set Ubuntu firewall packages
+  - name: Install firewall packages (Ubuntu 18.04+)
     when: ansible_distribution_version is version('18.04', '>=')
-    ansible.builtin.set_fact:
-      ubuntu_firewall_packages:
+    ansible.builtin.package:
+      name:
         - fail2ban
         - libnet-ip-perl # for aggregate-cidr-addresses.pl
         - nftables
         - python3-systemd
         - curl # for nftables update scripts
         - python3-tz # for report-ssh-abuseipdb.sh
-
-  - name: Install firewall packages
-    when: ansible_distribution_version is version('16.04', '>=')
-    ansible.builtin.package:
-      pkg: "{{ ubuntu_firewall_packages }}"
       state: present
       cache_valid_time: 3600
 

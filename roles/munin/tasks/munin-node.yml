@@ -8,31 +8,26 @@
 # Enable sensors support if this is a bare metal machine. The way we check this
 # is to consult ansible_virtualization_role, which always returns "host" if the
 # host is bare metal.
-- name: Set sensor packages (Red Hat)
-  ansible.builtin.set_fact:
-    sensor_packages:
+- name: Install sensor packages (Red Hat)
+  ansible.builtin.package:
+    name:
       - lm_sensors # for CPU package and PCI card temperatures
       - hddtemp    # for hard drive temperatures
+    state: present
   when:
     - ansible_virtualization_role == "host"
     - ansible_os_family == "RedHat"
   tags: packages
 
-- name: Set sensor packages (Debian)
-  ansible.builtin.set_fact:
-    sensor_packages:
+- name: Install sensor packages (Debian)
+  ansible.builtin.package:
+    name:
       - lm-sensors
       - hddtemp
+    state: present
   when:
     - ansible_virtualization_role == "host"
     - ansible_os_family == "Debian"
-  tags: packages
-
-- name: Install sensor packages
-  ansible.builtin.package:
-    name: "{{ sensor_packages }}"
-    state: present
-  when: sensor_packages is defined
   tags: packages
 
 - name: Enable Munin temperature and fan plugins

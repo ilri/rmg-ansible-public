@@ -10,9 +10,15 @@
       mode: 0644
     register: configure_apt_mirror
 
-  - name: Set Debian base packages
-    ansible.builtin.set_fact:
-      debian_base_packages:
+  - name: Update apt cache
+    ansible.builtin.package:
+      update_cache: true
+    when:
+      configure_apt_mirror is changed
+
+  - name: Install base packages
+    ansible.builtin.package:
+      name:
         - git
         - tmux
         - iotop
@@ -29,16 +35,6 @@
         - debconf-utils
         - sysstat
         - software-properties-common
-
-  - name: Update apt cache
-    ansible.builtin.package:
-      update_cache: true
-    when:
-      configure_apt_mirror is changed
-
-  - name: Install base packages
-    ansible.builtin.package:
-      name: "{{ debian_base_packages }}"
       state: present
       cache_valid_time: 3600
 

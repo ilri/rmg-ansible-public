@@ -16,20 +16,15 @@
     uid: 490
     group: slurm
 
-- name: Set slurm packages
-  ansible.builtin.set_fact:
-    slurm_packages:
+- name: Install slurm
+  ansible.builtin.package:
+    name:
       - slurm
       - slurm-slurmd
       - slurm-devel
       - slurm-pam_slurm
       - slurm-example-configs
       - munge
-  tags: packages
-
-- name: Install slurm
-  ansible.builtin.package:
-    name: "{{ slurm_packages }}"
     state: present
   tags: packages
 

@@ -20,9 +20,9 @@
       upgrade: dist
       cache_valid_time: 3600
 
-  - name: Set Ubuntu base packages
-    ansible.builtin.set_fact:
-      ubuntu_base_packages:
+  - name: Install base packages
+    ansible.builtin.package:
+      name:
         - git
         - tmux
         - iotop
@@ -40,10 +40,6 @@
         - debconf-utils
         - software-properties-common
         - zstd
-
-  - name: Install base packages
-    ansible.builtin.package:
-      pkg: "{{ ubuntu_base_packages }}"
       state: present
       cache_valid_time: 3600
 
@@ -70,9 +66,9 @@
     when: ansible_distribution_version is version('20.04', '==')
     ignore_errors: true
 
-  - name: Set fact for packages to remove
-    ansible.builtin.set_fact:
-      ubuntu_annoying_packages:
+  - name: Remove annoying packages
+    ansible.builtin.package:
+      name:
         - whoopsie # security (CIS 4.1)
         - apport   # security (CIS 4.1)
         - command-not-found # annoying
@@ -84,11 +80,13 @@
         - liblxc1 # annoying (Ubuntu >= 16.04)
         - lxc-common # annoying (Ubuntu >= 16.04)
         - lxcfs # annoying (Ubuntu >= 16.04)
+      state: absent
+      purge: true
     when: ansible_distribution_version is version('18.04', '<=')
 
-  - name: Set fact for packages to remove (Ubuntu 20.04)
-    ansible.builtin.set_fact:
-      ubuntu_annoying_packages:
+  - name: Remove annoying packages
+    ansible.builtin.package:
+      name:
         - whoopsie # security (CIS 4.1)
         - apport   # security (CIS 4.1)
         - command-not-found # annoying
@@ -96,13 +94,9 @@
         - python3-commandnotfound # annoying
         - snapd # annoying (Ubuntu >= 16.04)
         - lxd-agent-loader # annoying (Ubuntu 20.04)
-    when: ansible_distribution_version is version('20.04', '==')
-
-  - name: Remove packages
-    ansible.builtin.package:
-      name: "{{ ubuntu_annoying_packages }}"
       state: absent
       purge: true
+    when: ansible_distribution_version is version('20.04', '==')
 
   - name: Disable annoying Canonical spam in MOTD
     ansible.builtin.file:

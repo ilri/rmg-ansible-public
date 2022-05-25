@@ -1,15 +1,11 @@
 ---
-- name: Set fact for old GlusterFS package repositories
-  ansible.builtin.set_fact:
-    old_glusterfs_package_repositories:
+- name: Remove old GlusterFS package repositories
+  ansible.builtin.package:
+    name:
       - centos-release-gluster5
       - centos-release-gluster6
       - centos-release-gluster7
       - centos-release-gluster8
-
-- name: Remove old GlusterFS package repositories
-  ansible.builtin.package:
-    name: "{{ old_glusterfs_package_repositories }}"
     state: absent
 
 - name: Enable GlusterFS packages from CentOS SIG

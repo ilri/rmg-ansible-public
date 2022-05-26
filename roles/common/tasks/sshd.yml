@@ -26,7 +26,7 @@
 - name: Remove small Diffie-Hellman SSH moduli
   block:
     - name: Check unsafe Diffie-Hellman SSH moduli
-      ansible.builtin.shell:
+      ansible.builtin.command:
         cmd: awk '$5 < 3071' moduli
         chdir: /etc/ssh
       register: check_unsafe_moduli

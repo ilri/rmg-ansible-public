@@ -3,52 +3,51 @@
 # Use firewalld on CentOS 7
 # Use nftables on CentOS 8
 
-- block:
-  - name: Copy /etc/sysconfig/iptables
-    when: ansible_distribution_major_version is version('6', '==')
-    ansible.builtin.template:
-      src: iptables.j2
-      dest: /etc/sysconfig/iptables
-      owner: root
-      mode: 0600
-    notify:
-      - restart iptables
+- name: Copy /etc/sysconfig/iptables
+  when: ansible_distribution_major_version is version('6', '==')
+  ansible.builtin.template:
+    src: iptables.j2
+    dest: /etc/sysconfig/iptables
+    owner: root
+    mode: 0600
+  notify:
+    - restart iptables
 
-  - name: Copy /etc/sysconfig/ip6tables
-    when: ansible_distribution_major_version is version('6', '==')
-    ansible.builtin.template:
-      src: ip6tables.j2
-      dest: /etc/sysconfig/ip6tables
-      owner: root
-      group: root
-      mode: 0600
-    notify:
-      - restart ip6tables
+- name: Copy /etc/sysconfig/ip6tables
+  when: ansible_distribution_major_version is version('6', '==')
+  ansible.builtin.template:
+    src: ip6tables.j2
+    dest: /etc/sysconfig/ip6tables
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - restart ip6tables
 
-  - name: Install firewall packages (CentOS 7)
-    when: ansible_distribution_major_version is version('7', '==')
-    ansible.builtin.package:
-      name:
-        - tidy
-        - fail2ban
-        - fail2ban-firewalld
-        - fail2ban-selinux
-        - python-inotify
-      state: present
-    tags: packages
+- name: Install firewall packages (CentOS 7)
+  when: ansible_distribution_major_version is version('7', '==')
+  ansible.builtin.package:
+    name:
+      - tidy
+      - fail2ban
+      - fail2ban-firewalld
+      - fail2ban-selinux
+      - python-inotify
+    state: present
+  tags: packages
 
-  - name: Install firewall packages (CentOS Stream 8)
-    when: ansible_distribution_major_version is version('8', '==')
-    ansible.builtin.package:
-      name:
-        - fail2ban
-        - fail2ban-systemd
-        - fail2ban-selinux
-        - python3-inotify
-        - perl-Net-IP # for aggregate-cidr-addresses.pl
-        - wget # for updating blocklists
-      state: present
-    tags: packages
+- name: Install firewall packages (CentOS Stream 8)
+  when: ansible_distribution_major_version is version('8', '==')
+  ansible.builtin.package:
+    name:
+      - fail2ban
+      - fail2ban-systemd
+      - fail2ban-selinux
+      - python3-inotify
+      - perl-Net-IP # for aggregate-cidr-addresses.pl
+      - wget # for updating blocklists
+    state: present
+  tags: packages
 
 # 2022-04-09: fail2ban does not currently work with SELinux on CentOS Stream 8:
 #
@@ -56,128 +55,127 @@
 #   SELinux is preventing /usr/libexec/platform-python3.6 from append access on the file fail2ban.log.
 #
 # See: https://bugzilla.redhat.com/show_bug.cgi?id=2073606
-  - name: Check fail2ban SELinux module
-    when: ansible_distribution_major_version is version('8', '==')
+- name: Check fail2ban SELinux module
+  when: ansible_distribution_major_version is version('8', '==')
+  ansible.builtin.command:
+    cmd: semodule -l
+  register: semodule_list
+
+- block:
+  - name: Copy custom fail2ban SELinux policy
+    ansible.builtin.copy:
+      src: my-fail2banserver.te
+      dest: /tmp/my-fail2banserver.te
+      mode: 0640
+
+  - name: Compile custom fail2ban SELinux module
     ansible.builtin.command:
-      cmd: semodule -l
-    register: semodule_list
+      cmd: checkmodule -M -m -o my-fail2banserver.mod my-fail2banserver.te
+      chdir: /tmp
+      creates: my-fail2banserver.mod
 
-  - block:
-    - name: Copy custom fail2ban SELinux policy
-      ansible.builtin.copy:
-        src: my-fail2banserver.te
-        dest: /tmp/my-fail2banserver.te
-        mode: 0640
-
-    - name: Compile custom fail2ban SELinux module
-      ansible.builtin.command:
-        cmd: checkmodule -M -m -o my-fail2banserver.mod my-fail2banserver.te
-        chdir: /tmp
-        creates: my-fail2banserver.mod
-
-    - name: Create custom fail2ban SELinux policy module package
-      ansible.builtin.command:
-        cmd: semodule_package -o my-fail2banserver.pp -m my-fail2banserver.mod
-        chdir: /tmp
-        creates: my-fail2banserver.pp
-
-    - name: Install custom fail2ban SELinux policy
-      ansible.builtin.command:
-        cmd: semodule -X 300 -i my-fail2banserver.pp -P
-        chdir: /tmp
-
-    - name: Clean up custom fail2ban SELinux policy files
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-        loop:
-          - /tmp/my-fail2banserver.te
-          - /tmp/my-fail2banserver.mod
-          - /tmp/my-fail2banserver.pp
-    # Note: this `when` is for the entire block of CentOS Stream 8 tasks!
-    when:
-      - not semodule_list.skipped
-      - '"my-fail2banserver" not in semodule_list.stdout_lines'
-
-  - name: Configure nftables
-    ansible.builtin.include_tasks: nftables.yml
-    when: ansible_distribution_major_version is version('8', '==')
-
-  - name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
-    when: ansible_distribution_major_version is version('7', '==')
-    ansible.builtin.template:
-      src: public.xml.j2
-      dest: /etc/firewalld/zones/public.xml
-      owner: root
-      mode: 0600
-
-  - name: Format public.xml firewalld zone file
-    when: ansible_distribution_major_version is version('7', '==')
+  - name: Create custom fail2ban SELinux policy module package
     ansible.builtin.command:
-      cmd: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
-    notify:
-      - restart firewalld
-      - restart fail2ban
+      cmd: semodule_package -o my-fail2banserver.pp -m my-fail2banserver.mod
+      chdir: /tmp
+      creates: my-fail2banserver.pp
 
-  - name: Copy ipsets of abusive IPs
-    when: ansible_distribution_major_version is version('7', '==')
-    ansible.builtin.copy:
-      src: "{{ item.src }}"
-      dest: "/etc/firewalld/ipsets/{{ item.src }}"
-      owner: root
-      group: root
-      mode: 0600
-      force: "{{ item.force }}"
-    loop:
-      - { src: "spamhaus-ipv4.xml", force: false }
-      - { src: "spamhaus-ipv6.xml", force: false }
-      - { src: "abusers-ipv4.xml", force: true }
-      - { src: "abusers-ipv6.xml", force: true }
-    notify:
-      - restart firewalld
-      - restart fail2ban
+  - name: Install custom fail2ban SELinux policy
+    ansible.builtin.command:
+      cmd: semodule -X 300 -i my-fail2banserver.pp -P
+      chdir: /tmp
 
-  - name: Copy Spamhaus firewalld update script
-    when: ansible_distribution_major_version is version('7', '==')
-    ansible.builtin.copy:
-      src: update-spamhaus-lists.sh
-      dest: /usr/local/bin/update-spamhaus-lists.sh
-      mode: 0755
-      owner: root
-      group: root
+  - name: Clean up custom fail2ban SELinux policy files
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: absent
+      loop:
+        - /tmp/my-fail2banserver.te
+        - /tmp/my-fail2banserver.mod
+        - /tmp/my-fail2banserver.pp
+  # Note: this `when` is for the entire block of CentOS Stream 8 tasks!
+  when:
+    - not semodule_list.skipped
+    - '"my-fail2banserver" not in semodule_list.stdout_lines'
 
-  - name: Copy Spamhaus firewalld systemd units
-    when: ansible_distribution_major_version is version('7', '==')
-    ansible.builtin.copy:
-      src: "{{ item }}"
-      dest: "/etc/systemd/system/{{ item }}"
-      mode: 0644
-      owner: root
-      group: root
-    loop:
-      - update-spamhaus-lists.service
-      - update-spamhaus-lists.timer
-    register: spamhaus_firewalld_systemd_units
+- name: Configure nftables
+  ansible.builtin.include_tasks: nftables.yml
+  when: ansible_distribution_major_version is version('8', '==')
 
-  # need to reload to pick up service/timer/environment changes
-  - name: Reload systemd daemon
-    ansible.builtin.systemd:
-      daemon_reload: true
-    when: spamhaus_firewalld_systemd_units is changed
+- name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
+  when: ansible_distribution_major_version is version('7', '==')
+  ansible.builtin.template:
+    src: public.xml.j2
+    dest: /etc/firewalld/zones/public.xml
+    owner: root
+    mode: 0600
 
-  - name: Start and enable Spamhaus firewalld update timer
-    when: ansible_distribution_major_version is version('7', '==')
-    ansible.builtin.systemd:
-      name: update-spamhaus-lists.timer
-      state: started
-      enabled: true
-    notify:
-      - restart firewalld
-      - restart fail2ban
+- name: Format public.xml firewalld zone file
+  when: ansible_distribution_major_version is version('7', '==')
+  ansible.builtin.command:
+    cmd: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
+  notify:
+    - restart firewalld
+    - restart fail2ban
 
-  - name: Configure fail2ban
-    ansible.builtin.include_tasks: fail2ban.yml
-    when: ansible_distribution_major_version is version('7', '>=')
-  tags: firewall
+- name: Copy ipsets of abusive IPs
+  when: ansible_distribution_major_version is version('7', '==')
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "/etc/firewalld/ipsets/{{ item.src }}"
+    owner: root
+    group: root
+    mode: 0600
+    force: "{{ item.force }}"
+  loop:
+    - { src: "spamhaus-ipv4.xml", force: false }
+    - { src: "spamhaus-ipv6.xml", force: false }
+    - { src: "abusers-ipv4.xml", force: true }
+    - { src: "abusers-ipv6.xml", force: true }
+  notify:
+    - restart firewalld
+    - restart fail2ban
+
+- name: Copy Spamhaus firewalld update script
+  when: ansible_distribution_major_version is version('7', '==')
+  ansible.builtin.copy:
+    src: update-spamhaus-lists.sh
+    dest: /usr/local/bin/update-spamhaus-lists.sh
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Copy Spamhaus firewalld systemd units
+  when: ansible_distribution_major_version is version('7', '==')
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - update-spamhaus-lists.service
+    - update-spamhaus-lists.timer
+  register: spamhaus_firewalld_systemd_units
+
+# need to reload to pick up service/timer/environment changes
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: spamhaus_firewalld_systemd_units is changed
+
+- name: Start and enable Spamhaus firewalld update timer
+  when: ansible_distribution_major_version is version('7', '==')
+  ansible.builtin.systemd:
+    name: update-spamhaus-lists.timer
+    state: started
+    enabled: true
+  notify:
+    - restart firewalld
+    - restart fail2ban
+
+- name: Configure fail2ban
+  ansible.builtin.include_tasks: fail2ban.yml
+  when: ansible_distribution_major_version is version('7', '>=')
 
 # vim: set sw=2 ts=2:

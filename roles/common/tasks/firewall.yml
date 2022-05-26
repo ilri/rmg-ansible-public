@@ -18,7 +18,11 @@
   tags: firewall
 
 - name: Configure firewall on CentOS
-  ansible.builtin.include_tasks: firewall_CentOS.yml
+  ansible.builtin.include_tasks:
+    file: firewall_CentOS.yml
+    apply:
+      tags:
+        - firewall
   when: ansible_distribution == 'CentOS'
   tags: firewall
 

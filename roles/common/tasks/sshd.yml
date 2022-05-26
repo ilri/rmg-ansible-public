@@ -30,6 +30,7 @@
         cmd: awk '$5 < 3071' moduli
         chdir: /etc/ssh
       register: check_unsafe_moduli
+      changed_when: check_unsafe_moduli.stdout_lines | length > 0
 
     - name: Extract safe Diffie-Hellman SSH moduli
       ansible.builtin.shell:

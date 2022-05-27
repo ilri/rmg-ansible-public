@@ -38,6 +38,7 @@
     state: absent
   loop:
     - "/usr/local/bin/vmutils-amd64-v1.74.0.tar.gz"
+    - "/usr/local/bin/vmutils-amd64-v1.75.0.tar.gz"
     - "/usr/local/bin/vmutils-amd64-v1.76.0.tar.gz"
 
 - name: Create vmagent tmpData directory

@@ -62,7 +62,8 @@
   tags: ntp
 
 # This should work on CentOS 7+ and Ubuntu 16.04+. As of CentOS Stream 8 the
-# persistent journal is still not enabled by default.
+# persistent journal is still not enabled by default. Ubuntu 22.04 seems to
+# have persistent journal enabled by default.
 - name: Configure persistent systemd journal
   block:
     - name: Create systemd-journald drop-in config directory
@@ -80,7 +81,10 @@
         owner: root
         group: root
         mode: 0644
-  when: ansible_service_mgr == 'systemd'
+  when:
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=')) or
+    (ansible_distribution == 'CentOS' and ansible_distribution_version is version('7', '==')) or
+    (ansible_distribution == 'CentOS' and ansible_distribution_version is version('8', '=='))
   tags: systemd-journald
 
 - name: Reconfigure /etc/sysctl.conf on Debian and Ubuntu

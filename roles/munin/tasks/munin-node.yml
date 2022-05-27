@@ -123,7 +123,8 @@
 #
 # If we see those then we know something changed and we can notify the handler.
 - name: Configure munin-node
-  ansible.builtin.shell: munin-node-configure --shell --families=contrib,auto --remove-also | sh -x
+  ansible.builtin.shell:
+    cmd: munin-node-configure --shell --families=contrib,auto --remove-also | sh -x
   register: munin_node_configure
   changed_when: munin_node_configure.stderr is regex("\+ (ln -s|rm -f).*")
   notify:

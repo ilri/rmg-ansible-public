@@ -18,7 +18,7 @@
 - name: Set systemd version fact
   ansible.builtin.set_fact:
     __systemd_version_int: "{{ __systemd_version.stdout_lines[0] | regex_replace('^systemd\\s(\\d+).*$', '\\1') }}"
-  when: __systemd_version is defined
+  when: __systemd_version.skipped is not defined
   tags: always
 
 - name: Include tasks to update /etc/hosts

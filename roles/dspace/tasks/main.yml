@@ -177,6 +177,7 @@
     url: "{{ tomcat_url }}"
     dest: "{{ tomcat_path }}.tar.gz"
     checksum: "sha512:{{ tomcat_url_checksum }}"
+    mode: 0640
   register: tomcat_download
   when: not tomcat_stat.stat.exists
   tags: tomcat
@@ -206,7 +207,9 @@
     - { path: "{{ tomcat_path }}/work", owner: root, group: "{{ tomcat_group }}" }
     - { path: "{{ tomcat_path }}/bin", owner: root, group: "{{ tomcat_group }}" }
     - { path: "{{ tomcat_path }}/lib", owner: root, group: "{{ tomcat_group }}" }
-  when: tomcat_unzip is changed
+  when:
+    - tomcat_unzip.extract_results is defined
+    - tomcat_unzip.extract_results.rc == 0
   tags: tomcat
 
 # The Tomcat user only needs to read its configuration and write logs/temp/work
@@ -222,7 +225,9 @@
     - { path: "{{ tomcat_path }}/conf/context.xml", mode: "0640" }
     - { path: "{{ tomcat_path }}/conf/tomcat-users.xml", mode: "0640" }
     - { path: "{{ tomcat_path }}/conf/web.xml", mode: "0640" }
-  when: tomcat_unzip is changed
+  when:
+    - tomcat_unzip.extract_results is defined
+    - tomcat_unzip.extract_results.rc == 0
   tags: tomcat
 
 - name: Remove old Tomcat versions

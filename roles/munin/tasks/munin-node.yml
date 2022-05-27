@@ -23,7 +23,7 @@
   ansible.builtin.package:
     name:
       - lm-sensors
-      - hddtemp
+      - hddtemp # TODO: this is not present on Ubuntu 22.04!
     state: present
   when:
     - ansible_virtualization_role == "host"

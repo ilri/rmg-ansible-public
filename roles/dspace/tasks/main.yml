@@ -375,7 +375,9 @@
     mode: 0640
 
 - name: Create postgres users
-  postgresql_user: name={{ item.name }} password={{ item.password }}
+  postgresql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
   loop:
     - { name: '{{ dspace_db_user }}', password: '{{ dspace_db_password }}' }
     - { name: '{{ dspace_statistics_db_user }}', password: '{{ dspace_statistics_db_password }}' }
@@ -383,7 +385,11 @@
   tags: postgresql
 
 - name: Create postgres databases
-  postgresql_db: name={{ item.name }} encoding='UTF-8' template='template0' owner={{ item.owner }}
+  postgresql_db:
+    name: "{{ item.name }}"
+    encoding: 'UTF-8'
+    template: 'template0'
+    owner: "{{ item.owner }}"
   loop:
     - { name: '{{ dspace_db_name }}', owner: '{{ dspace_db_user }}' }
     - { name: '{{ dspace_statistics_db_user }}', owner: '{{ dspace_statistics_db_user }}' }

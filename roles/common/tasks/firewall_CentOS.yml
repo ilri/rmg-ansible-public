@@ -61,39 +61,40 @@
     cmd: semodule -l
   register: semodule_list
 
-- block:
-  - name: Copy custom fail2ban SELinux policy
-    ansible.builtin.copy:
-      src: my-fail2banserver.te
-      dest: /tmp/my-fail2banserver.te
-      mode: 0640
+- name: Configure custom fail2ban SELinux policy
+  block:
+    - name: Copy custom fail2ban SELinux policy
+      ansible.builtin.copy:
+        src: my-fail2banserver.te
+        dest: /tmp/my-fail2banserver.te
+        mode: 0640
 
-  - name: Compile custom fail2ban SELinux module
-    ansible.builtin.command:
-      cmd: checkmodule -M -m -o my-fail2banserver.mod my-fail2banserver.te
-      chdir: /tmp
-      creates: my-fail2banserver.mod
+    - name: Compile custom fail2ban SELinux module
+      ansible.builtin.command:
+        cmd: checkmodule -M -m -o my-fail2banserver.mod my-fail2banserver.te
+        chdir: /tmp
+        creates: my-fail2banserver.mod
 
-  - name: Create custom fail2ban SELinux policy module package
-    ansible.builtin.command:
-      cmd: semodule_package -o my-fail2banserver.pp -m my-fail2banserver.mod
-      chdir: /tmp
-      creates: my-fail2banserver.pp
+    - name: Create custom fail2ban SELinux policy module package
+      ansible.builtin.command:
+        cmd: semodule_package -o my-fail2banserver.pp -m my-fail2banserver.mod
+        chdir: /tmp
+        creates: my-fail2banserver.pp
 
-  - name: Install custom fail2ban SELinux policy
-    ansible.builtin.command:
-      cmd: semodule -X 300 -i my-fail2banserver.pp -P
-      chdir: /tmp
+    - name: Install custom fail2ban SELinux policy
+      ansible.builtin.command:
+        cmd: semodule -X 300 -i my-fail2banserver.pp -P
+        chdir: /tmp
 
-  - name: Clean up custom fail2ban SELinux policy files
-    ansible.builtin.file:
-      path: "{{ item }}"
-      state: absent
-      loop:
-        - /tmp/my-fail2banserver.te
-        - /tmp/my-fail2banserver.mod
-        - /tmp/my-fail2banserver.pp
-  # Note: this `when` is for the entire block of CentOS Stream 8 tasks!
+    - name: Clean up custom fail2ban SELinux policy files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+        loop:
+          - /tmp/my-fail2banserver.te
+          - /tmp/my-fail2banserver.mod
+          - /tmp/my-fail2banserver.pp
+    # Note: this `when` is for the entire block of CentOS Stream 8 tasks!
   when:
     - not semodule_list.skipped
     - '"my-fail2banserver" not in semodule_list.stdout_lines'

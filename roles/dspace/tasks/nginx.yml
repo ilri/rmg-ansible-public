@@ -17,7 +17,7 @@
   register: add_nginx_apt_repository
 
 - name: Update apt cache
-  ansible.builtin.apt:
+  ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
     add_nginx_apt_key is changed or

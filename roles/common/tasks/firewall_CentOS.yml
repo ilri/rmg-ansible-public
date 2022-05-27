@@ -96,7 +96,7 @@
           - /tmp/my-fail2banserver.pp
     # Note: this `when` is for the entire block of CentOS Stream 8 tasks!
   when:
-    - not semodule_list.skipped
+    - semodule_list.skipped is not defined
     - '"my-fail2banserver" not in semodule_list.stdout_lines'
 
 - name: Configure nftables

@@ -7,7 +7,7 @@
   tags: always
 
 - name: Get systemd version
-  ansible.builtin.command:
+  ansible.builtin.command: # noqa command-instead-of-module
     cmd: systemctl --version
   changed_when: false
   check_mode: false

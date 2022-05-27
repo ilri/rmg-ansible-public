@@ -36,7 +36,6 @@
   ansible.builtin.package:
     name: ntp
     state: absent
-    cache_valid_time: 3600
   when:
     - ansible_os_family == 'Debian'
     - ansible_service_mgr == 'systemd'

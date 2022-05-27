@@ -26,7 +26,9 @@
       - --strip-components
       - 1
       - "{{ mysqld_exporter_tarball | replace('.tar.gz', '') }}/mysqld_exporter"
-  when: mysqld_exporter_download is changed
+  when:
+    - mysqld_exporter_download.status_code is defined
+    - mysqld_exporter_download.status_code == 200
   notify:
     - restart mysqld-exporter
 

@@ -64,7 +64,9 @@
           - bunzip2
           - -f
           - "{{ restic_binary_path }}-{{ restic_version }}.bz2"
-      when: restic_download is changed
+      when:
+        - restic_download.status_code is defined
+        - restic_download.status_code == 200
       register: restic_binary
 
     - name: Make restic binary executable

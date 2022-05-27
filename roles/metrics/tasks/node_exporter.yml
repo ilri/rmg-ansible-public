@@ -26,7 +26,9 @@
       - --strip-components
       - 1
       - "{{ node_exporter_tarball | replace('.tar.gz', '') }}/node_exporter"
-  when: node_exporter_download is changed
+  when:
+    - node_exporter_download.status_code is defined
+    - node_exporter_download.status_code == 200
   notify:
     - restart node-exporter
 

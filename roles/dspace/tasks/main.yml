@@ -186,7 +186,9 @@
     src: "{{ tomcat_path }}.tar.gz"
     dest: "{{ tomcat_path_prefix }}"
     remote_src: true
-  when: tomcat_download is changed
+  when:
+    - tomcat_download.status_code is defined
+    - tomcat_download.status_code == 200
   register: tomcat_unzip
   tags: tomcat
 

@@ -22,15 +22,10 @@
     name: "{{ sshd_service_name }}"
     state: reloaded
 
-# if NX(No eXecute (AMD)) or XD(eXecute Disable (Intel)) is already
-# enabled in the BIOS, then you can't enable ExecShield using sysctl's
-# kernel.exec-shield
-# check if NX/XD is enabled in the BIOS
-# $ dmesg | grep '[NX|DX]*protection'
 - name: reload sysctl
-  ignore_errors: true
-  ansible.builtin.command:
-    cmd: sysctl -p /etc/sysctl.conf
+  ansible.builtin.systemd:
+    name: systemd-sysctl
+    state: restarted
 
 - name: restart firewalld
   ansible.builtin.service:

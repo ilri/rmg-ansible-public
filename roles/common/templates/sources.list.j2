@@ -1,5 +1,5 @@
 {% if ansible_distribution == "Ubuntu" %}
-{% set apt_mirror    = apt_mirror | default("ke.archive.ubuntu.com") %}
+{%   set apt_mirror    = apt_mirror | default("ke.archive.ubuntu.com") %}
 #############################################################
 ################### OFFICIAL UBUNTU REPOS ###################
 #############################################################
@@ -14,9 +14,9 @@ deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates m
 ###### Ubuntu Partner Repo
 deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
 
-{% if ansible_distribution_version is version('14.04', '==') %}
+{%   if ansible_distribution_version is version('14.04', '==') %}
 {# extras repo was discontinued after 14.10 #}
 ###### Ubuntu Extras Repo
 deb http://extras.ubuntu.com/ubuntu {{ ansible_distribution_release }} main
-{% endif %}
+{%   endif %}
 {% endif %}

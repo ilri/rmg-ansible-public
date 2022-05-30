@@ -44,35 +44,44 @@
         state: present
         cache_valid_time: 3600
 
+    # Gather package facts so we can check if snap is installed
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
     # We have to remove snaps one by one in a specific order because some depend
     # on others. Only after that can we remove the corresponding system packages.
     - name: Remove lxd snap
       community.general.snap:
         name: lxd
         state: absent
-      when: ansible_distribution_version is version('20.04', '>=')
-      ignore_errors: true
+      when:
+        - "'snapd' in ansible_facts.packages"
+        - ansible_distribution_version is version('20.04', '>=')
 
     - name: Remove core18 snap
       community.general.snap:
         name: core18
         state: absent
-      when: ansible_distribution_version is version('20.04', '==')
-      ignore_errors: true
+      when:
+        - "'snapd' in ansible_facts.packages"
+        - ansible_distribution_version is version('20.04', '==')
 
     - name: Remove core20 snap
       community.general.snap:
         name: core20
         state: absent
-      when: ansible_distribution_version is version('22.04', '==')
-      ignore_errors: true
+      when:
+        - "'snapd' in ansible_facts.packages"
+        - ansible_distribution_version is version('22.04', '==')
 
     - name: Remove snapd snap
       community.general.snap:
         name: snapd
         state: absent
-      when: ansible_distribution_version is version('20.04', '>=')
-      ignore_errors: true
+      when:
+        - "'snapd' in ansible_facts.packages"
+        - ansible_distribution_version is version('20.04', '>=')
 
     - name: Remove annoying packages
       ansible.builtin.package:

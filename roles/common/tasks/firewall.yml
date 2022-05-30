@@ -31,5 +31,6 @@
   loop:
     - { 'src': scripts/parse_logs.py.j2, 'dest': /opt/ilri/scripts/parse_logs.py }
     - { 'src': scripts/report-ssh-abuseipdb.sh.j2, 'dest': /opt/ilri/scripts/report-ssh-abuseipdb.sh }
+  tags: firewall
 
 # vim: set sw=2 ts=2:

@@ -4,131 +4,129 @@
 # Ubuntu 18.04 will use nftables directly, with no firewalld.
 # Ubuntu 16.04 will use firewalld with the iptables backend.
 
-- block:
-  - name: Install firewall packages (Ubuntu 16.04)
-    when: ansible_distribution_version is version('16.04', '==')
-    ansible.builtin.package:
-      name:
-        - firewalld
-        - tidy
-        - fail2ban
-        - python3-systemd # for fail2ban systemd backend
-      state: present
-      cache_valid_time: 3600
+- name: Install firewall packages (Ubuntu 16.04)
+  when: ansible_distribution_version is version('16.04', '==')
+  ansible.builtin.package:
+    name:
+      - firewalld
+      - tidy
+      - fail2ban
+      - python3-systemd # for fail2ban systemd backend
+    state: present
+    cache_valid_time: 3600
 
-  - name: Install firewall packages (Ubuntu 18.04+)
-    when: ansible_distribution_version is version('18.04', '>=')
-    ansible.builtin.package:
-      name:
-        - fail2ban
-        - libnet-ip-perl # for aggregate-cidr-addresses.pl
-        - nftables
-        - python3-systemd
-        - curl # for nftables update scripts
-        - python3-tz # for report-ssh-abuseipdb.sh
-      state: present
-      cache_valid_time: 3600
+- name: Install firewall packages (Ubuntu 18.04+)
+  when: ansible_distribution_version is version('18.04', '>=')
+  ansible.builtin.package:
+    name:
+      - fail2ban
+      - libnet-ip-perl # for aggregate-cidr-addresses.pl
+      - nftables
+      - python3-systemd
+      - curl # for nftables update scripts
+      - python3-tz # for report-ssh-abuseipdb.sh
+    state: present
+    cache_valid_time: 3600
 
-  # Ubuntu 18.04's linux-virtual and linux-kvm kernels don't support nftables.
-  # For virtual machines we need to either install the generic kernel, which
-  # pulls in a bunch of firmware and microcode, or use the LTS enablement stack
-  # to get a newer virtual kernel that supports nftables.
-  #
-  # See: https://bugs.launchpad.net/ubuntu/+source/linux-kvm/+bug/1881346
-  - name: Install Ubuntu LTS kernel package
-    when:
-      - ansible_distribution_version is version('18.04', '==')
-      - ansible_virtualization_role == 'guest'
-    ansible.builtin.package:
-      pkg: linux-virtual-hwe-18.04
-      state: present
-      cache_valid_time: 3600
+# Ubuntu 18.04's linux-virtual and linux-kvm kernels don't support nftables.
+# For virtual machines we need to either install the generic kernel, which
+# pulls in a bunch of firmware and microcode, or use the LTS enablement stack
+# to get a newer virtual kernel that supports nftables.
+#
+# See: https://bugs.launchpad.net/ubuntu/+source/linux-kvm/+bug/1881346
+- name: Install Ubuntu LTS kernel package
+  when:
+    - ansible_distribution_version is version('18.04', '==')
+    - ansible_virtualization_role == 'guest'
+  ansible.builtin.package:
+    pkg: linux-virtual-hwe-18.04
+    state: present
+    cache_valid_time: 3600
 
-  - name: Remove ufw
-    when: ansible_distribution_version is version('16.04', '>=')
-    ansible.builtin.package:
-      pkg: ufw
-      state: absent
-    tags: packages
+- name: Remove ufw
+  when: ansible_distribution_version is version('16.04', '>=')
+  ansible.builtin.package:
+    pkg: ufw
+    state: absent
+  tags: packages
 
-  - name: Configure nftables
-    ansible.builtin.include_tasks: nftables.yml
-    when: ansible_distribution_version is version('18.04', '>=')
+- name: Configure nftables
+  ansible.builtin.include_tasks: nftables.yml
+  when: ansible_distribution_version is version('18.04', '>=')
 
-  - name: Copy firewalld public zone file
-    when: ansible_distribution_version is version('16.04', '==')
-    ansible.builtin.template:
-      src: public.xml.j2
-      dest: /etc/firewalld/zones/public.xml
-      owner: root
-      mode: 0600
+- name: Copy firewalld public zone file
+  when: ansible_distribution_version is version('16.04', '==')
+  ansible.builtin.template:
+    src: public.xml.j2
+    dest: /etc/firewalld/zones/public.xml
+    owner: root
+    mode: 0600
 
-  - name: Format public.xml firewalld zone file
-    when: ansible_distribution_version is version('16.04', '==')
-    ansible.builtin.command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
-    notify:
-      - restart firewalld
-      - restart fail2ban
+- name: Format public.xml firewalld zone file
+  when: ansible_distribution_version is version('16.04', '==')
+  ansible.builtin.command: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
+  notify:
+    - restart firewalld
+    - restart fail2ban
 
-  - name: Copy firewalld ipsets
-    when: ansible_distribution_version is version('16.04', '==')
-    ansible.builtin.copy:
-      src: "{{ item.src }}"
-      dest: "/etc/firewalld/ipsets/{{ item.src }}"
-      owner: root
-      group: root
-      mode: 0600
-      force: "{{ item.force }}"
-    loop:
-      - { src: spamhaus-ipv4.xml, force: false }
-      - { src: spamhaus-ipv6.xml, force: false }
-      - { src: abusers-ipv4.xml, force: true }
-      - { src: abusers-ipv6.xml, force: true }
-    notify:
-      - restart firewalld
-      - restart fail2ban
+- name: Copy firewalld ipsets
+  when: ansible_distribution_version is version('16.04', '==')
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "/etc/firewalld/ipsets/{{ item.src }}"
+    owner: root
+    group: root
+    mode: 0600
+    force: "{{ item.force }}"
+  loop:
+    - { src: spamhaus-ipv4.xml, force: false }
+    - { src: spamhaus-ipv6.xml, force: false }
+    - { src: abusers-ipv4.xml, force: true }
+    - { src: abusers-ipv6.xml, force: true }
+  notify:
+    - restart firewalld
+    - restart fail2ban
 
-  - name: Copy Spamhaus firewalld update script
-    when: ansible_distribution_version is version('16.04', '==')
-    ansible.builtin.copy:
-      src: update-spamhaus-lists.sh
-      dest: /usr/local/bin/update-spamhaus-lists.sh
-      mode: 0755
-      owner: root
-      group: root
+- name: Copy Spamhaus firewalld update script
+  when: ansible_distribution_version is version('16.04', '==')
+  ansible.builtin.copy:
+    src: update-spamhaus-lists.sh
+    dest: /usr/local/bin/update-spamhaus-lists.sh
+    mode: 0755
+    owner: root
+    group: root
 
-  - name: Copy Spamhaus firewalld systemd units
-    when: ansible_distribution_version is version('16.04', '==')
-    ansible.builtin.copy:
-      src: "{{ item }}"
-      dest: "/etc/systemd/system/{{ item }}"
-      mode: 0644
-      owner: root
-      group: root
-    loop:
-      - update-spamhaus-lists.service
-      - update-spamhaus-lists.timer
-    register: spamhaus_firewalld_systemd_units
+- name: Copy Spamhaus firewalld systemd units
+  when: ansible_distribution_version is version('16.04', '==')
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: 0644
+    owner: root
+    group: root
+  loop:
+    - update-spamhaus-lists.service
+    - update-spamhaus-lists.timer
+  register: spamhaus_firewalld_systemd_units
 
-  # need to reload to pick up service/timer/environment changes
-  - name: Reload systemd daemon
-    ansible.builtin.systemd: # noqa no-handler
-      daemon_reload: true
-    when: spamhaus_firewalld_systemd_units is changed
+# need to reload to pick up service/timer/environment changes
+- name: Reload systemd daemon
+  ansible.builtin.systemd: # noqa no-handler
+    daemon_reload: true
+  when: spamhaus_firewalld_systemd_units is changed
 
-  - name: Start and enable Spamhaus firewalld update timer
-    when: ansible_distribution_version is version('16.04', '==')
-    ansible.builtin.systemd:
-      name: update-spamhaus-lists.timer
-      state: started
-      enabled: true
-    notify:
-      - restart firewalld
-      - restart fail2ban
+- name: Start and enable Spamhaus firewalld update timer
+  when: ansible_distribution_version is version('16.04', '==')
+  ansible.builtin.systemd:
+    name: update-spamhaus-lists.timer
+    state: started
+    enabled: true
+  notify:
+    - restart firewalld
+    - restart fail2ban
 
-  - name: Configure fail2ban
-    when: ansible_distribution_major_version is version('16', '>=')
-    ansible.builtin.include_tasks: fail2ban.yml
-  tags: firewall
+- name: Configure fail2ban
+  when: ansible_distribution_major_version is version('16', '>=')
+  ansible.builtin.include_tasks: fail2ban.yml
 
 # vim: set sw=2 ts=2:

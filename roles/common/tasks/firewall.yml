@@ -4,7 +4,11 @@
 # run Docker and Docker doesn't work with nftables. We also ignore holstein be-
 # cause it is running libvirtd, which has a hard depend on iptables.
 - name: Configure firewall on Ubuntu
-  ansible.builtin.include_tasks: firewall_Ubuntu.yml
+  ansible.builtin.include_tasks:
+    file: firewall_Ubuntu.yml
+    apply:
+      tags:
+        - firewall
   when:
     - ansible_distribution == 'Ubuntu'
     - inventory_hostname != 'linode20'

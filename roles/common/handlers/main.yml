@@ -45,16 +45,12 @@
     name: fail2ban
     state: restarted
 
-# ignore_errors: at times fails on some compute nodes
 - name: start tuned
-  ignore_errors: true
   ansible.builtin.service:
     name: tuned
     state: started
 
-# ignore_errors: at times fails on some compute nodes
 - name: start cpuspeed
-  ignore_errors: true
   ansible.builtin.service:
     name: cpuspeed
     state: started

@@ -37,7 +37,9 @@
     owner: "{{ solr_user }}"
     group: "{{ solr_group }}"
     remote_src: true
-  when: get_url_result is changed
+  when:
+    - get_url_result.status_code is defined
+    - get_url_result.status_code == 200
 
 - name: Create Solr data & log dirs
   ansible.builtin.file:
@@ -71,7 +73,7 @@
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  ansible.builtin.systemd:
+  ansible.builtin.systemd: # noqa no-handler
     daemon_reload: true
   when: solr_systemd_service is changed
 

@@ -63,7 +63,7 @@
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  ansible.builtin.systemd:
+  ansible.builtin.systemd: # noqa no-handler
     daemon_reload: true
   when: mellanox_irq_affinity_systemd_service is changed
         or mellanox_descriptors_systemd_service is changed

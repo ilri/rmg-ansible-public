@@ -96,10 +96,10 @@
       register: add_nodejs_apt_repository
 
     - name: Update apt cache
-      ansible.builtin.apt:
+      ansible.builtin.apt: # noqa no-handler
         update_cache: true
       when:
-        add_nodejs_apt_key is changed or
+        add_nodejs_apt_key.after is defined
         add_nodejs_apt_repository is changed
 
     - name: Install DSpace Mirage 2 system build dependencies
@@ -403,7 +403,7 @@
   tags: postgresql
 
 - name: Enable pgcrypto for DSpace 6
-  postgresql_query:
+  postgresql_query: # noqa no-handler
     db: '{{ dspace_db_name }}'
     query: CREATE EXTENSION IF NOT EXISTS pgcrypto
   become_user: postgres
@@ -489,7 +489,7 @@
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  ansible.builtin.systemd:
+  ansible.builtin.systemd: # noqa no-handler
     daemon_reload: true
   when: dspace_systemd_services is changed
         or dspace_systemd_timers is changed

@@ -161,7 +161,7 @@
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  ansible.builtin.systemd:
+  ansible.builtin.systemd: # noqa no-handler
     daemon_reload: true
   when: spamhaus_firewalld_systemd_units is changed
 

@@ -22,11 +22,15 @@
     - packages
     - postgresql
 
+# Update cache if apt source file changed. ansible-lint doesn't like when we
+# use "is changed" but that's all we can do here. At least for the apt_key
+# status we can check whether "after" is defined, as that is only true when
+# the key was added.
 - name: Update apt cache
-  ansible.builtin.apt:
+  ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    add_postgresql_apt_key is changed or
+    add_postgresql_apt_key.after is defined
     add_postgresql_apt_repository is changed
   tags:
     - packages

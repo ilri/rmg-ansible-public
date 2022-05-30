@@ -94,7 +94,7 @@
           - /tmp/my-fail2banserver.te
           - /tmp/my-fail2banserver.mod
           - /tmp/my-fail2banserver.pp
-    # Note: this `when` is for the entire block of CentOS Stream 8 tasks!
+
   when:
     - semodule_list.skipped is not defined
     - '"my-fail2banserver" not in semodule_list.stdout_lines'

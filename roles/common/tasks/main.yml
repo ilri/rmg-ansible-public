@@ -87,7 +87,7 @@
     (ansible_distribution == 'CentOS' and ansible_distribution_version is version('8', '=='))
   tags: systemd-journald
 
-- name: Reconfigure /etc/sysctl.conf on Debian and Ubuntu
+- name: Reconfigure /etc/sysctl.conf on Ubuntu
   when: ansible_distribution != "CentOS"
   ansible.builtin.template:
     src: "sysctl_{{ ansible_distribution }}.j2"

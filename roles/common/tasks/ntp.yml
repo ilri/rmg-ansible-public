@@ -32,7 +32,7 @@
     state: started
     enabled: true
 
-- name: Uninstall ntp on modern Ubuntu/Debian
+- name: Uninstall ntp on modern Ubuntu
   ansible.builtin.package:
     name: ntp
     state: absent
@@ -40,7 +40,7 @@
     - ansible_os_family == 'Debian'
     - ansible_service_mgr == 'systemd'
 
-- name: Install ntp on old Ubuntu/Debian
+- name: Install ntp on old Ubuntu
   ansible.builtin.package:
     name: ntp
     state: present

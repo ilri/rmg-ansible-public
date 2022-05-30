@@ -1,5 +1,5 @@
 ---
-# SSH configs don't change in Debian / CentOS minor versions
+# SSH configs don't change in CentOS minor versions
 - name: Reconfigure /etc/ssh/sshd_config
   ansible.builtin.template:
     src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2
@@ -7,7 +7,7 @@
     owner: root
     group: root
     mode: 0600
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'CentOS'
+  when: ansible_distribution == 'CentOS'
   notify: reload sshd
 
 # Ubuntu is the only distro we have where SSH version is very different from 14.04 -> 14.10,

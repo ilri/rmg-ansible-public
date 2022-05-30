@@ -9,9 +9,4 @@
   when: ansible_distribution == 'Ubuntu'
   tags: packages
 
-- name: Install common packages on Debian
-  ansible.builtin.include_tasks: packages_Debian.yml
-  when: ansible_distribution == 'Debian'
-  tags: packages
-
 # vim: set ts=2 sw=2:

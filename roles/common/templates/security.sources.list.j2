@@ -1,5 +1,1 @@
-{% if ansible_distribution == 'Ubuntu' %}
 deb http://security.ubuntu.com/ubuntu {{ ansible_distribution_release }}-security main restricted universe multiverse
-{% elif ansible_distribution == 'Debian' %}
-deb http://security.debian.org/ {{ ansible_distribution_release }}/updates main
-{% endif %}

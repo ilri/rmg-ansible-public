@@ -12,11 +12,6 @@
     - inventory_hostname != 'holstein'
   tags: firewall
 
-- name: Configure firewall on Debian
-  ansible.builtin.include_tasks: firewall_Debian.yml
-  when: ansible_distribution == 'Debian'
-  tags: firewall
-
 - name: Configure firewall on CentOS
   ansible.builtin.include_tasks:
     file: firewall_CentOS.yml

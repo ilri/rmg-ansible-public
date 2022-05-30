@@ -60,7 +60,6 @@
   when:
     - ansible_distribution == 'CentOS'
     - ansible_service_mgr == 'systemd'
-  ignore_errors: true
 
 - name: Uninstall ntp on CentOS
   ansible.builtin.package:

@@ -132,6 +132,7 @@
         name: "{{ item }}"
         state: stopped
         enabled: false
+        masked: true
       when: ansible_service_mgr == 'systemd'
       loop:
         - motd-news.service

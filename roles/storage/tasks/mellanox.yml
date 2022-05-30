@@ -48,7 +48,7 @@
     mode: 0644
     owner: root
     group: root
-  register: mellanox_irq_affinity_systemd_service
+  notify: Start and enable Mellanox IRQ affinity service
   tags: mellanox
 
 - name: Configure Mellanox rx/tx descriptors service
@@ -58,31 +58,7 @@
     mode: 0644
     owner: root
     group: root
-  register: mellanox_descriptors_systemd_service
-  tags: mellanox
-
-# need to reload to pick up service/timer/environment changes
-- name: Reload systemd daemon
-  ansible.builtin.systemd: # noqa no-handler
-    daemon_reload: true
-  when: mellanox_irq_affinity_systemd_service is changed
-        or mellanox_descriptors_systemd_service is changed
-  tags: mellanox
-
-- name: Start and enable Mellanox IRQ affinity service
-  ansible.builtin.systemd:
-    name: set-mellanox-irq-affinity.service
-    state: started
-    enabled: true
-  when: mellanox_irq_affinity_systemd_service is changed
-  tags: mellanox
-
-- name: Start and enable Mellanox rx/tx descriptors service
-  ansible.builtin.systemd:
-    name: set-mellanox-descriptors.service
-    state: started
-    enabled: true
-  when: mellanox_descriptors_systemd_service is changed
+  notify: Start and enable Mellanox rx/tx descriptors service
   tags: mellanox
 
 # vim: set sw=2 ts=2:

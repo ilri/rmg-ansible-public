@@ -116,7 +116,7 @@
       when: ansible_distribution_version is version('20.04', '>=')
 
     - name: Disable annoying Canonical spam in MOTD
-      ansible.builtin.file:
+      ansible.builtin.file: # noqa ignore-errors
         path: "{{ item }}"
         mode: 0644
       loop:

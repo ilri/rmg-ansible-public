@@ -11,6 +11,9 @@
   ansible.builtin.copy:
     src: gmetad.conf
     dest: /etc/ganglia/gmetad.conf
+    owner: ganglia
+    group: ganglia
+    mode: 0640
   notify:
     - restart gmetad
   tags: gmetad

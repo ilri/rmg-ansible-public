@@ -9,6 +9,9 @@
   ansible.builtin.template:
     src: gmond.conf.j2
     dest: /etc/ganglia/gmond.conf
+    owner: ganglia
+    group: ganglia
+    mode: 0640
   notify:
     - restart gmond
 

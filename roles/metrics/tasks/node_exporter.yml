@@ -50,13 +50,4 @@
     - reload systemd
     - restart node-exporter
 
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
-
-- name: Start and enable node-exporter
-  ansible.builtin.systemd:
-    name: node-exporter.service
-    state: started
-    enabled: true
-
 # vim: set sw=2 ts=2:

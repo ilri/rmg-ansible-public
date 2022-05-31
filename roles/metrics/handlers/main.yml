@@ -5,46 +5,54 @@
   ansible.builtin.systemd:
     name: victoria-metrics.service
     state: restarted
-
-# Restart is used when the service file changes
-- name: restart vmagent
-  ansible.builtin.systemd:
-    name: victoria-metrics-vmagent.service
-    state: restarted
-
-# Reload is use when the config file changes
-- name: reload vmagent
-  ansible.builtin.systemd:
-    name: victoria-metrics-vmagent.service
-    state: reloaded
+    enabled: true
 
 # Restart is used when the service file changes
 - name: restart vmauth
   ansible.builtin.systemd:
     name: victoria-metrics-vmauth.service
     state: restarted
+    enabled: true
 
-# Reload is use when the config file changes
+# Reload is used when the config file changes
 - name: reload vmauth
   ansible.builtin.systemd:
     name: victoria-metrics-vmauth.service
     state: reloaded
+  when: configure_vmauth.diff | length > 0
 
 - name: restart node-exporter
   ansible.builtin.systemd:
     name: node-exporter.service
     state: restarted
+    enabled: true
 
 # Restart is used when the service file changes
 - name: restart mysqld-exporter
   ansible.builtin.systemd:
     name: mysqld-exporter.service
     state: restarted
+    enabled: true
 
-# Reload is use when the config file changes
+# Reload is used when the config file changes
 - name: reload mysqld-exporter
   ansible.builtin.systemd:
     name: mysqld-exporter.service
     state: reloaded
+  when: configure_mysqld_exporter.diff | length > 0
+
+# Restart is used when the service file changes
+- name: restart vmagent
+  ansible.builtin.systemd:
+    name: victoria-metrics-vmagent.service
+    state: restarted
+    enabled: true
+
+# Reload is used when the config file changes
+- name: reload vmagent
+  ansible.builtin.systemd:
+    name: victoria-metrics-vmagent.service
+    state: reloaded
+  when: configure_vmagent.diff | length > 0
 
 # vim: set sw=2 ts=2:

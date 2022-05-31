@@ -42,6 +42,7 @@
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
     mode: 0600
+  register: configure_vmauth
   notify:
     - reload vmauth
 
@@ -53,31 +54,26 @@
     group: "{{ victoriametrics_group }}"
     mode: 0770
 
-- name: Copy VictoriaMetrics server service units
+- name: Copy VictoriaMetrics server service unit
   ansible.builtin.template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+    src: etc/systemd/system/victoria-metrics.service.j2
+    dest: /etc/systemd/system/victoria-metrics.service
     owner: root
     group: root
     mode: 0644
-  loop:
-    - {'src': 'etc/systemd/system/victoria-metrics.service.j2', 'dest': '/etc/systemd/system/victoria-metrics.service'}
-    - {'src': 'etc/systemd/system/victoria-metrics-vmauth.service.j2', 'dest': '/etc/systemd/system/victoria-metrics-vmauth.service'}
   notify:
     - reload systemd
     - restart victoria-metrics
+
+- name: Copy VictoriaMetrics vmauth service unit
+  ansible.builtin.template:
+    src: etc/systemd/system/victoria-metrics-vmauth.service.j2
+    dest: /etc/systemd/system/victoria-metrics-vmauth.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload systemd
     - restart vmauth
-
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
-
-- name: Start and enable VictoriaMetrics server services
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    state: started
-    enabled: true
-  loop:
-    - victoria-metrics.service
-    - victoria-metrics-vmauth.service
 
 # vim: set sw=2 ts=2:

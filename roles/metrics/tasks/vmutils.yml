@@ -56,6 +56,7 @@
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
     mode: 0644
+  register: configure_vmagent
   notify:
     - reload vmagent
 
@@ -71,18 +72,5 @@
   notify:
     - reload systemd
     - restart vmagent
-
-# This is not perfect, because on the first run the service will "restart" and
-# then "reload" when we flush the handlers (due to the order they are defined
-# in the handlers file), but for successive runs it will do mostly the right
-# thing: config changes → reload, service changes → restart.
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
-
-- name: Start and enable vmagent
-  ansible.builtin.systemd:
-    name: victoria-metrics-vmagent.service
-    state: started
-    enabled: true
 
 # vim: set sw=2 ts=2:

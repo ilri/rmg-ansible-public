@@ -46,6 +46,7 @@
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
     mode: 0640
+  register: configure_mysqld_exporter
   notify:
     - reload mysqld-exporter
 
@@ -59,14 +60,5 @@
   notify:
     - reload systemd
     - restart mysqld-exporter
-
-- name: Flush handlers
-  ansible.builtin.meta: flush_handlers
-
-- name: Start and enable mysqld-exporter
-  ansible.builtin.systemd:
-    name: mysqld-exporter.service
-    state: started
-    enabled: true
 
 # vim: set sw=2 ts=2:

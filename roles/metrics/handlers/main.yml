@@ -1,7 +1,6 @@
 ---
 # file: roles/metrics/handlers/main.yml
 
-# Reload is use when the config file changes
 - name: restart victoria-metrics
   ansible.builtin.systemd:
     name: victoria-metrics.service

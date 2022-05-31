@@ -4,6 +4,32 @@ After=network.target
 
 [Service]
 Type=simple
+
+PrivateDevices=yes
+PrivateTmp=yes
+# mysqld-exporter does not need access to /home, /root, or /run/user
+ProtectHome=true
+{% if __systemd_version_int | int > 229 %}
+# mysqld-exporter can live with read-only access to the entire file system hierarchy
+ProtectSystem=strict
+{% else %}
+{# Older systemd versions don't have ProtectSystem=strict #}
+# /usr, /boot, and /etc are mounted read-only
+ProtectSystem=full
+{% endif %}
+
+# The service process and all its children can never gain new privileges
+NoNewPrivileges=true
+
+{% if __systemd_version_int | int > 229 %}
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+
+# Do not allow process or its children to create SUID/SGID files/directories
+RestrictSUIDSGID=true
+{% endif %}
+
 User={{ victoriametrics_user }}
 Group={{ victoriametrics_group }}
 StartLimitBurst=5

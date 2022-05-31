@@ -5,6 +5,24 @@ ConditionFileIsExecutable={{ victoriametrics_vmauth_binary_path }}
 
 [Service]
 Type=simple
+
+PrivateDevices=yes
+PrivateTmp=yes
+# vmauth does not need access to /home, /root, or /run/user
+ProtectHome=true
+# vmauth can live with read-only access to the entire file system hierarchy
+ProtectSystem=strict
+
+# The service process and all its children can never gain new privileges
+NoNewPrivileges=true
+
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+
+# Do not allow process or its children to create SUID/SGID files/directories
+RestrictSUIDSGID=true
+
 User={{ victoriametrics_user }}
 Group={{ victoriametrics_group }}
 StartLimitBurst=5

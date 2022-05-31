@@ -5,10 +5,12 @@
   ansible.builtin.systemd:
     name: gmond
     state: restarted
+    enabled: true
 
 - name: restart gmetad
   ansible.builtin.systemd:
     name: gmetad
     state: restarted
+    enabled: true
 
 # vim: set sw=2 ts=2:

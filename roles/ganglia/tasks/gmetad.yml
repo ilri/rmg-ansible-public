@@ -18,12 +18,4 @@
     - restart gmetad
   tags: gmetad
 
-- name: Start gmetad service
-  when: ansible_service_mgr == 'systemd'
-  ansible.builtin.systemd:
-    name: gmetad
-    state: started
-    enabled: true
-  tags: gmetad
-
 # vim: set sw=2 ts=2:

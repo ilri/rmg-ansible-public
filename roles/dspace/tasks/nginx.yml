@@ -20,7 +20,7 @@
   ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    add_nginx_apt_key is changed or
+    add_nginx_apt_key.after is defined or
     add_nginx_apt_repository is changed
 
 - name: Install nginx

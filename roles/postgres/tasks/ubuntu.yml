@@ -30,7 +30,7 @@
   ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    add_postgresql_apt_key.after is defined
+    add_postgresql_apt_key.after is defined or
     add_postgresql_apt_repository is changed
   tags:
     - packages

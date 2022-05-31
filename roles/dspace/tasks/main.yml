@@ -99,7 +99,7 @@
       ansible.builtin.apt: # noqa no-handler
         update_cache: true
       when:
-        add_nodejs_apt_key.after is defined
+        add_nodejs_apt_key.after is defined or
         add_nodejs_apt_repository is changed
 
     - name: Install DSpace Mirage 2 system build dependencies

@@ -123,6 +123,7 @@
       - glib2.x86_64 # for wise / Cegma
       - gnuplot.x86_64
       - graphviz
+      - graphviz-devel.x86_64 # for some Python libraries
       - gsl.x86_64 # for fastSTRUCTURE
       - gsl-devel.x86_64 # needed for some R packages like HiCeekR
       - hdf5-devel.x86_64 # for some R libraries

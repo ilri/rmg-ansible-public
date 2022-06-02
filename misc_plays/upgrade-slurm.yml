@@ -18,10 +18,12 @@
         state: latest
         update_only: true
         update_cache: true
+      register: upgrade_slurm_packages
 
     - name: Reload systemd
-      ansible.builtin.systemd:
+      ansible.builtin.systemd: # noqa no-handler
         daemon_reload: true
+      when: upgrade_slurm_packages is changed
 
     # this ensures we get the latest config file changes and restart daemons in
     # the correct order.
@@ -39,10 +41,12 @@
         state: latest
         update_only: true
         update_cache: true
+      register: upgrade_slurm_packages
 
     - name: Reload systemd
-      ansible.builtin.systemd:
+      ansible.builtin.systemd: # noqa no-handler
         daemon_reload: true
+      when: upgrade_slurm_packages is changed
 
     - name: Include slurm tasks from compute role
       ansible.builtin.include_role:

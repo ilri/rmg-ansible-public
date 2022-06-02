@@ -23,15 +23,12 @@
       ansible.builtin.systemd:
         daemon_reload: true
 
-    - name: Restart SLURM database daemon on HPC
-      ansible.builtin.systemd:
-        name: slurmdbd
-        state: restarted
-
-    - name: Restart slurmd on HPC
-      ansible.builtin.systemd:
-        name: slurmd
-        state: restarted
+    # this ensures we get the latest config file changes and restart daemons in
+    # the correct order.
+    - name: Include slurm tasks from compute role
+      ansible.builtin.include_role:
+        name: compute
+        tasks_from: slurm
 
 - hosts: compute:!hpc
   become: true
@@ -47,9 +44,9 @@
       ansible.builtin.systemd:
         daemon_reload: true
 
-    - name: Restart slurmd on compute nodes
-      ansible.builtin.systemd:
-        name: slurmd
-        state: restarted
+    - name: Include slurm tasks from compute role
+      ansible.builtin.include_role:
+        name: compute
+        tasks_from: slurm
 
 # vim: set sw=2 ts=2:

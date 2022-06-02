@@ -8,13 +8,13 @@
   ansible.builtin.systemd:
     name: slurmdbd
     state: restarted
-  when: inventory_hostname == slurm_head_node
+  delegate_to: "{{ hostvars[slurm_head_node].ansible_host }}"
 
 - name: restart slurmctld
   ansible.builtin.systemd:
     name: slurmctld
     state: restarted
-  when: inventory_hostname == slurm_head_node
+  delegate_to: "{{ hostvars[slurm_head_node].ansible_host }}"
 
 - name: restart slurmd
   ansible.builtin.systemd:

@@ -9,60 +9,47 @@
 # Note: this playbook is only recommended for minor version increments. For
 # major versions you should check for config changes and update manually.
 
-- hosts: compute
-  become: yes
-  tasks:
-    - name: Clear yum cache
-      command: yum clean all
-      when: ansible_distribution_major_version is version('7','==')
-
-    - name: Update yum cache
-      command: yum makecache fast
-      when: ansible_distribution_major_version is version('7','==')
-
-    - name: Clear dnf cache
-      command: dnf clean all
-      when: ansible_distribution_major_version is version('8','==')
-
-    - name: Update dnf cache
-      command: dnf makecache
-      when: ansible_distribution_major_version is version('8','==')
-
 - hosts: hpc
-  become: yes
+  become: true
   tasks:
     - name: Upgrade SLURM on HPC
       ansible.builtin.package:
         name: 'slurm-*'
         state: latest
         update_only: true
+        update_cache: true
 
-    - name: Reload systemd daemon definitions
-      systemd:
-        daemon_reload: yes
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
 
     - name: Restart SLURM database daemon on HPC
-      systemd:
+      ansible.builtin.systemd:
         name: slurmdbd
         state: restarted
 
     - name: Restart slurmd on HPC
-      systemd:
+      ansible.builtin.systemd:
         name: slurmd
         state: restarted
 
 - hosts: compute:!hpc
-  become: yes
+  become: true
   tasks:
     - name: Upgrade SLURM on compute nodes
       ansible.builtin.package:
         name: 'slurm-*'
         state: latest
+        update_only: true
+        update_cache: true
+
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
 
     - name: Restart slurmd on compute nodes
-      systemd:
+      ansible.builtin.systemd:
         name: slurmd
         state: restarted
-        daemon_reload: yes
 
 # vim: set sw=2 ts=2:

@@ -35,6 +35,7 @@
       ansible.builtin.package:
         name: 'slurm-*'
         state: latest
+        update_only: true
 
     - name: Reload systemd daemon definitions
       systemd:

@@ -35,7 +35,6 @@
     owner: root
     group: root
     mode: 0644
-  register: slurm_conf
   notify:
     - restart slurmdbd
     - restart slurmctld

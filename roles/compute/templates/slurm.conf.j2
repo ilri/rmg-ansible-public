@@ -2,28 +2,29 @@
 # Put this file on all nodes of your cluster.
 # See the slurm.conf man page for more information.
 #
-ControlMachine={{ slurm_head_node }}
-ControlAddr={{ hostvars[slurm_head_node].ansible_host }}
+ClusterName=ilri_kenya
+SlurmctldHost={{ slurm_head_node }}
+SlurmctldAddr={{ hostvars[slurm_head_node].ansible_host }}
 #
 #DisableRootJobs=NO
 #EnforcePartLimits=NO
 #Epilog=
 #EpilogSlurmctld=
 #FirstJobId=1
-#MaxJobId=999999
+#MaxJobId=67043328
 GresTypes=gpu
 #GroupUpdateForce=0
 #GroupUpdateTime=600
 #JobFileAppend=0
 #JobRequeue=1
-#JobSubmitPlugins=1
+#JobSubmitPlugins=lua
 #KillOnBadExit=0
 #LaunchType=launch/slurm
 #Licenses=foo*4,bar
 MailProg=/bin/mail
 MaxJobCount=100000
 #MaxStepCount=40000
-#MaxTasksPerNode=128
+#MaxTasksPerNode=512
 MpiDefault=none
 #MpiParams=ports=#-#
 #PluginDir=
@@ -93,6 +94,7 @@ SelectTypeParameters=CR_Core
 #
 #
 # JOB PRIORITY
+#PriorityFlags=
 #PriorityType=priority/basic
 #PriorityDecayHalfLife=
 #PriorityCalcPeriod=
@@ -109,7 +111,6 @@ SelectTypeParameters=CR_Core
 # LOGGING AND ACCOUNTING
 #AccountingStorageEnforce=0
 #AccountingStorageHost=
-#AccountingStorageLoc=
 #AccountingStoragePass=
 #AccountingStoragePort=
 AccountingStorageType=accounting_storage/slurmdbd
@@ -117,25 +118,22 @@ AccountingStorageType=accounting_storage/slurmdbd
 # You must use limits for the accounting limits to be enforced!
 AccountingStorageEnforce=limits,qos
 AccountingStoreFlags=job_comment
-ClusterName=ilri_kenya
-#DebugFlags=
 #JobCompHost=
 #JobCompLoc=
 #JobCompPass=
 #JobCompPort=
 JobCompType=jobcomp/none
 #JobCompUser=
+#JobContainerType=job_container/none
 JobAcctGatherFrequency=30
 JobAcctGatherType=jobacct_gather/cgroup
-#SlurmctldDebug=3
 SlurmctldDebug=info
 SlurmctldLogFile=/var/log/slurm/slurmctld.log
-#SlurmdDebug=3
-DebugFlags=Backfill
 SlurmdDebug=info
 SlurmdLogFile=/var/log/slurm/slurmd.log
 #SlurmSchedLogFile=
 #SlurmSchedLogLevel=
+#DebugFlags=
 #
 #
 # POWER SAVE SUPPORT FOR IDLE NODES (optional)

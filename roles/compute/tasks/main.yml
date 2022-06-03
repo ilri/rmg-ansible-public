@@ -112,6 +112,7 @@
       - boost-iostreams.x86_64 # for augustus
       - cairo-devel.x86_64 # for genometools and others
       - compat-openssl10.x86_64 # for stuff compiled on CentOS 7
+      - dbus-devel # required for SLURM 22.05.0 cgroup/v2
       - emacs.x86_64
       - environment-modules.x86_64
       - fftw-devel.x86_64 # for gromacs

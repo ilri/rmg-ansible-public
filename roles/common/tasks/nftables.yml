@@ -2,11 +2,6 @@
 # Common nftables tasks for Ubuntu 18.04, Ubuntu 20.04, CentOS Stream 8, and
 # Ubuntu 22.04.
 
-- name: Remove firewalld
-  ansible.builtin.package:
-    name: firewalld
-    state: absent
-
 - name: Copy nftables.conf
   ansible.builtin.template:
     src: nftables.conf.j2

@@ -20,7 +20,6 @@
   ansible.builtin.systemd:
     name: slurmd
     state: restarted
-    enabled: true
 
 - name: restart munge
   ansible.builtin.systemd:

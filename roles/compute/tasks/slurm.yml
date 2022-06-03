@@ -116,4 +116,10 @@
     state: started
     enabled: true
 
+- name: Start and enable slurmd
+  ansible.builtin.systemd:
+    name: slurmd
+    state: started
+    enabled: true
+
 # vim: set sw=2 ts=2:

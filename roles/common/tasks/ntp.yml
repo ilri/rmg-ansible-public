@@ -49,19 +49,6 @@
     - ansible_os_family == 'Debian'
     - ansible_service_mgr != 'systemd'
 
-# 2018-02-19: Make sure ntp is stopped and removed from CentOS machines before
-# installing chrony (just in case). Chrony is now preferred in favor of ntp:
-# https://www.coreinfrastructure.org/news/blogs/2017/09/securing-network-time
-- name: Stop and disable ntp on CentOS
-  ansible.builtin.systemd:
-    name: ntpd
-    state: stopped
-    enabled: false
-  when:
-    - ansible_distribution == 'CentOS'
-    - ansible_service_mgr == 'systemd'
-  ignore_errors: true
-
 - name: Uninstall ntp on CentOS
   ansible.builtin.package:
     name: ntp

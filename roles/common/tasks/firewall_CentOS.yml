@@ -40,64 +40,10 @@
   when: ansible_distribution_major_version is version('8', '==')
   ansible.builtin.package:
     name:
-      - fail2ban
-      - fail2ban-systemd
-      - fail2ban-selinux
-      - python3-inotify
       - perl-Net-IP # for aggregate-cidr-addresses.pl
       - wget # for updating blocklists
     state: present
   tags: packages
-
-# 2022-04-09: fail2ban does not currently work with SELinux on CentOS Stream 8:
-#
-#   SELinux is preventing /usr/libexec/platform-python3.6 from append access on the file fail2ban.pid.
-#   SELinux is preventing /usr/libexec/platform-python3.6 from append access on the file fail2ban.log.
-#
-# See: https://bugzilla.redhat.com/show_bug.cgi?id=2073606
-- name: Check fail2ban SELinux module
-  when: ansible_distribution_major_version is version('8', '==')
-  ansible.builtin.command:
-    cmd: semodule -l
-  register: semodule_list
-
-- name: Configure custom fail2ban SELinux policy
-  block:
-    - name: Copy custom fail2ban SELinux policy
-      ansible.builtin.copy:
-        src: my-fail2banserver.te
-        dest: /tmp/my-fail2banserver.te
-        mode: 0640
-
-    - name: Compile custom fail2ban SELinux module
-      ansible.builtin.command:
-        cmd: checkmodule -M -m -o my-fail2banserver.mod my-fail2banserver.te
-        chdir: /tmp
-        creates: my-fail2banserver.mod
-
-    - name: Create custom fail2ban SELinux policy module package
-      ansible.builtin.command:
-        cmd: semodule_package -o my-fail2banserver.pp -m my-fail2banserver.mod
-        chdir: /tmp
-        creates: my-fail2banserver.pp
-
-    - name: Install custom fail2ban SELinux policy
-      ansible.builtin.command:
-        cmd: semodule -X 300 -i my-fail2banserver.pp -P
-        chdir: /tmp
-
-    - name: Clean up custom fail2ban SELinux policy files
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: absent
-        loop:
-          - /tmp/my-fail2banserver.te
-          - /tmp/my-fail2banserver.mod
-          - /tmp/my-fail2banserver.pp
-
-  when:
-    - semodule_list.skipped is not defined
-    - '"my-fail2banserver" not in semodule_list.stdout_lines'
 
 - name: Configure nftables
   ansible.builtin.include_tasks: nftables.yml
@@ -177,6 +123,6 @@
 
 - name: Configure fail2ban
   ansible.builtin.include_tasks: fail2ban.yml
-  when: ansible_distribution_major_version is version('7', '>=')
+  when: ansible_distribution_major_version is version('7', '==')
 
 # vim: set sw=2 ts=2:

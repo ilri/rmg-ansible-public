@@ -32,7 +32,7 @@
 # Add HPC IP to nodes that are using its mirrors for HW RAID utilities
 - name: Add HPC to /etc/hosts
   ansible.builtin.lineinfile:
-    dest: /etc/hosts
+    path: /etc/hosts
     regexp: '{{ hostvars["hpc"].ansible_host }}.*hpc.*hpc\.ilri\.cgiar\.org$'
     line: "{{ hostvars['hpc'].ansible_host }} hpc hpc.ilri.cgiar.org"
     state: present

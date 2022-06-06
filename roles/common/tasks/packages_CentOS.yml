@@ -37,7 +37,7 @@
       # compute hosts for now. Only seems to exist on CentOS 7.
     - name: Disable yum fastestmirror plugin
       ansible.builtin.lineinfile:
-        dest: /etc/yum/pluginconf.d/fastestmirror.conf
+        path: /etc/yum/pluginconf.d/fastestmirror.conf
         regexp: '^enabled=1$'
         line: "enabled=0"
         state: present

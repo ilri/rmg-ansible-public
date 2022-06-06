@@ -87,6 +87,39 @@
     (ansible_distribution == 'CentOS' and ansible_distribution_version is version('8', '=='))
   tags: systemd-journald
 
+# See: https://www.redhat.com/en/blog/world-domination-cgroups-rhel-8-welcome-cgroups-v2
+- name: Enable cgroups v2 on CentOS Stream 8
+  block:
+    - name: Check if cgroups v2 is enabled
+      ansible.builtin.lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX=".+ systemd.unified_cgroup_hierarchy=1"$'
+        state: absent
+      check_mode: true
+      changed_when: false
+      register: check_cgroupsv2
+
+    - name: Enable cgroups v2
+      ansible.builtin.lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX="(.+)"$'
+        line: 'GRUB_CMDLINE_LINUX="\1 systemd.unified_cgroup_hierarchy=1"'
+        backrefs: true
+        state: present
+      when: not check_cgroupsv2.found 
+      register: enable_cgroupsv2
+
+    - name: Regenerate grub2 config
+      ansible.builtin.command:
+        cmd: grub2-mkconfig
+      when:
+        - enable_cgroupsv2.msg is defined
+        - "'line replaced' in enable_cgroupsv2.msg"
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_version is version('8', '==')
+  tags: cgroupsv2
+
 - name: Reconfigure /etc/sysctl.conf on Ubuntu
   when: ansible_distribution != "CentOS"
   ansible.builtin.template:

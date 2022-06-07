@@ -106,7 +106,7 @@
         line: 'GRUB_CMDLINE_LINUX="\1 systemd.unified_cgroup_hierarchy=1"'
         backrefs: true
         state: present
-      when: not check_cgroupsv2.found 
+      when: not check_cgroupsv2.found
       register: enable_cgroupsv2
 
     - name: Regenerate grub2 config

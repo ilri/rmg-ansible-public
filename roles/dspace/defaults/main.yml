@@ -51,7 +51,7 @@ dspace_ldap_server: ldaps://AZCGNEROOT3.cgiarad.org:636/
 dspace_mail_disabled: false
 
 # CMYK/RGB iccprofiles for DSpace 5.6+ PDF thumbnails
-dspace_ghostscript_prefix: /usr/share/ghostscript/9.50
+dspace_ghostscript_prefix: /usr/share/color/icc/ghostscript
 # needs to be a string or else Ansible translates it as a Python boolean, ie False
 dspace_dev_mode: 'false'
 

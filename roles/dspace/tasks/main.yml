@@ -80,26 +80,29 @@
   block:
     # Use Node.js repository instead of Ubuntu's due to libssl conflicts
     # See: https://bugs.launchpad.net/ubuntu/+source/nodejs/+bug/1794589
-    - name: Add Node.js apt signing key
+    - name: Remove Node.js key from apt-key
       ansible.builtin.apt_key:
-        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-        state: present
-      register: add_nodejs_apt_key
+        id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
+        state: absent
+
+    - name: Download Node.js package signing key
+      ansible.builtin.shell:
+        cmd: curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor > /usr/share/keyrings/nodesource.gpg
+        creates: /usr/share/keyrings/nodesource.gpg
+      register: add_nodejs_signing_key
 
     - name: Add Node.js 14 LTS repository
-      ansible.builtin.template:
-        src: nodesource.list.j2
-        dest: /etc/apt/sources.list.d/nodesource.list
-        mode: 0644
-        owner: root
-        group: root
+      ansible.builtin.apt_repository:
+        repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main'
+        filename: nodesource
+        state: present
       register: add_nodejs_apt_repository
 
     - name: Update apt cache
       ansible.builtin.apt: # noqa no-handler
         update_cache: true
       when:
-        add_nodejs_apt_key.after is defined or
+        add_nodejs_signing_key is changed or
         add_nodejs_apt_repository is changed
 
     - name: Install DSpace Mirage 2 system build dependencies
@@ -134,33 +137,42 @@
         line: 'export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin'
         state: present
       become_user: '{{ tomcat_user }}'
-  when: ansible_distribution_version is version('18.04', '>=')
+  when: ansible_distribution_version is version('20.04', '>=')
 
 # For quickly analyzing nginx logs, see: https://goaccess.io/download
 - name: Configure GoAccess
   block:
-    - name: Add GPG key for GoAccess repo
+    - name: Remove GoAccess GPG key from apt-key
       ansible.builtin.apt_key:
         id: C03B48887D5E56B046715D3297BD1A0133449C3D
-        url: https://deb.goaccess.io/gnugpg.key
-        state: present
+        state: absent
+
+    - name: Download GoAccess GPG key
+      ansible.builtin.shell:
+        cmd: curl -fsSL https://deb.goaccess.io/gnugpg.key | gpg --dearmor > /usr/share/keyrings/goaccess.gpg
+        creates: /usr/share/keyrings/goaccess.gpg
+      register: add_goaccess_gpg_key
 
     - name: Add new GoAccess repository
       ansible.builtin.apt_repository:
-        repo: 'deb [arch=amd64] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+        repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/goaccess.gpg] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
         filename: goaccess
         state: present
+      register: add_goaccess_repository
 
-    - name: Remove old GoAccess repository
-      ansible.builtin.apt_repository:
-        repo: 'deb https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
-        filename: goaccess
-        state: absent
+    - name: Update apt cache
+      ansible.builtin.apt: # noqa no-handler
+        update_cache: true
+      when:
+        add_goaccess_gpg_key is changed or
+        add_goaccess_repository is changed
+
     - name: Install GoAccess
       ansible.builtin.apt:
         pkg: goaccess
         state: present
-  when: ansible_distribution_version is version('20.04', '<=')
+        cache_valid_time: 3600
+  when: ansible_distribution_version is version('22.04', '<=')
 
 - name: Configure nginx
   ansible.builtin.import_tasks: nginx.yml

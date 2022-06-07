@@ -1,26 +1,38 @@
 ---
 
-- name: Add nginx.org apt signing key
+- name: Remove nginx.org apt signing key
   ansible.builtin.apt_key:
-    url: https://nginx.org/keys/nginx_signing.key
-    state: present
-  register: add_nginx_apt_key
+    id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+    state: absent
   tags: packages
 
-- name: Add nginx.org repository
-  ansible.builtin.template:
-    src: nginx_org_packages_ubuntu.list.j2
-    dest: /etc/apt/sources.list.d/nginx_org_packages_ubuntu.list
-    mode: 0644
-    owner: root
-    group: root
+- name: Download nginx apt signing key
+  ansible.builtin.shell:
+    cmd: curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor > /usr/share/keyrings/nginx-archive-keyring.gpg
+    creates: /usr/share/keyrings/nginx-archive-keyring.gpg
+  register: add_nginx_signing_key
+
+- name: Add nginx stable repository
+  ansible.builtin.apt_repository:
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx'
+    filename: nginx_org_packages_ubuntu
+    state: present
   register: add_nginx_apt_repository
+  when: nginx_branch == "stable"
+
+- name: Add nginx mainline repository
+  ansible.builtin.apt_repository:
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx'
+    filename: nginx_org_packages_ubuntu
+    state: present
+  register: add_nginx_apt_repository
+  when: nginx_branch == "mainline"
 
 - name: Update apt cache
   ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    add_nginx_apt_key.after is defined or
+    add_nginx_signing_key is changed or
     add_nginx_apt_repository is changed
 
 - name: Install nginx

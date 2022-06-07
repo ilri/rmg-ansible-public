@@ -1,37 +1,39 @@
 ---
 # file: roles/postgres/tasks/ubuntu.yml
 
-- name: Add PGDG apt list file
-  ansible.builtin.template:
-    src: pgdg.list.j2
-    dest: /etc/apt/sources.list.d/pgdg.list
-    owner: root
-    group: root
-    mode: 0644
-  register: add_postgresql_apt_repository
-  tags:
-    - packages
-    - postgresql
-
-- name: Import PGDG repo keys
+- name: Remove PGDG key from apt-key
   ansible.builtin.apt_key:
-    url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
-    state: present
-  register: add_postgresql_apt_key
+    id: B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
+    state: absent
   tags:
     - packages
     - postgresql
 
-# Update cache if apt source file changed. ansible-lint doesn't like when we
-# use "is changed" but that's all we can do here. At least for the apt_key
-# status we can check whether "after" is defined, as that is only true when
-# the key was added.
+- name: Download PGDG package signing key
+  ansible.builtin.shell:
+    cmd: curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > /usr/share/keyrings/apt.postgresql.org.gpg
+    creates: /usr/share/keyrings/apt.postgresql.org.gpg
+  register: add_pgdg_signing_key
+  tags:
+    - packages
+    - postgresql
+
+- name: Add PGDG repository
+  ansible.builtin.apt_repository:
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/apt.postgresql.org.gpg] https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+    filename: pgdg
+    state: present
+  register: add_pgdg_apt_repository
+  tags:
+    - packages
+    - postgresql
+
 - name: Update apt cache
   ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    add_postgresql_apt_key.after is defined or
-    add_postgresql_apt_repository is changed
+    add_pgdg_signing_key is changed or
+    add_pgdg_apt_repository is changed
   tags:
     - packages
     - postgresql

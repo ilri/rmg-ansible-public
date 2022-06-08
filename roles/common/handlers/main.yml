@@ -40,10 +40,13 @@
 # 2021-09-28: note to self, this should be defined after the firewalld and
 # nftables handlers, as handlers are run in the order they are defined, not
 # the order they are listed in the task's notify.
+# 2022-06-08: do not run fail2ban handlers on CentOS because we currently
+# do not use fail2ban there (due to its hard dependency on firewalld).
 - name: restart fail2ban
   ansible.builtin.systemd:
     name: fail2ban
     state: restarted
+  when: ansible_distribution != 'CentOS'
 
 - name: start tuned
   ansible.builtin.service:

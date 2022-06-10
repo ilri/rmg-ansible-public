@@ -25,7 +25,7 @@
       - slurm-pam_slurm
       - slurm-example-configs
       - munge
-    state: latest
+    state: present
   tags: packages
 
 - name: Copy slurm.conf

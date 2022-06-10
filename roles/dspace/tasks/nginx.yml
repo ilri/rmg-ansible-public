@@ -1,6 +1,6 @@
 ---
 
-- name: Remove nginx.org apt signing key
+- name: Remove nginx apt signing key from apt-key
   ansible.builtin.apt_key:
     id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
     state: absent

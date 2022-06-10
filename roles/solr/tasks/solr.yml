@@ -77,11 +77,11 @@
     daemon_reload: true
   when: solr_systemd_service is changed
 
-- name: Copy solr.xml config files
+- name: Copy solr.xml config file
   ansible.posix.synchronize:
     src: "{{ solr_install_dir }}/server/solr/solr.xml"
     dest: "{{ solr_home_dir }}/data/"
-    delegate_to: localhost
+  delegate_to: "{{ inventory_hostname }}"
 
 # TODO: Update this (Solr 6+ have different GC_TUNE settings)
 - name: Copy Solr environment

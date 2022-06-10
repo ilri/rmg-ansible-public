@@ -1,15 +1,72 @@
 [Unit]
-Description=Solr
+Description=Solr {{ solr_version }}
 After=network.target
 
 [Service]
+Type=simple
+
+WorkingDirectory={{ solr_home_dir }}
 PIDFile={{ solr_home_dir }}/solr-{{ solr_port }}.pid
-Environment=SOLR_INCLUDE={{ solr_home_dir }}/solr.in.sh
+Environment=SOLR_PID_DIR={{ solr_home_dir }}
+Environment=SOLR_HOME={{ solr_home_dir }}/data
+Environment=SOLR_LOGS_DIR={{ solr_home_dir }}/logs
+
+PrivateDevices=yes
+PrivateTmp=yes
+# Solr does not need access to /home, /root, or /run/user
+ProtectHome=true
+{% if __systemd_version_int | int > 229 %}
+# Solr can live with read-only access to the entire file system hierarchy other
+# than the paths below.
+ProtectSystem=strict
+{% else %}
+{# Older systemd versions don't have ProtectSystem=strict #}
+# /usr, /boot, and /etc are mounted read-only
+ProtectSystem=full
+{% endif %}
+
+# The service process and all its children can never gain new privileges
+NoNewPrivileges=true
+
+{% if __systemd_version_int | int > 229 %}
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+
+# Do not allow process or its children to create SUID/SGID files/directories
+RestrictSUIDSGID=true
+
+LockPersonality=true
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=~CAP_NET_BROADCAST CAP_NET_RAW
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+RemoveIPC=true
+RestrictAddressFamilies=~AF_PACKET AF_NETLINK AF_UNIX
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources
+
+# Allow writing to these paths, but don't fail if they don't exist
+ReadWritePaths=-{{ solr_home_dir }}
+{% else %}
+{# Older systemd versions don't have ReadWritePaths #}
+# Allow writing to these directories, but don't fail if they don't exist
+ReadWriteDirectories=-{{ solr_home_dir }}
+{% endif %}
+
 User={{ solr_user }}
 Group={{ solr_group }}
 
-ExecStart={{ solr_install_dir }}/bin/solr start
+ExecStart={{ solr_install_dir }}/bin/solr start -f
 ExecStop={{ solr_install_dir }}/bin/solr stop
+
+LimitNOFILE=65000
+LimitNPROC=65000
 
 [Install]
 WantedBy=multi-user.target

@@ -9,18 +9,30 @@
     - packages
     - postgresql
 
+- name: Check PGDG package signing key
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/ACCC4CF8.asc
+  register: pgdg_signing_key_stat
+  tags:
+    - packages
+    - postgresql
+
 - name: Download PGDG package signing key
-  ansible.builtin.shell:
-    cmd: curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor > /usr/share/keyrings/apt.postgresql.org.gpg
-    creates: /usr/share/keyrings/apt.postgresql.org.gpg
-  register: add_pgdg_signing_key
+  ansible.builtin.get_url:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    dest: /usr/share/keyrings/ACCC4CF8.asc
+    owner: root
+    group: root
+    mode: 0644
+  register: download_pgdg_signing_key
+  when: not pgdg_signing_key_stat.stat.exists
   tags:
     - packages
     - postgresql
 
 - name: Add PGDG repository
   ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/apt.postgresql.org.gpg] https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/ACCC4CF8.asc] https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
     filename: pgdg
     state: present
   register: add_pgdg_apt_repository
@@ -32,7 +44,7 @@
   ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    add_pgdg_signing_key is changed or
+    (download_pgdg_signing_key.status_code is defined and download_pgdg_signing_key.status_code == 200) or
     add_pgdg_apt_repository is changed
   tags:
     - packages

@@ -6,15 +6,24 @@
     state: absent
   tags: packages
 
+- name: Check nginx apt signing key
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/nginx_signing.key
+  register: nginx_signing_key_stat
+
 - name: Download nginx apt signing key
-  ansible.builtin.shell:
-    cmd: curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor > /usr/share/keyrings/nginx-archive-keyring.gpg
-    creates: /usr/share/keyrings/nginx-archive-keyring.gpg
-  register: add_nginx_signing_key
+  ansible.builtin.get_url:
+    url: https://nginx.org/keys/nginx_signing.key
+    dest: /usr/share/keyrings/nginx_signing.key
+    owner: root
+    group: root
+    mode: 0644
+  register: download_nginx_signing_key
+  when: not nginx_signing_key_stat.stat.exists
 
 - name: Add nginx stable repository
   ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx'
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nginx_signing.key] https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx'
     filename: nginx_org_packages_ubuntu
     state: present
   register: add_nginx_apt_repository
@@ -22,7 +31,7 @@
 
 - name: Add nginx mainline repository
   ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx'
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nginx_signing.key] https://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx'
     filename: nginx_org_packages_ubuntu
     state: present
   register: add_nginx_apt_repository
@@ -32,7 +41,7 @@
   ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    add_nginx_signing_key is changed or
+    (download_nginx_signing_key.status_code is defined and download_nginx_signing_key.status_code == 200) or
     add_nginx_apt_repository is changed
 
 - name: Install nginx

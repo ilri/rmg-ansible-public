@@ -85,15 +85,24 @@
         id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
         state: absent
 
+    - name: Check Node.js package signing key
+      ansible.builtin.stat:
+        path: /usr/share/keyrings/nodesource.gpg.key
+      register: nodejs_signing_key_stat
+
     - name: Download Node.js package signing key
-      ansible.builtin.shell:
-        cmd: curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor > /usr/share/keyrings/nodesource.gpg
-        creates: /usr/share/keyrings/nodesource.gpg
-      register: add_nodejs_signing_key
+      ansible.builtin.get_url:
+        url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+        dest: /usr/share/keyrings/nodesource.gpg.key
+        owner: root
+        group: root
+        mode: 0644
+      register: download_nodejs_signing_key
+      when: not nodejs_signing_key_stat.stat.exists
 
     - name: Add Node.js 14 LTS repository
       ansible.builtin.apt_repository:
-        repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main'
+        repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource.gpg.key] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main'
         filename: nodesource
         state: present
       register: add_nodejs_apt_repository
@@ -102,7 +111,7 @@
       ansible.builtin.apt: # noqa no-handler
         update_cache: true
       when:
-        add_nodejs_signing_key is changed or
+        (download_nodejs_signing_key.status_code is defined and download_nodejs_signing_key.status_code == 200) or
         add_nodejs_apt_repository is changed
 
     - name: Install DSpace Mirage 2 system build dependencies
@@ -147,15 +156,24 @@
         id: C03B48887D5E56B046715D3297BD1A0133449C3D
         state: absent
 
+    - name: Check GoAccess GPG key
+      ansible.builtin.stat:
+        path: /usr/share/keyrings/goaccess.key
+      register: goaccess_gpg_key_stat
+
     - name: Download GoAccess GPG key
-      ansible.builtin.shell:
-        cmd: curl -fsSL https://deb.goaccess.io/gnugpg.key | gpg --dearmor > /usr/share/keyrings/goaccess.gpg
-        creates: /usr/share/keyrings/goaccess.gpg
-      register: add_goaccess_gpg_key
+      ansible.builtin.get_url:
+        url: https://deb.goaccess.io/gnugpg.key
+        dest: /usr/share/keyrings/goaccess.key
+        owner: root
+        group: root
+        mode: 0644
+      register: download_goaccess_gpg_key
+      when: not goaccess_gpg_key_stat.stat.exists
 
     - name: Add new GoAccess repository
       ansible.builtin.apt_repository:
-        repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/goaccess.gpg] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+        repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/goaccess.key] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
         filename: goaccess
         state: present
       register: add_goaccess_repository
@@ -164,7 +182,7 @@
       ansible.builtin.apt: # noqa no-handler
         update_cache: true
       when:
-        add_goaccess_gpg_key is changed or
+        (download_goaccess_gpg_key.status_code is defined and download_goaccess_gpg_key.status_code == 200) or
         add_goaccess_repository is changed
 
     - name: Install GoAccess

@@ -92,6 +92,7 @@
     group: "{{ solr_group }}"
     mode: 0755
   notify: restart solr
+  when: ansible_distribution_version is version('20.04', '<')
 
 - name: Reconfigure Solr logging
   ansible.builtin.copy:
@@ -101,6 +102,7 @@
     group: "{{ solr_group }}"
     mode: 0644
   notify: restart solr
+  when: ansible_distribution_version is version('20.04', '<')
 
 - name: Start and enable Solr service
   ansible.builtin.service:

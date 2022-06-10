@@ -12,7 +12,17 @@
     name: openjdk-8-jre-headless
     state: present
     install_recommends: false
-  when: ansible_distribution_version is version('16.04', '>=')
+  when: ansible_distribution_version is version('22.04', '<')
+  tags:
+    - java
+    - packages
+
+- name: Install OpenJDK 11
+  ansible.builtin.package:
+    name: openjdk-11-jre-headless
+    state: present
+    install_recommends: false
+  when: ansible_distribution_version is version('22.04', '>=')
   tags:
     - java
     - packages

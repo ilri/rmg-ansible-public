@@ -31,7 +31,7 @@ MAIL_ARGS="${MAIL_ARGS} -S nss-config-dir=/etc/pki/nssdb -S ssl-verify=ignore"
 {% endif %}
 
 # get slots on this machine's HP storage
-SLOTS=$($HP_CLI_BIN controller all show | grep -E 'Slot [0-9]{0,2}' | awk '{print $6}')
+SLOTS=$($HP_CLI_BIN controller all show | grep -oE 'Slot [0-9]{0,2}' | awk '{print $2}')
 
 function checkPhysicalDisks () {
     # check for physical disk status (ignoring lines beginning with error, like

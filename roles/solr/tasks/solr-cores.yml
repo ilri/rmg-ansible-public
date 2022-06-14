@@ -24,7 +24,7 @@
   ansible.posix.synchronize:
     src: "{{ solr_install_dir }}/server/solr/configsets/basic_configs/conf/"
     dest: "{{ solr_home_dir }}/data/{{ item }}/conf/"
-    delegate_to: localhost
+  delegate_to: localhost
   loop: "{{ solr_cores }}"
   notify: restart solr
   tags: solr-cores

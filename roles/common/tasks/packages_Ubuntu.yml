@@ -44,6 +44,13 @@
         state: present
         cache_valid_time: 3600
 
+    # See: https://wiki.ubuntu.com/Kernel/LTSEnablementStack
+    - name: Install LTS kernel
+      ansible.builtin.include_tasks: kernel_Ubuntu.yml
+      when:
+        ansible_distribution_version is version('18.04', '==') or
+        ansible_distribution_version is version('20.04', '==')
+
     # Gather package facts so we can check if snap is installed
     - name: Gather package facts
       ansible.builtin.package_facts:

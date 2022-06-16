@@ -1,0 +1,39 @@
+---
+
+- name: Install linux-virtual-hwe-18.04
+  ansible.builtin.package:
+    name: linux-virtual-hwe-18.04
+    state: present
+    cache_valid_time: 3600
+  when:
+    - ansible_distribution_version is version('18.04', '==')
+    - ansible_virtualization_role == 'guest'
+
+- name: Install linux-generic-hwe-18.04
+  ansible.builtin.package:
+    name: linux-generic-hwe-18.04
+    state: present
+    cache_valid_time: 3600
+  when:
+    - ansible_distribution_version is version('18.04', '==')
+    - ansible_virtualization_role == 'host'
+
+- name: Install linux-virtual-hwe-20.04
+  ansible.builtin.package:
+    name: linux-virtual-hwe-20.04
+    state: present
+    cache_valid_time: 3600
+  when:
+    - ansible_distribution_version is version('20.04', '==')
+    - ansible_virtualization_role == 'guest'
+
+- name: Install linux-generic-hwe-20.04
+  ansible.builtin.package:
+    name: linux-generic-hwe-20.04
+    state: present
+    cache_valid_time: 3600
+  when:
+    - ansible_distribution_version is version('20.04', '==')
+    - ansible_virtualization_role == 'host'
+
+# vim: set ts=2 sw=2:

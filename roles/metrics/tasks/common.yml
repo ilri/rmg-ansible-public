@@ -3,6 +3,11 @@
 #
 # Common setup for VictoriaMetrics servers and clients.
 
+- name: Install tar
+  ansible.builtin.package:
+    name: tar
+    state: present
+
 - name: Add VictoriaMetrics group
   ansible.builtin.group:
     name: "{{ victoriametrics_group }}"

@@ -12,7 +12,7 @@
   ansible.builtin.package:
     name:
       - glusterfs-fuse
-      - python3-libselinux.x86_64 # required by Ansible's seboolean module
+      - python3-libsemanage.x86_64 # required by Ansible's seboolean module
     state: present
   when: ansible_distribution_major_version is version('8','==')
   tags: glusterfs-client

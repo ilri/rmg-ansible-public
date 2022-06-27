@@ -40,6 +40,7 @@
   when: ansible_distribution_major_version is version('8', '==')
   ansible.builtin.package:
     name:
+      - nftables
       - perl-Net-IP # for aggregate-cidr-addresses.pl
       - wget # for updating blocklists
     state: present

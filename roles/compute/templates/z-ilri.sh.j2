@@ -36,4 +36,9 @@ module load ilri/latest
 # semantic versioning so we can just load `nvtop` and we should reliably get the
 # latest version in /export/apps.
 module load nvtop
+
+# Configure paths for NVIDIA utilities and libraries.
+# See: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#post-installation-actions
+export PATH=/usr/local/cuda-11.7/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 {% endif %}

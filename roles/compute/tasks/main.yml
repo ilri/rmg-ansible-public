@@ -149,6 +149,7 @@
       - make.x86_64
       - mesa-libGLU-devel.x86_64 # for some R libraries
       - nano.x86_64
+      - ncurses-compat-libs.x86_64 # for some stuff compiled in CentOS 7
       - openblas.x86_64 # for scipy
       - openmpi.x86_64 # optional for abyss
       - openssl-devel.x86_64 # for R

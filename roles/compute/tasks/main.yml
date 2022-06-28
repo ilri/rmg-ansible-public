@@ -175,6 +175,7 @@
       - python3-setuptools.noarch # needed by some Python scripts to load entrypoint
       - python36.x86_64
       - readline-devel.x86_64 # for R/4.2.0
+      - rsync.x86_64
       - screen.x86_64
       - singularity # from EPEL, for viralrecon pipeline
       - sqlite-devel.x86_64 # for some R libraries

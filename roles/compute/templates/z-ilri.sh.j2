@@ -3,6 +3,10 @@
 # Location of ILRI module files
 export MODULEPATH=/etc/modulefiles/ilri
 
+# Do not load modules without a version. Only works on CentOS Stream 8.
+# See: https://modules.readthedocs.io/en/latest/module.html#envvar-MODULES_IMPLICIT_DEFAULT=
+export MODULES_IMPLICIT_DEFAULT=0
+
 {% if inventory_hostname == 'hpc' %}
 # only run on interactive sessions
 TTY=$(tty -s)

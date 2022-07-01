@@ -7,6 +7,11 @@ export MODULEPATH=/etc/modulefiles/ilri
 # See: https://modules.readthedocs.io/en/latest/module.html#envvar-MODULES_IMPLICIT_DEFAULT=
 export MODULES_IMPLICIT_DEFAULT=0
 
+# adjust squeue output to show longer job names
+export SQUEUE_FORMAT="%.18i %.9P %.16j %.8u %.2t %.10M %.6D %R"
+# adjust sacct output to show more information
+export SACCT_FORMAT="JobID,JobName,User,Account,State,CPUTime,AllocCPUs,Partition,NodeList%-30"
+
 {% if inventory_hostname == 'hpc' %}
 # only run on interactive sessions
 TTY=$(tty -s)

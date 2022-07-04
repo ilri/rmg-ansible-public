@@ -62,6 +62,7 @@
     - extra-security.conf
     - nginx.conf
     - proxy_params
+    - bot-networks.conf
   notify:
     - reload nginx
 

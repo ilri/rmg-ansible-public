@@ -105,7 +105,8 @@ server {
         limit_req zone=dynamicpages burst=5;
 
         # rate limit for poorly behaved bots, see limit_req_zone below
-        limit_req zone=badbots;
+        limit_req zone=badbots_ua;
+        limit_req zone=badbots_ip;
 
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
@@ -141,7 +142,8 @@ server {
         limit_req zone=dynamicpages burst=5;
 
         # rate limit for poorly behaved bots, see limit_req_zone below
-        limit_req zone=badbots;
+        limit_req zone=badbots_ua;
+        limit_req zone=badbots_ip;
 
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
@@ -171,7 +173,8 @@ server {
         }
 
         # rate limit for poorly behaved bots, see limit_req_zone below
-        limit_req zone=badbots;
+        limit_req zone=badbots_ua;
+        limit_req zone=badbots_ip;
 
         # log access requests for debug / load analysis
         access_log /var/log/nginx/access.log;
@@ -319,77 +322,28 @@ upstream statistics_api {
 # thousands of requests like a bot, but don't declare a proper user agent. We
 # can then rely on Tomcat's Crawler Session Manager Valve to assign one single
 # session to all these users in order to reduce resource usage.
-map $remote_addr $ua {
+#
+# In the included file matching networks have the key set to 'bot', which we
+# map to $ua here and pass to Tomcat via proxy_set_header in several location
+# blocks above.
+geo $ua {
     default          $http_user_agent;
 
-    # 2017-11-08 old ciat.cgiar.org scraper
-    104.196.152.243  'bot';
-    # 2017-11-08 Random Chinese host grabbing 20,000 PDFs
-    ~124\.17\.34\.   'bot';
-    # 2018-07-10 mystery client on Google Cloud
-    35.227.26.162    'bot';
-    # 2018-09-27 ciat.cgiar.org scraper
-    35.237.175.180   'bot';
-    # 2018-09-27 mystery client on Cox
-    68.6.87.12       'bot';
-    # 2018-10-03 mystery client on Hetzner
-    138.201.49.199   'bot';
-    # 2018-11-04 mystery client on Hetzner
-    78.46.89.18      'bot';
-    # 2019-03-26 mystery client in Ukraine
-    93.179.69.74     'bot';
-    # 2019-03-26 CTA scraper on Amazon
-    18.195.78.144    'bot';
-    # 2019-03-26 CTA scraper on Amazon
-    18.196.196.108   'bot';
-    # 2019-03-26 CTA scraper on Amazon
-    18.194.46.84     'bot';
-    # 2020-02-23 mystery client in Costa Rica
-    186.32.217.255   'bot';
-    # 2020-02-23 mystery client in UK
-    31.6.77.23       'bot';
-    # 2020-02-24 AReS harvester
-    172.104.229.92   'bot';
-    # 2020-02-24 ILRI website harvesters
-    2a01:7e00::f03c:91ff:fe9a:3a37 'bot';
-    2a01:7e00::f03c:91ff:fe18:7396 'bot';
-    # 2020-02-24 wle.cgiar.org REST API harvester
-    70.32.90.172     'bot';
-    # 2020-02-24 ccafs.cgiar.org REST API harvester
-    205.186.128.185  'bot';
-    # 2020-02-24 some other CIAT REST API harvester
-    45.5.184.72      'bot';
-    # 2020-02-24 Macaroni Bros test server REST API harvester
-    63.32.242.35     'bot';
-    # 2020-02-24 Africa RISING REST API harvester
-    162.243.171.159  'bot';
-    # 2020-02-24 Bioversity REST API harvester
-    95.110.154.135   'bot';
-    # 2020-02-24 ICARDA MEL
-    34.209.213.122   'bot';
-    # 2020-03-10 Robot on Online.net in France (mostly hitting XMLUI, but also REST API)
-    163.172.68.99    'bot';
-    # 2020-03-10 Robot on Online.net in France (mostly hitting XMLUI, but also REST API)
-    163.172.70.248   'bot';
-    # 2020-03-10 Robot on Online.net in France (mostly hitting XMLUI, but also REST API)
-    163.172.71.24    'bot';
-    # 2020-03-10 Robot on Digital Ocean hitting the REST API
-    64.225.40.66     'bot';
-    # 2020-04-20 Some Russian IP downloaded a single PDF 8900 times in one day
-    91.241.19.70     'bot';
-    # 2020-04-30 Robot on Google Cloud making tens of thousands of requests since 2018
-    104.154.216.0    'bot';
-    # 2020-04-30 Robot on Google Cloud making tens of thousands of requests since 2018
-    104.198.96.245   'bot';
-    # 2020-05-07 Robot in Russia making tens of thousands of requests to XMLUI Discovery
-    188.134.31.88    'bot';
-    # 2021-03-07 GARDIAN harvester
-    143.233.242.132  'bot';
-    # 2021-10-28 several bots in Sweden scraping Discovery
-    93.158.91.62     'bot';
-    192.36.109.131   'bot';
-    # 2022-04-13 some bot in the UK scraping Discovery
-    185.192.69.15    'bot';
+    include /etc/nginx/bot-networks.conf;
+}
+
+# List of networks to mark as bots. Hosts on these networks are behaving like
+# bots but not declaring a bot user agent. We use the same bot-networks.conf
+# list from above to reduce duplication.
+#
+# In the included file matching networks have the key set to 'bot', which we
+# map to $limit_bots_ip and use as the key for a limit_req_zone below for bots.
+geo $limit_bots_ip {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    include /etc/nginx/bot-networks.conf;
 }
 
 # Use a mapping to identify certain search bots with many IP addresses and force
@@ -398,8 +352,8 @@ map $remote_addr $ua {
 # maps all Baidu requests to the same $limit_bots value, allowing us to force it
 # to abide by a total rate limit for all client instances regardless of the IP.
 #
-# $limit_bots will be used as the key for the limit_req_zone.
-map $http_user_agent $limit_bots {
+# $limit_bots_ua will be used as the key for the limit_req_zone.
+map $http_user_agent $limit_bots_ua {
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
     default '';
@@ -464,7 +418,8 @@ map $http_user_agent $limit_bots {
 # A zone key size of 1 megabyte should be able to store around 16,000 sessions,
 # which should be about 15,999 sessions too many for now as I'm currently only
 # worried about Baidu (see mapping above).
-limit_req_zone $limit_bots zone=badbots:1m rate=1r/m;
+limit_req_zone $limit_bots_ua zone=badbots_ua:1m rate=1r/m;
+limit_req_zone $limit_bots_ip zone=badbots_ip:1m rate=1r/m;
 
 # Zone for limiting requests to dynamic pages like browse and discover that are
 # of no use to bots and cause a high load on the server. For now I think I will

@@ -62,6 +62,9 @@
   ansible.builtin.stat:
     path: /usr/share/keyrings/hpePublicKey2048_key1.pub
   register: hpe_mcp_signing_key_stat
+  when:
+    - ansible_os_family == 'Debian'
+    - "'hp' in hw_raid_vendor"
 
 - name: Download HPE MCP package signing key
   ansible.builtin.get_url:
@@ -71,14 +74,18 @@
     group: root
     mode: 0644
   register: download_hpe_mcp_signing_key
-  when: not hpe_mcp_signing_key_stat.stat.exists
+  when:
+    - ansible_os_family == 'Debian'
+    - "'hp' in hw_raid_vendor"
+    - not hpe_mcp_signing_key_stat.stat.exists
 
 - name: Update apt cache
   ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    (download_hpe_mcp_signing_key.status_code is defined and download_hpe_mcp_signing_key.status_code == 200) or
-    add_hpe_mcp_apt_repository is changed
+    - (download_hpe_mcp_signing_key.status_code is defined and download_hpe_mcp_signing_key.status_code == 200) or add_hpe_mcp_apt_repository is changed
+    - ansible_os_family == 'Debian'
+    - "'hp' in hw_raid_vendor"
 
 - name: Install HPE Smart Storage Administrator CLI
   ansible.builtin.package:

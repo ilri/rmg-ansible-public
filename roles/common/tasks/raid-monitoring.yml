@@ -58,6 +58,14 @@
     - ansible_os_family == 'Debian'
     - "'hp' in hw_raid_vendor"
 
+- name: Remove HPE-MCP key from apt-key
+  ansible.builtin.apt_key:
+    id: 57446EFDE098E5C934B69C7DC208ADDE26C2B797
+    state: absent
+  when:
+    - ansible_os_family == 'Debian'
+    - "'hp' in hw_raid_vendor"
+
 - name: Check HPE MCP package signing key
   ansible.builtin.stat:
     path: /usr/share/keyrings/hpePublicKey2048_key1.pub

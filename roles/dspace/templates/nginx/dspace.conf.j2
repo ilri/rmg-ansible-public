@@ -318,32 +318,40 @@ upstream statistics_api {
     server 127.0.0.1:5000;
 }
 
-# Assign a custom user agent to certain client IPs who are sending hundreds or
-# thousands of requests like a bot, but don't declare a proper user agent. We
-# can then rely on Tomcat's Crawler Session Manager Valve to assign one single
-# session to all these users in order to reduce resource usage.
-#
-# In the included file matching networks have the key set to 'bot', which we
-# map to $ua here and pass to Tomcat via proxy_set_header in several location
-# blocks above.
-geo $ua {
-    default          $http_user_agent;
-
-    include /etc/nginx/bot-networks.conf;
-}
-
 # List of networks to mark as bots. Hosts on these networks are behaving like
-# bots but not declaring a bot user agent. We use the same bot-networks.conf
-# list from above to reduce duplication.
+# bots but not declaring a bot user agent. We then rely on Tomcat's Crawler
+# Session Manager Valve to assign one single session to all these users in
+# order to reduce resource usage.
 #
-# In the included file matching networks have the key set to 'bot', which we
+# In the included file, matching networks have the key set to 'bot', which we
 # map to $limit_bots_ip and use as the key for a limit_req_zone below for bots.
+# Networks that don't match have $limit_bots_ip set to an empty string, which
+# is importing for the limit_req zone and the next mapping block.
 geo $limit_bots_ip {
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
     default '';
 
     include /etc/nginx/bot-networks.conf;
+}
+
+# Matching networks have the key set to 'bot' by the geo module above, while
+# those not matching are set to an empty string. We re-use this below by map-
+# ping $limit_bots_ip to $ua, which we then pass to Tomcat via proxy_set_header
+# in location blocks above.
+#
+# Note: this seems overly complicated, but is necessary because geo does not
+# support dynamic values. Instead we set an empty string above and then map
+# the host's declared user agent to $ua when we see an empty string. This is
+# also a way for me to use one bot-networks.conf file for both the limiting
+# of requests as well as classifying bots.
+map $limit_bots_ip $ua {
+    # If the geo block above set this to an empty string then we can map the
+    # host's declared user agent directly. Otherwise, it's a bot as declared
+    # by the geo block.
+    ''      $http_user_agent;
+
+    default 'bot';
 }
 
 # Use a mapping to identify certain search bots with many IP addresses and force

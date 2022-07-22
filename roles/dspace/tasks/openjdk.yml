@@ -1,0 +1,37 @@
+---
+# Explicitly install OpenJDK 8 first in a separate transaction so that tomcat8
+# doesn't pull in Java 10+ via default-jre. Also, it seems there is a bug with
+# apt's dependency resolution that causes maven to pull in Java 10+ in Ubuntu
+# 18.04 currently.
+- name: Install OpenJDK 8
+  ansible.builtin.apt:
+    pkg: openjdk-8-jdk-headless
+    state: present
+    install_recommends: false
+    cache_valid_time: 3600
+  when: java_distribution == 'openjdk'
+
+- name: Set OpenJDK 8 as default java
+  community.general.alternatives:
+    name: java
+    path: /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+
+# 2020-02-23: Fix issue with JFreeChart in Atmire CUA
+# see https://code-maven.com/slides/jenkins-intro/no-graph-error
+- name: Disable OpenJDK assistive technologies
+  ansible.builtin.lineinfile:
+    path: /etc/java-8-openjdk/accessibility.properties
+    regexp: '^assistive_technologies=org.GNOME.Accessibility.AtkWrapper$'
+    line: '#assistive_technologies=org.GNOME.Accessibility.AtkWrapper'
+    state: present
+
+# 2021-06-30: Fix slow Tomcat startup due to blocking /dev/random
+# tomcat7[30294]: WARNING: Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [111,733] milliseconds.
+- name: Use /dev/urandom for JVM SecureRandom
+  ansible.builtin.lineinfile:
+    path: /etc/java-8-openjdk/security/java.security
+    regexp: '^securerandom.source=file:/dev/random$'
+    line: 'securerandom.source=file:/dev/urandom'
+    state: present
+
+# vim: set sw=2 ts=2:

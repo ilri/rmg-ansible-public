@@ -1,0 +1,42 @@
+---
+- name: Remove GoAccess GPG key from apt-key
+  ansible.builtin.apt_key:
+    id: C03B48887D5E56B046715D3297BD1A0133449C3D
+    state: absent
+
+- name: Check GoAccess GPG key
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/goaccess.key
+  register: goaccess_gpg_key_stat
+
+- name: Download GoAccess GPG key
+  ansible.builtin.get_url:
+    url: https://deb.goaccess.io/gnugpg.key
+    dest: /usr/share/keyrings/goaccess.key
+    owner: root
+    group: root
+    mode: 0644
+  register: download_goaccess_gpg_key
+  when: not goaccess_gpg_key_stat.stat.exists
+
+- name: Add new GoAccess repository
+  ansible.builtin.apt_repository:
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/goaccess.key] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+    filename: goaccess
+    state: present
+  register: add_goaccess_repository
+
+- name: Update apt cache
+  ansible.builtin.apt: # noqa no-handler
+    update_cache: true
+  when:
+    (download_goaccess_gpg_key.status_code is defined and download_goaccess_gpg_key.status_code == 200) or
+    add_goaccess_repository is changed
+
+- name: Install GoAccess
+  ansible.builtin.apt:
+    pkg: goaccess
+    state: present
+    cache_valid_time: 3600
+
+# vim: set sw=2 ts=2:

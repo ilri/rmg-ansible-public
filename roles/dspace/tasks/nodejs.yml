@@ -1,0 +1,51 @@
+---
+
+- name: Remove Node.js key from apt-key
+  ansible.builtin.apt_key:
+    id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
+    state: absent
+
+- name: Check Node.js package signing key
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/nodesource.gpg.key
+  register: nodejs_signing_key_stat
+
+- name: Download Node.js package signing key
+  ansible.builtin.get_url:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    dest: /usr/share/keyrings/nodesource.gpg.key
+    owner: root
+    group: root
+    mode: 0644
+  register: download_nodejs_signing_key
+  when: not nodejs_signing_key_stat.stat.exists
+
+- name: Add Node.js 14 LTS repository
+  ansible.builtin.apt_repository:
+    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource.gpg.key] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main'
+    filename: nodesource
+    state: present
+  register: add_nodejs_apt_repository
+
+- name: Update apt cache
+  ansible.builtin.apt: # noqa no-handler
+    update_cache: true
+  when:
+    (download_nodejs_signing_key.status_code is defined and download_nodejs_signing_key.status_code == 200) or
+    add_nodejs_apt_repository is changed
+
+- name: Install DSpace Mirage 2 system build dependencies
+  ansible.builtin.apt:
+    name: ['build-essential', 'nodejs']
+    state: present
+    install_recommends: false
+    cache_valid_time: 3600
+
+- name: Configure npm environment
+  ansible.builtin.template:
+    src: npmrc.j2
+    dest: "{{ tomcat_user_home }}/.npmrc"
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+
+# vim: set sw=2 ts=2:

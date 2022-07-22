@@ -47,5 +47,6 @@
     dest: "{{ tomcat_user_home }}/.npmrc"
     owner: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
+    mode: 0640
 
 # vim: set sw=2 ts=2:

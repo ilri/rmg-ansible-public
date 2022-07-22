@@ -58,8 +58,6 @@ dspace_dev_mode: 'false'
 # command to use for pyvenv (Ubuntu 20.04 is Python 3.8)
 pyvenv_command: python3.8 -m venv
 
-# distribution must be openjdk
-java_distribution: openjdk
 # version must be 8 (for now)
 java_version_major: 8
 

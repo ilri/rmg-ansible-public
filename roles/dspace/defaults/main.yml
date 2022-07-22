@@ -58,7 +58,7 @@ dspace_dev_mode: 'false'
 # command to use for pyvenv (Ubuntu 22.04 is Python 3.10)
 pyvenv_command: python3.10 -m venv
 
-# version must be 8 (for now)
+# version 8 for DSpace 6, version 17 for DSpace 7
 java_version_major: 8
 
 tomcat_user: dspace

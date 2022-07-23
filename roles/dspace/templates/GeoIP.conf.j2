@@ -1,13 +1,18 @@
-# GeoIP.conf file for `geoipupdate` program, for versions < 3.1.1.
-# Used to update GeoIP databases from https://www.maxmind.com.
-# For more information about this config file, visit the docs at
-# https://dev.maxmind.com/geoip/geoipupdate/.
+# Please see https://dev.maxmind.com/geoip/geoipupdate/ for instructions
+# on setting up geoipupdate, including information on how to download a
+# pre-filled GeoIP.conf file.
 
-# `UserId` is from your MaxMind account.
-UserId {{ maxmind_geoip_account_id }}
-
-# `LicenseKey` is from your MaxMind account
+# Replace YOUR_ACCOUNT_ID_HERE and YOUR_LICENSE_KEY_HERE with an active account
+# ID and license key combination associated with your MaxMind account. These
+# are available from https://www.maxmind.com/en/my_license_key.
+AccountID {{ maxmind_geoip_account_id }}
 LicenseKey {{ maxmind_geoip_license_key }}
 
-# `ProductIds` is from your MaxMind account.
-ProductIds GeoLite2-City
+# Enter the edition IDs of the databases you would like to update.
+# Multiple edition IDs are separated by spaces.
+#
+# Include one or more of the following edition IDs:
+# * GeoLite2-ASN - GeoLite 2 ASN
+# * GeoLite2-City - GeoLite 2 City
+# * GeoLite2-Country - GeoLite2 Country
+EditionIDs GeoLite2-City

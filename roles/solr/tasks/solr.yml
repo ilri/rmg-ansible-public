@@ -52,15 +52,6 @@
     - "{{ solr_home_dir }}/data"
     - "{{ solr_home_dir }}/logs"
 
-- name: Copy Solr init.d service file
-  ansible.builtin.template:
-    src: init.d-solr.j2
-    dest: /etc/init.d/solr
-    owner: root
-    group: root
-    mode: 0755
-  when: ansible_service_mgr != 'systemd'
-
 - name: Copy systemd service unit
   ansible.builtin.template:
     src: solr.service.j2

@@ -3,10 +3,7 @@
 GCLOG_OPTS=" \
 -verbose:gc \
 -Xloggc:{{ tomcat_user_home }}/gc.log \
--XX:+PrintGCDateStamps \
 -XX:+PrintGCDetails \
--XX:+PrintAdaptiveSizePolicy \
--XX:+PrintReferenceGC
 "
 
 {# Note: these variables come from the metrics role! #}

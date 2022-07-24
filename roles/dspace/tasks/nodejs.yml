@@ -50,7 +50,7 @@
     mode: 0640
 
 - name: Install DSpace Mirage 2 Node.js build dependencies
-	npm: name={{ item }} global=yes
+  npm: name={{ item }} global=yes
   loop:
     - grunt-cli
     - yarn

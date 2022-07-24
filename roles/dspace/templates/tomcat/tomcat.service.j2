@@ -1,12 +1,12 @@
 [Unit]
-Description=Tomcat 7 servlet container
+Description=Tomcat {{ tomcat_version_major }} servlet container
 After=network.target
 
 [Service]
 SyslogIdentifier=tomcat{{ tomcat_version_major }}
 User={{ tomcat_user }}
 Group={{ tomcat_group }}
-EnvironmentFile=/etc/default/tomcat7
+EnvironmentFile=/etc/default/tomcat{{ tomcat_version_major }}
 # Raise the open file limit for Tomcat to avoid
 # "java.net.SocketException: Too many open files"
 LimitNOFILE=16384

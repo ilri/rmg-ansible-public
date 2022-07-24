@@ -108,6 +108,8 @@
     - { name: '{{ dspace_statistics_db_user }}', password: '{{ dspace_statistics_db_password }}' }
   become_user: postgres
   tags: postgresql
+  environment:
+        PGOPTIONS: "-c password_encryption=scram-sha-256"
 
 - name: Create postgres databases
   postgresql_db:

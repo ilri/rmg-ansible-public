@@ -1,9 +1,9 @@
 ---
 
-solr_version: 6.6.6
+solr_version: 8.11.2
 solr_tarball: solr-{{ solr_version }}.tgz
 solr_mirror_url: https://archive.apache.org/dist/lucene/solr/{{ solr_version }}/{{ solr_tarball }}
-solr_sha256sum: 149ec1a7ee950867ab6257a1a96246df79ccda983983389dc639220f3447b6e8
+solr_sha256sum: 54d6ebd392942f0798a60d50a910e26794b2c344ee97c2d9b50e678a7066d3a6
 solr_prefix_dir: /opt
 solr_install_dir: /opt/solr-{{ solr_version }}
 solr_home_dir: /var/solr

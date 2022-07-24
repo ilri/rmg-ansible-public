@@ -34,6 +34,9 @@ nginx_branch: stable
 dspace_dbpool_web_max_connections: 250
 dspace_dbpool_api_max_connections: 50
 
+# DSpace 6 or 7
+dspace_version_major: 6
+
 # postgresql version to deploy
 pg_version: 14
 

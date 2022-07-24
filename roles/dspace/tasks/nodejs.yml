@@ -54,6 +54,15 @@
     - grunt-cli
     - yarn
   become_user: "{{ tomcat_user }}"
+  when: dspace_version_major == 6
+
+- name: Install DSpace Angular Node.js build dependencies
+  npm:
+    name: yarn
+    version: '1.22.19'
+    global: yes
+  become_user: "{{ tomcat_user }}"
+  when: dspace_version_major == 7
 
 - name: Add npm packages to PATH
   ansible.builtin.lineinfile:

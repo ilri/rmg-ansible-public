@@ -10,7 +10,7 @@ For example:
 pg_listen_addresses: 192.168.1.7
 ```
 
-PostgreSQL uses a [host-based authentication file](http://www.postgresql.org/docs/9.6/static/auth-pg-hba-conf.html) to control how clients are authenticated and which databases they can access. To allow connections from specific ipsets, you need to define a `pg_db_connections` variable containing a list of dictionaries with the connection type, db name, source address, etc.
+PostgreSQL uses a [host-based authentication file](http://www.postgresql.org/docs/12/static/auth-pg-hba-conf.html) to control how clients are authenticated and which databases they can access. To allow connections from specific ipsets, you need to define a `pg_db_connections` variable containing a list of dictionaries with the connection type, db name, source address, etc.
 
 For example:
 
@@ -24,5 +24,5 @@ pg_db_connections:
 ## OS Family Supported
 Tested and working on the following OS versions:
 
-- Ubuntu 18.04
 - Ubuntu 20.04
+- Ubuntu 22.04

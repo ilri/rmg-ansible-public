@@ -12,7 +12,6 @@
     - postgres
     - munin
     - { role: metrics, when: ansible_service_mgr == 'systemd', tags: metrics }
-    - { role: solr, when: dspace_version_major == 7, tags: solr }
     - { role: dspace, when: ansible_os_family == 'Debian', tags: dspace }
 
 # vim: set sw=2 ts=2:

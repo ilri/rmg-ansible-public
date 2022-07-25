@@ -125,4 +125,7 @@ net.ipv4.tcp_slow_start_after_idle = 0
 # See: https://solr.apache.org/guide/8_11/taking-solr-to-production.html
 # See: https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
 vm.max_map_count = 262144
+
+# Solr's "Taking Solr to Production" guide recommends reducing swappiness.
+vm.swappiness = 1
 {% endif %}

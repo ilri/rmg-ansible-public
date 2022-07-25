@@ -116,3 +116,13 @@ net.ipv4.ip_local_port_range = 10240 65535
 # see: http://www.chromium.org/spdy/spdy-best-practices
 net.ipv4.tcp_slow_start_after_idle = 0
 {% endif %}
+
+{% if 'solr' in group_names or 'dspace' in group_names %}
+# Solr's "Taking Solr to Production" guide recommends setting this to unlimited,
+# but Elasticsearch (a similar Lucene-powered search server) recommends 262144.
+# The default in Ubuntu 22.04 is currently 65530 so this should be OK for now.
+#
+# See: https://solr.apache.org/guide/8_11/taking-solr-to-production.html
+# See: https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html
+vm.max_map_count = 262144
+{% endif %}

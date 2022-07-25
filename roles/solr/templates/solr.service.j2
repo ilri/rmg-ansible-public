@@ -10,6 +10,7 @@ PIDFile={{ solr_home_dir }}/solr-{{ solr_port }}.pid
 Environment=SOLR_PID_DIR={{ solr_home_dir }}
 Environment=SOLR_HOME={{ solr_home_dir }}/data
 Environment=SOLR_LOGS_DIR={{ solr_home_dir }}/logs
+Environment=SOLR_HEAP={{ solr_heap }}
 
 PrivateDevices=yes
 PrivateTmp=yes

@@ -12,4 +12,7 @@ solr_user: solr
 solr_group: solr
 solr_user_homedir: /home/{{ solr_user }}
 
+# For newer Solr using systemd service.
+solr_heap: 1g
+# For older Solr using solr.in.sh.
 solr_java_mem: "-Xms1024m -Xmx1024m"

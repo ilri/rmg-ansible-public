@@ -65,8 +65,12 @@ Group={{ solr_group }}
 ExecStart={{ solr_install_dir }}/bin/solr start -f
 ExecStop={{ solr_install_dir }}/bin/solr stop
 
+# Recommended system limits
+# See: https://solr.apache.org/guide/8_11/taking-solr-to-production.html
 LimitNOFILE=65000
 LimitNPROC=65000
+LimitAS=infinity
+LimitRSS=infinity
 
 # the JVM exits gracefully with 143 when it receives a SIGTERM (128 + 15 == 143)
 SuccessExitStatus=143

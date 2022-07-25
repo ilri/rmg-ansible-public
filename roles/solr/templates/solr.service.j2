@@ -68,5 +68,8 @@ ExecStop={{ solr_install_dir }}/bin/solr stop
 LimitNOFILE=65000
 LimitNPROC=65000
 
+# the JVM exits gracefully with 143 when it receives a SIGTERM (128 + 15 == 143)
+SuccessExitStatus=143
+
 [Install]
 WantedBy=multi-user.target

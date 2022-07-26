@@ -1,0 +1,11 @@
+---
+
+# Include the solr role to do the basic non-DSpace specific Solr setup. I think
+# it is cleaner to do this from here than running the Solr role on all DSpace
+# hosts. We will see...
+- name: Include common tasks from Solr role
+  ansible.builtin.include_role:
+    name: solr
+  tags: solr
+
+# vim: set sw=2 ts=2:

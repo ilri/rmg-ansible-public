@@ -1,6 +1,11 @@
 [Unit]
 Description=Tomcat {{ tomcat_version_major }} servlet container
 After=network.target
+{% if dspace_version_major is version('7', '==') -%}
+# Tomcat has a hard dependency on solr.service being up
+Requires=solr.service
+After=solr.service
+{%- endif %}
 
 [Service]
 SyslogIdentifier=tomcat{{ tomcat_version_major }}

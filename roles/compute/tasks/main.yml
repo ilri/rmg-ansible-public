@@ -108,6 +108,7 @@
 - name: Install extra packages (CentOS Stream 8)
   ansible.builtin.package:
     name:
+      - bcl2fastq2 # from Illumina, in ILRI repo
       - boost-devel.x86_64 # for augustus
       - boost-iostreams.x86_64 # for augustus
       - cairo-devel.x86_64 # for genometools and others

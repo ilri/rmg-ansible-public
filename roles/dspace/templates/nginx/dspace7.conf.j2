@@ -1,0 +1,174 @@
+{# just in case the host doesn't have this defined, can't go in role defaults because it messes up inheritance for some playbooks #}
+{% set nginx_server_name    = nginx_server_name | default("localhost") %}
+{% set nginx_vhosts         = nginx_vhosts | default(nginx_server_name) %}
+
+{% if 'mahider.cgiar.org' in nginx_vhosts -%}
+    {% include 'nginx/mahider.cgiar.org.conf.j2' %}
+{% endif %}
+
+{% if 'library.cgiar.org' in nginx_vhosts -%}
+    {% include 'nginx/library.cgiar.org.conf.j2' %}
+{% endif %}
+
+{% if 'mahider.ilri.org' in nginx_vhosts and 'dspace.ilri.org' in nginx_vhosts -%}
+    {% include 'nginx/legacy-dspace-domains.conf.j2' %}
+{% endif %}
+
+{% if nginx_tls_cert is defined %}
+# Handle {{ nginx_server_name }} http -> https
+#
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ nginx_server_name }};
+
+    # redirect http -> https
+    location / {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/http-access.log;
+
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+    }
+
+    include extra-security.conf;
+}
+{% endif %} {# end: nginx_tls_cert #}
+
+# HTTPS server (only for domains we have a cert for)
+#
+server {
+    {% if nginx_tls_cert is defined %}
+    listen {{ nginx_ssl_port }} ssl http2;
+    listen [::]:{{ nginx_ssl_port }} ssl http2;
+    {% else %}
+    listen 80;
+    listen [::]:80;
+    {% endif %} {# end: nginx_tls_cert #}
+
+    server_name {{ nginx_server_name }};
+
+    {% if nginx_forbid_robots == True %}
+    # Add header to forbid robots to index
+    # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+    add_header X-Robots-Tag "none";
+    {% endif %}
+
+    ssl_certificate {{ nginx_tls_cert }};
+    ssl_certificate_key {{ nginx_tls_key }};
+
+    include /etc/nginx/intermediate-tls.conf;
+
+    location / {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/https-access.log;
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Send requests to Express
+        proxy_pass http://express-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
+    # log API requests
+    location /server {
+        access_log /var/log/nginx/api-access.log;
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        proxy_pass http://tomcat-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
+    # log legacy rest requests
+    location /rest {
+        # redirect invalid REST retrieveLink values (see DS-3193)
+        rewrite ^/rest/rest/(.*)$ https://{{ nginx_server_name }}/rest/$1 redirect;
+
+        access_log /var/log/nginx/rest-access.log;
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        proxy_pass http://tomcat-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
+    include extra-security.conf;
+}
+
+upstream tomcat-http {
+    {% if nginx_tls_cert is defined %}
+    server 127.0.0.1:8443;
+    {% else %}
+    server 127.0.0.1:8001;
+    {% endif %}
+
+    # The keepalive parameter sets the maximum number of idle keepalive connections
+    # to upstream servers that are preserved in the cache of each worker process. When
+    # this number is exceeded, the least recently used connections are closed.
+    keepalive 60;
+}
+
+# dspace-angular running via Node.js with Express
+upstream express-http {
+    server 127.0.0.1:4000;
+
+    # The keepalive parameter sets the maximum number of idle keepalive connections
+    # to upstream servers that are preserved in the cache of each worker process. When
+    # this number is exceeded, the least recently used connections are closed.
+    keepalive 60;
+}
+
+# List of networks to mark as bots. Hosts on these networks are behaving like
+# bots but not declaring a bot user agent. We then rely on Tomcat's Crawler
+# Session Manager Valve to assign one single session to all these users in
+# order to reduce resource usage.
+#
+# In the included file, matching networks have the key set to 'bot', which we
+# map to $limit_bots_ip and use as the key for a limit_req_zone below for bots.
+# Networks that don't match have $limit_bots_ip set to an empty string, which
+# is importing for the limit_req zone and the next mapping block.
+geo $limit_bots_ip {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    include /etc/nginx/bot-networks.conf;
+}
+
+# Matching networks have the key set to 'bot' by the geo module above, while
+# those not matching are set to an empty string. We re-use this below by map-
+# ping $limit_bots_ip to $ua, which we then pass to Tomcat via proxy_set_header
+# in location blocks above.
+#
+# Note: this seems overly complicated, but is necessary because geo does not
+# support dynamic values. Instead we set an empty string above and then map
+# the host's declared user agent to $ua when we see an empty string. This is
+# also a way for me to use one bot-networks.conf file for both the limiting
+# of requests as well as classifying bots.
+map $limit_bots_ip $ua {
+    # If the geo block above set this to an empty string then we can map the
+    # host's declared user agent directly. Otherwise, it's a bot as declared
+    # by the geo block.
+    ''      $http_user_agent;
+
+    default 'bot';
+}
+
+# vim: set ts=4 sw=4:

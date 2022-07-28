@@ -65,13 +65,25 @@
   notify:
     - reload nginx
 
-- name: Configure nginx dspace vhost
+- name: Configure nginx DSpace 6 vhost
   ansible.builtin.template:
     src: nginx/dspace.conf.j2
     dest: /etc/nginx/conf.d/dspace.conf
     mode: "0644"
     owner: root
     group: root
+  when: dspace_version_major == 6
+  notify:
+    - reload nginx
+
+- name: Configure nginx DSpace 7 vhost
+  ansible.builtin.template:
+    src: nginx/dspace7.conf.j2
+    dest: /etc/nginx/conf.d/dspace.conf
+    mode: 0644
+    owner: root
+    group: root
+  when: dspace_version_major == 7
   notify:
     - reload nginx
 

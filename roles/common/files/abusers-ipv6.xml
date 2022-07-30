@@ -3,23 +3,25 @@
   <option name="family" value="inet6" />
   <short>abusers-ipv6</short>
   <description>A list of abusive IPv6 addresses.</description>
-  <entry>2001:1418:14:100::47</entry>
-  <entry>2001:41d0:c:f49::</entry>
-  <entry>2001:470:26:10:250:56ff:fea6:758d</entry>
-  <entry>2400:6180:0:d0::161:e001</entry>
-  <entry>2400:6180:0:d0::53b:1</entry>
-  <entry>2400:6180:0:d0::ea8:8001</entry>
-  <entry>2400:6180:100:d0::2db:3001</entry>
-  <entry>2400:6180:100:d0::9bb:1</entry>
-  <entry>2604:2dc0:200:1378::</entry>
-  <entry>2604:a880:400:d0::4c3c:e001</entry>
-  <entry>2604:a880:4:1d0::b9:8000</entry>
-  <entry>2a00:d680:20:50::2647</entry>
+  <entry>2001:19f0:6401:694:5400:1ff:fe80:2c28</entry>
+  <entry>2001:41d0:203:83e2::</entry>
+  <entry>2001:df0:2fc:153::3e45:f14e</entry>
+  <entry>2400:6180:0:d0::4be:2001</entry>
+  <entry>2400:6180:0:d0::857:c001</entry>
+  <entry>2400:6180:0:d0::ee6:9001</entry>
+  <entry>2401:5f80:5000:2::11</entry>
+  <entry>2403:6a40::120:cc2a:d773:3d27:4391</entry>
+  <entry>2607:5300:120:334::</entry>
+  <entry>2607:5300:203:1ad7::</entry>
   <entry>2a00:d680:20:50::42</entry>
-  <entry>2a00:d680:20:50::4a10</entry>
-  <entry>2a01:4f8:161:1d2::2</entry>
-  <entry>2a01:4f9:4a:5299::2</entry>
-  <entry>2a02:c207:2019:9917::1</entry>
-  <entry>2a02:c207:3007:3363::1</entry>
-  <entry>2a03:4000:61:16ac::17:2686</entry>
+  <entry>2a00:f940:2:1:2::bcb</entry>
+  <entry>2a01:4f8:171:d45::2</entry>
+  <entry>2a01:4f8:241:10c5::2</entry>
+  <entry>2a01:4f8:c012:e88b::1</entry>
+  <entry>2a01:4f8:c0c:3137::2</entry>
+  <entry>2a02:2308::c8c:b725:6a93:ab9:3d8c</entry>
+  <entry>2a02:c207:2066:7304::1</entry>
+  <entry>2a03:4000::318:78f9:4eff:fe0f:1529</entry>
+  <entry>2a03:4000::31b:1446:79ff:fe7b:7794</entry>
+  <entry>2a05:ba00:0:235::1</entry>
 </ipset>

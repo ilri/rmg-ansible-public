@@ -166,6 +166,7 @@
       - perl-Font-TTF.noarch # for circos
       - perl-JSON.noarch # for vep
       - perl-LWP-Protocol-https.noarch # so perl can use https
+      - perl-List-MoreUtils.noarch # for abricate
       - perl-PerlIO-gzip.x86_64 # for vep
       - perl-Readonly.noarch # for circos
       - perl-Text-Soundex.x86_64 # for RepeatMasker

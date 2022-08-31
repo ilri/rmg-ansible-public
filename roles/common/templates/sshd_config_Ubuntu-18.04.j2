@@ -127,9 +127,8 @@ MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@op
 KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
 
 {% if ssh_allowed_users is defined and ssh_allowed_users %}
-# Is there a list of allowed users?
-# Is it populated? (An empty list is 'None', which evaluates as False in Python)
-# merge the items of a list into one string using a space as a separator
-# http://jinja.pocoo.org/docs/dev/templates/#join
 AllowUsers {{ ssh_allowed_users|join(" ") }} {{ provisioning_user.name }}
+{% else %}
+# Always allow the provisioning user
+AllowUsers {{ provisioning_user.name }}
 {% endif %}

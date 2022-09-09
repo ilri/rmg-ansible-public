@@ -21,9 +21,10 @@ On subsequent runs, after SSH keys and sudo configurations have been deployed, y
 
 ## TODO
 
-- Convention: replace all double quotes with single quotes where we don't need variable interpolation
 - Update: sysctl.conf template for Ubuntu, using CentOS template as a reference
 - Update: make SSH rate limits configurable
+- Port MySQL backup script to Python 3
+- Migrate from cron-apt to unattended-upgrades
 
 ## License
 Copyright (C) 2015–2022 International Livestock Research Institute (ILRI)

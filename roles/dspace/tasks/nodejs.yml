@@ -50,14 +50,14 @@
     mode: 0640
 
 - name: Install DSpace Mirage 2 Node.js build dependencies
-  npm: name={{ item }} global=yes
+  community.general.npm: name={{ item }} global=yes
   loop:
     - grunt-cli
     - yarn
   become_user: '{{ tomcat_user }}'
 
 - name: Add npm packages to PATH
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: '{{ tomcat_user_home }}/.profile'
     regexp: '^export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin$'
     line: 'export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin'

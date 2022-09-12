@@ -5,7 +5,7 @@
       - glusterfs-fuse
       - libsemanage-python # required by Ansible's seboolean module
     state: present
-  when: ansible_distribution_major_version is version('7','==')
+  when: ansible_distribution_major_version is version('7', '==')
   tags: glusterfs-client
 
 - name: Install GlusterFS client packages (CentOS Stream 8)
@@ -14,7 +14,7 @@
       - glusterfs-fuse
       - python3-libsemanage.x86_64 # required by Ansible's seboolean module
     state: present
-  when: ansible_distribution_major_version is version('8','==')
+  when: ansible_distribution_major_version is version('8', '==')
   tags: glusterfs-client
 
 - name: Create mount points

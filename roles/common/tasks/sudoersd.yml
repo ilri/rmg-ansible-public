@@ -17,7 +17,7 @@
     group: root
     mode: 0600
     validate: visudo -cf %s
-  when: ansible_os_family !=  "Debian"
+  when: ansible_os_family != "Debian"
 
 - name: Add extra sudo users
   ansible.builtin.template:

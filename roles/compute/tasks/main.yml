@@ -98,7 +98,7 @@
       - xeyes # to test x11 :)
       - xz-compat-libs.x86_64 # for samtools/1.5 compiled on CentOS 6
     state: present
-  when: ansible_distribution_major_version is version('7','==')
+  when: ansible_distribution_major_version is version('7', '==')
   tags: packages
 
 # 2022-04-21: currently missing from CentOS 8:
@@ -188,7 +188,7 @@
       - wget.x86_64
       - xorg-x11-xauth.x86_64 # or else X11 forwarding doesn't work
     state: present
-  when: ansible_distribution_major_version is version('8','==')
+  when: ansible_distribution_major_version is version('8', '==')
   tags: packages
 
 - name: Clone environment modules

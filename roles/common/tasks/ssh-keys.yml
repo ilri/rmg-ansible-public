@@ -8,7 +8,7 @@
 - name: Add public keys to authorized_keys
   ansible.posix.authorized_key:
     user: "{{ provisioning_user.name }}"
-    key: "{{ lookup('file',item) }}"
+    key: "{{ lookup('file', item) }}"
   with_fileglob:
     # use descriptive names for keys, like: aorth-mzito-rsa.pub
     - ssh-pub-keys/*.pub

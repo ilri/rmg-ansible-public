@@ -103,7 +103,6 @@
           - unzip
           - pciutils
           - zstd
-
         state: present
   tags: packages
 

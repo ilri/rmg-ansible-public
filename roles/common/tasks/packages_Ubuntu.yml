@@ -2,6 +2,19 @@
 
 - name: Configure Ubuntu packages
   block:
+    # Create directory for third-party package signing keys. Required on distros
+    # older than Debian 12 / Ubuntu 22.04.
+    #
+    # See: https://wiki.debian.org/DebianRepository/UseThirdParty
+    - name: Create /etc/apt/keyrings
+      file:
+        path: /etc/apt/keyrings
+        mode: 0755
+        owner: root
+        group: root
+        state: directory
+      when: ansible_distribution_major_version is version('22.04', '<')
+
     - name: Configure apt mirror
       ansible.builtin.template:
         src: sources.list.j2

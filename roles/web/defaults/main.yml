@@ -1,6 +1,11 @@
 ---
 # file: defaults/main.yml
 
+# Web server to use. For now we don't really configure much, but use this for
+# setting up some certbot pre/post scripts. Choices are currently "apache_httpd"
+# and "nginx". Eventually I might start using caddy.
+webserver: apache_httpd
+
 # 1 hour timeout
 nginx_ssl_session_timeout: 1h
 # 10MB -> 40,000 sessions

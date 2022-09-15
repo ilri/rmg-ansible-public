@@ -93,7 +93,7 @@ def run_cmd(cmd):
 # Using mysql creds. provided by user:
 #    - return a list of all dbs
 def get_databases(auth_file):
-    cmd_list_dbs = "%s --defaults-extra-file=%s --silent -N -e 'show databases'" % (BIN_MYSQL, auth_file)
+    cmd_list_dbs = f"{BIN_MYSQL} --defaults-extra-file={auth_file} --silent -N -e 'show databases'"
     return run_cmd(cmd_list_dbs)
 
 
@@ -116,15 +116,15 @@ host={host}
 #    - iterate through the list & back'em up one by one
 def backup_databases(database, auth_file, timestamp_filenames, mysql_backups_dir=DEF_MYSQL_BACKUPS_DIR, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS):
     if timestamp_filenames:
-        dump_filename = "%s/%s-%s.sql" % (mysql_backups_dir, database, get_timestamp())
+        dump_filename = f"{mysql_backups_dir}/{database}-{get_timestamp()}.sql"
     else:
-        dump_filename = "%s/%s.sql" % (mysql_backups_dir, database)
+        dump_filename = f"{mysql_backups_dir}/{database}.sql"
 
-    cmd_dump_db = "%s --defaults-extra-file=%s --events --skip-add-locks -e --opt -c %s > %s" % (BIN_MYSQLDUMP, auth_file, database, dump_filename)
+    cmd_dump_db = f"{BIN_MYSQLDUMP} --defaults-extra-file={auth_file} --events --skip-add-locks -e --opt -c {database} > {dump_filename}"
     output, err, returncode = run_cmd(cmd_dump_db)
     if returncode != 0:
 
-        job_status = "Failed to backup '%s' db.\nOutput: %s\nError: %s\nReturn Code: %d" % (database, output, err, returncode)
+        job_status = f"Failed to backup '{database}' db.\nOutput: {output}\nError: {err}\nReturn Code: {returncode}"
         print(job_status)
         # send mail notification
         if notify:
@@ -134,15 +134,15 @@ def backup_databases(database, auth_file, timestamp_filenames, mysql_backups_dir
             sys.exit(returncode)
     else:
         compress_backup(dump_filename, notify)
-        print("Done backing up '%s' db" % database)
+        print(f"Done backing up '{database}' db")
 
 
 # Compress dump file using gzip
 def compress_backup(dump_filename, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNORE_ERRORS):
-    cmd_gzip_dump = "%s -c %s > %s.gz" % (BIN_GZIP, dump_filename, dump_filename)
+    cmd_gzip_dump = f"{BIN_GZIP} -c {dump_filename} > {dump_filename}.gz"
     output, err, returncode = run_cmd(cmd_gzip_dump)
     if returncode != 0:
-        job_status = "Failed to compress %s sql backup file.\nOutput: %s\nReturn Code: %d" % (dump_filename, output, returncode)
+        job_status = f"Failed to compress {dump_filename} sql backup file.\nOutput: {output}\nReturn Code: {returncode}"
         print(job_status)
         # send mail notification
         if notify:
@@ -150,27 +150,27 @@ def compress_backup(dump_filename, notify=DEF_SEND_MAIL, ignore_errors=DEF_IGNOR
         if not ignore_errors:
             sys.exit(returncode)
     else:
-        print("Done compressing %s sql backup file" % dump_filename)
+        print(f"Done compressing {dump_filename} sql backup file")
         os.unlink(dump_filename)
 
 
 # Send mail notifications using mailx which will get mail configs./options
 # from ~/.mailrc
 def sendmail_notification(cronjob_status):
-    mailrc_opts = "-S from=%s -S smtp=%s -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user=%s -S smtp-auth-password=%s" % (MAILRC_FROM_EMAIL, MAILRC_SMTP_SERVER, MAILRC_AUTH_USER, MAILRC_AUTH_PASS)
-    mail_subject = "%s - MySQL backup status" % socket.gethostname()
-    cmd_sendmail = "echo %s | %s %s -s '%s' %s" % (json.dumps(cronjob_status), BIN_MAIL, mailrc_opts, mail_subject, DEF_ADMIN_EMAILS)
+    mailrc_opts = f"-S from={MAILRC_FROM_EMAIL} -S smtp={MAILRC_SMTP_SERVER} -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user={MAILRC_AUTH_USER} -S smtp-auth-password={MAILRC_AUTH_PASS}"
+    mail_subject = f"{socket.gethostname()} - MySQL backup status"
+    cmd_sendmail = f"echo {json.dumps(cronjob_status)} | {BIN_MAIL} {mailrc_opts} -s '{mail_subject}' {DEF_ADMIN_EMAILS}"
     output, err, returncode = run_cmd(cmd_sendmail)
     if returncode != 0:
-        print("Failed to send mail notification using %s" % BIN_MAIL)
+        print(f"Failed to send mail notification using {BIN_MAIL}")
     else:
-        print("Notification mail(s) sent to %s" % DEF_ADMIN_EMAILS)
+        print(f"Notification mail(s) sent to {DEF_ADMIN_EMAILS}")
 
 
 # Create backup destination dir. if nonexistent
 def create_backup_dir(backup_dir):
     if not os.path.exists(backup_dir):
-        print("Backup directory '%s' doesn't exist. Creating it..." % backup_dir)
+        print(f"Backup directory '{backup_dir}' doesn't exist. Creating it...")
         os.makedirs(backup_dir, 0o755)
 
 
@@ -213,7 +213,7 @@ def main():
     # get a list of dbs, fail otherwise
     output, err, retcode = get_databases(auth_file)
     if retcode != 0:
-        job_status = "Couldn't get a list of databases.\nOutput: %s\nError: %s\nReturn Code: %d" % (output, err, retcode)
+        job_status = f"Couldn't get a list of databases.\nOutput: {output}\nError: {err}\nReturn Code: {retcode}"
         print(job_status)
         # send mail notification
         if notify_mail:
@@ -226,7 +226,7 @@ def main():
         if db == "information_schema" or db == "performance_schema":
             pass
         else:
-            print("backing up '%s' db" % db)
+            print(f"backing up '{db}' db")
             backup_databases(db, auth_file, timestamp_filenames, mysql_backups_dir, notify_mail, ignore_errors)
     os.unlink(auth_file)
     print("Peace out !!")

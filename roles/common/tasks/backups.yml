@@ -35,6 +35,7 @@
   loop:
     - { src: "scripts/backup_mysql.py.j2", dest: "/opt/ilri/scripts/backup_mysql.py" }
     - { src: "scripts/backup_postgresql.py.j2", dest: "/opt/ilri/scripts/backup_postgresql.py" }
+  tags: scripts
 
 # Install the restic binary as restic-0.12.1 to make version handling easier, as
 # I can then just test if my expected version exists rather than trying to parse

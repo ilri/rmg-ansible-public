@@ -87,7 +87,8 @@ def show_args():
 def run_cmd(cmd):
     proc = sb.Popen(cmd, stdout=sb.PIPE, stderr=sb.STDOUT, shell=True)
     output, err = proc.communicate()
-    return output, err, proc.returncode
+    # decode output to string because communicate() returns bytes
+    return output.decode(), err, proc.returncode
 
 
 # Using mysql creds. provided by user:

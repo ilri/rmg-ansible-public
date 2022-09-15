@@ -58,18 +58,12 @@ BIN_MAIL = "/usr/bin/mailx"
 {% endif %}
 
 
-# return current timestamp, used in backup filename
+# Return current timestamp (used in backup filename)
 def get_timestamp():
     return time.strftime("%Y-%m-%d")
 
 
-# show cmd-line args & parse'em
-#    -u, --username -> mysql username used for backup op.
-#    -p, --password -> mysql user's password
-#    -H, --host -> mysql host
-#    -n, --notify -> send cronjob status via mail notifications
-#    -d, --destination -> path mysql backups dir
-#    -i, --ignore-errors -> ignore any errors occurred i.e. don't exit on error
+# Show and parse command line arguments
 def show_args():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -113,7 +107,7 @@ def show_args():
     return args, parser
 
 
-# Run the given cmd & return the output
+# Run the given cmd and return the output
 def run_cmd(cmd):
     proc = sb.Popen(cmd, stdout=sb.PIPE, stderr=sb.STDOUT, shell=True)
     output, err = proc.communicate()
@@ -121,8 +115,7 @@ def run_cmd(cmd):
     return output.decode(), err, proc.returncode
 
 
-# Using mysql creds. provided by user:
-#    - return a list of all dbs
+# Return a list of all databases accessible by the curreny MySQL user
 def get_databases(auth_file):
     cmd_list_dbs = (
         f"{BIN_MYSQL} --defaults-extra-file={auth_file} --silent -N -e 'show databases'"
@@ -130,8 +123,7 @@ def get_databases(auth_file):
     return run_cmd(cmd_list_dbs)
 
 
-# Generate a temporary login credentials file for
-# use in mysql/mysqldump
+# Generate a temporary login credentials file for use in mysql/mysqldump
 def generate_credentials_file(mysql_user, mysql_pass, mysql_host):
     auth_template = """
 [client]
@@ -145,8 +137,7 @@ host={host}
     return tmpfile.name
 
 
-# given a list of databases:
-#    - iterate through the list & back'em up one by one
+# Iterate through a list of databases and back them up one by one
 def backup_databases(
     database,
     auth_file,
@@ -159,6 +150,8 @@ def backup_databases(
         dump_filename = f"{mysql_backups_dir}/{database}-{get_timestamp()}.sql"
     else:
         dump_filename = f"{mysql_backups_dir}/{database}.sql"
+
+    print(f"> Dumping '{database}' to '{dump_filename}'")
 
     cmd_dump_db = f"{BIN_MYSQLDUMP} --defaults-extra-file={auth_file} --events --skip-add-locks -e --opt -c {database} > {dump_filename}"
     output, err, returncode = run_cmd(cmd_dump_db)
@@ -174,7 +167,7 @@ def backup_databases(
             sys.exit(returncode)
     else:
         compress_backup(dump_filename, notify)
-        print(f"Done backing up '{database}' db")
+        print(f"> Backed up '{database}' ✓\n")
 
 
 # Compress dump file using gzip
@@ -192,7 +185,7 @@ def compress_backup(
         if not ignore_errors:
             sys.exit(returncode)
     else:
-        print(f"Done compressing {dump_filename} sql backup file")
+        print(f"> Compressed '{dump_filename}' ✓")
         os.unlink(dump_filename)
 
 
@@ -216,10 +209,9 @@ def create_backup_dir(backup_dir):
         os.makedirs(backup_dir, 0o755)
 
 
-# main function:
+# Main function:
 #     - Parse user input a.k.a cmd-line args
-#     - backup all dbs except information_schema
-#     - peace out!!
+#     - Backup all databases except system schemas
 def main():
     args, parser = show_args()
     if args.username is None or args.password is None or args.host is None:
@@ -270,7 +262,7 @@ def main():
         if db == "information_schema" or db == "performance_schema":
             pass
         else:
-            print(f"backing up '{db}' db")
+            print(f"Backing up '{db}'...")
             backup_databases(
                 db,
                 auth_file,
@@ -281,9 +273,7 @@ def main():
             )
 
     os.unlink(auth_file)
-    print("Peace out !!")
 
 
-# run all teh tings!
 if __name__ == "__main__":
     sys.exit(main())

@@ -260,7 +260,7 @@ def main():
     mysql_dbs = output.splitlines()
     for db in mysql_dbs:
         if db == "information_schema" or db == "performance_schema":
-            pass
+            continue
         else:
             print(f"Backing up '{db}'...")
             backup_databases(

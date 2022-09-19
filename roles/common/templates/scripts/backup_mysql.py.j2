@@ -102,7 +102,7 @@ def get_databases(mysql_user, mysql_pass, mysql_host):
     cmd_list_dbs = f"{BIN_MYSQL} --user={mysql_user} --password={mysql_pass} --host={mysql_host} --silent -N -e 'show databases'"
 
     args = shlex.split(cmd_list_dbs)
-    process = sb.run(args, capture_output=True, text=True)
+    process = sb.run(args, stdout=sb.PIPE, stderr=sb.PIPE, universal_newlines=True)
 
     if process.returncode != 0:
         send_mail(process.stderr)
@@ -169,7 +169,7 @@ def send_mail(status):
     cmd_send_mail = f"{BIN_MAIL} {mailrc_opts} -s '{mail_subject}' {DEF_ADMIN_EMAILS}"
     args = shlex.split(cmd_send_mail)
 
-    mail_process = sb.run(args, input=json.dumps(status), stderr=sb.PIPE, text=True)
+    mail_process = sb.run(args, input=json.dumps(status), stderr=sb.PIPE, universal_newlines=True)
 
     if mail_process.returncode != 0:
         print(f"Failed to send mail notification using {BIN_MAIL}")

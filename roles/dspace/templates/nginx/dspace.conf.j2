@@ -14,12 +14,12 @@
     {% include 'nginx/legacy-dspace-domains.conf.j2' %}
 {% endif %}
 
-# Create a new cache for rest requests with space for 1 million keys (which can
-# store ~8,000 keys), purges inactive responses after 24 hours regardless of t-
+# Create a new cache for rest requests with space for 2 million keys (which can
+# store ~16,000 keys), purges inactive responses after 24 hours regardless of t-
 # heir validity, and has two levels of storage, ie "2c/65".
 #
 # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html
-proxy_cache_path /var/cache/nginx/rest_cache levels=2:2 keys_zone=rest:1m inactive=24h max_size=1G;
+proxy_cache_path /var/cache/nginx/rest_cache levels=2:2 keys_zone=rest:2m inactive=24h max_size=1G;
 
 {% if nginx_tls_cert is defined %}
 # Handle {{ nginx_server_name }} http -> https
@@ -276,6 +276,10 @@ server {
             proxy_cache_valid 24h;
             # Allow use of stale entries if the cache is updating
             proxy_cache_use_stale updating;
+            # Override the default proxy cache key to include the HTTP Accept
+            # header. This makes sure we don't send JSON responses to clients
+            # requesting XML and vice versa.
+            proxy_cache_key $scheme$proxy_host$request_uri$http_accept;
             # DSpace always sends a cookie, which makes nginx refuse to cache the response
             proxy_ignore_headers "Set-Cookie";
             # Add header with cache status (MISS, HIT, EXPIRED, etc.)

@@ -41,6 +41,11 @@ MaxAuthTries 4
 # but this is overridden so installations will only check .ssh/authorized_keys
 AuthorizedKeysFile	.ssh/authorized_keys
 
+{# For Ona.io's devops team #}
+{% if inventory_hostname is regex("ilrinrb3[346]") %}
+TrustedUserCAKeys /etc/ssh/ca/authorized
+{% endif %}
+
 #AuthorizedPrincipalsFile none
 
 #AuthorizedKeysCommand none

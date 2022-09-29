@@ -287,6 +287,11 @@ server {
             # Make sure session cookies are not leaked in cached payloads
             proxy_hide_header "Set-Cookie";
 
+            # Don't cache when user Shift-refreshes (Cache-Control: no-cache) or
+            # when a client has an active session (see the $cookie_jsessionid map).
+            proxy_cache_bypass $http_cache_control $active_user_session;
+            proxy_no_cache $http_cache_control $active_user_session;
+
             # Explicitly set proxy headers again because the existing headers from
             # the global context get cleared when we add new headers with add_header
             # and proxy_set_header in this block.
@@ -467,6 +472,20 @@ map $http_user_agent $limit_bots_ua {
 
     # 2021-12-29 dead giveway for a bot that is trying to pretend to be a user
     ~randint 1;
+}
+
+# Check if the JSESSIONID cookie is present and contains a 32-character hex
+# value, which would mean that a user is actively attempting to re-use their
+# Tomcat session. Then we set the $active_user_session variable and use it
+# to bypass the nginx proxy cache in REST requests. This is safe because any
+# client sending one of these has likely already logged in and is trying to
+# get fresh data.
+map $cookie_jsessionid $active_user_session {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    '~[A-Z0-9]{32}' 1;
 }
 
 # Zone for limiting "bad bot" requests with a hard limit of 1 per minute. Uses

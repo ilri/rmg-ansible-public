@@ -12,6 +12,10 @@ export SQUEUE_FORMAT="%.7i %.9P %.18j %.8u %.2t %.10M %.6C %R"
 # adjust sacct output to show more information
 export SACCT_FORMAT="JobID,JobName,User,Account,State,CPUTime,AllocCPUs,Partition,NodeList%-30"
 
+# Temporary directory to build the squashfs filesystem (default is /tmp). We
+# don't want users to fill up /tmp and crash SLURM!
+export SINGULARITY_TMPDIR=/var/scratch/$USER
+
 {% if inventory_hostname == 'hpc' %}
 # only run on interactive sessions
 TTY=$(tty -s)

@@ -10,7 +10,7 @@
     path: /etc/ssl/private/nginx-snakeoil.key
   tags: nginx
 
-- name: Generate self-signed TLS cert1
+- name: Generate self-signed TLS cert
   community.crypto.x509_certificate:
     path: /etc/ssl/certs/nginx-snakeoil.crt
     privatekey_path: /etc/ssl/private/nginx-snakeoil.key

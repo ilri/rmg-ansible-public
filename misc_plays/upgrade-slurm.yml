@@ -12,9 +12,23 @@
 - hosts: hpc
   become: true
   tasks:
+  # Note: We name the packages explicitly so we can use `state: latest` with
+  # `update_only: true`. If we try to update "slurm-*" yum/dnf will see the
+  # other available slurm packages in the repository that we don't have in-
+  # stalled, and will refuse to run because those are not updates.
+  #
+  # See: https://github.com/ansible/ansible/issues/77770
     - name: Upgrade SLURM on HPC
       ansible.builtin.package:
-        name: 'slurm-*'
+        name:
+          - slurm
+          - slurm-slurmd
+          - slurm-devel
+          - slurm-pam_slurm
+          - slurm-example-configs
+          - slurm-contribs
+          - slurm-slurmctld
+          - slurm-slurmdbd
         state: latest
         update_only: true
         update_cache: true
@@ -37,7 +51,13 @@
   tasks:
     - name: Upgrade SLURM on compute nodes
       ansible.builtin.package:
-        name: 'slurm-*'
+        name:
+          - slurm
+          - slurm-slurmd
+          - slurm-devel
+          - slurm-pam_slurm
+          - slurm-example-configs
+          - slurm-contribs
         state: latest
         update_only: true
         update_cache: true

@@ -1,15 +1,9 @@
 ---
 # file: roles/dspace/handlers/main.yml
-
-- name: restart nginx
-  ansible.builtin.systemd:
-    name: nginx
-    state: restarted
-
-- name: reload nginx
-  ansible.builtin.systemd:
-    name: nginx
-    state: reloaded
+#
+# Note: because Ansible handlers are global, there are no nginx handlers here.
+# They are in the web role.
+#
 
 - name: restart tomcat7
   ansible.builtin.systemd:

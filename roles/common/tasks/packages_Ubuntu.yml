@@ -54,6 +54,10 @@
           - debconf-utils
           - software-properties-common
           - zstd
+          - debian-keyring # recommended for third-party repositories
+          - debian-archive-keyring # recommended for third-party repositories
+          - apt-transport-https # recommended for third-party repositories
+          - ubuntu-keyring # recommended for third-party repositories
         state: present
         cache_valid_time: 3600
 

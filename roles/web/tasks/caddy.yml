@@ -35,7 +35,7 @@
     (download_caddy_signing_key.status_code is defined and download_caddy_signing_key.status_code == 200) or
     add_caddy_apt_repository is changed
 
-- name: Install Caddy 
+- name: Install Caddy
   ansible.builtin.apt:
     name: caddy
     state: present

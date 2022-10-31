@@ -17,3 +17,5 @@
   ansible.builtin.systemd:
     name: caddy
     state: reloaded
+
+# vim: set sw=2 ts=2:

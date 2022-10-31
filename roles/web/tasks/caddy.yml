@@ -1,0 +1,64 @@
+---
+# For now this only does some auxiliary configuration of the caddy install. It
+# could eventually handle more dynamic things like vhosts, but then we'd have
+# to worry about a lot more specifics. At the very least we are now able to m-
+# anage some of the basic security headers.
+#
+# See: https://caddyserver.com/docs/install#debian-ubuntu-raspbian
+
+- name: Check Caddy package signing key
+  ansible.builtin.stat:
+    path: /usr/share/keyrings/caddy-stable-archive-keyring.key
+  register: caddy_signing_key_stat
+
+- name: Download Caddy package signing key
+  ansible.builtin.get_url:
+    url: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+    dest: /usr/share/keyrings/caddy-stable-archive-keyring.key
+    owner: root
+    group: root
+    mode: 0644
+  register: download_caddy_signing_key
+  when: not caddy_signing_key_stat.stat.exists
+
+- name: Add Caddy stable repository
+  ansible.builtin.apt_repository:
+    repo: 'deb [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.key] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main'
+    filename: caddy-stable
+    state: present
+  register: add_caddy_apt_repository
+
+- name: Update apt cache
+  ansible.builtin.apt: # noqa no-handler
+    update_cache: true
+  when:
+    (download_caddy_signing_key.status_code is defined and download_caddy_signing_key.status_code == 200) or
+    add_caddy_apt_repository is changed
+
+- name: Install Caddy 
+  ansible.builtin.apt:
+    name: caddy
+    state: present
+    install_recommends: false
+    cache_valid_time: 3600
+
+- name: Create caddy conf.d directory
+  ansible.builtin.file:
+    path: /etc/caddy/conf.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Copy extra caddy configs
+  ansible.builtin.copy:
+    src: etc/caddy/conf.d/01-security-headers.conf
+    dest: /etc/caddy/conf.d/01-security-headers.conf
+    mode: 0644
+    owner: root
+    group: root
+  notify:
+    - reload caddy
+  tags: caddy
+
+# vim: set sw=2 ts=2:

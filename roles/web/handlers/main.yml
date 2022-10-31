@@ -12,3 +12,8 @@
   ansible.builtin.systemd:
     name: nginx
     state: reloaded
+
+- name: reload caddy
+  ansible.builtin.systemd:
+    name: caddy
+    state: reloaded

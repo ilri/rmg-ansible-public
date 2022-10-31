@@ -7,6 +7,7 @@
   when:
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version is version('20.04', '>=')
+    - (webserver is defined and webserver != caddy)
   tags: letsencrypt
 
 - name: Configure nginx
@@ -15,5 +16,12 @@
     - webserver is defined
     - webserver == 'nginx'
   tags: nginx
+
+- name: Configure caddy
+  ansible.builtin.include_tasks: caddy.yml
+  when:
+    - webserver is defined
+    - webserver == 'caddy'
+  tags: caddy
 
 # vim: set ts=2 sw=2:

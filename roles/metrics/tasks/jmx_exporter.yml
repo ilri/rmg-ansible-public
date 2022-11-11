@@ -20,9 +20,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
-  loop:
-    - "/etc/victoriametrics/jmx_prometheus_javaagent-0.16.0.jar"
-    - "/etc/victoriametrics/jmx_prometheus_javaagent-0.16.1.jar"
+  loop: "{{ jmx_exporter_old_versions }}"
 
 - name: Configure jmx_exporter
   ansible.builtin.copy:

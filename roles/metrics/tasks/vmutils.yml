@@ -36,12 +36,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
-  loop:
-    - "/usr/local/bin/vmutils-amd64-v1.74.0.tar.gz"
-    - "/usr/local/bin/vmutils-amd64-v1.75.0.tar.gz"
-    - "/usr/local/bin/vmutils-amd64-v1.76.0.tar.gz"
-    - "/usr/local/bin/vmutils-amd64-v1.77.1.tar.gz"
-    - "/usr/local/bin/vmutils-linux-amd64-v1.79.3.tar.gz"
+  loop: "{{ victoriametrics_old_versions }}"
 
 - name: Create vmagent tmpData directory
   ansible.builtin.file:

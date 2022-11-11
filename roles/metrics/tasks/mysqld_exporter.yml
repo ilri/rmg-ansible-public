@@ -36,8 +36,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: absent
-  loop:
-    - "/usr/local/bin/mysqld_exporter-0.13.0.linux-amd64.tar.gz"
+  loop: "{{ mysqld_exporter_old_versions }}"
 
 - name: Configure mysqld_exporter config
   ansible.builtin.template:

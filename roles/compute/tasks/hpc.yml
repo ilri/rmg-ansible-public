@@ -1,0 +1,76 @@
+---
+# Try to codify the organic growth of HPC as a system into something we can ac-
+# tually manage.
+
+# Need to set SELinux to permissive for Apache httpd only:
+#
+#   semanage permissive -a httpd_t
+#
+# There is no Ansible module for semanage and we need this for DokuWiki.
+
+- name: Install SELinux utilities
+  ansible.builtin.dnf:
+    name:
+      - policycoreutils-python-utils
+      - python3-libsemanage.x86_64 # required by Ansible's seboolean module
+    state: present
+  tags: packages
+
+# I'm not sure if we also need httpd_unified? In the past we did...
+- name: Set SELinux booleans
+  ansible.posix.seboolean:
+    name: "{ item }"
+    state: true
+    persistent: true
+  loop:
+    - httpd_can_network_connect
+    - httpd_can_network_connect_db
+    - httpd_use_fusefs
+
+# HPC runs a web server for the wiki, mirrors, and a few other PHP applications
+- name: Install web packages
+  ansible.builtin.dnf:
+    name:
+      - httpd.x86_64
+      - mod_ssl.x86_64
+      - php-fpm.x86_64
+      - php-gd.x86_64
+      - php-intl.x86_64
+      - php-json.x86_64
+      - php-mbstring.x86_64
+      - php-mysqlnd.x86_64
+      - php-opcache.x86_64
+      - php-pdo.x86_64
+      - php-xml.x86_64
+    state: present
+  tags: packages
+
+# HPC runs samba to do Windows filesharing for SegoliP
+- name: Install samba packages
+  ansible.builtin.dnf:
+    name: samba.x86_64
+    state: present
+  tags: packages
+
+# HPC runs 389-ds for LDAP. This is ghetto because there's no way to enable a
+# module idempotently from Ansible.
+#
+# See: https://github.com/ansible/ansible/issues/64852
+- name: Enable the 389-ds module
+  ansible.builtin.copy:
+    dest: /etc/dnf/modules.d/389-ds.module
+    content: |
+      [389-ds]
+      name=389-ds
+      stream=1.4
+      profiles=
+      state=enabled
+  tags: packages,foo
+
+- name: Install 389-ds-base
+  ansible.builtin.dnf:
+    name: 389-ds-base.x86_64
+    state: present
+  tags: packages,foo
+
+# vim: set sw=2 ts=2:

@@ -27,11 +27,12 @@
     - "{{ local_ca_certs_dir }}/hpc-ca.crt"
     - "{{ local_ca_certs_dir }}/hpc-ca-2017.crt"
     - /etc/pki/ca-trust/source/anchors/hpc-ca-2017.crt
+    - "{{ local_ca_certs_dir }}/hpc-ca-2017.pem"
 
 - name: Copy HPC CA certificate to trust store
   ansible.builtin.copy:
-    src: hpc-ca-2017.pem
-    dest: "{{ local_ca_certs_dir }}/hpc-ca-2017.pem"
+    src: hpc-ca-2022.asc
+    dest: "{{ local_ca_certs_dir }}/hpc-ca-2022.asc"
     owner: root
     group: root
     mode: 0644

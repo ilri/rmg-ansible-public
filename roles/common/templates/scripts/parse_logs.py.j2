@@ -43,7 +43,10 @@ def main(arguments):
         # !! Match this format to your system's format.
         timestamp = r"([a-zA-Z]+ [0-9]+ [0-9]+:[0-9]+:[0-9]+)"
         ipv4 = r"([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})"
-        comment = fr"(Invalid user [a-zA-Z0-9]+ from {ipv4} port [0-9]+)"
+        # Match these messages in the journal:
+        #   Invalid user devops from 178.60.204.50 port 50768
+        #   Failed password for invalid user root from 61.177.173.31 port 22182 ssh2
+        comment = fr"(Failed password for invalid|Invalid) (user [a-zA-Z0-9]+ from {ipv4} port [0-9]+)"
 
         # The regex of the line we're looking for, built up from component regexps.
         combined_re = fr"{timestamp} .* {comment}"
@@ -59,8 +62,8 @@ def main(arguments):
             # waste time and resources submitting duplicates.
             #
             # See: https://www.abuseipdb.com/faq.html
-            if matches_flat[2] not in ipv4_addresses:
-                ipv4_addresses.append(matches_flat[2])
+            if matches_flat[3] not in ipv4_addresses:
+                ipv4_addresses.append(matches_flat[3])
             else:
                 continue
 
@@ -83,9 +86,9 @@ def main(arguments):
             # Output as a CSV row.
             writer.writerow(
                 {
-                    "IP": matches_flat[2],
+                    "IP": matches_flat[3],
                     "Categories": "18,22",
-                    "Comment": f"{attack_datetime_human} {matches_flat[1]}",
+                    "Comment": f"{attack_datetime_human} {matches_flat[1]} {matches_flat[2]}",
                     "ReportDate": attack_datetime_iso,
                 }
             )

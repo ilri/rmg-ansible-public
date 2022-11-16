@@ -19,7 +19,7 @@ ldap_access_filter = (objectClass=posixAccount)
 ldap_uri = ldaps://hpc.ilri.cgiar.org
 
 # CACERT should work on both GnuTLS (Ubuntu) and OpenSSL (CentOS)
-ldap_tls_cacert = {{ local_ca_certs_dir }}/hpc-ca-2017.pem
+ldap_tls_cacert = {{ local_ca_certs_dir }}/hpc-ca-2022.asc
 ldap_tls_reqcert = demand
 
 # General SSSD heartbeat timeout. After three missed heartbeats SSSD will shut

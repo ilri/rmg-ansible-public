@@ -157,19 +157,11 @@
     state: present
   when: ansible_distribution == 'CentOS'
 
-- name: Install heirloom-mailx
-  ansible.builtin.package:
-    name: heirloom-mailx
-    state: present
-  when:
-    - ansible_distribution == 'Ubuntu'
-    - ansible_distribution_version is version('16.04', '<')
-
 - name: Install s-nail
   ansible.builtin.package: name=s-nail state=present
   when:
     - ansible_distribution == 'Ubuntu'
-    - ansible_distribution_version is version('16.04', '>=')
+    - ansible_distribution_version is version('18.04', '>=')
 
 - name: Copy LSI RAID monitoring script
   ansible.builtin.template:

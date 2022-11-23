@@ -13,9 +13,6 @@ banaction=nftables[type=allports]
 {% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
 # Integrate with nftables
 banaction=nftables-allports
-{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '==') %}
-# Integrate with firewalld and ipsets
-banaction = firewallcmd-ipset
 {% else %}
 # Integrate with firewalld using direct rules. This is the default in CentOS's
 # fail2ban-firewalld package, see: /etc/fail2ban/jail.d/00-firewalld.conf.

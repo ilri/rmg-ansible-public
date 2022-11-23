@@ -12,9 +12,7 @@ HP_CLI_BIN=/usr/sbin/ssacli
 # admin email(s)
 EMAIL="{{ sysadmin_emails|join(" ") }}"
 
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '<') %}
-BIN_MAIL="/usr/bin/mail"
-{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('16.04', '>=') %}
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}
 BIN_MAIL="/usr/bin/s-nail"
 {% elif ansible_distribution == 'CentOS' %}
 BIN_MAIL="/usr/bin/mailx"

@@ -28,21 +28,6 @@
     state: present
     cache_valid_time: 3600
 
-# Ubuntu 18.04's linux-virtual and linux-kvm kernels don't support nftables.
-# For virtual machines we need to either install the generic kernel, which
-# pulls in a bunch of firmware and microcode, or use the LTS enablement stack
-# to get a newer virtual kernel that supports nftables.
-#
-# See: https://bugs.launchpad.net/ubuntu/+source/linux-kvm/+bug/1881346
-- name: Install Ubuntu LTS kernel package
-  when:
-    - ansible_distribution_version is version('18.04', '==')
-    - ansible_virtualization_role == 'guest'
-  ansible.builtin.package:
-    pkg: linux-virtual-hwe-18.04
-    state: present
-    cache_valid_time: 3600
-
 - name: Remove ufw
   when: ansible_distribution_version is version('16.04', '>=')
   ansible.builtin.package:

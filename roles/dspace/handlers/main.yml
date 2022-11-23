@@ -1,9 +1,12 @@
 ---
 # file: roles/dspace/handlers/main.yml
 #
-# Note: because Ansible handlers are global, there are no nginx handlers here.
-# They are in the web role.
+# Note: Ansible handlers are global so I technically shouldn't need an nginx
+# handler here (there is one in the web role), but I am getting an error:
 #
+#   ERROR! The requested handler 'web: reload nginx' was not found in either the main handlers list nor in the listening handlers list
+#
+# So for now I will duplicate it here.
 
 - name: restart tomcat7
   ansible.builtin.systemd:
@@ -19,3 +22,9 @@
   ansible.builtin.systemd:
     name: dspace-statistics-api
     state: restarted
+
+# When configs or TLS certificates change
+- name: reload nginx
+  ansible.builtin.systemd:
+    name: nginx
+    state: reloaded

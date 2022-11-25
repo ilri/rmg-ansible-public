@@ -19,7 +19,7 @@
 # I'm not sure if we also need httpd_unified? In the past we did...
 - name: Set SELinux booleans
   ansible.posix.seboolean:
-    name: "{ item }"
+    name: "{{ item }}"
     state: true
     persistent: true
   loop:

@@ -103,6 +103,7 @@
           - unzip
           - pciutils
           - zstd
+          - bzip2
         state: present
   tags: packages
 

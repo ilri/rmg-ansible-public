@@ -26,6 +26,10 @@
     - httpd_can_network_connect
     - httpd_can_network_connect_db
     - httpd_use_fusefs
+    - samba_enable_home_dirs
+    - samba_share_fusefs
+    - samba_export_all_ro
+    - samba_export_all_rw
 
 # HPC runs a web server for the wiki, mirrors, and a few other PHP applications
 - name: Install web packages

@@ -222,6 +222,15 @@
     mode: 0644
   tags: limits
 
+- name: Create user.slice override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/user.slice.d
+    group: root
+    owner: root
+    mode: 0755
+    state: directory
+  tags: limits
+
 - name: Copy systemd user.slice override
   ansible.builtin.copy:
     src: etc/systemd/system/user.slice.d/override.conf

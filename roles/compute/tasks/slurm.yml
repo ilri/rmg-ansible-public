@@ -16,7 +16,24 @@
     uid: 490
     group: slurm
 
-- name: Install slurm
+# TODO: we don't currently copy slurmdbd.conf or manage slurmdbd/slurmctld
+- name: Install slurm (head node)
+  ansible.builtin.package:
+    name:
+      - slurm
+      - slurm-slurmd
+      - slurm-slurmctld
+      - slurm-slurmdbd
+      - slurm-devel
+      - slurm-pam_slurm
+      - slurm-example-configs
+      - slurm-contribs
+      - munge
+    state: present
+  when: inventory_hostname == slurm_head_node
+  tags: packages
+
+- name: Install slurm (compute node)
   ansible.builtin.package:
     name:
       - slurm
@@ -27,6 +44,7 @@
       - slurm-contribs
       - munge
     state: present
+  when: inventory_hostname != slurm_head_node
   tags: packages
 
 - name: Copy slurm.conf

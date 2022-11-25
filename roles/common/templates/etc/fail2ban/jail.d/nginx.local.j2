@@ -20,4 +20,4 @@ logpath   = /var/log/nginx/*access.log
 maxretry  = 1
 findtime  = {{ fail2ban_findtime }}
 bantime   = {{ fail2ban_bantime }}
-ignoreip  = {{ fail2ban_ignoreip }}
+ignoreip  = {{ fail2ban_ignoreip }} {{ ansible_default_ipv4.address }}/32

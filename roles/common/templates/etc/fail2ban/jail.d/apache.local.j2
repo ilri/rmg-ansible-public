@@ -25,7 +25,7 @@ logpath   = {{ fail2ban_httpd_logpath }}
 maxretry  = 1
 findtime  = {{ fail2ban_findtime }}
 bantime   = {{ fail2ban_bantime }}
-ignoreip  = {{ fail2ban_ignoreip }}
+ignoreip  = {{ fail2ban_ignoreip }} {{ ansible_default_ipv4.address }}/32
 
 [apache-proxy]
 enabled   = true
@@ -49,4 +49,4 @@ logpath   = {{ fail2ban_httpd_logpath }}
 maxretry  = 1
 findtime  = {{ fail2ban_findtime }}
 bantime   = {{ fail2ban_bantime }}
-ignoreip  = {{ fail2ban_ignoreip }}
+ignoreip  = {{ fail2ban_ignoreip }} {{ ansible_default_ipv4.address }}/32

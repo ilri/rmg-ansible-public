@@ -69,12 +69,12 @@
       stream=1.4
       profiles=
       state=enabled
-  tags: packages,foo
+  tags: packages
 
 - name: Install 389-ds-base
   ansible.builtin.dnf:
     name: 389-ds-base.x86_64
     state: present
-  tags: packages,foo
+  tags: packages
 
 # vim: set sw=2 ts=2:

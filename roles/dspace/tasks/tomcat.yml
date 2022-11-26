@@ -64,6 +64,15 @@
     - tomcat_unzip.extract_results.rc == 0
   tags: tomcat
 
+# See: https://gitlab.inf.unibz.it/commul/docker/clarin-dspace/-/issues/44
+- name: Increase Tomcat session timeout
+  ansible.builtin.lineinfile:
+    path: "{{ tomcat_path }}/conf/web.xml"
+    regexp: '^\s+<session-timeout>30</session-timeout>'
+    line: "        <session-timeout>60</session-timeout>"
+    state: present
+  tags: tomcat
+
 - name: Remove old Tomcat versions
   ansible.builtin.file:
     path: "{{ item }}"

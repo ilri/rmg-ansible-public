@@ -73,11 +73,16 @@
       - perl-DBI.x86_64 # for vep, see: https://hpc.ilri.cgiar.org/vep-software
       - perl-Env.noarch # for masurca
       - perl-Font-TTF.noarch # for circos
+      - perl-GD.x86_64 # for circos
       - perl-JSON.noarch # for vep
       - perl-LWP-Protocol-https.noarch # so perl can use https
       - perl-List-MoreUtils.noarch # for abricate
+      - perl-Math-Round.noarch # for circos
       - perl-PerlIO-gzip.x86_64 # for vep
       - perl-Readonly.noarch # for circos
+      - perl-Regexp-Common.noarch # for circos
+      - perl-Statistics-Basic.noarch # for circos
+      - perl-Text-Format.noarch # for circos
       - perl-Text-Soundex.x86_64 # for RepeatMasker
       - perl-parent.noarch # for some BioPerl scripts
       - pigz.x86_64 # for SeqKit

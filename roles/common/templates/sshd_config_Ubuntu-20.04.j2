@@ -60,7 +60,11 @@ TrustedUserCAKeys /etc/ssh/ca/authorized
 #IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to no here!
-#PasswordAuthentication yes
+{% if ssh_password_authentication == 'disabled' %}
+PasswordAuthentication no
+{% else %}
+PasswordAuthentication yes
+{% endif %}
 #PermitEmptyPasswords no
 
 # Change to yes to enable challenge-response passwords (beware issues with

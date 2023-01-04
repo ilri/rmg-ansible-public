@@ -27,4 +27,6 @@ tuned_profile: throughput-performance
 
 timezone: 'Africa/Nairobi'
 
+ssh_password_authentication: disabled
+
 # vim: set ts=2 sw=2:

@@ -27,4 +27,6 @@ tls_cipher_suite: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECD
 # webservers are running nginx.
 webserver: apache_httpd
 
+ssh_password_authentication: enabled
+
 # vim: set ts=2 sw=2:

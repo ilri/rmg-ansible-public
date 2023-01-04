@@ -9,4 +9,6 @@
 ssh_access:
   - public
 
+ssh_password_authentication: enabled
+
 # vim: set ts=2 sw=2:

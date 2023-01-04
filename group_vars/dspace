@@ -94,4 +94,6 @@ extra_fail2ban_filters:
 # Currently only used for the Let's Encrypt certbot renewal hooks
 webserver: nginx
 
+ssh_password_authentication: disabled
+
 # vim: set ts=2 sw=2:

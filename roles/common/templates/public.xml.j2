@@ -84,6 +84,12 @@
         <accept/>
     </rule>
     {%     endif %}
+    {# Explicitly add a rule for wingu2, since it's not in the storage group #}
+    <rule family="ipv4">
+        <source address="{{ hostvars['wingu2']['ansible_host'] }}"/>
+        <accept/>
+    </rule>
+
     {%   endfor %}
 
     {%   for host in groups['compute'] %}

@@ -97,7 +97,7 @@
         state: absent
       when:
         - "'snapd' in ansible_facts.packages"
-        - ansible_distribution_version is version('22.04', '>=')
+        - ansible_distribution_version is version('20.04', '>=')
 
     - name: Remove snapd snap
       community.general.snap:

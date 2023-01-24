@@ -33,6 +33,7 @@
       - gdal.x86_64 # for libgdal.so.1
       - geos-devel.x86_64 # for some R libraries
       - glib2.x86_64 # for wise / Cegma
+      - glpk-devel.x86_64 # for shannon_cpp
       - gnuplot.x86_64
       - graphviz
       - graphviz-devel.x86_64 # for some Python libraries
@@ -59,6 +60,7 @@
       - libzstd-devel.x86_64 # for some R libraries
       - make.x86_64
       - mesa-libGLU-devel.x86_64 # for some R libraries
+      - metis-devel.x86_64 # for shannon_cpp
       - nano.x86_64
       - ncurses-compat-libs.x86_64 # for some stuff compiled in CentOS 7
       - openblas.x86_64 # for scipy

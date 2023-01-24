@@ -97,6 +97,7 @@
       - rsync.x86_64
       - screen.x86_64
       - singularity # from EPEL, for viralrecon pipeline
+      - sparsehash-devel.x86_64 # for shannon_cpp
       - sqlite-devel.x86_64 # for some R libraries
       - tbb-devel.x86_64 # for flexbar
       - tmpwatch.x86_64

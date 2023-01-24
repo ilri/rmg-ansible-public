@@ -37,12 +37,13 @@
       - gnuplot.x86_64
       - graphviz
       - graphviz-devel.x86_64 # for some Python libraries
-      - gsl.x86_64 # for fastSTRUCTURE
       - gsl-devel.x86_64 # needed for some R packages like HiCeekR
+      - gsl.x86_64 # for fastSTRUCTURE
       - hdf5-devel.x86_64 # for some R libraries
       - htop.x86_64
       - java-1.8.0-openjdk.x86_64 # for lots of stuff
       - lapack.x86_64 # for presto
+      - libXt-devel.x86_64 # for R/4.2.0 (X11/Intrinsic.h)
       - libXtst.x86_64 # for some X apps like CLC Genomics
       - libcurl-devel.x86_64 # for some R libraries
       - libgfortran.x86_64 # for R
@@ -56,7 +57,6 @@
       - libtool-ltdl.x86_64 # for pandaseq/2.7
       - libwebp-devel.x86_64 # for some R libraries
       - libxml2-devel.x86_64 # for some R libraries
-      - libXt-devel.x86_64 # for R/4.2.0 (X11/Intrinsic.h)
       - libzstd-devel.x86_64 # for some R libraries
       - make.x86_64
       - mesa-libGLU-devel.x86_64 # for some R libraries

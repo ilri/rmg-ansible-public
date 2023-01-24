@@ -17,6 +17,7 @@
 - name: Install extra packages (CentOS Stream 8)
   ansible.builtin.package:
     name:
+      - apptainer.x86_64 # from EPEL, for viralrecon pipeline
       - bcl2fastq2 # from Illumina, in ILRI repo
       - boost-devel.x86_64 # for augustus
       - boost-iostreams.x86_64 # for augustus
@@ -96,7 +97,6 @@
       - readline-devel.x86_64 # for R/4.2.0
       - rsync.x86_64
       - screen.x86_64
-      - singularity # from EPEL, for viralrecon pipeline
       - sparsehash-devel.x86_64 # for shannon_cpp
       - sqlite-devel.x86_64 # for some R libraries
       - tbb-devel.x86_64 # for flexbar

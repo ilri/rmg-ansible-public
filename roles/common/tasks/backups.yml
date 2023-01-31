@@ -92,6 +92,7 @@
         - "{{ restic_binary_path }}-0.12.1"
         - "{{ restic_binary_path }}-0.13.0"
         - "{{ restic_binary_path }}-0.14.0"
+        - "{{ restic_binary_path }}-0.15.0"
 
     - name: Copy restic scripts
       ansible.builtin.template:

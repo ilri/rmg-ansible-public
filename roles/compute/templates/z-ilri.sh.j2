@@ -14,7 +14,7 @@ export SACCT_FORMAT="JobID,JobName,User,Account,State,CPUTime,AllocCPUs,Partitio
 
 # Temporary directory to build the squashfs filesystem (default is /tmp). We
 # don't want users to fill up /tmp and crash SLURM!
-export SINGULARITY_TMPDIR=/var/scratch/$USER
+export APPTAINER_TMPDIR=/var/scratch/$USER
 
 {% if inventory_hostname == 'hpc' %}
 # only run on interactive sessions

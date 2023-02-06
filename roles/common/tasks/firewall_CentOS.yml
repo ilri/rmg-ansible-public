@@ -19,6 +19,7 @@
   ansible.builtin.package:
     name:
       - nftables
+      - sshguard
       - perl-Net-IP # for aggregate-cidr-addresses.pl
       - wget # for updating blocklists
     state: present
@@ -111,5 +112,11 @@
 - name: Configure fail2ban
   ansible.builtin.include_tasks: fail2ban.yml
   when: ansible_distribution_major_version is version('7', '==')
+
+# Use sshguard on CentOS Stream 8 because the fail2ban package has a hard dep
+# on firewalld and we want to use nftables directly.
+- name: Configure sshguard
+  ansible.builtin.include_tasks: sshguard.yml
+  when: ansible_distribution_major_version is version('8', '==')
 
 # vim: set sw=2 ts=2:

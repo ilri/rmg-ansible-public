@@ -1,0 +1,51 @@
+# sshguard.conf -- SSHGuard configuration file
+# For details, see 'man sshguard-setup' and 'man sshguard'
+
+#### REQUIRED CONFIGURATION ####
+# Full path to backend executable (required, no default)
+BACKEND="/usr/libexec/sshguard/sshg-fw-nft-sets"
+
+# Space-separated list of log files to monitor. (optional, no default)
+#FILES="/var/log/auth.log /var/log/authlog /var/log/maillog"
+
+# Shell command that provides logs on standard output. (optional, no default)
+# By default, this only monitors sshd. Add further services
+# you wish to monitor using '-t <service label>' or any other journald filter
+LOGREADER="LANG=C /usr/bin/journalctl -afb -p info -n1 -o cat -t sshd"
+
+#### OPTIONS ####
+# Block attackers when their cumulative attack score exceeds THRESHOLD.
+# Most attacks have a score of 10. (default: 30)
+THRESHOLD={{ fail2ban_maxretry * 10 }}
+
+# Block attackers for initially BLOCK_TIME seconds after exceeding THRESHOLD.
+# Subsequent blocks increase by a factor of 1.5. (default: 120)
+BLOCK_TIME=180
+
+# Remember potential attackers for up to DETECTION_TIME seconds before
+# resetting their score. (default: 1800)
+DETECTION_TIME=3600
+
+# Size of IPv6 'subnet to block. Defaults to a single address, CIDR notation. (default: 128)
+#IPV6_SUBNET=128
+
+# Size of IPv4 subnet to block. Defaults to a single address, CIDR notation. (default: 32)
+#IPV4_SUBNET=32
+
+#### EXTRAS ####
+# !! Warning: These features may not work correctly with sandboxing. !!
+
+# Full path to PID file
+# Uncomment to let sshguard create a pidfile (default: do not create pidfile)
+#PID_FILE=/run/sshguard.pid
+
+# Colon-separated blacklist threshold and full path to blacklist file.
+# Uncomment to add attackers hitting the threshold to the permanent blacklist
+# (default: disabled)
+#BLACKLIST_FILE=90:/var/lib/sshguard/blacklist
+
+# Full path to whitelist file.
+# Uncomment to consider IP addresses, address blocks or hostnames listed in this
+# file as friendlies that will never be blocked.
+# (default: disabled)
+WHITELIST_FILE=/etc/sshguard.whitelist

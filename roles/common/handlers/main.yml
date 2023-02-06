@@ -48,6 +48,11 @@
     state: restarted
   when: ansible_distribution != 'CentOS'
 
+- name: restart sshguard
+  ansible.builtin.systemd:
+    name: sshguard.service
+    state: restarted
+
 - name: start tuned
   ansible.builtin.service:
     name: tuned

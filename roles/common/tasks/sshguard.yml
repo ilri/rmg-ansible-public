@@ -1,0 +1,20 @@
+---
+
+- name: Configure sshguard
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    mode: 0644
+  loop:
+    - { src: etc/sshguard.conf.j2, dest: /etc/sshguard.conf }
+    - { src: etc/sshguard.whitelist.j2, dest: /etc/sshguard.whitelist }
+  notify: restart sshguard
+
+- name: Start and enable sshguard service
+  ansible.builtin.systemd:
+    name: sshguard.service
+    state: started
+    enabled: true
+
+# vim: set sw=2 ts=2:

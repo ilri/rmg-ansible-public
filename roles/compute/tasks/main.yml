@@ -108,6 +108,15 @@
   when: ansible_distribution_major_version is version('8', '==')
   tags: packages
 
+# Create a symlink to libbz2.so.1.0 to please stt.
+# See: https://github.com/coqui-ai/STT/issues/2341
+- name: Create symlink for libbz2.so.1.0
+  ansible.builtin.file:
+    src: /usr/lib64/libbz2.so.1.0.6
+    dest: /usr/lib64/libbz2.so.1.0
+    state: link
+  tags: packages
+
 - name: Clone environment modules
   ansible.builtin.git:
     repo: https://github.com/ilri/hpc-environment-modules.git

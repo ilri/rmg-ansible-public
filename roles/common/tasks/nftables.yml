@@ -11,6 +11,7 @@
   notify:
     - restart nftables
     - restart fail2ban
+    - restart sshguard
 
 # Ubuntu does not have /etc/nftables directory by default
 - name: Create /etc/nftables extra config directory
@@ -47,6 +48,7 @@
   notify:
     - restart nftables
     - restart fail2ban
+    - restart sshguard
 
 - name: Copy nftables update scripts
   ansible.builtin.copy:

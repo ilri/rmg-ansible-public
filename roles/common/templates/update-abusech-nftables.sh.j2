@@ -62,7 +62,17 @@ fi
 
 echo "Reloading nftables"
 {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=') %}
-/bin/systemctl reload nftables.service
+{%   set systemctl_bin = '/bin/systemctl' %}
 {% else %}
-/usr/bin/systemctl reload nftables.service
+{%   set systemctl_bin = '/usr/bin/systemctl' %}
+{% endif -%}
+
+{{ systemctl_bin }} reload nftables.service
+
+{% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==') %}
+echo "Restarting sshguard"
+{{ systemctl_bin }} restart sshguard.service
+{% else %}
+echo "Restarting fail2ban"
+{{ systemctl_bin }} restart fail2ban.service
 {% endif %}

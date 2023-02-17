@@ -51,16 +51,23 @@
     - restart sshguard
 
 - name: Copy nftables update scripts
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: "{{ item }}"
-    dest: "/usr/local/bin/{{ item }}"
+    dest: "/usr/local/bin/{{ item | split('.j2') | first }}"
     mode: 0755
     owner: root
     group: root
   loop:
-    - update-spamhaus-nftables.sh
-    - aggregate-cidr-addresses.pl
-    - update-abusech-nftables.sh
+    - update-spamhaus-nftables.sh.j2
+    - update-abusech-nftables.sh.j2
+
+- name: Copy extra nftables utility
+  ansible.builtin.copy:
+    src: aggregate-cidr-addresses.pl
+    dest: /usr/local/bin/aggregate-cidr-addresses.pl
+    mode: 0755
+    owner: root
+    group: root
 
 - name: Copy nftables systemd units
   ansible.builtin.copy:

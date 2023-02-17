@@ -85,6 +85,10 @@ NFT_HEAD
 fi
 
 echo "Reloading nftables"
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=') %}
+/bin/systemctl reload nftables.service
+{% else %}
 /usr/bin/systemctl reload nftables.service
+{% endif %}
 
 rm -v drop.txt edrop.txt dropv6.txt

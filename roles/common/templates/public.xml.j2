@@ -96,8 +96,7 @@
     {%     if host == 'hpc' %}
     <rule family="ipv4">
         <source address="{{ hostvars[host]['ansible_host'] }}"/>
-        {# glusterfs_brick_ports currently uses a colon for range, but firewalld wants a dash #}
-        <port protocol="tcp" port="{{ glusterfs_brick_ports | regex_replace(':', '-') }}"/>
+        <port protocol="tcp" port="{{ glusterfs_brick_ports }}"/>
         <accept/>
     </rule>
     <rule family="ipv4">

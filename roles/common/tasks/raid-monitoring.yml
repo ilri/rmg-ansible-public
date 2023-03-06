@@ -120,10 +120,12 @@
   when: ansible_distribution == 'CentOS'
 
 - name: Install s-nail
-  ansible.builtin.package: name=s-nail state=present
+  ansible.builtin.package:
+    name: s-nail
+    state: present
   when:
-    - ansible_distribution == 'Ubuntu'
-    - ansible_distribution_version is version('18.04', '>=')
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=')) or
+    (ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>='))
 
 - name: Copy LSI RAID monitoring script
   ansible.builtin.template:

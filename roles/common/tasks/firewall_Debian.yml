@@ -1,0 +1,32 @@
+---
+# Debian 11 will use nftables directly, with no firewalld.
+
+- name: Install firewall packages (Debian 11+)
+  when: ansible_distribution_version is version('11', '>=')
+  ansible.builtin.package:
+    name:
+      - fail2ban
+      - libnet-ip-perl # for aggregate-cidr-addresses.pl
+      - nftables
+      - python3-systemd
+      - curl # for nftables update scripts
+      - python3-tz # for report-ssh-abuseipdb.sh
+    state: present
+    cache_valid_time: 3600
+
+- name: Remove ufw
+  when: ansible_distribution_version is version('11', '>=')
+  ansible.builtin.package:
+    pkg: ufw
+    state: absent
+  tags: packages
+
+- name: Configure nftables
+  ansible.builtin.include_tasks: nftables.yml
+  when: ansible_distribution_version is version('11', '>=')
+
+- name: Configure fail2ban
+  when: ansible_distribution_major_version is version('11', '>=')
+  ansible.builtin.include_tasks: fail2ban.yml
+
+# vim: set sw=2 ts=2:

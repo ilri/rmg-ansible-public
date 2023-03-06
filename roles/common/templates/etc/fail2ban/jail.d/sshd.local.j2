@@ -10,6 +10,9 @@ banaction=nftables[type=allports]
 {% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
 # Integrate with nftables
 banaction=nftables[type=allports]
+{% elif ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>=') %}
+# Integrate with nftables
+banaction=nftables[type=allports]
 {% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
 # Integrate with nftables
 banaction=nftables-allports

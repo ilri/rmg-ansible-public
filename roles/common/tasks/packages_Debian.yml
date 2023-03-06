@@ -1,0 +1,68 @@
+---
+
+- name: Configure Ubuntu packages
+  block:
+    # Create directory for third-party package signing keys. Required on distros
+    # older than Debian 12 / Ubuntu 22.04.
+    #
+    # See: https://wiki.debian.org/DebianRepository/UseThirdParty
+    - name: Create /etc/apt/keyrings
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        mode: 0755
+        owner: root
+        group: root
+        state: directory
+      when: ansible_distribution_major_version is version('12', '<')
+
+    - name: Configure apt mirror
+      ansible.builtin.template:
+        src: sources.list.j2
+        dest: /etc/apt/sources.list
+        owner: root
+        group: root
+        mode: 0644
+      register: apt_mirror
+
+    - name: Update apt cache
+      ansible.builtin.package:
+        update_cache: true
+      when: apt_mirror is changed
+
+    - name: Upgrade base OS
+      ansible.builtin.package:
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Install base packages
+      ansible.builtin.package:
+        name:
+          - git
+          - tmux
+          - iotop
+          - htop
+          - strace
+          - s3cmd
+          - cron-apt
+          - safe-rm
+          - debian-goodies
+          - mosh
+          - python3-pycurl # for ansible's apt_repository
+          - vim
+          - acpid
+          - debconf
+          - debconf-utils
+          - software-properties-common
+          - zstd
+          - debian-keyring # recommended for third-party repositories
+          - debian-archive-keyring # recommended for third-party repositories
+          - apt-transport-https # recommended for third-party repositories
+        state: present
+        cache_valid_time: 3600
+
+    - name: Configure cron-apt
+      ansible.builtin.import_tasks: cron-apt.yml
+      tags: cron-apt
+  tags: packages
+
+# vim: set ts=2 sw=2:

@@ -32,7 +32,7 @@
     state: started
     enabled: true
 
-- name: Uninstall ntp on modern Ubuntu
+- name: Uninstall ntp on modern Debian/Ubuntu
   ansible.builtin.package:
     name: ntp
     state: absent

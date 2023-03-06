@@ -12,8 +12,8 @@
     name: s-nail
     state: present
   when:
-    - ansible_distribution == 'Ubuntu'
-    - ansible_distribution_version is version('18.04', '>=')
+    (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=')) or
+    (ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>='))
   tags: packages
 
 - name: Copy backup script templates

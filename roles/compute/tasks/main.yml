@@ -43,6 +43,7 @@
       - hdf5-devel.x86_64 # for some R libraries
       - htop.x86_64
       - java-1.8.0-openjdk.x86_64 # for lots of stuff
+      - joe.x86_64 # some users need this
       - lapack.x86_64 # for presto
       - libXt-devel.x86_64 # for R/4.2.0 (X11/Intrinsic.h)
       - libXtst.x86_64 # for some X apps like CLC Genomics

@@ -166,7 +166,6 @@ KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-grou
 # CIS 6.2.14
 Banner /etc/ssh/sshd_banner
 
-# Always allow the provisioning user
 {% if ssh_allowed_users is defined and ssh_allowed_users %}
 AllowUsers {{ ssh_allowed_users|join(" ") }} {{ provisioning_user.name }}
 {% else %}

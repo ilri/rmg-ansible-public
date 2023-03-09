@@ -174,8 +174,10 @@ AllowUsers {{ ssh_allowed_users|join(" ") }} {{ provisioning_user.name }}
 AllowUsers {{ provisioning_user.name }}
 {% endif %}
 
-{% if 'compute' in group_names %}
-# Also allow members of the "ssh" group to login via ssh
-Match group ssh
+{% if ssh_allowed_groups is defined and ssh_allowed_groups %}
+{%   for group in ssh_allowed_groups %}
+# Also allow members of the "{{ group }}" group to login via ssh
+Match group {{ group }}
     AllowUsers *
+{%   endfor %}
 {% endif %}

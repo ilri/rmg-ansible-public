@@ -101,8 +101,8 @@
 # From upstream: https://jdbc.postgresql.org/download.html
 - name: Copy PostgreSQL JDBC library
   ansible.builtin.copy:
-    src: postgresql-42.3.5.jar
-    dest: "{{ tomcat_path }}/lib/postgresql-42.3.5.jar"
+    src: postgresql-42.5.4.jar
+    dest: "{{ tomcat_path }}/lib/postgresql-42.5.4.jar"
     mode: 0644
     owner: root
     group: root
@@ -115,9 +115,8 @@
     path: "{{ tomcat_path }}/lib/{{ item }}"
     state: absent
   loop:
-    - postgresql-42.2.24.jar
-    - postgresql-42.3.2.jar
     - postgresql-42.3.3.jar
+    - postgresql-42.3.5.jar
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

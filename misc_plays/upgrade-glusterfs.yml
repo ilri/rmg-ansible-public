@@ -1,12 +1,12 @@
 ---
-# Perform Gluster 8.x -> 9.x upgrade on storage and compute nodes
+# Perform Gluster 9.x -> 10.x upgrade on storage and compute nodes
 
 - hosts: compute:storage
   become: true
   tasks:
-    - name: Install Gluster 9 release channel
+    - name: Install Gluster 10 release channel
       ansible.builtin.package:
-        name: centos-release-gluster9
+        name: centos-release-gluster10
         state: present
 
 - hosts: storage
@@ -20,7 +20,7 @@
     - name: Upgrade glusterfs
       ansible.builtin.package:
         name: "*"
-        enablerepo: centos-gluster9
+        enablerepo: centos-gluster10
         disablerepo: "*"
         state: latest
         update_cache: true
@@ -36,7 +36,7 @@
     - name: Upgrade glusterfs
       ansible.builtin.package:
         name: "*"
-        enablerepo: centos-gluster9
+        enablerepo: centos-gluster10
         disablerepo: "*"
         state: latest
         update_cache: true

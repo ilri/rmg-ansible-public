@@ -23,4 +23,4 @@ You can define the `glusterfs_mounts` variable in your `host_vars` or `group_var
 To specify a host as a storage server, you need to assign the value `server` to `glusterfs_role` in `host_vars/$hostname` or in `group_vars/$groupname`. This will install the glusterfs-server package along with its dependencies and a few other disk utilities. It does not configure GlusterFS — you will need to go to the server(s) and do this manually!
 
 # OS Family Supported
-- CentOS 6, CentOS 7
+- CentOS Stream 8

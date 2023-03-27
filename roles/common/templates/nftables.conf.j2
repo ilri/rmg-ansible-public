@@ -137,7 +137,6 @@ table inet filter {
         {% if 'storage' in group_names %}
         {%   if ganglia_master_host is defined %}
         {%     if ghetto_ipsets[ganglia_master_host].src is defined %}
-        <rule family="ipv4">
         ip saddr {{ ghetto_ipsets[ganglia_master_host].src }} ct state new tcp dport {{ ganglia_gmond_port }} counter accept comment "Allow Ganglia gmond TCP"
         ip saddr {{ ghetto_ipsets[ganglia_master_host].src }} ct state new tcp dport {{ ganglia_gmond_port }} counter accept comment "Allow Ganglia gmond UDP"
         {%     endif %}

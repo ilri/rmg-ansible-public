@@ -7,10 +7,12 @@
     mode: 0644
   notify: restart fail2ban
 
+# Check if we have any nginx filters enabled (using a clever trick to convert
+# the list to a string so we can use "in" without iterating over the items).
 - name: Configure fail2ban nginx filter
   when:
     - extra_fail2ban_filters is defined
-    - "'nginx' in extra_fail2ban_filters"
+    - "'nginx' in ''.join(extra_fail2ban_filters)"
   ansible.builtin.template:
     src: etc/fail2ban/jail.d/nginx.local.j2
     dest: /etc/fail2ban/jail.d/nginx.local
@@ -18,12 +20,12 @@
     mode: 0644
   notify: restart fail2ban
 
-# Only run this on hosts with newer fail2ban (>0.10.0?), which basically just
-# excludes Ubuntu 16.04.
+# Check if we have any Apache filters enabled (using a clever trick to convert
+# the list to a string so we can use "in" without iterating over the items).
 - name: Configure fail2ban apache filter
   when:
     - extra_fail2ban_filters is defined
-    - "'apache' in extra_fail2ban_filters"
+    - "'apache' in ''.join(extra_fail2ban_filters)"
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"

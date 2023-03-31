@@ -1,27 +1,31 @@
 {{ ansible_managed | comment }}
+{# The extra_fail2ban_filters var is a list so we need to convert it to a #}
+{# string so we can easily check if a pattern is "in" it. #}
+{% set fail2ban_filters = ''.join(extra_fail2ban_filters) %}
 
+{% if "apache-botsearch" in fail2ban_filters %}
 [apache-botsearch]
 enabled   = true
 usedns    = no
 # See: /etc/fail2ban/filter.d/apache-botsearch.conf
 filter    = apache-botsearch
-{% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==') %}
+{%   if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==') %}
 # Integrate with nftables
 banaction=nftables[type=allports]
-{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
+{%   elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
 # Integrate with nftables
 banaction = nftables[type=allports]
-{% elif ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>=') %}
+{%   elif ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>=') %}
 # Integrate with nftables
 banaction=nftables[type=allports]
-{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
+{%   elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
 # Integrate with nftables
 banaction = nftables-allports
-{% else %}
+{%   else %}
 # Integrate with firewalld using direct rules. This is the default in CentOS's
 # fail2ban-firewalld package, see: /etc/fail2ban/jail.d/00-firewalld.conf.
 banaction = firewallcmd-rich-rules[actiontype=<allports>]
-{% endif %}
+{%   endif %}
 backend   = pyinotify
 logpath   = {{ fail2ban_httpd_logpath }}
 # Try to find a non-existent wp-login.php once and get banned. Tough luck.
@@ -29,26 +33,28 @@ maxretry  = 1
 findtime  = {{ fail2ban_findtime }}
 bantime   = {{ fail2ban_bantime }}
 ignoreip  = {{ fail2ban_ignoreip }} {{ ansible_default_ipv4.address }}/32
+{% endif %}
 
+{% if "apache-proxy" in fail2ban_filters %}
 [apache-proxy]
 enabled   = true
 usedns    = no
 # See: /etc/fail2ban/filter.d/apache-proxy.local
 filter    = apache-proxy
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
+{%   if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=') %}
 # Integrate with nftables
 banaction = nftables[type=allports]
-{% elif ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>=') %}
+{%   elif ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>=') %}
 # Integrate with nftables
 banaction=nftables[type=allports]
-{% elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
+{%   elif ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '==') %}
 # Integrate with nftables
 banaction = nftables-allports
-{% else %}
+{%   else %}
 # Integrate with firewalld using direct rules. This is the default in CentOS's
 # fail2ban-firewalld package, see: /etc/fail2ban/jail.d/00-firewalld.conf.
 banaction = firewallcmd-rich-rules[actiontype=<allports>]
-{% endif %}
+{%   endif %}
 backend   = pyinotify
 logpath   = {{ fail2ban_httpd_logpath }}
 # Make a proxy request once and get banned. Tough luck.
@@ -56,3 +62,4 @@ maxretry  = 1
 findtime  = {{ fail2ban_findtime }}
 bantime   = {{ fail2ban_bantime }}
 ignoreip  = {{ fail2ban_ignoreip }} {{ ansible_default_ipv4.address }}/32
+{% endif %}

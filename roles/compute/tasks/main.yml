@@ -56,6 +56,7 @@
       - libnsl.x86_64 # needed by binaries linked against older libc
       - libpng12.x86_64 # for pre-compiled blat binary
       - libstdc++.i686 # for 32-bit binaries
+      - libtiff-devel.x86_64 # for some R libraries
       - libtool-ltdl.x86_64 # for pandaseq/2.7
       - libwebp-devel.x86_64 # for some R libraries
       - libxml2-devel.x86_64 # for some R libraries

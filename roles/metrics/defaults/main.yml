@@ -22,7 +22,7 @@ victoriametrics_tls_crt_path: /etc/victoriametrics/victoria-metrics.crt
 victoriametrics_tls_key_path: /etc/victoriametrics/victoria-metrics.key
 
 # See: https://github.com/VictoriaMetrics/VictoriaMetrics/releases
-victoriametrics_version: 1.79.10
+victoriametrics_version: 1.87.6
 
 victoriametrics_old_versions:
   - "/usr/local/bin/vmutils-amd64-v1.74.0.tar.gz"
@@ -34,19 +34,20 @@ victoriametrics_old_versions:
   - "/usr/local/bin/vmutils-linux-amd64-v1.79.5.tar.gz"
   - "/usr/local/bin/vmutils-linux-amd64-v1.79.6.tar.gz"
   - "/usr/local/bin/vmutils-linux-amd64-v1.79.9.tar.gz"
+  - "/usr/local/bin/vmutils-linux-amd64-v1.79.10.tar.gz"
 
 # URL for main victoriametrics tarball
 victoriametrics_tarball: victoria-metrics-linux-amd64-v{{ victoriametrics_version }}.tar.gz
 victoriametrics_url: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v{{ victoriametrics_version }}/{{ victoriametrics_tarball }}
 # sha256sum from checksums.txt on GitHub releases page or manually
-victoriametrics_url_checksum: 3b29b99d2f84773dc1e60839188c31a47b8ea79333330ecada261263949e3c8f
+victoriametrics_url_checksum: 02b4d52d832f631ccf4c43a11a79e2254e6cd640d3187fee226e223b0838572d
 victoriametrics_binary_path: /usr/local/bin/victoria-metrics-prod
 
 # URL for vmutils tarball containing vmagent, vmauth, etc.
 victoriametrics_vmutils_tarball: vmutils-linux-amd64-v{{ victoriametrics_version }}.tar.gz
 victoriametrics_vmutils_url: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v{{ victoriametrics_version }}/{{ victoriametrics_vmutils_tarball }}
 # sha256sum from checksums.txt on release page, or manually
-victoriametrics_vmutils_url_checksum: c824b745a998d10c2565428332270394909e02f25628c19be17851f5777f75db
+victoriametrics_vmutils_url_checksum: 6fd7a138199592ea3fb6386c4591ff150e94cceb9baf6b91f4700543f4e0f2fe
 
 victoriametrics_vmauth_binary_path: /usr/local/bin/vmauth-prod
 victoriametrics_vmauth_config_path: /etc/victoriametrics/vmauth.yml

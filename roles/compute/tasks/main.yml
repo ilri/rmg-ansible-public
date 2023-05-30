@@ -103,7 +103,6 @@
       - sparsehash-devel.x86_64 # for shannon_cpp
       - sqlite-devel.x86_64 # for some R libraries
       - tbb-devel.x86_64 # for flexbar
-      - tmpwatch.x86_64
       - udunits2-devel.x86_64 # for some R libraries
       - wget.x86_64
       - xorg-x11-xauth.x86_64 # or else X11 forwarding doesn't work
@@ -188,11 +187,10 @@
     state: directory
   tags: scratch
 
-# TODO: convert to systemd timer
-- name: Add cron job to clean up scratch space
+- name: Add systemd-tmpfiles config for scratch
   ansible.builtin.template:
-    src: cron/cleanup-scratch-space.j2
-    dest: /etc/cron.d/2cleanup-scratch-space
+    src: etc/tmpfiles.d/scratch.conf.j2
+    dest: /etc/tmpfiles.d/scratch.conf
     owner: root
     group: root
     mode: 0644

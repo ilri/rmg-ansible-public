@@ -1,0 +1,7 @@
+#Type   Path                        Mode    UID GID Age Argument
+e       {{ local_scratch }}         -       -   -   90d -
+
+{% if inventory_hostname == slurm_head_node %}
+# Only clean up global scratch from the head node
+e       {{ local_scratch }}/global  -       -   -   90d -
+{% endif %}

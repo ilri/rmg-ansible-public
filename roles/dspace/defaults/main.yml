@@ -55,8 +55,8 @@ dspace_ghostscript_prefix: /usr/share/color/icc/ghostscript
 # needs to be a string or else Ansible translates it as a Python boolean, ie False
 dspace_dev_mode: 'false'
 
-# command to use for pyvenv (Ubuntu 20.04 is Python 3.8)
-pyvenv_command: python3.8 -m venv
+# command to use for pyvenv (Ubuntu 22.04 is Python 3.10)
+pyvenv_command: python3.10 -m venv
 
 # version must be 8 (for now)
 java_version_major: 8

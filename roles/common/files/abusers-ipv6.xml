@@ -2,15 +2,10 @@
 <ipset type="hash:ip">
   <option name="family" value="inet6" />
   <short>abusers-ipv6</short>
-  <entry>2001:41d0:1004:113c::</entry>
-  <entry>2001:470:1:c84::30</entry>
-  <entry>2001:bc8:1200:1:dac4:97ff:fe5b:7949</entry>
-  <entry>2001:bc8:1201:69:569f:35ff:fe17:e0ca</entry>
-  <entry>2400:6180:0:d0::4be:2001</entry>
-  <entry>2400:6180:0:d0::e6b:4001</entry>
-  <entry>2400:6180:100:d0::87b:3001</entry>
-  <entry>2400:8904::f03c:92ff:fec4:8d3a</entry>
-  <entry>2804:b44:1000::25</entry>
-  <entry>2a01:7e01::f03c:93ff:fe86:906a</entry>
-  <entry>2a06:6440:0:2c3a::1</entry>
+  <entry>2001:41d0:403:1680::</entry>
+  <entry>2001:470:1:c84::29</entry>
+  <entry>2400:8500:1302:843:150:95:183:194</entry>
+  <entry>2607:ff10:c8:594::5</entry>
+  <entry>2607:ff10:c8:594::6</entry>
+  <entry>2607:ff10:c8:594::e</entry>
 </ipset>

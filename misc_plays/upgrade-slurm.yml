@@ -22,12 +22,12 @@
       ansible.builtin.package:
         name:
           - slurm
-          - slurm-slurmd
-          - slurm-devel
-          - slurm-pam_slurm
-          - slurm-example-configs
           - slurm-contribs
+          - slurm-devel
+          - slurm-example-configs
+          - slurm-pam_slurm
           - slurm-slurmctld
+          - slurm-slurmd
           - slurm-slurmdbd
         state: latest
         update_only: true
@@ -53,11 +53,11 @@
       ansible.builtin.package:
         name:
           - slurm
-          - slurm-slurmd
-          - slurm-devel
-          - slurm-pam_slurm
-          - slurm-example-configs
           - slurm-contribs
+          - slurm-devel
+          - slurm-example-configs
+          - slurm-pam_slurm
+          - slurm-slurmd
         state: latest
         update_only: true
         update_cache: true

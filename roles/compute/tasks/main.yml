@@ -196,4 +196,20 @@
     mode: 0644
   tags: scratch
 
+# Keep 12 months of logins instead of 1
+- name: Configure logrotate for wtmp
+  ansible.builtin.lineinfile:
+    path: /etc/logrotate.d/wtmp
+    regexp: ^\s+rotate 1$
+    line: '    rotate 12'
+    state: present
+
+# Keep 12 months of failed logins instead of 1
+- name: Configure logrotate for btmp
+  ansible.builtin.lineinfile:
+    path: /etc/logrotate.d/btmp
+    regexp: ^\s+rotate 1$
+    line: '    rotate 12'
+    state: present
+
 # vim: set sw=2 ts=2:

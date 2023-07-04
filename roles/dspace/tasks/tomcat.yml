@@ -98,29 +98,6 @@
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
-# From upstream: https://jdbc.postgresql.org/download.html
-- name: Copy PostgreSQL JDBC library
-  ansible.builtin.copy:
-    src: postgresql-42.5.4.jar
-    dest: "{{ tomcat_path }}/lib/postgresql-42.5.4.jar"
-    mode: 0644
-    owner: root
-    group: root
-  notify:
-    - restart tomcat{{ tomcat_version_major }}
-  tags: tomcat
-
-- name: Remove old PostgreSQL JDBC libraries
-  ansible.builtin.file:
-    path: "{{ tomcat_path }}/lib/{{ item }}"
-    state: absent
-  loop:
-    - postgresql-42.3.3.jar
-    - postgresql-42.3.5.jar
-  notify:
-    - restart tomcat{{ tomcat_version_major }}
-  tags: tomcat
-
 - name: Create Tomcat context directory
   ansible.builtin.file:
     path: "{{ tomcat_path }}/conf/Catalina/localhost"

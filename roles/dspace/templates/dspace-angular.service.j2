@@ -1,0 +1,26 @@
+# See: https://github.com/Unitech/pm2/blob/master/lib/templates/init-scripts/systemd.tpl
+
+[Unit]
+Description=DSpace Angular (PM2)
+After=network.target tomcat{{ tomcat_version_major }}.service
+Wants=tomcat{{ tomcat_version_major }}.service
+
+[Service]
+Environment=NODE_ENV=production
+Type=forking
+User={{ tomcat_user }}
+Group={{ tomcat_group }}
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Environment=PM2_HOME={{ tomcat_user_home }}/.pm2
+Restart=on-failure
+WorkingDirectory={{ tomcat_user_home }}/src/git/dspace-angular
+# We don't use `pm2 resurrect` here because that requires having the app
+# already started at least once via pm2 before.
+ExecStart={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 start ./dist/server/main.js --name dspace-ui -i 4
+ExecReload={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 reload all
+ExecStop={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 kill
+
+[Install]
+WantedBy=multi-user.target

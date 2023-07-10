@@ -30,6 +30,7 @@
     - samba_share_fusefs
     - samba_export_all_ro
     - samba_export_all_rw
+    - httpd_can_network_relay # for RStudio
 
 # HPC runs a web server for the wiki, mirrors, and a few other PHP applications
 - name: Install web packages

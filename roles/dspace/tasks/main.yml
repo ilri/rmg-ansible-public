@@ -87,6 +87,7 @@
     depth: 1
   become_user: "{{ tomcat_user }}"
 
+# TODO: update this for DSpace 7, as both the file and path are different
 - name: Copy DSpace local.cfg
   ansible.builtin.template:
     src: local.cfg.j2
@@ -94,6 +95,7 @@
     owner: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
     mode: "0640"
+  when: dspace_version_major < 7
 
 - name: Copy GeoIP.conf
   ansible.builtin.template:

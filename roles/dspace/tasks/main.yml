@@ -45,6 +45,13 @@
     shell: /bin/bash
   tags: tomcat
 
+# We need to make sure the dspace user's home has o+x so that the solr user
+# can traverse it in order to copy the configsets.
+- name: Tweak dspace user home
+  ansible.builtin.file:
+    path: "{{ tomcat_user_home }}"
+    mode: o+x
+
 - name: Configure Node.js
   ansible.builtin.import_tasks: nodejs.yml
   tags: nodejs
@@ -86,6 +93,20 @@
     force: true
     depth: 1
   become_user: "{{ tomcat_user }}"
+
+# Import vars from the Solr task so we can get the Solr home directory without
+# having to re-define it in our DSpace role or hard code it here.
+- name: Import Solr vars
+  ansible.builtin.include_vars:
+    file: "{{ role_path }}/../solr/defaults/main.yml"
+
+# Can't use a wildcard here, so we rely on rsync behavior with trailing slash
+- name: Copy Solr config sets
+  ansible.posix.synchronize:
+    src: "{{ tomcat_user_home }}/src/git/DSpace/dspace/solr/"
+    dest: "{{ solr_home_dir }}/data/configsets"
+  delegate_to: "{{ inventory_hostname }}"
+  become_user: "{{ solr_user }}"
 
 # TODO: update this for DSpace 7, as both the file and path are different
 - name: Copy DSpace local.cfg

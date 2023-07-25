@@ -20,60 +20,56 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # At a minimum these tasks should be run daily.
 #--------------
 
-# Regenerate DSpace Sitemaps every 8 hours (12AM, 8AM, 4PM).
-# SiteMaps ensure that your content is more findable in Google, Google Scholar, and other major search engines.
-0 0,8,16 * * * {{ tomcat_user }} $DSPACE/bin/dspace generate-sitemaps >> $DSPACE/log/cron-sitemaps.log.$(date --iso-8601) 2>&1
+# Send information about new and changed DOIs to the DOI registration agency
+# NOTE: ONLY NECESSARY IF YOU REGISTER DOIS USING DATACITE AS REGISTRATION AGENCY (Disabled by default)
+# 0 4,12,20 * * *  $DSPACE/bin/dspace doi-organiser -u -q ; [dspace]/bin/dspace doi-organiser -s -q ; [dspace]/bin/dspace doi-organiser -r -q ; [dspace]/bin/dspace doi-organiser -d -q
 
 #----------------
 # DAILY TASKS
 # (Recommended to be run once per day. Feel free to tweak the scheduled times below.)
 #----------------
 
-# Update the OAI-PMH index with the newest content (and re-optimize that index) at midnight every day
-# NOTE: ONLY NECESSARY IF YOU ARE RUNNING OAI-PMH
-# (This ensures new content is available via OAI-PMH and ensures the OAI-PMH index is optimized for better performance)
-0 0 * * * {{ tomcat_user }} $DSPACE/bin/dspace oai import -o > /dev/null
-# remove cached OAI responses in [dspace]/var/oai after index refresh
-0 1 * * * {{ tomcat_user }} $DSPACE/bin/dspace oai clean-cache > /dev/null
+# Update the OAI-PMH index with the newest content at midnight every day
+# REQUIRED to update content available in OAI-PMH (However, it can be removed if you do not enable OAI-PMH)
+0 0 * * * {{ tomcat_user }} $DSPACE/bin/dspace oai import > /dev/null
+
 # Clean and Update the Discovery indexes at midnight every day
 # (This ensures that any deleted documents are cleaned from the Discovery search/browse index)
+# RECOMMENDED to ensure your search/browse index stays fresh.
 0 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-discovery > /dev/null
-# Re-Optimize the Discovery indexes at 12:30 every day
-# (This ensures that the Discovery Solr Index is re-optimized for better performance)
-# Disabled 2016-09, see: https://issues.apache.org/jira/browse/SOLR-3141
-# 30 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-discovery -o > /dev/null
 
 # run the index-authority script once a day at 12:45 to ensure the Solr Authority cache is up to date
-# Disabled 2018-03 because we are no longer using ORCID lookup after they discontinued the v1 API
 #45 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-authority > /dev/null
 
-# Re-Optimize DSpace Statistics Solr Index at 01:30 every day
-# NOTE: ONLY NECESSARY IF YOU ARE RUNNING SOLR STATISTICS
-# (This ensures that the Statistics Solr Index is re-optimized for better performance)
-# Disabled 2016-09, see: https://issues.apache.org/jira/browse/SOLR-3141
-#30 1 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace stats-util -o
+# Cleanup Web Spiders from DSpace Statistics Solr Index at 01:00 every day
+# (This removes any known web spiders from your usage statistics)
+# RECOMMENDED if you are running Solr Statistics.
+0 1 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace stats-util -i
 
-# Send out subscription e-mails at 02:00 every day
-# (This sends an email to any users who have "subscribed" to a Collection, notifying them of newly added content.)
-0 2 * * * {{ tomcat_user }} $DSPACE/bin/dspace sub-daily
+# Send out "daily" update subscription e-mails at 02:00 every day
+# (This sends an email to any users who have "subscribed" to a Community/Collection, notifying them of newly added content.)
+# REQUIRED for daily "Email Subscriptions" to work properly.
+0 2 * * * {{ tomcat_user }} $DSPACE/bin/dspace subscription-send -f D
 
 # Run the media filter at 03:00 every day.
 # (This task ensures that thumbnails are generated for newly add images,
-# and also ensures full text search is available for newly added PDF/Word/PPT/HTML documents)
+# and ensures full text search is available for newly added PDF/Word/PPT/HTML documents)
+# REQUIRED for Thumbnails to be generated & full-text indexing to work.
 0 3 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace filter-media >> $DSPACE/log/cron-filter-media.log.$(date --iso-8601) 2>&1
-
-# Run any Curation Tasks queued from the Admin UI at 04:00 every day
-# (Ensures that any curation task that an administrator "queued" from the Admin UI is executed
-# asynchronously behind the scenes)
-0 4 * * * {{ tomcat_user }} $DSPACE/bin/dspace curate -q admin_ui
 
 #----------------
 # WEEKLY TASKS
 # (Recommended to be run once per week, but can be run more or less frequently, based on your local needs/policies)
 #----------------
+# Send out "weekly" update subscription e-mails at 02:00 every Sunday
+# (This sends an email to any users who have "subscribed" to a Community/Collection, notifying them of newly added content.)
+# REQUIRED for weekly "Email Subscriptions" to work properly.
+0 2 * * 0 {{ tomcat_user }} $DSPACE/bin/dspace subscription-send -f W
+
 # Run the checksum checker at 04:00 every Sunday
 # By default it runs through every file (-l) and also prunes old results (-p)
 # (This re-verifies the checksums of all files stored in DSpace. If any files have been changed/corrupted, checksums will differ.)
+# OPTIONAL, but useful if you want to enable regular regular checksum validation of files stored in DSpace.
 # 0 4 * * 0 $DSPACE/bin/dspace checker -l -p
 # NOTE: LARGER SITES MAY WISH TO USE DIFFERENT OPTIONS. The above "-l" option tells DSpace to check *everything*.
 # If your site is very large, you may need to only check a portion of your content per week. The below commented-out task
@@ -89,16 +85,13 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # MONTHLY TASKS
 # (Recommended to be run once per month, but can be run more or less frequently, based on your local needs/policies)
 #----------------
+# Send out "monthly" update subscription e-mails at 02:00, on the first of every month
+# (This sends an email to any users who have "subscribed" to a Community/Collection, notifying them of newly added content.)
+# REQUIRED for monthly "Email Subscriptions" to work properly.
+0 2 1 * * $DSPACE/bin/dspace subscription-send -f M
+
 # Permanently delete any bitstreams flagged as "deleted" in DSpace, on the first of every month at 01:00
 # (This ensures that any files which were deleted from DSpace are actually removed from your local filesystem.
 # By default they are just marked as deleted, but are not removed from the filesystem.)
+# REQUIRED to fully remove deleted content files from the "assetstore" folder
 0 1 1 * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace cleanup >> $DSPACE/log/cleanup.log.$(date --iso-8601) 2>&1
-
-#----------------
-# YEARLY TASKS (Recommended to be run once per year)
-#----------------
-# At 2:00AM every January 1, "shard" the DSpace Statistics Solr index.
-# This ensures each year has its own Solr index, which improves performance.
-# NOTE: ONLY NECESSARY IF YOU ARE RUNNING SOLR STATISTICS
-# NOTE: This is scheduled here for 2:00AM so that it happens *after* the daily cleaning & re-optimization of this index.
-#0 2 1 1 * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace stats-util -s >> $DSPACE/log/cron-stats-util.log.$(date --iso-8601) 2>&1

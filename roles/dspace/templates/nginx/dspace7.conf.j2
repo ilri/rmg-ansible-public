@@ -96,6 +96,11 @@ server {
         # redirect invalid REST retrieveLink values (see DS-3193)
         rewrite ^/rest/rest/(.*)$ https://{{ nginx_server_name }}/rest/$1 redirect;
 
+        location ~ /rest/statistics/?(.*) {
+            access_log /var/log/nginx/statistics.log;
+            proxy_pass http://statistics_api/$1$is_args$args;
+        }
+
         access_log /var/log/nginx/rest-access.log;
 
         # Explicitly set proxy headers again because the existing headers from
@@ -133,6 +138,10 @@ upstream express-http {
     # to upstream servers that are preserved in the cache of each worker process. When
     # this number is exceeded, the least recently used connections are closed.
     keepalive 60;
+}
+
+upstream statistics_api {
+    server 127.0.0.1:5000;
 }
 
 # List of networks to mark as bots. Hosts on these networks are behaving like

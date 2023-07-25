@@ -1,6 +1,6 @@
 {{ ansible_managed | comment }}
 
-SOLR_SERVER=http://localhost:8081/solr
+SOLR_SERVER={{ dspace_solr_server }}
 DATABASE_NAME={{ dspace_statistics_db_name }}
 DATABASE_USER={{ dspace_statistics_db_user }}
 DATABASE_PASS={{ dspace_statistics_db_password }}

@@ -43,6 +43,9 @@ dspace_statistics_api_git_repo: https://github.com/ilri/dspace-statistics-api.gi
 dspace_statistics_api_git_version: v1.4.3
 dspace_statistics_api_dir: /opt/ilri/dspace-statistics-api
 
+# Port 8081 on DSpace 6, 8983 on DSpace 7
+dspace_solr_server: http://localhost:8081/solr
+
 dspace_explorer_server: prod.ares.codeobia.com
 
 dspace_mail_server: smtp.office365.com

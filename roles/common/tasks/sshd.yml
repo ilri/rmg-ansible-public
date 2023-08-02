@@ -10,6 +10,16 @@
   when: ansible_distribution == 'CentOS'
   notify: reload sshd
 
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/system_design_guide/securing_networks
+- name: Opt out of system-wide crypto policy
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: ^# CRYPTO_POLICY=$
+    line: CRYPTO_POLICY=
+    state: present
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==')
+  notify: reload sshd
+
 # In Debian/Ubuntu the SSH version is very different from 10 to 11, or 14.04
 # to 14.10, ie with new ciphers supported, etc.
 - name: Reconfigure /etc/ssh/sshd_config

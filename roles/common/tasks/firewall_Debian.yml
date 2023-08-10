@@ -1,5 +1,5 @@
 ---
-# Debian 11 will use nftables directly, with no firewalld.
+# Debian 11+ will use nftables directly, with no firewalld.
 
 - name: Install firewall packages (Debian 11+)
   when: ansible_distribution_version is version('11', '>=')

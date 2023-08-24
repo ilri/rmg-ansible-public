@@ -86,15 +86,16 @@ mysqld_exporter_user: "{{ lookup('file', 'private/vars/metrics/mysqld_exporter_u
 mysqld_exporter_pass: "{{ lookup('file', 'private/vars/metrics/mysqld_exporter_pass') }}"
 
 # See: https://github.com/prometheus/jmx_exporter/releases
-jmx_exporter_version: 0.19.0
+jmx_exporter_version: 0.20.0
 jmx_exporter_old_versions:
   - "/etc/victoriametrics/jmx_prometheus_javaagent-0.17.0.jar"
+  - "/etc/victoriametrics/jmx_prometheus_javaagent-0.19.0.jar"
 
 # URL for jmx_exporter tarball
 jmx_exporter_jar: jmx_prometheus_javaagent-{{ jmx_exporter_version }}.jar
 jmx_exporter_url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/{{ jmx_exporter_version }}/{{ jmx_exporter_jar }}
 # sha256sum
-jmx_exporter_url_checksum: fb507001996c9af38709c110de32517f7592c818bb33e18bc5fe94e076d24c1f
+jmx_exporter_url_checksum: 8b67ed40485d475648c36d11d21464b484406f85faf912b3363f71a6a7861320
 jmx_exporter_jar_path: /etc/victoriametrics/{{ jmx_exporter_jar }}
 jmx_exporter_config_path: /etc/victoriametrics/jmx_exporter.yml
 

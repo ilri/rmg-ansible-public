@@ -127,12 +127,15 @@ Subsystem	sftp	/usr/lib/openssh/sftp-server
 #	PermitTTY no
 #	ForceCommand cvs server
 
-# Originally from: https://stribika.github.io/2015/01/04/secure-secure-shell.html
-# ... but with ciphers and MACs with < 256 bits removed, as NSA's Suite B now
-# does away with these! See: https://www.nsa.gov/ia/programs/suiteb_cryptography/index.shtml
+# Based on the ssh-audit profile for OpenSSH 8.9, but with but with all algos
+# with less than 256 bits removed, as NSA's Suite B removed them years ago and
+# the new (2018) CNSA suite is 256 bits and up.
+#
+# See: https://github.com/jtesta/ssh-audit/blob/master/src/ssh_audit/policy.py
+# See: https://en.wikipedia.org/wiki/Commercial_National_Security_Algorithm_Suite
 Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes256-ctr
 MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
-KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+KexAlgorithms sntrup761x25519-sha512@openssh.com,curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,diffie-hellman-group-exchange-sha256
 
 {% if ssh_allowed_users is defined and ssh_allowed_users %}
 AllowUsers {{ ssh_allowed_users|join(" ") }} {{ provisioning_user.name }}

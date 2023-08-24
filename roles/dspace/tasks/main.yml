@@ -208,6 +208,9 @@
   register: dspace_systemd_environment2
   notify:
     - restart tomcat{{ tomcat_version_major }}
+  tags:
+    - tomcat
+    - metrics # these settings are used by the jmx_exporter
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon

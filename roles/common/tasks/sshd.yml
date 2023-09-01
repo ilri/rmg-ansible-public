@@ -13,7 +13,7 @@
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/system_design_guide/securing_networks
 - name: Opt out of system-wide crypto policy
   ansible.builtin.lineinfile:
-    path: /etc/hosts
+    path: /etc/sysconfig/sshd
     regexp: ^# CRYPTO_POLICY=$
     line: CRYPTO_POLICY=
     state: present

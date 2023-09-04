@@ -1,13 +1,4 @@
 ---
-- name: Install GlusterFS client packages (CentOS 7)
-  ansible.builtin.package:
-    name:
-      - glusterfs-fuse
-      - libsemanage-python # required by Ansible's seboolean module
-    state: present
-  when: ansible_distribution_major_version is version('7', '==')
-  tags: glusterfs-client
-
 - name: Install GlusterFS client packages (CentOS Stream 8)
   ansible.builtin.package:
     name:

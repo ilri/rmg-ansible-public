@@ -84,7 +84,6 @@
         mode: 0644
   when:
     (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=')) or
-    (ansible_distribution == 'CentOS' and ansible_distribution_version is version('7', '==')) or
     (ansible_distribution == 'CentOS' and ansible_distribution_version is version('8', '=='))
   tags: systemd-journald
 

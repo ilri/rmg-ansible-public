@@ -27,11 +27,6 @@
     name: systemd-sysctl
     state: restarted
 
-- name: restart firewalld
-  ansible.builtin.service:
-    name: firewalld
-    state: restarted
-
 - name: restart nftables
   ansible.builtin.systemd:
     name: nftables

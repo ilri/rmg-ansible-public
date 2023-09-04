@@ -1,18 +1,5 @@
 ---
-# Use firewalld on CentOS 7
 # Use nftables on CentOS Stream 8
-
-- name: Install firewall packages (CentOS 7)
-  when: ansible_distribution_major_version is version('7', '==')
-  ansible.builtin.package:
-    name:
-      - tidy
-      - fail2ban
-      - fail2ban-firewalld
-      - fail2ban-selinux
-      - python-inotify
-    state: present
-  tags: packages
 
 - name: Install firewall packages (CentOS Stream 8)
   when: ansible_distribution_major_version is version('8', '==')
@@ -37,78 +24,14 @@
   ansible.builtin.include_tasks: nftables.yml
   when: ansible_distribution_major_version is version('8', '==')
 
-- name: Copy firewalld public zone file to /etc/firewalld/zones/public.xml
-  when: ansible_distribution_major_version is version('7', '==')
-  ansible.builtin.template:
-    src: public.xml.j2
-    dest: /etc/firewalld/zones/public.xml
-    owner: root
-    mode: 0600
-
-- name: Format public.xml firewalld zone file
-  when: ansible_distribution_major_version is version('7', '==')
-  ansible.builtin.command:
-    cmd: tidy -xml -iq -m -w 0 /etc/firewalld/zones/public.xml
-  notify:
-    - restart firewalld
-    - restart fail2ban
-
-- name: Copy ipsets of abusive IPs
-  when: ansible_distribution_major_version is version('7', '==')
-  ansible.builtin.copy:
-    src: "{{ item.src }}"
-    dest: "/etc/firewalld/ipsets/{{ item.src }}"
-    owner: root
-    group: root
-    mode: 0600
-    force: "{{ item.force }}"
-  loop:
-    - { src: "spamhaus-ipv4.xml", force: false }
-    - { src: "spamhaus-ipv6.xml", force: false }
-    - { src: "abusers-ipv4.xml", force: true }
-    - { src: "abusers-ipv6.xml", force: true }
-  notify:
-    - restart firewalld
-    - restart fail2ban
-
-- name: Copy Spamhaus firewalld update script
-  when: ansible_distribution_major_version is version('7', '==')
-  ansible.builtin.copy:
-    src: update-spamhaus-lists.sh
-    dest: /usr/local/bin/update-spamhaus-lists.sh
-    mode: 0755
-    owner: root
-    group: root
-
-- name: Copy Spamhaus firewalld systemd units
-  when: ansible_distribution_major_version is version('7', '==')
-  ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "/etc/systemd/system/{{ item }}"
-    mode: 0644
-    owner: root
-    group: root
-  loop:
-    - update-spamhaus-lists.service
-    - update-spamhaus-lists.timer
-  register: spamhaus_firewalld_systemd_units
-
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
   ansible.builtin.systemd: # noqa no-handler
     daemon_reload: true
   when: spamhaus_firewalld_systemd_units is changed
 
-- name: Start and enable Spamhaus firewalld update timer
-  when: ansible_distribution_major_version is version('7', '==')
-  ansible.builtin.systemd:
-    name: update-spamhaus-lists.timer
-    state: started
-    enabled: true
-  notify:
-    - restart firewalld
-    - restart fail2ban
-
+# TODO: re-evaluate this later, as no current CentOS versions run fail2ban
+# without pulling in firewalld right now.
 - name: Configure fail2ban
   ansible.builtin.include_tasks: fail2ban.yml
   when: ansible_distribution_major_version is version('7', '==')

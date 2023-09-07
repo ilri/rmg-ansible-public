@@ -15,18 +15,8 @@ MegaCli="/opt/MegaRAID/MegaCli/MegaCli64"
 MegaCli="/usr/sbin/megacli"
 {% endif %}
 
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}
+# We use s-nail on Ubuntu 18.04+ and CentOS 8+ hosts
 BIN_MAIL="/usr/bin/s-nail"
-{% elif ansible_distribution == 'CentOS' %}
-BIN_MAIL="/usr/bin/mailx"
-{% endif %}
-
-# extra mail options -> mailrc
-MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'
-
-{% if ansible_distribution == 'CentOS' %}
-MAIL_ARGS="${MAIL_ARGS} -S nss-config-dir=/etc/pki/nssdb -S ssl-verify=ignore"
-{% endif %}
 
 # The identifying number of the enclosure. Default for our systems is "8". Use
 # "MegaCli64 -PDlist -a0 | grep "Enclosure Device"" to see what your number
@@ -179,7 +169,7 @@ if [ "$1" = "checkNemail" ]; then
 
    # On bad raid status send email with basic drive information
    if [ "$STATUS1" ]; then
-      $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | mail ${MAIL_ARGS} -s $(hostname)' - RAID Notification' $EMAIL
+      $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|state' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" -"$0;}END{print x;}' | sed 's/Firmware state://g' | ${BIN_MAIL} -s $(hostname)' - RAID Notification' $EMAIL
    fi
 
    # Check if disks are in good condition
@@ -187,7 +177,7 @@ if [ "$1" = "checkNemail" ]; then
 
    # On bad disk status send email with basic drive information
    if [ "$STATUS2" ]; then
-      $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|S\.M\.A\.R\.T' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" - "$0;}END{print x;}' | grep -v 'No' | ${BIN_MAIL} ${MAIL_ARGS} -s $(hostname)' - RAID Notification' $EMAIL
+      $MegaCli -PDlist -aALL -NoLog | grep -E 'Slot|S\.M\.A\.R\.T' | awk '/Slot/{if (x)print x;x="";}{x=(!x)?$0:x" - "$0;}END{print x;}' | grep -v 'No' | ${BIN_MAIL} -s $(hostname)' - RAID Notification' $EMAIL
    fi
 
 fi

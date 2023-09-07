@@ -12,18 +12,8 @@ HP_CLI_BIN=/usr/sbin/ssacli
 # admin email(s)
 EMAIL="{{ sysadmin_emails|join(" ") }}"
 
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}
+# We use s-nail on Ubuntu 18.04+ and CentOS 8+ hosts
 BIN_MAIL="/usr/bin/s-nail"
-{% elif ansible_distribution == 'CentOS' %}
-BIN_MAIL="/usr/bin/mailx"
-{% endif %}
-
-# extra mail options -> mailrc
-MAIL_ARGS='-S from={{ mailrc_from_email }} -S smtp={{ mailrc_smtp_server }} -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user={{ mailrc_auth_user }} -S smtp-auth-password={{ mailrc_auth_pass }}'
-
-{% if ansible_distribution == 'CentOS' %}
-MAIL_ARGS="${MAIL_ARGS} -S nss-config-dir=/etc/pki/nssdb -S ssl-verify=ignore"
-{% endif %}
 
 # get slots on this machine's HP storage
 SLOTS=$($HP_CLI_BIN controller all show | grep -oE 'Slot [0-9]{0,2}' | awk '{print $2}')
@@ -35,7 +25,7 @@ function checkPhysicalDisks () {
     result=$($HP_CLI_BIN ctrl slot=$slot pd all show | grep -v '^Error: ' | grep physicaldrive | grep -v OK | wc -l)
 
     if [[ $result > 0 ]]; then
-        $HP_CLI_BIN ctrl slot=$slot pd all show | ${BIN_MAIL} ${MAIL_ARGS} -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
+        $HP_CLI_BIN ctrl slot=$slot pd all show | ${BIN_MAIL} -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
     fi
 }
 
@@ -45,7 +35,7 @@ done
 
 # test if email is working
 if [[ $1 == 'test' ]]; then
-    $HP_CLI_BIN ctrl slot=$slot pd all show | ${BIN_MAIL} ${MAIL_ARGS} -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
+    $HP_CLI_BIN ctrl slot=$slot pd all show | ${BIN_MAIL} -s `hostname`" (slot$slot) - RAID Notification" $EMAIL
 fi
 
 # vim: set ts=4 sw=4:

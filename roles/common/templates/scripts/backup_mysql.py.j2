@@ -4,9 +4,6 @@
 Purpose:
     - Backup all mysql databases except information_schema & performance_schema
     - Send MySQL backup completion status via email to admin(s)
-NOTE:
-    - Since SELinux policy on CentOS 6 doesn't allow crond to read root's ~/.mailrc,
-    we had to hardcode mailrc options in this script.
 """
 
 import argparse
@@ -34,22 +31,12 @@ DEF_ADMIN_EMAILS = "{{ sysadmin_emails|join(" ") }}"
 # Default absolute path to MySQL backups directory
 DEF_MYSQL_BACKUPS_DIR = "/home/backup/mysql"
 
-# SMTP configs. for mandrill API. Circumvents SELinux's policy which
-# prevents crond from reading root's ~/.mailrc
-MAILRC_FROM_EMAIL = "{{ mailrc_from_email }}"
-MAILRC_SMTP_SERVER = "{{ mailrc_smtp_server }}"
-MAILRC_AUTH_USER = "{{ mailrc_auth_user }}"
-MAILRC_AUTH_PASS = "{{ mailrc_auth_pass }}"
-
 # Paths to binaries
 BIN_MYSQL = "/usr/bin/mysql"
 BIN_MYSQLDUMP = "/usr/bin/mysqldump"
 BIN_ZSTD = "/usr/bin/zstd"
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}
+# We use s-nail on Ubuntu 18.04+ and CentOS 8+ hosts
 BIN_MAIL = "/usr/bin/s-nail"
-{% elif ansible_distribution == 'CentOS' %}
-BIN_MAIL = "/usr/bin/mailx"
-{% endif %}
 
 
 # Return current timestamp (used in backup filename)
@@ -162,9 +149,8 @@ def backup_databases(
 
 # Send mail notifications with failed process status
 def send_mail(status):
-    mailrc_opts = f"-S from={MAILRC_FROM_EMAIL} -S smtp={MAILRC_SMTP_SERVER} -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user={MAILRC_AUTH_USER} -S smtp-auth-password={MAILRC_AUTH_PASS}"
     mail_subject = f"{socket.gethostname()} - MySQL backup status"
-    cmd_send_mail = f"{BIN_MAIL} {mailrc_opts} -s '{mail_subject}' {DEF_ADMIN_EMAILS}"
+    cmd_send_mail = f"{BIN_MAIL} -s '{mail_subject}' {DEF_ADMIN_EMAILS}"
     args = shlex.split(cmd_send_mail)
 
     mail_process = sb.run(args, input=json.dumps(status), stderr=sb.PIPE, universal_newlines=True)

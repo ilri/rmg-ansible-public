@@ -4,9 +4,6 @@
 Purpose:
     - Backup all PostgreSQL databases except template0, template1, and postgres
     - Send PostgreSQL backup completion status via email to admin(s)
-NOTE:
-    - Since SELinux policy on CentOS 6 doesn't allow crond to read root's ~/.mailrc,
-    we had to hardcode mailrc options in this script.
 """
 
 import argparse
@@ -36,21 +33,11 @@ DEF_ADMIN_EMAILS = "{{ sysadmin_emails|join(" ") }}"
 # Default absolute path to PostgreSQL backups directory
 DEF_POSTGRESQL_BACKUPS_DIR = "/home/backup/postgresql"
 
-# SMTP configs. Circumvents SELinux's policy which
-# prevents crond from reading root's ~/.mailrc
-MAILRC_FROM_EMAIL = "{{ mailrc_from_email }}"
-MAILRC_SMTP_SERVER = "{{ mailrc_smtp_server }}"
-MAILRC_AUTH_USER = "{{ mailrc_auth_user }}"
-MAILRC_AUTH_PASS = "{{ mailrc_auth_pass }}"
-
 # Paths to binaries
 BIN_PSQL = "/usr/bin/psql"
 BIN_PGDUMP = "/usr/bin/pg_dump"
-{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('18.04', '>=') %}
+# We use s-nail on Ubuntu 18.04+ and CentOS 8+ hosts
 BIN_MAIL = "/usr/bin/s-nail"
-{% elif ansible_distribution == 'CentOS' %}
-BIN_MAIL = "/usr/bin/mailx"
-{% endif %}
 
 # return current timestamp, used in backup filename
 def get_timestamp():
@@ -110,9 +97,8 @@ def backup_databases(database, timestamp_filenames, postgresql_backups_dir, noti
 # Send mail notifications using mailx which will get mail configs./options
 # from ~/.mailrc
 def sendmail_notification(cronjob_status):
-    mailrc_opts = "-S from=%s -S smtp=%s -S smtp-use-starttls -S smtp-auth=login -S smtp-auth-user=%s -S smtp-auth-password=%s" % (MAILRC_FROM_EMAIL, MAILRC_SMTP_SERVER, MAILRC_AUTH_USER, MAILRC_AUTH_PASS)
     mail_subject = "%s - PostgreSQL backup status" % socket.gethostname()
-    cmd_sendmail = "echo %s | %s %s -s '%s' %s" % (json.dumps(cronjob_status), BIN_MAIL, mailrc_opts, mail_subject, DEF_ADMIN_EMAILS)
+    cmd_sendmail = "echo %s | %s -s '%s' %s" % (json.dumps(cronjob_status), BIN_MAIL, mail_subject, DEF_ADMIN_EMAILS)
     output, err, returncode = run_cmd(cmd_sendmail)
     if returncode != 0:
         print "Failed to send mail notification using %s" % BIN_MAIL

@@ -29,24 +29,8 @@
   ansible.builtin.import_tasks: packages.yml
   tags: packages
 
-- name: Create ILRI scripts directory
-  ansible.builtin.file:
-    path: /opt/ilri/scripts
-    owner: root
-    group: root
-    mode: 0755
-    state: directory
-  tags: scripts
-
-- name: Copy ILRI scripts
-  ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: /opt/ilri/scripts
-    owner: root
-    group: root
-    mode: 0755
-  with_fileglob:
-    - scripts/*.sh
+- name: Configure ILRI scripts
+  ansible.builtin.import_tasks: scripts.yml
   tags: scripts
 
 - name: Configure firewall

@@ -1,0 +1,23 @@
+# Testing syntax:
+# echo "Testing, Testing, Testing" | s-nail -s "My test..." address@whatever.com
+
+# Use v15.0 compatibility mode
+set v15-compat
+
+# See the whole process, especially for troubleshooting:
+#set verbose
+
+# Essential setting: select allowed character sets
+set sendcharsets=utf-8,iso-8859-1
+# and reply in the same charset used by sender:
+set reply-in-same-charset
+
+set from="{{ mailrc_from_email }}"
+set smtp-auth=none
+
+# When sending messages, wait until the Mail-Transfer-Agent finishes.
+# Only like this you will be able to see errors reported through the
+# exit status of the MTA (including the built-in SMTP one)!
+set sendwait
+
+set mta=smtp://{{ mailrc_smtp_server }}

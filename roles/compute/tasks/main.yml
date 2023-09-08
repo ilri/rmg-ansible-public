@@ -106,6 +106,7 @@
       - udunits2-devel.x86_64 # for some R libraries
       - wget.x86_64
       - xorg-x11-xauth.x86_64 # or else X11 forwarding doesn't work
+      - reptyr.x86_64 # re-parent a running process
     state: present
   when: ansible_distribution_major_version is version('8', '==')
   tags: packages

@@ -33,12 +33,18 @@
     (ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>=')) or
     ansible_distribution == 'CentOS'
 
-- name: Configure /root/.mailrc for s-nail
+# Prefer the system s-nail configuration over this
+- name: Remove /root/.mailrc
+  ansible.builtin.file:
+    path: /root/.mailrc
+    state: absent
+
+- name: Configure /etc/s-nail.rc
   ansible.builtin.template:
     src: mailrc.j2
-    dest: /root/.mailrc
+    dest: /etc/s-nail.rc
     owner: root
     group: root
-    mode: 0660
+    mode: 0644
 
 # vim: set sw=2 ts=2:

@@ -57,6 +57,7 @@
           - pciutils
           - zstd
           - bzip2
+          - mosh
         state: present
   tags: packages
 

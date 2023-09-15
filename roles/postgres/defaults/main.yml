@@ -8,4 +8,7 @@ pg_conf_dir: "/etc/postgresql/{{ pg_version }}/main"
 pg_listen_addresses: "localhost"
 pg_max_connections: 100
 
+extra_victoriametrics_exporters:
+  - postgres
+
 # vim: set sw=2 ts=2:

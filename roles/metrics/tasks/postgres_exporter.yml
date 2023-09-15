@@ -1,0 +1,52 @@
+---
+# file: roles/metrics/tasks/postgres_exporter.yml
+#
+
+- name: Check postgres_exporter version
+  ansible.builtin.stat:
+    path: "/usr/local/bin/{{ postgres_exporter_tarball }}"
+  register: postgres_exporter_stat
+
+- name: Download postgres_exporter
+  ansible.builtin.get_url:
+    url: "{{ postgres_exporter_url }}"
+    dest: "/usr/local/bin/{{ postgres_exporter_tarball }}"
+    checksum: "sha256:{{ postgres_exporter_url_checksum }}"
+    mode: 0640
+  register: postgres_exporter_download
+  when: not postgres_exporter_stat.stat.exists
+
+# Unzip the tarball and extract only the postgres_exporter file
+- name: Unzip postgres_exporter
+  ansible.builtin.unarchive:
+    src: "/usr/local/bin/{{ postgres_exporter_tarball }}"
+    remote_src: true
+    dest: /usr/local/bin
+    extra_opts:
+      - --strip-components
+      - 1
+      - "{{ postgres_exporter_tarball | replace('.tar.gz', '') }}/postgres_exporter"
+  when:
+    - postgres_exporter_download.status_code is defined
+    - postgres_exporter_download.status_code == 200
+  notify:
+    - restart postgres-exporter
+
+- name: Remove old postgres_exporter tarballs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ postgres_exporter_old_versions }}"
+
+- name: Configure postgres-exporter systemd service
+  ansible.builtin.template:
+    src: etc/systemd/system/postgres-exporter.service.j2
+    dest: /etc/systemd/system/postgres-exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload systemd
+    - restart postgres-exporter
+
+# vim: set sw=2 ts=2:

@@ -86,6 +86,20 @@ mysqld_exporter_config_path: /etc/victoriametrics/mysqld_exporter.cnf
 mysqld_exporter_user: "{{ lookup('file', 'private/vars/metrics/mysqld_exporter_user') }}"
 mysqld_exporter_pass: "{{ lookup('file', 'private/vars/metrics/mysqld_exporter_pass') }}"
 
+
+# See: https://github.com/prometheus-community/postgres_exporter/releases
+postgres_exporter_version: 0.13.2
+postgres_exporter_old_versions:
+  - "/usr/local/bin/postgres_exporter-0.13.1.linux-amd64.tar.gz"
+
+# URL for postgres_exporter tarball
+postgres_exporter_tarball: postgres_exporter-{{ postgres_exporter_version }}.linux-amd64.tar.gz
+postgres_exporter_url: https://github.com/prometheus-community/postgres_exporter/releases/download/v{{ postgres_exporter_version }}/{{ postgres_exporter_tarball }}
+# sha256sum from sha256sums.txt on GitHub releases page or manually
+postgres_exporter_url_checksum: 33f820116a1c0cfc0a069d237036e05c142d216976b6fcb7c11df5abf5a537f8
+postgres_exporter_binary_path: /usr/local/bin/postgres_exporter
+
+
 # See: https://github.com/prometheus/jmx_exporter/releases
 jmx_exporter_version: 0.20.0
 jmx_exporter_old_versions:

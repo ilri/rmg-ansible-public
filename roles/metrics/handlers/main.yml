@@ -36,6 +36,12 @@
     state: restarted
     enabled: true
 
+- name: restart postgres-exporter
+  ansible.builtin.systemd:
+    name: postgres-exporter.service
+    state: restarted
+    enabled: true
+
 # Reload is used when the config file changes, and we only want to run this when
 # the configuration has been updated, not when it is newly created (because the
 # restart handler will restart the service anyways).

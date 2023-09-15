@@ -21,6 +21,16 @@ scrape_configs:
     target_label: instance
     replacement: '{{ inventory_hostname }}'
 {%   endif %}
+{%   if 'postgres' in extra_victoriametrics_exporters %}
+- job_name: postgres
+  static_configs:
+  - targets: ['127.0.0.1:9187']
+  relabel_configs:
+  - source_labels: [instance]
+    regex: '.*'
+    target_label: instance
+    replacement: '{{ inventory_hostname }}'
+{%   endif %}
 {% endif %}
 {% if "dspace" in group_names %}
 - job_name: java

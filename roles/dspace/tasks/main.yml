@@ -192,10 +192,10 @@
     group: root
   loop:
     - { src: dspace-handle-server.service.j2, name: dspace-handle-server.service }
-    - { src: dspace-statistics-api.service.j2, name': dspace-statistics-api.service }
+    - { src: dspace-statistics-api.service.j2, name: dspace-statistics-api.service }
     - { src: dspace-statistics-indexer.service.j2, name: dspace-statistics-indexer.service }
     - { src: tomcat/tomcat.service.j2, name: "tomcat{{ tomcat_version_major }}.service" }
-    - { src: dspace-angular.service.j2, name: dspace-angular.service' }
+    - { src: dspace-angular.service.j2, name: dspace-angular.service }
     - { src: cgspace-country-code-tagger.service.j2, name: cgspace-country-code-tagger.service }
     - { src: dspace-iwmi-exporter.service.j2, name: dspace-iwmi-exporter.service }
   register: dspace_systemd_services

@@ -20,7 +20,7 @@ WorkingDirectory={{ tomcat_user_home }}/src/git/dspace-angular
 # already started at least once via pm2 before.
 ExecStart={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 start ./dist/server/main.js --name dspace-ui -i 4
 ExecReload={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 reload all
-ExecStop={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 kill
+ExecStop={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 stop
 
 [Install]
 WantedBy=multi-user.target

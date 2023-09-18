@@ -6,7 +6,7 @@
     regexp: '{{ hostvars["hpc"].ansible_host }}.*hpc.*hpc\.ilri\.cgiar\.org$'
     line: "{{ hostvars['hpc'].ansible_host }} hpc hpc.ilri.cgiar.org"
     state: present
-  when: hw_raid_vendor is defined
+  when: "'hp' in hw_raid_vendor or 'lsi' in hw_raid_vendor"
 
 - name: Add ILRI mirror of Debian-based HPE MCP repository
   ansible.builtin.template:

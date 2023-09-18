@@ -140,4 +140,13 @@
     mode: 0644
   when: "'hp' in hw_raid_vendor or 'lsi' in hw_raid_vendor"
 
+# TODO: according to mdadm.conf we can only use ONE email address
+- name: Configure MAILADDR for mdadm
+  ansible.builtin.lineinfile:
+    path: /etc/mdadm/mdadm.conf
+    regexp: ^MAILADDR\s+{{ sysadmin_emails[0] }}$
+    line: MAILADDR {{ sysadmin_emails[0] }}
+    state: present
+  when: "'md' in hw_raid_vendor"
+
 # vim: set sw=2 ts=2:

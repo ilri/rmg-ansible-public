@@ -1,8 +1,8 @@
 ---
-- name: Install munin-node
+- name: Uninstall munin-node
   ansible.builtin.package:
     name: munin-node
-    state: present
+    state: absent
   tags: packages
 
 # Enable sensors support if this is a bare metal machine. The way we check this
@@ -29,11 +29,10 @@
     - ansible_os_family == "Debian"
   tags: packages
 
-- name: Enable Munin temperature and fan plugins
+- name: Disable Munin temperature and fan plugins
   ansible.builtin.file:
-    src: /usr/share/munin/plugins/sensors_
-    dest: "{{ item }}"
-    state: link
+    path: "{{ item }}"
+    state: absent
   loop:
     - /etc/munin/plugins/sensors_fan
     - /etc/munin/plugins/sensors_temp
@@ -41,21 +40,11 @@
 
 # some nice things to have for munin-node on Ubuntu (12.04 and 14.04 right now)
 # libwww-perl for munin's nginx_status check
-- name: Install munin-node deps
+- name: Uninstall munin-node deps
   ansible.builtin.package:
     name: libwww-perl
-    state: present
+    state: absent
   when: ansible_distribution == "Ubuntu"
-  tags: packages
-
-# explicitly install the JRE before munin-plugins-java so it doesn't pull in
-# default-jre (Java 10) on Ubuntu 18.04.
-- name: Install Java 8 JRE
-  when: ((ansible_distribution == "Ubuntu" and ansible_distribution_version is version('18.04', '=='))
-        and ("dspace" in group_names or "solr" in group_names))
-  ansible.builtin.package:
-    name: openjdk-8-jre-headless
-    state: present
   tags: packages
 
 # Some nice things to have on Ubuntu Tomcat servers:
@@ -63,76 +52,38 @@
 #   - libxml-simple-perl for munin's tomcat checks
 #   - libdbd-pg-perl for munin's postgres check
 #   - munin-plugins-java to monitor Tomcat via JMX
-- name: Install munin-node Tomcat deps
+- name: Uninstall munin-node Tomcat deps
   when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names or "postgres" in group_names))
   ansible.builtin.package:
     name: ['ruby', 'libxml-simple-perl', 'libdbd-pg-perl', 'munin-plugins-java']
-    state: present
+    state: absent
   tags: packages
 
-- name: Configure munin Tomcat plugin
+- name: Remove munin Tomcat plugin
   when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names))
-  ansible.builtin.template:
-    src: tomcat.conf.j2
-    dest: /etc/munin/plugin-conf.d/tomcat
-    owner: root
-    group: root
-    mode: 0640
-  notify:
-    - restart munin-node
+  ansible.builtin.file:
+    path: /etc/munin/plugin-conf.d/tomcat
+    state: absent
 
 - name: Configure munin DSpace Sessions plugin
-  ansible.builtin.copy:
-    src: jmx_dspace_sessions
-    dest: /etc/munin/plugins/jmx_dspace_sessions
-    owner: root
-    group: root
-    mode: 0755
+  ansible.builtin.file:
+    path: /etc/munin/plugins/jmx_dspace_sessions
+    state: absent
   when:
     - ansible_distribution == "Ubuntu"
     - '"dspace" in group_names'
-  notify:
-    - restart munin-node
 
 - name: Enable munin JMX dbpools plugin
   ansible.builtin.file:
-    src: /usr/share/munin/plugins/jmx_tomcat_dbpools
-    dest: /etc/munin/plugins/jmx_tomcat_dbpools
-    state: link
+    path: /etc/munin/plugins/jmx_tomcat_dbpools
+    state: absent
   when:
     - ansible_distribution == "Ubuntu"
     - '"dspace" in group_names'
-  notify:
-    - restart munin-node
 
-- name: Create munin-node.conf
-  ansible.builtin.template:
-    src: munin-node.conf.j2
-    dest: /etc/munin/munin-node.conf
-    mode: 0644
-  notify:
-    - restart munin-node
-
-# It is not possible to determine if munin-node-configure plans to enable or
-# disable any plugins based on its return code. We can only look for lines like
-# these in stderr:
-#
-#   + ln -s /usr/share/munin/plugins/nginx_request /etc/munin/plugins/nginx_request
-#   + rm -f /etc/munin/plugins/nginx_status
-#
-# If we see those then we know something changed and we can notify the handler.
-- name: Configure munin-node
-  ansible.builtin.shell:
-    cmd: munin-node-configure --shell --families=contrib,auto --remove-also | sh -x
-  register: munin_node_configure
-  changed_when: munin_node_configure.stderr is regex("\+ (ln -s|rm -f).*")
-  notify:
-    - restart munin-node
-
-- name: Start munin-node
-  ansible.builtin.service:
-    name: munin-node
-    state: started
-    enabled: true
+- name: Remove munin-node.conf
+  ansible.builtin.file:
+    path: /etc/munin/munin-node.conf
+    state: absent
 
 # vim: set sw=2 ts=2:

@@ -19,8 +19,10 @@ WorkingDirectory={{ tomcat_user_home }}/src/git/dspace-angular
 # We don't use `pm2 resurrect` here because that requires having the app
 # already started at least once via pm2 before.
 ExecStart={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 start ./dist/server/main.js --name dspace-ui -i 4
-ExecReload={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 reload all
-ExecStop={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 stop
+ExecReload={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 reload dspace-ui
+# Actually, stopping is problematic because then it doesn't start back up!
+# Leaving this heere for now...
+ExecStop={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 stop dspace-ui
 
 [Install]
 WantedBy=multi-user.target

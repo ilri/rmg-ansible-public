@@ -1,6 +1,6 @@
 ---
 
-# Glaring fucking hack: skip the firewall on linode20 and linode31 because they
+# Glaring fucking hack: skip the firewall on linode31 and hetzner02 because they
 # run Docker and Docker doesn't work with nftables. We also ignore holstein be-
 # cause it is running libvirtd, which has a hard depend on iptables.
 - name: Configure firewall on Ubuntu
@@ -11,9 +11,9 @@
         - firewall
   when:
     - ansible_distribution == 'Ubuntu'
-    - inventory_hostname != 'linode20'
     - inventory_hostname != 'linode31'
     - inventory_hostname != 'holstein'
+    - inventory_hostname != 'hetzner02'
   tags: firewall
 
 - name: Configure firewall on Debian

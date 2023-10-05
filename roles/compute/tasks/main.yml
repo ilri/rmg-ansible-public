@@ -90,6 +90,7 @@
       - perl-Text-Format.noarch # for circos
       - perl-Text-Soundex.x86_64 # for RepeatMasker
       - perl-parent.noarch # for some BioPerl scripts
+      - perl-Params-Validate.x86_64 # for circos
       - pigz.x86_64 # for SeqKit
       - proj-devel.x86_64 # for some R libraries
       - proj.x86_64 # for libproj.so.0

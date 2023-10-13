@@ -114,6 +114,16 @@
   when: ansible_distribution_major_version is version('8', '==')
   tags: packages
 
+# Previously nvtop was not packaged in EPEL so we compiled it as an environment
+# module. As of CentOS Stream 8 it is in EPEL and is more up to date than the
+# one I had compiled manually.
+- name: Install nvtop on compute06
+  ansible.builtin.package:
+    name: nvtop
+    state: present
+  when: inventory_hostname == 'compute06'
+  tags: packages
+
 # Create a symlink to libbz2.so.1.0 to please stt.
 # See: https://github.com/coqui-ai/STT/issues/2341
 - name: Create symlink for libbz2.so.1.0

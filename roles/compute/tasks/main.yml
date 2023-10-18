@@ -66,6 +66,7 @@
       - metis-devel.x86_64 # for shannon_cpp
       - nano.x86_64
       - ncurses-compat-libs.x86_64 # for some stuff compiled in CentOS 7
+      - netcdf-devel # for some R packages
       - openblas.x86_64 # for scipy
       - openmpi.x86_64 # optional for abyss
       - openssl-devel.x86_64 # for R

@@ -16,6 +16,10 @@ export SACCT_FORMAT="JobID,JobName,User,Account,State,CPUTime,AllocCPUs,Partitio
 # don't want users to fill up /tmp and crash SLURM!
 export APPTAINER_TMPDIR=/var/scratch/$USER
 
+# Signal to programs that support this that we do not want them to use /tmp for
+# temporary data. bcftools sort supports this since v1.15 for example.
+export TMPDIR=/var/scratch
+
 {% if inventory_hostname == 'hpc' %}
 # only run on interactive sessions
 TTY=$(tty -s)

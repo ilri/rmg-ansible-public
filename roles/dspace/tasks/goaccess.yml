@@ -15,13 +15,13 @@
     dest: /usr/share/keyrings/goaccess.key
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   register: download_goaccess_gpg_key
   when: not goaccess_gpg_key_stat.stat.exists
 
 - name: Add new GoAccess repository
   ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/goaccess.key] https://deb.goaccess.io/ {{ ansible_distribution_release }} main'
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/goaccess.key] https://deb.goaccess.io/ {{ ansible_distribution_release }} main
     filename: goaccess
     state: present
   register: add_goaccess_repository

@@ -4,22 +4,22 @@
 
 - name: Check mysqld_exporter version
   ansible.builtin.stat:
-    path: "/usr/local/bin/{{ mysqld_exporter_tarball }}"
+    path: /usr/local/bin/{{ mysqld_exporter_tarball }}
   register: mysqld_exporter_stat
 
 - name: Download mysqld_exporter
   ansible.builtin.get_url:
     url: "{{ mysqld_exporter_url }}"
-    dest: "/usr/local/bin/{{ mysqld_exporter_tarball }}"
-    checksum: "sha256:{{ mysqld_exporter_url_checksum }}"
-    mode: 0640
+    dest: /usr/local/bin/{{ mysqld_exporter_tarball }}
+    checksum: sha256:{{ mysqld_exporter_url_checksum }}
+    mode: "0640"
   register: mysqld_exporter_download
   when: not mysqld_exporter_stat.stat.exists
 
 # Unzip the tarball and extract only the mysqld_exporter file
 - name: Unzip mysqld_exporter
   ansible.builtin.unarchive:
-    src: "/usr/local/bin/{{ mysqld_exporter_tarball }}"
+    src: /usr/local/bin/{{ mysqld_exporter_tarball }}
     remote_src: true
     dest: /usr/local/bin
     extra_opts:
@@ -44,7 +44,7 @@
     dest: "{{ mysqld_exporter_config_path }}"
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
-    mode: 0640
+    mode: "0640"
   register: configure_mysqld_exporter
   notify:
     - reload mysqld-exporter
@@ -55,7 +55,7 @@
     dest: /etc/systemd/system/mysqld-exporter.service
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
     - reload systemd
     - restart mysqld-exporter

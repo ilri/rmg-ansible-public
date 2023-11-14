@@ -1,8 +1,7 @@
 ---
-
 - name: Install disk utilities and glusterfs-server
   ansible.builtin.package:
-    name: ['gdisk', 'xfsprogs', 'nfs-utils', 'htop', 'glusterfs-server']
+    name: [gdisk, xfsprogs, nfs-utils, htop, glusterfs-server]
     state: present
   tags: glusterfs-server
 

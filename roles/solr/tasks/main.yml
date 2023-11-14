@@ -1,7 +1,7 @@
 ---
 - name: Install Ansible unarchive dependencies
   ansible.builtin.package:
-    name: ['unzip', 'tar']
+    name: [unzip, tar]
     state: present
     install_recommends: false
     cache_valid_time: 3600

@@ -1,5 +1,4 @@
 ---
-
 - name: Configure munin scraper
   ansible.builtin.import_tasks: munin.yml
   tags: munin

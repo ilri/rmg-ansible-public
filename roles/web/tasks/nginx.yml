@@ -24,7 +24,7 @@
     url: https://raw.githubusercontent.com/internetstandards/dhe_groups/master/ffdhe4096.pem
     checksum: sha256:64852d6890ff9e62eecd1ee89c72af9af244dfef5b853bcedea3dfd7aade22b3
     dest: "{{ nginx_ssl_dhparam }}"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify:
@@ -43,7 +43,7 @@
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   loop:

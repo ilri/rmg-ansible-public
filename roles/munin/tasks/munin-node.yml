@@ -12,7 +12,7 @@
   ansible.builtin.package:
     name:
       - lm_sensors # for CPU package and PCI card temperatures
-      - hddtemp    # for hard drive temperatures
+      - hddtemp # for hard drive temperatures
     state: present
   when:
     - ansible_virtualization_role == "host"
@@ -55,7 +55,7 @@
 - name: Uninstall munin-node Tomcat deps
   when: (ansible_distribution == "Ubuntu" and ("dspace" in group_names or "solr" in group_names or "postgres" in group_names))
   ansible.builtin.package:
-    name: ['ruby', 'libxml-simple-perl', 'libdbd-pg-perl', 'munin-plugins-java']
+    name: [ruby, libxml-simple-perl, libdbd-pg-perl, munin-plugins-java]
     state: absent
   tags: packages
 

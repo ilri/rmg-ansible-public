@@ -3,21 +3,21 @@
 
 - name: Check VictoriaMetrics version
   ansible.builtin.stat:
-    path: "/usr/local/bin/{{ victoriametrics_tarball }}"
+    path: /usr/local/bin/{{ victoriametrics_tarball }}
   register: victoriametrics_stat
 
 - name: Download VictoriaMetrics
   ansible.builtin.get_url:
     url: "{{ victoriametrics_url }}"
-    dest: "/usr/local/bin/{{ victoriametrics_tarball }}"
-    checksum: "sha256:{{ victoriametrics_url_checksum }}"
-    mode: 0640
+    dest: /usr/local/bin/{{ victoriametrics_tarball }}
+    checksum: sha256:{{ victoriametrics_url_checksum }}
+    mode: "0640"
   register: victoriametrics_download
   when: not victoriametrics_stat.stat.exists
 
 - name: Unzip VictoriaMetrics
   ansible.builtin.unarchive:
-    src: "/usr/local/bin/{{ victoriametrics_tarball }}"
+    src: /usr/local/bin/{{ victoriametrics_tarball }}
     remote_src: true
     dest: /usr/local/bin
   when:
@@ -39,7 +39,7 @@
     dest: "{{ victoriametrics_vmauth_config_path }}"
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
-    mode: 0600
+    mode: "0600"
   register: configure_vmauth
   notify:
     - reload vmauth
@@ -50,7 +50,7 @@
     state: directory
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
-    mode: 0770
+    mode: "0770"
 
 - name: Copy VictoriaMetrics server service unit
   ansible.builtin.template:
@@ -58,7 +58,7 @@
     dest: /etc/systemd/system/victoria-metrics.service
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
     - reload systemd
     - restart victoria-metrics
@@ -69,7 +69,7 @@
     dest: /etc/systemd/system/victoria-metrics-vmauth.service
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
     - reload systemd
     - restart vmauth

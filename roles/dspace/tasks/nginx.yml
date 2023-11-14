@@ -1,5 +1,4 @@
 ---
-
 - name: Remove nginx apt signing key from apt-key
   ansible.builtin.apt_key:
     id: 573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
@@ -17,13 +16,13 @@
     dest: /usr/share/keyrings/nginx_signing.key
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   register: download_nginx_signing_key
   when: not nginx_signing_key_stat.stat.exists
 
 - name: Add nginx stable repository
   ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nginx_signing.key] https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx'
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nginx_signing.key] https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx
     filename: nginx_org_packages_ubuntu
     state: present
   register: add_nginx_apt_repository
@@ -31,7 +30,7 @@
 
 - name: Add nginx mainline repository
   ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nginx_signing.key] https://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx'
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nginx_signing.key] https://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx
     filename: nginx_org_packages_ubuntu
     state: present
   register: add_nginx_apt_repository
@@ -53,9 +52,9 @@
 
 - name: Copy nginx configs
   ansible.builtin.copy:
-    src: "nginx/{{ item }}"
-    dest: "/etc/nginx/{{ item }}"
-    mode: 0644
+    src: nginx/{{ item }}
+    dest: /etc/nginx/{{ item }}
+    mode: "0644"
     owner: root
     group: root
   loop:
@@ -70,7 +69,7 @@
   ansible.builtin.template:
     src: nginx/dspace.conf.j2
     dest: /etc/nginx/conf.d/dspace.conf
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify:
@@ -80,7 +79,7 @@
   ansible.builtin.copy:
     src: nginx/munin.conf
     dest: /etc/nginx/conf.d/munin.conf
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify:

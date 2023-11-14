@@ -23,7 +23,7 @@
     dest: /usr/share/keyrings/ACCC4CF8.asc
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   register: download_pgdg_signing_key
   when: not pgdg_signing_key_stat.stat.exists
   tags:
@@ -32,7 +32,7 @@
 
 - name: Add PGDG repository
   ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/ACCC4CF8.asc] https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/ACCC4CF8.asc] https://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main
     filename: pgdg
     state: present
   register: add_pgdg_apt_repository
@@ -66,7 +66,7 @@
 - name: Create additional PostgreSQL config directory
   ansible.builtin.file:
     path: "{{ pg_conf_dir }}/conf.d"
-    mode: 0755
+    mode: "0755"
     owner: postgres
     group: postgres
     state: directory
@@ -76,7 +76,7 @@
   ansible.builtin.template:
     src: pg_confd_vars.conf.j2
     dest: "{{ pg_conf_dir }}/conf.d/custom_vars.conf"
-    mode: 0644
+    mode: "0644"
     owner: postgres
     group: postgres
   when: pg_confd_vars is defined
@@ -92,8 +92,8 @@
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
   loop:
-    - { src: 'postgresql-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/postgresql.conf', mode: '0644', owner: 'postgres', group: 'postgres' }
-    - { src: 'pg_hba-{{ pg_version }}.conf.j2', dest: '{{ pg_conf_dir }}/pg_hba.conf', mode: '0640', owner: 'postgres', group: 'postgres' }
+    - { src: "postgresql-{{ pg_version }}.conf.j2", dest: "{{ pg_conf_dir }}/postgresql.conf", mode: "0644", owner: postgres, group: postgres }
+    - { src: "pg_hba-{{ pg_version }}.conf.j2", dest: "{{ pg_conf_dir }}/pg_hba.conf", mode: "0640", owner: postgres, group: postgres }
   notify:
     - restart postgresql
   tags: postgresql

@@ -1,5 +1,4 @@
 ---
-
 - name: Remove Node.js key from apt-key
   ansible.builtin.apt_key:
     id: 9FD3B784BC1C6FC31A8A0A1C1655A0AB68576280
@@ -16,13 +15,13 @@
     dest: /usr/share/keyrings/nodesource.gpg.key
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   register: download_nodejs_signing_key
   when: not nodejs_signing_key_stat.stat.exists
 
 - name: Add Node.js 14 LTS repository
   ansible.builtin.apt_repository:
-    repo: 'deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource.gpg.key] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main'
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource.gpg.key] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main
     filename: nodesource
     state: present
   register: add_nodejs_apt_repository
@@ -36,7 +35,7 @@
 
 - name: Install DSpace Mirage 2 system build dependencies
   ansible.builtin.apt:
-    name: ['build-essential', 'nodejs']
+    name: [build-essential, nodejs]
     state: present
     install_recommends: false
     cache_valid_time: 3600
@@ -47,21 +46,21 @@
     dest: "{{ tomcat_user_home }}/.npmrc"
     owner: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
-    mode: 0640
+    mode: "0640"
 
 - name: Install DSpace Mirage 2 Node.js build dependencies
   community.general.npm: name={{ item }} global=yes
   loop:
     - grunt-cli
     - yarn
-  become_user: '{{ tomcat_user }}'
+  become_user: "{{ tomcat_user }}"
 
 - name: Add npm packages to PATH
   ansible.builtin.lineinfile:
-    dest: '{{ tomcat_user_home }}/.profile'
-    regexp: '^export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin$'
-    line: 'export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin'
+    dest: "{{ tomcat_user_home }}/.profile"
+    regexp: ^export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin$
+    line: export PATH=$PATH:{{ tomcat_user_home }}/.node_modules/bin
     state: present
-  become_user: '{{ tomcat_user }}'
+  become_user: "{{ tomcat_user }}"
 
 # vim: set sw=2 ts=2:

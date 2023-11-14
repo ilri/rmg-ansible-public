@@ -1,5 +1,4 @@
 ---
-
 - name: Configure OpenJDK
   ansible.builtin.import_tasks: openjdk.yml
   tags: openjdk
@@ -27,7 +26,7 @@
 - name: Enable PDF support in ImageMagick
   ansible.builtin.lineinfile:
     path: /etc/ImageMagick-6/policy.xml
-    regexp: 'pattern="PDF"'
+    regexp: pattern="PDF"
     state: absent
 
 - name: Add dspace group
@@ -69,7 +68,7 @@
     dest: "{{ tomcat_user_home }}/.m2/settings.xml"
     owner: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
-    mode: 0640
+    mode: "0640"
   when:
     - maven_username is defined
     - maven_password is defined
@@ -81,7 +80,7 @@
     version: "{{ dspace_git_branch }}"
     force: true
     depth: 1
-  become_user: '{{ tomcat_user }}'
+  become_user: "{{ tomcat_user }}"
 
 - name: Copy DSpace local.cfg
   ansible.builtin.template:
@@ -89,7 +88,7 @@
     dest: "{{ tomcat_user_home }}/src/git/DSpace/local.cfg"
     owner: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
-    mode: 0640
+    mode: "0640"
 
 - name: Copy GeoIP.conf
   ansible.builtin.template:
@@ -97,36 +96,36 @@
     dest: /etc/GeoIP.conf
     owner: root
     group: root
-    mode: 0640
+    mode: "0640"
 
 - name: Create postgres users
   postgresql_user:
     name: "{{ item.name }}"
     password: "{{ item.password }}"
   loop:
-    - { name: '{{ dspace_db_user }}', password: '{{ dspace_db_password }}' }
-    - { name: '{{ dspace_statistics_db_user }}', password: '{{ dspace_statistics_db_password }}' }
+    - { name: "{{ dspace_db_user }}", password: "{{ dspace_db_password }}" }
+    - { name: "{{ dspace_statistics_db_user }}", password: "{{ dspace_statistics_db_password }}" }
   become_user: postgres
   tags: postgresql
   environment:
-    PGOPTIONS: "-c password_encryption=scram-sha-256"
+    PGOPTIONS: -c password_encryption=scram-sha-256
 
 - name: Create postgres databases
   postgresql_db:
     name: "{{ item.name }}"
-    encoding: 'UTF-8'
-    template: 'template0'
+    encoding: UTF-8
+    template: template0
     owner: "{{ item.owner }}"
   loop:
-    - { name: '{{ dspace_db_name }}', owner: '{{ dspace_db_user }}' }
-    - { name: '{{ dspace_statistics_db_user }}', owner: '{{ dspace_statistics_db_user }}' }
+    - { name: "{{ dspace_db_name }}", owner: "{{ dspace_db_user }}" }
+    - { name: "{{ dspace_statistics_db_user }}", owner: "{{ dspace_statistics_db_user }}" }
   become_user: postgres
   register: create_postgres_databases
   tags: postgresql
 
 - name: Enable pgcrypto for DSpace 6
   postgresql_query: # noqa no-handler
-    db: '{{ dspace_db_name }}'
+    db: "{{ dspace_db_name }}"
     query: CREATE EXTENSION IF NOT EXISTS pgcrypto
   become_user: postgres
   when: create_postgres_databases is changed
@@ -154,35 +153,35 @@
     dest: /etc/cron.d/dspace-maintenance-tasks
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Copy systemd service units
   ansible.builtin.template:
     src: "{{ item.src }}"
-    dest: "/etc/systemd/system/{{ item.name }}"
-    mode: 0644
+    dest: /etc/systemd/system/{{ item.name }}
+    mode: "0644"
     owner: root
     group: root
   loop:
-    - { 'src': dspace-handle-server.service.j2, 'name': dspace-handle-server.service }
-    - { 'src': dspace-statistics-api.service.j2, 'name': dspace-statistics-api.service }
-    - { 'src': dspace-statistics-indexer.service.j2, 'name': dspace-statistics-indexer.service }
-    - { 'src': 'tomcat/tomcat.service.j2', 'name': 'tomcat{{ tomcat_version_major }}.service' }
-    - { 'src': 'cgspace-country-code-tagger.service.j2', 'name': 'cgspace-country-code-tagger.service' }
-    - { 'src': 'dspace-iwmi-exporter.service.j2', 'name': 'dspace-iwmi-exporter.service' }
+    - { src: dspace-handle-server.service.j2, name: dspace-handle-server.service }
+    - { src: dspace-statistics-api.service.j2, name: dspace-statistics-api.service }
+    - { src: dspace-statistics-indexer.service.j2, name: dspace-statistics-indexer.service }
+    - { src: tomcat/tomcat.service.j2, name: "tomcat{{ tomcat_version_major }}.service" }
+    - { src: cgspace-country-code-tagger.service.j2, name: cgspace-country-code-tagger.service }
+    - { src: dspace-iwmi-exporter.service.j2, name: dspace-iwmi-exporter.service }
   register: dspace_systemd_services
 
 - name: Copy systemd timer units
   ansible.builtin.copy:
     src: "{{ item.src }}"
-    dest: "/etc/systemd/system/{{ item.name }}"
-    mode: 0644
+    dest: /etc/systemd/system/{{ item.name }}
+    mode: "0644"
     owner: root
     group: root
   loop:
-    - { 'src': dspace-statistics-indexer.timer, 'name': dspace-statistics-indexer.timer }
-    - { 'src': cgspace-country-code-tagger.timer, 'name': cgspace-country-code-tagger.timer }
-    - { 'src': dspace-iwmi-exporter.timer, 'name': dspace-iwmi-exporter.timer }
+    - { src: dspace-statistics-indexer.timer, name: dspace-statistics-indexer.timer }
+    - { src: cgspace-country-code-tagger.timer, name: cgspace-country-code-tagger.timer }
+    - { src: dspace-iwmi-exporter.timer, name: dspace-iwmi-exporter.timer }
   register: dspace_systemd_timers
 
 # We have two separate tasks for copying these environments because we need to
@@ -191,7 +190,7 @@
   ansible.builtin.template:
     src: dspace-statistics-api.j2
     dest: /etc/dspace-statistics-api
-    mode: 0640
+    mode: "0640"
     owner: root
     group: root
   register: dspace_systemd_environment1
@@ -201,8 +200,8 @@
 - name: Copy Tomcat environment
   ansible.builtin.template:
     src: tomcat/defaults.j2
-    dest: "/etc/default/tomcat{{ tomcat_version_major }}"
-    mode: 0640
+    dest: /etc/default/tomcat{{ tomcat_version_major }}
+    mode: "0640"
     owner: root
     group: root
   register: dspace_systemd_environment2
@@ -230,7 +229,7 @@
     - dspace-handle-server.service
     - dspace-statistics-api.service
     - dspace-statistics-indexer.timer
-    - 'tomcat{{ tomcat_version_major }}.service'
+    - tomcat{{ tomcat_version_major }}.service
     - cgspace-country-code-tagger.timer
     - dspace-iwmi-exporter.timer
 
@@ -239,7 +238,7 @@
     path: "{{ dspace_root }}"
     owner: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
-    mode: 0755
+    mode: "0755"
     state: directory
 
 - name: Add DSpace bin directory to PATH
@@ -248,6 +247,6 @@
     dest: /etc/profile.d/dspace.sh
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
 
 # vim: set sw=2 ts=2:

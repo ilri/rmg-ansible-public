@@ -1,5 +1,4 @@
 ---
-
 - name: Create slurm group
   ansible.builtin.group:
     name: slurm
@@ -53,7 +52,7 @@
     dest: /etc/slurm/slurm.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
     - restart slurmdbd
     - restart slurmctld
@@ -65,7 +64,7 @@
     dest: /etc/logrotate.d/slurm
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Copy extra slurm configs
   ansible.builtin.copy:
@@ -73,10 +72,10 @@
     dest: "{{ item.dest }}"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   loop:
-    - { src: 'etc/pam.d/slurm', dest: '/etc/pam.d/slurm'}
-    - { src: 'etc/slurm/cgroup.conf', dest: '/etc/slurm/cgroup.conf'}
+    - { src: etc/pam.d/slurm, dest: /etc/pam.d/slurm }
+    - { src: etc/slurm/cgroup.conf, dest: /etc/slurm/cgroup.conf }
   notify:
     - restart slurmdbd
     - restart slurmctld
@@ -88,7 +87,7 @@
     dest: /etc/slurm/gres.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: inventory_hostname == 'compute06'
   notify:
     - restart slurmdbd
@@ -100,7 +99,7 @@
     path: "{{ item }}"
     owner: slurm
     group: slurm
-    mode: 0755
+    mode: "0755"
     state: directory
   loop:
     - /var/log/slurm
@@ -115,7 +114,7 @@
     path: /var/spool/slurmctld
     owner: slurm
     group: slurm
-    mode: 0755
+    mode: "0755"
     state: directory
   when: inventory_hostname == slurm_head_node
   notify: restart slurmctld
@@ -124,7 +123,7 @@
   ansible.builtin.copy:
     src: munge.key
     dest: /etc/munge/munge.key
-    mode: 0600
+    mode: "0600"
     owner: munge
     group: munge
   notify: restart munge

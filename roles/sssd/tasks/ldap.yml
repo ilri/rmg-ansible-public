@@ -14,7 +14,7 @@
     dest: "{{ ldap_conf_dir }}/ldap.conf"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 - name: Remove old CA certificates
   ansible.builtin.file:
@@ -34,7 +34,7 @@
     dest: "{{ local_ca_certs_dir }}/hpc-ca-2022.asc"
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   register: update_cert_bundle
 
 - name: update trusted ca-certificates bundle

@@ -20,8 +20,8 @@
 - name: Disable OpenJDK assistive technologies
   ansible.builtin.lineinfile:
     path: /etc/java-8-openjdk/accessibility.properties
-    regexp: '^assistive_technologies=org.GNOME.Accessibility.AtkWrapper$'
-    line: '#assistive_technologies=org.GNOME.Accessibility.AtkWrapper'
+    regexp: ^assistive_technologies=org.GNOME.Accessibility.AtkWrapper$
+    line: "#assistive_technologies=org.GNOME.Accessibility.AtkWrapper"
     state: present
 
 # 2021-06-30: Fix slow Tomcat startup due to blocking /dev/random
@@ -29,8 +29,8 @@
 - name: Use /dev/urandom for JVM SecureRandom
   ansible.builtin.lineinfile:
     path: /etc/java-8-openjdk/security/java.security
-    regexp: '^securerandom.source=file:/dev/random$'
-    line: 'securerandom.source=file:/dev/urandom'
+    regexp: ^securerandom.source=file:/dev/random$
+    line: securerandom.source=file:/dev/urandom
     state: present
 
 # vim: set sw=2 ts=2:

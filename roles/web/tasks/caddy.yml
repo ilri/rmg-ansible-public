@@ -17,13 +17,13 @@
     dest: /usr/share/keyrings/caddy-stable-archive-keyring.key
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   register: download_caddy_signing_key
   when: not caddy_signing_key_stat.stat.exists
 
 - name: Add Caddy stable repository
   ansible.builtin.apt_repository:
-    repo: 'deb [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.key] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main'
+    repo: deb [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.key] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
     filename: caddy-stable
     state: present
   register: add_caddy_apt_repository
@@ -46,7 +46,7 @@
   ansible.builtin.file:
     path: /etc/caddy/conf.d
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: root
     group: root
 
@@ -54,7 +54,7 @@
   ansible.builtin.copy:
     src: etc/caddy/conf.d/01-security-headers.conf
     dest: /etc/caddy/conf.d/01-security-headers.conf
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify:

@@ -1,14 +1,14 @@
 ---
 - name: Install sssd package
   ansible.builtin.package:
-    name: ['sssd', 'sssd-tools', 'sssd-ldap', 'oddjob-mkhomedir']
+    name: [sssd, sssd-tools, sssd-ldap, oddjob-mkhomedir]
     state: present
   when: ansible_distribution == 'CentOS'
   tags: packages
 
 - name: Install sssd package
   ansible.builtin.package:
-    name: ['sssd', 'sssd-tools']
+    name: [sssd, sssd-tools]
     state: present
     cache_valid_time: 3600
   when: ansible_distribution == 'Ubuntu'
@@ -22,7 +22,7 @@
     - ansible_distribution_release == 'Stream'
   ansible.builtin.lineinfile:
     path: "{{ ldap_conf_dir }}/ldap.conf"
-    regexp: "^TLS_CACERTDIR"
+    regexp: ^TLS_CACERTDIR
     state: absent
 
 - name: Configure sssd on CentOS Stream 8
@@ -37,7 +37,7 @@
     dest: /etc/sssd/sssd.conf
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
   notify: restart sssd
 
 - name: Enable pam_mkhomedir
@@ -46,7 +46,7 @@
     dest: /usr/share/pam-configs/pam_mkhomedir
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: ansible_distribution == 'Ubuntu'
 
 - name: Regenerate pam config
@@ -59,8 +59,8 @@
     - ansible_distribution_major_version is version('7', '==')
   ansible.builtin.replace:
     dest: "{{ item }}"
-    regexp: '1000'
-    replace: '500'
+    regexp: "1000"
+    replace: "500"
   loop:
     - /etc/pam.d/system-auth-ac
     - /etc/pam.d/password-auth-ac
@@ -76,10 +76,10 @@
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   loop:
-    - {'regexp': '^UID_MIN', 'line': 'UID_MIN 600'}
-    - {'regexp': '^SYS_UID_MAX', 'line': 'SYS_UID_MAX 599'}
-    - {'regexp': '^GID_MIN', 'line': 'GID_MIN 600'}
-    - {'regexp': '^SYS_GID_MAX', 'line': 'SYS_GID_MAX 599'}
+    - { regexp: ^UID_MIN, line: UID_MIN 600 }
+    - { regexp: ^SYS_UID_MAX, line: SYS_UID_MAX 599 }
+    - { regexp: ^GID_MIN, line: GID_MIN 600 }
+    - { regexp: ^SYS_GID_MAX, line: SYS_GID_MAX 599 }
 
 - name: Add hpc ip & hostname in /etc/hosts
   when: ansible_distribution == 'Ubuntu'

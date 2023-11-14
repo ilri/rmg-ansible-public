@@ -35,7 +35,7 @@
   ansible.builtin.template:
     src: set-mellanox-irq-affinity.service.j2
     dest: /etc/systemd/system/set-mellanox-irq-affinity.service
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Start and enable Mellanox IRQ affinity service
@@ -45,7 +45,7 @@
   ansible.builtin.template:
     src: set-mellanox-descriptors.service.j2
     dest: /etc/systemd/system/set-mellanox-descriptors.service
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   notify: Start and enable Mellanox rx/tx descriptors service

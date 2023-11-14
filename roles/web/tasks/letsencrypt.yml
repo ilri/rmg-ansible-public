@@ -18,7 +18,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   loop:
     - /etc/letsencrypt/renewal-hooks/pre
     - /etc/letsencrypt/renewal-hooks/post
@@ -44,7 +44,7 @@
     dest: "{{ item.dest }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   loop:
     - { src: stop-webserver.sh.j2, dest: /etc/letsencrypt/renewal-hooks/pre/stop-webserver.sh }
     - { src: start-webserver.sh.j2, dest: /etc/letsencrypt/renewal-hooks/post/start-webserver.sh }

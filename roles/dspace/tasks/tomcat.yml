@@ -1,5 +1,4 @@
 ---
-
 - name: Check installed Tomcat version
   ansible.builtin.stat:
     path: "{{ tomcat_path }}"
@@ -10,8 +9,8 @@
   ansible.builtin.get_url:
     url: "{{ tomcat_url }}"
     dest: "{{ tomcat_path }}.tar.gz"
-    checksum: "sha512:{{ tomcat_url_checksum }}"
-    mode: 0640
+    checksum: sha512:{{ tomcat_url_checksum }}
+    mode: "0640"
   register: tomcat_download
   when: not tomcat_stat.stat.exists
   tags: tomcat
@@ -68,7 +67,7 @@
 - name: Increase Tomcat session timeout
   ansible.builtin.lineinfile:
     path: "{{ tomcat_path }}/conf/web.xml"
-    regexp: '^\s+<session-timeout>30</session-timeout>'
+    regexp: ^\s+<session-timeout>30</session-timeout>
     line: "        <session-timeout>60</session-timeout>"
     state: present
   tags: tomcat
@@ -92,8 +91,12 @@
     owner: "{{ item.owner }}"
     group: "{{ item.group }}"
   loop:
-    - { src: 'tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2', dest: '{{ tomcat_path }}/conf/server.xml', owner: 'root', group: '{{ tomcat_group }}', mode: '0640' }
-    - { src: 'tomcat/tomcat-users.xml.j2', dest: '{{ tomcat_path }}/conf/tomcat-users.xml', owner: 'root', group: '{{ tomcat_group }}', mode: '0640' }
+    - src: tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2
+      dest: "{{ tomcat_path }}/conf/server.xml"
+      owner: root
+      group: "{{ tomcat_group }}"
+      mode: "0640"
+    - { src: tomcat/tomcat-users.xml.j2, dest: "{{ tomcat_path }}/conf/tomcat-users.xml", owner: root, group: "{{ tomcat_group }}", mode: "0640" }
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
@@ -104,7 +107,7 @@
     state: directory
     owner: root
     group: "{{ tomcat_group }}"
-    mode: 0770
+    mode: "0770"
   tags: tomcat
 
 - name: Prepare Tomcat web application contexts
@@ -113,7 +116,7 @@
     dest: "{{ item.context_path }}"
     owner: root
     group: "{{ tomcat_group }}"
-    mode: 0640
+    mode: "0640"
   loop: "{{ dspace_webapps }}"
   when: dspace_webapps is defined
   notify:
@@ -140,8 +143,8 @@
     group: "{{ item.group }}"
     mode: "{{ item.mode }}"
   loop:
-    - { dest: '{{ tomcat_user_home }}/.m2', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '750' }
-    - { dest: '{{ tomcat_user_home }}/src/git/DSpace', state: 'directory', owner: '{{ tomcat_user }}', group: '{{ tomcat_group }}', mode: '755' }
+    - { dest: "{{ tomcat_user_home }}/.m2", state: directory, owner: "{{ tomcat_user }}", group: "{{ tomcat_group }}", mode: "750" }
+    - { dest: "{{ tomcat_user_home }}/src/git/DSpace", state: directory, owner: "{{ tomcat_user }}", group: "{{ tomcat_group }}", mode: "755" }
   tags: tomcat
 
 - name: Configure rotation for Tomcat server's access logs
@@ -150,7 +153,7 @@
     dest: /etc/logrotate.d/tomcat-access_logs
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags: tomcat
 
 - name: Set open file limits for tomcat user
@@ -159,7 +162,7 @@
     dest: /etc/security/limits.d/90-tomcat.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags: tomcat
 
 # vim: set sw=2 ts=2:

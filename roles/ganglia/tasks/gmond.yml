@@ -11,7 +11,7 @@
     dest: /etc/ganglia/gmond.conf
     owner: ganglia
     group: ganglia
-    mode: 0640
+    mode: "0640"
   notify:
     - restart gmond
 

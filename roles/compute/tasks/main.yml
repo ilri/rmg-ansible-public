@@ -1,5 +1,4 @@
 ---
-
 - name: Configure HPC head node
   ansible.builtin.import_tasks: hpc.yml
   when:
@@ -147,7 +146,7 @@
     dest: /etc/profile.d/z-ilri.sh
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags: profile
 
 - name: Copy limits configuration
@@ -156,7 +155,7 @@
     dest: /etc/security/limits.d/90-ilri.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags: limits
 
 - name: Create user.slice override directory
@@ -164,7 +163,7 @@
     path: /etc/systemd/system/user.slice.d
     group: root
     owner: root
-    mode: 0755
+    mode: "0755"
     state: directory
   tags: limits
 
@@ -174,7 +173,7 @@
     dest: /etc/systemd/system/user.slice.d/override.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: inventory_hostname == slurm_head_node
   tags: limits
 
@@ -190,7 +189,7 @@
     dest: /etc/ssh/ssh_config
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags: ssh-config
 
 - name: Set sticky bit on local scratch
@@ -198,7 +197,7 @@
     path: "{{ local_scratch }}"
     group: root
     owner: root
-    mode: 01777
+    mode: "01777"
     state: directory
   tags: scratch
 
@@ -208,7 +207,7 @@
     dest: /etc/tmpfiles.d/scratch.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags: scratch
 
 # Keep 12 months of logins instead of 1
@@ -216,7 +215,7 @@
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/wtmp
     regexp: ^\s+rotate 1$
-    line: '    rotate 12'
+    line: "    rotate 12"
     state: present
 
 # Keep 12 months of failed logins instead of 1
@@ -224,7 +223,7 @@
   ansible.builtin.lineinfile:
     path: /etc/logrotate.d/btmp
     regexp: ^\s+rotate 1$
-    line: '    rotate 12'
+    line: "    rotate 12"
     state: present
 
 # vim: set sw=2 ts=2:

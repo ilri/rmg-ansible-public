@@ -10,8 +10,8 @@
   ansible.builtin.get_url:
     url: "{{ jmx_exporter_url }}"
     dest: "{{ jmx_exporter_jar_path }}"
-    checksum: "sha256:{{ jmx_exporter_url_checksum }}"
-    mode: 0644
+    checksum: sha256:{{ jmx_exporter_url_checksum }}
+    mode: "0644"
   when: not jmx_exporter_stat.stat.exists
   notify:
     - restart tomcat{{ tomcat_version_major }}
@@ -28,7 +28,7 @@
     dest: "{{ jmx_exporter_config_path }}"
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
-    mode: 0644
+    mode: "0644"
   notify:
     - restart tomcat{{ tomcat_version_major }}
 

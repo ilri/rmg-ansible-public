@@ -1,5 +1,6 @@
 ---
 - name: Configure CentOS packages
+  tags: packages
   block:
     - name: Configure ILRI CentOS Stream mirror
       ansible.builtin.copy:
@@ -58,7 +59,6 @@
           - bzip2
           - mosh
         state: present
-  tags: packages
 
 - name: Disable annoying cockpit notice in MOTD
   ansible.builtin.file:

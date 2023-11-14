@@ -50,6 +50,9 @@
 # have persistent journal enabled by default. Debian 11 seems to enable the
 # persistent journal by default.
 - name: Configure persistent systemd journal
+  when: (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=')) or (ansible_distribution == 'CentOS' and ansible_distribution_version
+    is version('8', '=='))
+  tags: systemd-journald
   block:
     - name: Create systemd-journald drop-in config directory
       ansible.builtin.file:
@@ -66,9 +69,6 @@
         owner: root
         group: root
         mode: "0644"
-  when: (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=')) or (ansible_distribution == 'CentOS' and ansible_distribution_version
-    is version('8', '=='))
-  tags: systemd-journald
 
 - name: Reconfigure /etc/sysctl.conf on Debian/Ubuntu
   when: ansible_distribution != "CentOS"

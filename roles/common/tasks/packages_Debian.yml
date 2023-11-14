@@ -1,5 +1,6 @@
 ---
 - name: Configure Ubuntu packages
+  tags: packages
   block:
     # Create directory for third-party package signing keys. Required on distros
     # older than Debian 12 / Ubuntu 22.04.
@@ -62,6 +63,5 @@
     - name: Configure cron-apt
       ansible.builtin.import_tasks: cron-apt.yml
       tags: cron-apt
-  tags: packages
 
 # vim: set ts=2 sw=2:

@@ -32,6 +32,8 @@
 # the output of `restic version` (especially since I don't know what versioning
 # they will use in the future).
 - name: Configure restic
+  when: restic_password is defined
+  tags: restic
   block:
     - name: Check restic version
       ansible.builtin.stat:
@@ -147,8 +149,5 @@
         name: restic-backup.timer
         state: started
         enabled: true
-
-  when: restic_password is defined
-  tags: restic
 
 # vim: set sw=2 ts=2:

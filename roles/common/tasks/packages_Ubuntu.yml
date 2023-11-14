@@ -1,5 +1,4 @@
 ---
-
 - name: Configure Ubuntu packages
   tags: packages
   block:
@@ -10,7 +9,7 @@
     - name: Create /etc/apt/keyrings
       ansible.builtin.file:
         path: /etc/apt/keyrings
-        mode: 0755
+        mode: "0755"
         owner: root
         group: root
         state: directory
@@ -22,7 +21,7 @@
         dest: /etc/apt/sources.list
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       when: '"hetzner" not in inventory_hostname'
       register: ubuntu_apt_mirror
 
@@ -116,7 +115,7 @@
       ansible.builtin.package:
         name:
           - whoopsie # security (CIS 4.1)
-          - apport   # security (CIS 4.1)
+          - apport # security (CIS 4.1)
           - command-not-found # annoying
           - command-not-found-data # annoying
           - python3-commandnotfound # annoying
@@ -134,7 +133,7 @@
       ansible.builtin.package:
         name:
           - whoopsie # security (CIS 4.1)
-          - apport   # security (CIS 4.1)
+          - apport # security (CIS 4.1)
           - command-not-found # annoying
           - command-not-found-data # annoying
           - python3-commandnotfound # annoying
@@ -147,7 +146,7 @@
     - name: Disable annoying Canonical spam in MOTD
       ansible.builtin.file: # noqa ignore-errors
         path: "{{ item }}"
-        mode: 0644
+        mode: "0644"
       loop:
         - /etc/update-motd.d/99-esm # Ubuntu 14.04
         - /etc/update-motd.d/10-help-text # Ubuntu 14.04+

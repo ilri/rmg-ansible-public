@@ -7,7 +7,7 @@
     src: nftables.conf.j2
     dest: "{{ nftables_conf_path }}"
     owner: root
-    mode: 0644
+    mode: "0644"
   notify:
     - restart nftables
     - restart fail2ban
@@ -22,7 +22,7 @@
     path: /etc/nftables
     state: directory
     owner: root
-    mode: 0755
+    mode: "0755"
 
 # Only overwrite static sets that are updated on the control machine and stored
 # in git. The others are updated daily by systemd timers on the host so we only
@@ -30,10 +30,10 @@
 - name: Copy nftables sets
   ansible.builtin.copy:
     src: "{{ item.src }}"
-    dest: "/etc/nftables/{{ item.src }}"
+    dest: /etc/nftables/{{ item.src }}
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
     force: "{{ item.force }}"
   loop:
     - { src: spamhaus-ipv4.nft, force: false }
@@ -53,8 +53,8 @@
 - name: Copy nftables update scripts
   ansible.builtin.template:
     src: "{{ item }}"
-    dest: "/usr/local/bin/{{ item | split('.j2') | first }}"
-    mode: 0755
+    dest: /usr/local/bin/{{ item | split('.j2') | first }}
+    mode: "0755"
     owner: root
     group: root
   loop:
@@ -65,15 +65,15 @@
   ansible.builtin.copy:
     src: aggregate-cidr-addresses.pl
     dest: /usr/local/bin/aggregate-cidr-addresses.pl
-    mode: 0755
+    mode: "0755"
     owner: root
     group: root
 
 - name: Copy nftables systemd units
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "/etc/systemd/system/{{ item }}"
-    mode: 0644
+    dest: /etc/systemd/system/{{ item }}
+    mode: "0644"
     owner: root
     group: root
   loop:

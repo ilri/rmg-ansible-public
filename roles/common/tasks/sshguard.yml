@@ -1,11 +1,10 @@
 ---
-
 - name: Configure sshguard
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
-    mode: 0644
+    mode: "0644"
   loop:
     - { src: etc/sshguard.conf.j2, dest: /etc/sshguard.conf }
     - { src: etc/sshguard.whitelist.j2, dest: /etc/sshguard.whitelist }

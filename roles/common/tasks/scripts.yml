@@ -1,11 +1,10 @@
 ---
-
 - name: Create ILRI scripts directory
   ansible.builtin.file:
     path: /opt/ilri/scripts
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
     state: directory
 
 - name: Copy ILRI scripts
@@ -14,7 +13,7 @@
     dest: /opt/ilri/scripts
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   with_fileglob:
     - scripts/*.sh
 
@@ -45,6 +44,6 @@
     dest: /etc/s-nail.rc
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
 
 # vim: set sw=2 ts=2:

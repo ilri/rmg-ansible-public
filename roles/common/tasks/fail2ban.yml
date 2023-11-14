@@ -4,7 +4,7 @@
     src: etc/fail2ban/jail.d/sshd.local.j2
     dest: /etc/fail2ban/jail.d/sshd.local
     owner: root
-    mode: 0644
+    mode: "0644"
   notify: restart fail2ban
 
 # Check if we have any nginx filters enabled (using a clever trick to convert
@@ -17,7 +17,7 @@
     src: etc/fail2ban/jail.d/nginx.local.j2
     dest: /etc/fail2ban/jail.d/nginx.local
     owner: root
-    mode: 0644
+    mode: "0644"
   notify: restart fail2ban
 
 # Check if we have any Apache filters enabled (using a clever trick to convert
@@ -30,7 +30,7 @@
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
     owner: root
-    mode: 0644
+    mode: "0644"
   loop:
     - { src: etc/fail2ban/jail.d/apache.local.j2, dest: /etc/fail2ban/jail.d/apache.local }
     - { src: etc/fail2ban/filter.d/botsearch-common.local.j2, dest: /etc/fail2ban/filter.d/botsearch-common.local }
@@ -43,7 +43,7 @@
     path: /etc/systemd/system/fail2ban.service.d
     state: directory
     owner: root
-    mode: 0755
+    mode: "0755"
 
 # See Arch Linux's example: https://wiki.archlinux.org/index.php/Fail2ban
 - name: Configure fail2ban service override
@@ -51,7 +51,7 @@
     src: etc/systemd/system/fail2ban.service.d/override.conf.j2
     dest: /etc/systemd/system/fail2ban.service.d/override.conf
     owner: root
-    mode: 0644
+    mode: "0644"
   notify:
     - reload systemd
     - restart fail2ban

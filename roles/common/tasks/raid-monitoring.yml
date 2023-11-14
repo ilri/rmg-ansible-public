@@ -12,7 +12,7 @@
   ansible.builtin.template:
     src: hpc_ilri_cgiar_org_mirror_mcp.list.j2
     dest: /etc/apt/sources.list.d/hpc_ilri_cgiar_org_mirror_mcp.list
-    mode: 0644
+    mode: "0644"
     owner: root
     group: root
   register: add_hpe_mcp_apt_repository
@@ -42,7 +42,7 @@
     dest: /usr/share/keyrings/hpePublicKey2048_key1.pub
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   register: download_hpe_mcp_signing_key
   when:
     - ansible_os_family == 'Debian'
@@ -82,7 +82,7 @@
     dest: /etc/yum.repos.d/hpe-mcp.repo
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when:
     - ansible_distribution == 'CentOS'
     - "'hp' in hw_raid_vendor"
@@ -119,7 +119,7 @@
     dest: /opt/ilri/scripts/lsi-raid-monitoring.sh
     owner: root
     group: root
-    mode: 0750
+    mode: "0750"
   when: "'lsi' in hw_raid_vendor"
 
 - name: Copy HPE RAID monitoring script
@@ -128,7 +128,7 @@
     dest: /opt/ilri/scripts/hp-raid-monitoring.sh
     owner: root
     group: root
-    mode: 0750
+    mode: "0750"
   when: "'hp' in hw_raid_vendor"
 
 - name: Configure RAID monitoring cron job
@@ -137,7 +137,7 @@
     dest: /etc/cron.d/1raid-monitoring
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   when: "'hp' in hw_raid_vendor or 'lsi' in hw_raid_vendor"
 
 # TODO: according to mdadm.conf we can only use ONE email address

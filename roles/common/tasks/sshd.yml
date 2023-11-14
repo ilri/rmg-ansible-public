@@ -6,7 +6,7 @@
     dest: /etc/ssh/sshd_config
     owner: root
     group: root
-    mode: 0600
+    mode: "0600"
   when: ansible_distribution == 'CentOS'
   notify: reload sshd
 
@@ -28,10 +28,8 @@
     dest: /etc/ssh/sshd_config
     owner: root
     group: root
-    mode: 0600
-  when:
-    ansible_distribution == 'Ubuntu'
-    or ansible_distribution == 'Debian'
+    mode: "0600"
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
   notify: reload sshd
 
 # See: WeakDH (2015): https://weakdh.org/sysadmin.html

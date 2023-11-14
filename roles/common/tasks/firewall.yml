@@ -1,5 +1,4 @@
 ---
-
 # Glaring fucking hack: skip the firewall on linode31 and hetzner02 because they
 # run Docker and Docker doesn't work with nftables. We also ignore holstein be-
 # cause it is running libvirtd, which has a hard depend on iptables.
@@ -41,10 +40,10 @@
     dest: "{{ item.dest }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   loop:
-    - { 'src': scripts/parse_logs.py.j2, 'dest': /opt/ilri/scripts/parse_logs.py }
-    - { 'src': scripts/report-ssh-abuseipdb.sh.j2, 'dest': /opt/ilri/scripts/report-ssh-abuseipdb.sh }
+    - { src: scripts/parse_logs.py.j2, dest: /opt/ilri/scripts/parse_logs.py }
+    - { src: scripts/report-ssh-abuseipdb.sh.j2, dest: /opt/ilri/scripts/report-ssh-abuseipdb.sh }
   tags: firewall
 
 # vim: set sw=2 ts=2:

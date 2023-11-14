@@ -1,5 +1,4 @@
 ---
-
 - name: Install mailx on CentOS hosts
   ansible.builtin.package:
     name: mailx
@@ -22,10 +21,10 @@
     dest: "{{ item.dest }}"
     owner: root
     group: root
-    mode: 0755
+    mode: "0755"
   loop:
-    - { src: "scripts/backup_mysql.py.j2", dest: "/opt/ilri/scripts/backup_mysql.py" }
-    - { src: "scripts/backup_postgresql.py.j2", dest: "/opt/ilri/scripts/backup_postgresql.py" }
+    - { src: scripts/backup_mysql.py.j2, dest: /opt/ilri/scripts/backup_mysql.py }
+    - { src: scripts/backup_postgresql.py.j2, dest: /opt/ilri/scripts/backup_postgresql.py }
   tags: scripts
 
 # Install the restic binary as restic-0.12.1 to make version handling easier, as
@@ -43,8 +42,8 @@
       ansible.builtin.get_url:
         url: "{{ restic_url }}"
         dest: "{{ restic_binary_path }}-{{ restic_version }}.bz2"
-        checksum: "sha256:{{ restic_url_checksum }}"
-        mode: 0640
+        checksum: sha256:{{ restic_url_checksum }}
+        mode: "0640"
       register: restic_download
       when: not restic_stat.stat.exists
 
@@ -66,7 +65,7 @@
         path: "{{ restic_binary_path }}-{{ restic_version }}"
         owner: root
         group: root
-        mode: 0755
+        mode: "0755"
       when: restic_binary is changed
 
     - name: Configure restic symlink
@@ -103,16 +102,16 @@
         dest: "{{ item.dest }}"
         owner: root
         group: root
-        mode: 0755
+        mode: "0755"
       loop:
-        - { 'src': scripts/restic-backup.sh.j2, 'dest': /opt/ilri/scripts/restic-backup.sh }
-        - { 'src': scripts/restic-prune.sh.j2, 'dest': /opt/ilri/scripts/restic-prune.sh }
+        - { src: scripts/restic-backup.sh.j2, dest: /opt/ilri/scripts/restic-backup.sh }
+        - { src: scripts/restic-prune.sh.j2, dest: /opt/ilri/scripts/restic-prune.sh }
 
     - name: Copy restic systemd service unit
       ansible.builtin.template:
         src: restic-backup.service.j2
         dest: /etc/systemd/system/restic-backup.service
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       register: restic_systemd_service
@@ -121,7 +120,7 @@
       ansible.builtin.copy:
         src: restic-backup.timer
         dest: /etc/systemd/system/restic-backup.timer
-        mode: 0644
+        mode: "0644"
         owner: root
         group: root
       register: restic_systemd_timer
@@ -130,7 +129,7 @@
       ansible.builtin.template:
         src: restic-backup-environment.j2
         dest: /etc/restic-backup
-        mode: 0660
+        mode: "0660"
         owner: root
         group: root
       register: restic_systemd_environment

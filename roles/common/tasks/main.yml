@@ -2,8 +2,8 @@
 - name: Import OS-specific variables
   ansible.builtin.include_vars: "{{ item }}"
   loop:
-    - "vars/{{ ansible_os_family }}.yml"
-    - "private/vars/{{ ansible_os_family }}.yml"
+    - vars/{{ ansible_os_family }}.yml
+    - private/vars/{{ ansible_os_family }}.yml
   tags: always
 
 - name: Get systemd version
@@ -56,29 +56,28 @@
         path: /etc/systemd/journald.conf.d
         owner: root
         group: root
-        mode: 0755
+        mode: "0755"
         state: directory
 
     - name: Enable persistent systemd journal
       ansible.builtin.copy:
-        src: 00-persistent-journal.conf
+        src: "00-persistent-journal.conf"
         dest: /etc/systemd/journald.conf.d/00-persistent-journal.conf
         owner: root
         group: root
-        mode: 0644
-  when:
-    (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=')) or
-    (ansible_distribution == 'CentOS' and ansible_distribution_version is version('8', '=='))
+        mode: "0644"
+  when: (ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=')) or (ansible_distribution == 'CentOS' and ansible_distribution_version
+    is version('8', '=='))
   tags: systemd-journald
 
 - name: Reconfigure /etc/sysctl.conf on Debian/Ubuntu
   when: ansible_distribution != "CentOS"
   ansible.builtin.template:
-    src: "sysctl_{{ ansible_distribution }}.j2"
+    src: sysctl_{{ ansible_distribution }}.j2
     dest: /etc/sysctl.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
     - reload sysctl
   tags: sysctl
@@ -86,11 +85,11 @@
 - name: Reconfigure /etc/sysctl.conf on CentOS
   when: ansible_distribution == "CentOS"
   ansible.builtin.template:
-    src: "sysctl_CentOS-{{ ansible_distribution_major_version }}.j2"
+    src: sysctl_CentOS-{{ ansible_distribution_major_version }}.j2
     dest: /etc/sysctl.conf
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
     - reload sysctl
   tags: sysctl
@@ -101,7 +100,7 @@
     dest: /etc/udev/rules.d/60-scheduler.rules
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   tags: udev
 
 - name: Configure tuned

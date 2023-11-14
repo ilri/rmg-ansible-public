@@ -1,5 +1,4 @@
 ---
-
 - name: Configure Ubuntu packages
   block:
     # Create directory for third-party package signing keys. Required on distros
@@ -9,7 +8,7 @@
     - name: Create /etc/apt/keyrings
       ansible.builtin.file:
         path: /etc/apt/keyrings
-        mode: 0755
+        mode: "0755"
         owner: root
         group: root
         state: directory
@@ -21,7 +20,7 @@
         dest: /etc/apt/sources.list
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       register: apt_mirror
 
     - name: Update apt cache

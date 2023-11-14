@@ -1,5 +1,4 @@
 ---
-
 # 2022-11-24: Ansible does not currently recognize Linode hosts as being guests
 # so I check if the hostname has "linode" in it.
 - name: Install linux-virtual-hwe-20.04

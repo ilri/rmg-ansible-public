@@ -1,5 +1,4 @@
 ---
-
 - name: Configure CentOS packages
   block:
     - name: Configure ILRI CentOS Stream mirror
@@ -8,16 +7,16 @@
         dest: /etc/yum.repos.d/{{ item | basename }}
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       when: ansible_distribution_release == 'Stream'
       with_fileglob:
         - CentOS-Stream-*.repo
 
-#   Fedora docs recommends enabling EPEL and EPEL Next on CentOS Stream
-#   See: https://docs.fedoraproject.org/en-US/epel/#_el8
+    #   Fedora docs recommends enabling EPEL and EPEL Next on CentOS Stream
+    #   See: https://docs.fedoraproject.org/en-US/epel/#_el8
     - name: Install EPEL
       ansible.builtin.package:
-        name: ['epel-release', 'epel-next-release']
+        name: [epel-release, epel-next-release]
         state: present
       when: ansible_distribution_release == 'Stream'
 
@@ -27,7 +26,7 @@
         dest: /etc/yum.repos.d/epel-next.repo
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       when: ansible_distribution_release == 'Stream'
 
     - name: Add EPEL RPM package signing key
@@ -41,7 +40,7 @@
         dest: /etc/yum.repos.d/ilri.repo
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       when: "'compute' in group_names or 'storage' in group_names"
 
     - name: Install base packages

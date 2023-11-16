@@ -1,5 +1,5 @@
 ---
-- name: Configure Ubuntu packages
+- name: Configure Debian packages
   tags: packages
   block:
     # Create directory for third-party package signing keys. Required on distros

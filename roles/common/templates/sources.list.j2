@@ -5,18 +5,18 @@
 #############################################################
 
 ###### Ubuntu Main Repos
-deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }} main restricted universe multiverse
+deb http://{{ apt_mirror }}/ubuntu {{ ansible_distribution_release }} main restricted universe multiverse
 
 ###### Ubuntu Update Repos
-deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security main restricted universe multiverse
-deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates main restricted universe multiverse
+deb http://{{ apt_mirror }}/ubuntu {{ ansible_distribution_release }}-security main restricted universe multiverse
+deb http://{{ apt_mirror }}/ubuntu {{ ansible_distribution_release }}-updates main restricted universe multiverse
 {% elif ansible_distribution == "Debian" %}
 {%   set apt_mirror    = apt_mirror | default("debian.mirror.liquidtelecom.com") %}
-deb http://deb.debian.org/debian/ {{ ansible_distribution_release }} main
+deb http://deb.debian.org/debian {{ ansible_distribution_release }} main
 
 deb http://security.debian.org/debian-security {{ ansible_distribution_release }}-security main
 
 # bullseye-updates, to get updates before a point release is made;
 # see https://www.debian.org/doc/manuals/debian-reference/ch02.en.html#_updates_and_backports
-deb http://deb.debian.org/debian/ {{ ansible_distribution_release }}-updates main
+deb http://deb.debian.org/debian {{ ansible_distribution_release }}-updates main
 {% endif %}

@@ -45,7 +45,6 @@
           - htop
           - strace
           - s3cmd
-          - cron-apt
           - safe-rm
           - debian-goodies
           - mosh

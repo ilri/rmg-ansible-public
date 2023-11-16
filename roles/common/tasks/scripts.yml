@@ -32,6 +32,23 @@
     (ansible_distribution == 'Debian' and ansible_distribution_version is version('11', '>=')) or
     ansible_distribution == 'CentOS'
 
+# unattended-upgrades expects /usr/bin/mail. Only tested on Ubuntu for now. Also
+# note that unattended-upgrades will try sendmail (postfix) first, which will
+# mail as "root@hostname" and probably not get delivered. Even so, with s-nail,
+# we can only deliver mail if we have been added to the whitelist by CGNET...
+# So basically we just trust that security updates work and get mails on fail
+# *sometimes*, on *some* hosts.
+#
+# See: https://unix.stackexchange.com/questions/699230/how-to-use-s-nail-with-unattended-upgrades
+# See: https://patineboot.com/article/buildiing-home-server-with-ubuntu/
+- name: Use s-nail as mail
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '>=')
+  community.general.alternatives:
+    name: mail
+    link: /usr/bin/mail
+    path: /usr/bin/s-nail
+    priority: 10
+
 # Prefer the system s-nail configuration over this
 - name: Remove /root/.mailrc
   ansible.builtin.file:

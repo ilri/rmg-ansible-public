@@ -22,7 +22,6 @@
         owner: root
         group: root
         mode: "0644"
-      when: '"hetzner" not in inventory_hostname'
       register: ubuntu_apt_mirror
 
     - name: Update apt cache

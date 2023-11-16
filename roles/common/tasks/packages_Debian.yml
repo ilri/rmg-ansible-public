@@ -27,7 +27,9 @@
     - name: Update apt cache
       ansible.builtin.package:
         update_cache: true
-      when: apt_mirror is changed
+      when:
+        - apt_mirror is defined
+        - apt_mirror is changed
 
     - name: Upgrade base OS
       ansible.builtin.package:

@@ -1,0 +1,10 @@
+---
+- name: Configure unattended-upgrades
+  ansible.builtin.template:
+    src: etc/apt/apt.conf.d/50unattended-upgrades.j2
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    mode: 0644
+    owner: root
+    group: root
+
+# vim: set ts=2 sw=2:

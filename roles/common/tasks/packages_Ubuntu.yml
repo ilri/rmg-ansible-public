@@ -166,6 +166,9 @@
         - motd-news.service
         - motd-news.timer
 
+    - name: Configure unattended-upgrades
+      ansible.builtin.import_tasks: unattended-upgrades.yml
+
     - name: Configure cron-apt
       ansible.builtin.import_tasks: cron-apt.yml
       tags: cron-apt

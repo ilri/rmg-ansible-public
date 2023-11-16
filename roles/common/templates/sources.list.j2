@@ -10,9 +10,6 @@ deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }} main rest
 ###### Ubuntu Update Repos
 deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }}-security main restricted universe multiverse
 deb http://{{ apt_mirror }}/ubuntu/ {{ ansible_distribution_release }}-updates main restricted universe multiverse
-
-###### Ubuntu Partner Repo
-deb http://archive.canonical.com/ubuntu {{ ansible_distribution_release }} partner
 {% elif ansible_distribution == "Debian" %}
 {%   set apt_mirror    = apt_mirror | default("debian.mirror.liquidtelecom.com") %}
 deb http://deb.debian.org/debian/ {{ ansible_distribution_release }} main

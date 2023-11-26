@@ -53,18 +53,6 @@
   ansible.builtin.command: pam-auth-update --package
   when: ansible_distribution == 'Ubuntu'
 
-- name: Change minimum PAM UID for SSH logins
-  when:
-    - ansible_distribution == 'CentOS'
-    - ansible_distribution_major_version is version('7', '==')
-  ansible.builtin.replace:
-    dest: "{{ item }}"
-    regexp: "1000"
-    replace: "500"
-  loop:
-    - /etc/pam.d/system-auth-ac
-    - /etc/pam.d/password-auth-ac
-
 # Allow LDAP users with UIDs less than 1000 to log in.
 # See: https://bugzilla.redhat.com/show_bug.cgi?id=1773567
 - name: Change minimum PAM UID for SSH logins

@@ -8,4 +8,7 @@ ssh_access:
 
 timezone: 'Africa/Addis_Ababa'
 
+# For now...
+ssh_password_authentication: enabled
+
 # vim: set ts=2 sw=2:

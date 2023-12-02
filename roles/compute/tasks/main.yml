@@ -170,6 +170,7 @@
     owner: root
     mode: "01777"
     state: directory
+  when: local_scratch is defined
   tags: scratch
 
 - name: Add systemd-tmpfiles config for scratch
@@ -179,6 +180,7 @@
     owner: root
     group: root
     mode: "0644"
+  when: local_scratch is defined
   tags: scratch
 
 # Keep 12 months of logins instead of 1

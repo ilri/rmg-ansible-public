@@ -78,4 +78,22 @@
     state: present
   tags: packages
 
+- name: Create user.slice override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/user.slice.d
+    group: root
+    owner: root
+    mode: "0755"
+    state: directory
+  tags: limits
+
+- name: Copy systemd user.slice override
+  ansible.builtin.copy:
+    src: etc/systemd/system/user.slice.d/override.conf
+    dest: /etc/systemd/system/user.slice.d/override.conf
+    owner: root
+    group: root
+    mode: "0644"
+  tags: limits
+
 # vim: set sw=2 ts=2:

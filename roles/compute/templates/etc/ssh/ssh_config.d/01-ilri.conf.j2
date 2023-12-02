@@ -1,7 +1,18 @@
 # trust compute nodes basically make it easy for people to run jobs
-{% for host in groups['compute'] %}
+{% if 'nairobi_compute' in group_names %}
+{%   for host in groups['nairobi_compute'] %}
 Host {{ host }}
     LogLevel=QUIET
     StrictHostKeyChecking no
     UserKnownHostsFile=/dev/null
-{% endfor %}
+{%   endfor %}
+{% endif %}
+
+{% if 'addis_compute' in group_names %}
+{%   for host in groups['addis_compute'] %}
+Host {{ host }}
+    LogLevel=QUIET
+    StrictHostKeyChecking no
+    UserKnownHostsFile=/dev/null
+{%   endfor %}
+{% endif %}

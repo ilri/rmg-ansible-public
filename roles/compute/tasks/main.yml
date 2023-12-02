@@ -101,7 +101,6 @@
       - readline-devel.x86_64 # for R/4.2.0
       - rsync.x86_64
       - screen.x86_64
-      - sox.x86_64 # for stt
       - sparsehash-devel.x86_64 # for shannon_cpp
       - sqlite-devel.x86_64 # for some R libraries
       - tbb-devel.x86_64 # for flexbar
@@ -122,15 +121,6 @@
     name: nvtop
     state: present
   when: inventory_hostname == 'compute06'
-  tags: packages
-
-# Create a symlink to libbz2.so.1.0 to please stt.
-# See: https://github.com/coqui-ai/STT/issues/2341
-- name: Create symlink for libbz2.so.1.0
-  ansible.builtin.file:
-    src: /usr/lib64/libbz2.so.1.0.6
-    dest: /usr/lib64/libbz2.so.1.0
-    state: link
   tags: packages
 
 - name: Clone environment modules

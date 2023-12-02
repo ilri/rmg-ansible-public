@@ -155,7 +155,7 @@ table inet filter {
         ip saddr {{ hostvars['wingu2']['ansible_host'] }} ct state new tcp dport {{ glusterd_mgmt_port }} counter accept comment "Allow wingu2 to Gluster management port"
         ip saddr {{ hostvars['wingu2']['ansible_host'] }} ct state new tcp dport {{ glusterfs_brick_ports }} counter accept comment "Allow wingu2 to Gluster bricks"
 
-        {%   for host in groups['compute'] %}
+        {%   for host in groups['nairobi_compute'] %}
         ip saddr {{ hostvars[host]['ansible_host'] }} ct state new tcp dport {{ glusterd_mgmt_port }} counter accept comment "Allow {{ host }} to Gluster management port"
         ip saddr {{ hostvars[host]['ansible_host'] }} ct state new tcp dport {{ glusterfs_brick_ports }} counter accept comment "Allow {{ host }} to Gluster bricks"
         {%   endfor %}

@@ -154,10 +154,20 @@
     state: absent
   tags: irqbalance
 
+# TODO: this can go away eventually since we reverted to the stock one
 - name: Configure global ssh_config on compute nodes
   ansible.builtin.template:
     src: etc/ssh/ssh_config.j2
     dest: /etc/ssh/ssh_config
+    owner: root
+    group: root
+    mode: "0644"
+  tags: ssh-config
+
+- name: Configure ILRI ssh_config overrides
+  ansible.builtin.template:
+    src: etc/ssh/ssh_config.d/01-ilri.conf.j2
+    dest: /etc/ssh/ssh_config.d/01-ilri.conf
     owner: root
     group: root
     mode: "0644"

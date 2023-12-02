@@ -1,0 +1,7 @@
+# trust compute nodes basically make it easy for people to run jobs
+{% for host in groups['compute'] %}
+Host {{ host }}
+    LogLevel=QUIET
+    StrictHostKeyChecking no
+    UserKnownHostsFile=/dev/null
+{% endfor %}

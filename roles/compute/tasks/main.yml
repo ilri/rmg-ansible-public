@@ -156,7 +156,7 @@
 
 - name: Configure global ssh_config on compute nodes
   ansible.builtin.template:
-    src: ssh_config.j2
+    src: etc/ssh/ssh_config.j2
     dest: /etc/ssh/ssh_config
     owner: root
     group: root

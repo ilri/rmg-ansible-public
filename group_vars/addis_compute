@@ -1,0 +1,11 @@
+---
+# file: group_vars/addis_compute
+
+ssh_access:
+  - ilri_add_corp
+  - ilri_nbo_corp
+  - ilri_nbo_dmz
+
+timezone: 'Africa/Addis_Ababa'
+
+# vim: set ts=2 sw=2:

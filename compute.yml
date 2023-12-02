@@ -1,7 +1,9 @@
 ---
 # file: compute.yml
+#
+# Subtle difference in compute roles for Nairobi and Addis.
 
-- hosts: compute
+- hosts: nairobi_compute
   become: true
   vars_files:
     - private/vars/common.yml
@@ -13,6 +15,18 @@
     - { role: metrics, when: ansible_service_mgr == 'systemd', tags: metrics }
     - { role: ganglia, when: ansible_distribution == 'CentOS', tags: ganglia }
     - { role: storage, when: ansible_distribution == 'CentOS', tags: storage }
+    - { role: compute, when: ansible_distribution == 'CentOS', tags: compute }
+
+# No ganglia (for now) or storage roles on Addis compute.
+- hosts: addis_compute
+  become: true
+  vars_files:
+    - private/vars/common.yml
+    - private/vars/ipsets.yml
+  roles:
+    - common
+    - sssd
+    - { role: metrics, when: ansible_service_mgr == 'systemd', tags: metrics }
     - { role: compute, when: ansible_distribution == 'CentOS', tags: compute }
 
 # vim: set sw=2 ts=2:

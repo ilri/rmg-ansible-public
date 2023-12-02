@@ -1,0 +1,30 @@
+---
+# file: group_vars/nairobi_compute
+
+#ganglia vars
+ganglia_master_host: hpc
+ganglia_gmond_name: compute
+ganglia_gmond_port: 8649
+
+glusterfs_role: client
+
+local_scratch: /var/scratch
+
+ssh_access:
+  - ilri_nbo_corp
+  - ilri_nbo_dmz
+
+#slurm vars
+slurm_head_node: hpc
+slurm_slurmd_port: 6818
+
+#glusterfs-client mount vars
+glusterfs_mounts:
+  - { mount_point: '/export/data', mount_src: 'wingu3:data', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,noauto,x-systemd.automount,localtime-logging,backupvolfile-server=wingu05', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+  - { mount_point: '/export/apps', mount_src: 'wingu3:apps', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,noauto,x-systemd.automount,localtime-logging,backupvolfile-server=wingu05', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+  - { mount_point: '/home', mount_src: 'wingu3:homes', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,noauto,x-systemd.automount,localtime-logging,backupvolfile-server=wingu05', mount_state: 'mounted', owner: 'root', group: 'root', mode: '0755', state: 'directory' }
+  - { mount_point: '/var/scratch/global', mount_src: 'wingu3:scratch', mount_fs: 'glusterfs', mount_opts: 'defaults,acl,noauto,x-systemd.automount,localtime-logging,backupvolfile-server=wingu05', mount_state: 'mounted', owner: 'root', group: 'root', mode: '01777', state: 'directory' }
+
+timezone: 'Africa/Nairobi'
+
+# vim: set ts=2 sw=2:

@@ -12,7 +12,7 @@ SlurmctldAddr={{ hostvars[slurm_head_node].ansible_host }}
 #EpilogSlurmctld=
 #FirstJobId=1
 #MaxJobId=67043328
-GresTypes=gpu
+GresTypes=gpu,mps
 #GroupUpdateForce=0
 #GroupUpdateTime=600
 #JobFileAppend=0
@@ -153,7 +153,7 @@ ResumeTimeout=500
 # COMPUTE NODES (Output based on slurmd -C)
 NodeName=hpc CPUs=8 Boards=1 SocketsPerBoard=1 CoresPerSocket=8 ThreadsPerCore=1 RealMemory=47911 State=UNKNOWN
 NodeName=compute05 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsPerCore=1 RealMemory=386252 State=UNKNOWN Weight=10
-NodeName=compute06 Gres=gpu:v100:1 CPUs=64 Boards=1 SocketsPerBoard=2 CoresPerSocket=32 ThreadsPerCore=1 RealMemory=257218 State=UNKNOWN Weight=05
+NodeName=compute06 Gres=gpu:v100:1,mps:2000 CPUs=64 Boards=1 SocketsPerBoard=2 CoresPerSocket=32 ThreadsPerCore=1 RealMemory=257218 State=UNKNOWN Weight=05
 NodeName=compute07 CPUs=8 Boards=1 SocketsPerBoard=1 CoresPerSocket=8 ThreadsPerCore=1 RealMemory=1019289 State=UNKNOWN Weight=05
 
 PartitionName=debug Nodes=hpc Default=YES MaxTime=5:00 State=UP

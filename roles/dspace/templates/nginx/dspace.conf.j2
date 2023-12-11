@@ -56,9 +56,8 @@ server {
 #
 server {
     {% if nginx_tls_cert is defined %}
-    listen {{ nginx_ssl_port }} ssl;
-    listen [::]:{{ nginx_ssl_port }} ssl;
-    http2 on;
+    listen {{ nginx_ssl_port }} ssl http2;
+    listen [::]:{{ nginx_ssl_port }} ssl http2;
     {% else %}
     listen 80;
     listen [::]:80;

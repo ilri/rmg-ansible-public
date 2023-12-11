@@ -49,10 +49,8 @@ server {
 # ... check Google for "inurl:mahider.ilri.org inurl:https"
 # ... check Google for "inurl:dspace.ilri.org inurl:https"
 server {
-    listen {{ nginx_ssl_port }} ssl;
-    listen [::]:{{ nginx_ssl_port }} ssl;
-    http2 on;
-
+    listen {{ nginx_ssl_port }} ssl http2;
+    listen [::]:{{ nginx_ssl_port }} ssl http2;
     server_name dspace.ilri.org mahider.ilri.org;
 
     ssl_certificate {{ nginx_ilri_tls_cert }};

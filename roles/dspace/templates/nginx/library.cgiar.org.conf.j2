@@ -83,9 +83,8 @@ server {
 # HTTPS vhost for CGIAR Library, needs to handle the same redirects
 # as the non-HTTPS vhost above, but on HTTPS.
 server {
-    listen {{ nginx_ssl_port }} ssl;
-    listen [::]:{{ nginx_ssl_port }} ssl;
-    http2 on;
+    listen {{ nginx_ssl_port }} ssl http2;
+    listen [::]:{{ nginx_ssl_port }} ssl http2;
 
     server_name library.cgiar.org;
 

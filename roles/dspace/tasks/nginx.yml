@@ -75,16 +75,6 @@
   notify:
     - reload nginx
 
-- name: Configure nginx munin vhost
-  ansible.builtin.copy:
-    src: nginx/munin.conf
-    dest: /etc/nginx/conf.d/munin.conf
-    mode: "0644"
-    owner: root
-    group: root
-  notify:
-    - reload nginx
-
 # Run some common things from the web role, like installing certbot and configu-
 # ring nginx TLS settings, default vhost, etc.
 - name: Include common tasks from web role

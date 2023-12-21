@@ -107,6 +107,8 @@
     - /usr/local/apache-tomcat-9.0.78
     - /usr/local/apache-tomcat-9.0.79.tar.gz
     - /usr/local/apache-tomcat-9.0.79
+    - /usr/local/apache-tomcat-9.0.82.tar.gz
+    - /usr/local/apache-tomcat-9.0.82
   tags: tomcat
 
 - name: Copy Tomcat server configs

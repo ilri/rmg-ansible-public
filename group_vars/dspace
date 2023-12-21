@@ -29,10 +29,6 @@ dspace_git_branch: 6_x-prod
 # mainline is 1.23.x
 nginx_branch: stable
 
-munin_tomcat_user: ilri-munin
-# plain http connector for munin to query Tomcat status
-munin_tomcat_port: 8081
-
 # PostgreSQL connection pool sizes for DSpace web (XMLUI) and API (REST, OAI)
 # applications.
 dspace_dbpool_web_max_connections: 250

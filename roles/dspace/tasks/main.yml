@@ -85,7 +85,7 @@
     - maven_username is defined
     - maven_password is defined
 
-- name: Clone DSpace repository
+- name: Clone DSpace backend repository
   ansible.builtin.git:
     repo: "{{ dspace_git_repo }}"
     dest: "{{ tomcat_user_home }}/src/git/DSpace"

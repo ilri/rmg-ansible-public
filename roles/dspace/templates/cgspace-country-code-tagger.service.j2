@@ -1,6 +1,6 @@
 [Unit]
 Description=CGSpace Country Code Tagger
-Wants=tomcat7.service
+Wants=tomcat{{ tomcat_version_major }}.service
 Requires=postgresql.service
 
 [Service]

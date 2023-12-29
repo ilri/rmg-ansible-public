@@ -2,10 +2,6 @@
 {% set nginx_server_name    = nginx_server_name | default("localhost") %}
 {% set nginx_vhosts         = nginx_vhosts | default(nginx_server_name) %}
 
-{% if 'mahider.cgiar.org' in nginx_vhosts -%}
-    {% include 'nginx/mahider.cgiar.org.conf.j2' %}
-{% endif %}
-
 {% if 'library.cgiar.org' in nginx_vhosts -%}
     {% include 'nginx/library.cgiar.org.conf.j2' %}
 {% endif %}

@@ -42,33 +42,3 @@ server {
 
     include extra-security.conf;
 }
-
-{% if nginx_ilri_tls_cert is defined %}
-# Handle HTTPS links for non-authoritative domains from Google Scholar, ie
-# dspace.ilri.org or mahider.ilri.org
-# ... check Google for "inurl:mahider.ilri.org inurl:https"
-# ... check Google for "inurl:dspace.ilri.org inurl:https"
-server {
-    listen {{ nginx_ssl_port }} ssl http2;
-    listen [::]:{{ nginx_ssl_port }} ssl http2;
-    server_name dspace.ilri.org mahider.ilri.org;
-
-    ssl_certificate {{ nginx_ilri_tls_cert }};
-    ssl_certificate_key {{ nginx_ilri_tls_key }};
-
-    include /etc/nginx/intermediate-tls.conf;
-
-    # Add header to forbid robots to index
-    # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
-    # May, 2015 we submitted a "Change of Address" -> cgspace.cgiar.org in Google Webmaster tools
-    # but I don't see any reason to let ANY bots try to index this site.
-    add_header X-Robots-Tag "none";
-
-    # redirect to {{ nginx_server_name }}
-    location / {
-        # ? in rewrite makes sure nginx doesn't append query string again
-        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
-    }
-}
-{% endif %} {# end: nginx_ilri_tls_cert #}

@@ -75,4 +75,14 @@
     state: present
   become_user: "{{ tomcat_user }}"
 
+- name: Clone DSpace frontend repository
+  when: dspace_version_major == 7
+  ansible.builtin.git:
+    repo: "{{ dspace_frontend_git_repo }}"
+    dest: "{{ tomcat_user_home }}/src/git/dspace-angular"
+    version: "{{ dspace_frontend_git_branch }}"
+    force: true
+    depth: 1
+  become_user: "{{ tomcat_user }}"
+
 # vim: set sw=2 ts=2:

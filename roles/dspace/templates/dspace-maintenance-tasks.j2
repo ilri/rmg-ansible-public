@@ -88,7 +88,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # Send out "monthly" update subscription e-mails at 02:00, on the first of every month
 # (This sends an email to any users who have "subscribed" to a Community/Collection, notifying them of newly added content.)
 # REQUIRED for monthly "Email Subscriptions" to work properly.
-0 2 1 * * $DSPACE/bin/dspace subscription-send -f M
+0 2 1 * * {{ tomcat_user }} $DSPACE/bin/dspace subscription-send -f M
 
 # Permanently delete any bitstreams flagged as "deleted" in DSpace, on the first of every month at 01:00
 # (This ensures that any files which were deleted from DSpace are actually removed from your local filesystem.

@@ -25,9 +25,7 @@ nginx_root: '{{ dspace_root }}/webapps/xmlui'
 
 # default dspace webapps
 dspace_webapps:
-  - { name: 'ROOT', app_path: '{{ dspace_root }}/webapps/xmlui', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/ROOT.xml', db_pool_name: 'jdbc/dspaceWeb' }
-  - { name: 'oai', app_path: '{{ dspace_root }}/webapps/oai', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/oai.xml', db_pool_name: 'jdbc/dspaceApi' }
-  - { name: 'solr', app_path: '{{ dspace_root }}/webapps/solr', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/solr.xml' }
+  - { name: 'server', app_path: '{{ dspace_root }}/webapps/server', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/server.xml', db_pool_name: 'jdbc/dspaceApi' }
   - { name: 'rest', app_path: '{{ dspace_root }}/webapps/rest', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/rest.xml', db_pool_name: 'jdbc/dspaceApi' }
 
 # default postgresql dspace db credentials

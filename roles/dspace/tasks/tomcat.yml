@@ -88,19 +88,6 @@
     path: "{{ item }}"
     state: absent
   loop:
-    - /usr/local/apache-tomcat-7.0.104.tar.gz
-    - /usr/local/apache-tomcat-7.0.104
-    - /usr/local/apache-tomcat-7.0.107.tar.gz
-    - /usr/local/apache-tomcat-7.0.107
-  tags: tomcat
-
-# We can remove the separate Tomcat 7 and Tomcat 9 tasks once we move. I will
-# keep them both for now to make it easier for rebasing this branch on master.
-- name: Remove old Tomcat 9 versions
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  loop:
     - /usr/local/apache-tomcat-9.0.76.tar.gz
     - /usr/local/apache-tomcat-9.0.76
     - /usr/local/apache-tomcat-9.0.78.tar.gz

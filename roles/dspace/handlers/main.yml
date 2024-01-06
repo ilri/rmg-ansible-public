@@ -8,11 +8,6 @@
 #
 # So for now I will duplicate it here.
 
-- name: restart tomcat7
-  ansible.builtin.systemd:
-    name: tomcat7
-    state: restarted
-
 - name: restart tomcat9
   ansible.builtin.systemd:
     name: tomcat9

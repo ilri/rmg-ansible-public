@@ -56,10 +56,10 @@ server {
 
     include /etc/nginx/intermediate-tls.conf;
 
-    # Redirect some legacy DSpace 6 URLs for user convenience
-    rewrite ^/discover$ https://{{ nginx_server_name }}/search redirect;
-    rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC redirect;
-    rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login redirect;
+    # permanent some legacy DSpace 6 URLs for user convenience
+    rewrite ^/discover$ https://{{ nginx_server_name }}/search permanent;
+    rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC permanent;
+    rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login permanent;
 
     location / {
         # log access requests for debug / load analysis

@@ -41,8 +41,8 @@ dspace_statistics_api_git_repo: https://github.com/ilri/dspace-statistics-api.gi
 dspace_statistics_api_git_version: v1.4.3
 dspace_statistics_api_dir: /opt/ilri/dspace-statistics-api
 
-# Port 8081 on DSpace 6, 8983 on DSpace 7
-dspace_solr_server: http://localhost:8081/solr
+# Port 8983 on DSpace 7
+dspace_solr_server: http://localhost:8983/solr
 
 dspace_explorer_server: prod.ares.codeobia.com
 
@@ -53,27 +53,25 @@ dspace_mail_disabled: false
 
 # CMYK/RGB iccprofiles for DSpace 5.6+ PDF thumbnails
 dspace_ghostscript_prefix: /usr/share/color/icc/ghostscript
-# needs to be a string or else Ansible translates it as a Python boolean, ie False
-dspace_dev_mode: 'false'
 
 # command to use for pyvenv (Ubuntu 22.04 is Python 3.10)
 pyvenv_command: python3.10 -m venv
 
-# version 8 for DSpace 6, version 17 for DSpace 7
-java_version_major: 8
+# version 17 for DSpace 7
+java_version_major: 17
 
-# version 14 for DSpace 6, version 18 for DSpace 7
+# version 18 for DSpace 7
 nodejs_version_major: 14
 
 tomcat_user: dspace
 tomcat_group: dspace
 tomcat_user_home: /home/dspace
-# See: https://tomcat.apache.org/download-70.cgi
-tomcat_version: 7.0.109
-tomcat_version_major: 7
+# See: https://tomcat.apache.org/download-90.cgi
+tomcat_version: 9.0.84
+tomcat_version_major: 9
 tomcat_url: https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_version_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
 # sha512
-tomcat_url_checksum: 612e830913bf1401bc9540e2273e465b0ee7ef63750a9969a80f1e9da9edb4888aa621fcc6fa5ba23cff94a40e91eb97e3f969b8064dabd49b2d0ea29e59b57e
+tomcat_url_checksum: 85a42ab5e7e4cb1923888e96a78a0f277a870d06e76147a95457878c124001c9a317eade4ad69c249a460ffe2cbefe894022b84389cdf33038bc456e3699c8e3
 tomcat_path_prefix: /usr/local
 tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 

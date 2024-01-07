@@ -61,6 +61,10 @@ server {
     rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC permanent;
     rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login permanent;
 
+    if ($http_user_agent = '') {
+        return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
+    }
+
     location / {
         # log access requests for debug / load analysis
         access_log /var/log/nginx/https-access.log;

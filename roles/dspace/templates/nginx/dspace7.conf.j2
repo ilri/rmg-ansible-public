@@ -231,6 +231,9 @@ geo $limit_bots_ip {
 
     # Unblock ourselves
     {{ ansible_default_ipv6.address }} '';
+
+    # Unblock AReS harvester
+    157.90.157.100 '';
 }
 
 # Matching networks have the key set to 'bot' by the geo module above, while

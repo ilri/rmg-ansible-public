@@ -18,6 +18,8 @@ WorkingDirectory={{ tomcat_user_home }}/src/git/dspace-angular
 ExecStart={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 start ./dist/server/main.js --name dspace-ui -i 4 --no-daemon
 ExecReload={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 reload dspace-ui
 ExecStop={{ tomcat_user_home }}/.node_modules/lib/node_modules/pm2/bin/pm2 stop dspace-ui
+# Don't log pm2 to the systemd journal! Use pm2 logs instead.
+StandardOutput=null
 
 [Install]
 WantedBy=multi-user.target

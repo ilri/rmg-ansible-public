@@ -11,52 +11,10 @@ server {
     # redirected to cgspace.cgiar.org with HTTP 301.
     access_log /var/log/nginx/library-access.log;
 
-    # Hardcode an alias for the Google Search Console's verification file
-    # test: http://library.cgiar.org/google31ea257b2e1fdfeb.html
-    location = /google31ea257b2e1fdfeb.html {
-        alias {{ nginx_root }}/themes/CGIARSystem/google31ea257b2e1fdfeb.html;
-    }
-
     # Translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
     # test: http://library.cgiar.org
     location = / {
         return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
-    }
-
-    # Translate legacy browse requests at root level
-    # test: http://library.cgiar.org/browse?type=author
-    # test: http://library.cgiar.org/browse?value=Intellectual%20Assets%20Reports&type=subject
-    location = /browse {
-        if ($arg_type = "subject") {
-            set $arg_type "systemsubject";
-            # adjust "type" query parameter to account for us moving subject→systemsubject
-            # when we imported all the CGIAR Library's records. Note: it's possible that
-            # $arg_value is not set, but DSpace doesn't care and I don't want to have to
-            # handle yet another corner case just to process these legacy requests.
-            rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse?value=$arg_value&type=$arg_type? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
-        }
-
-        # rewrite to new URI with existing query parameters
-        rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
-    }
-
-    # Translate legacy browse requests on Library's handle prefix (10947)
-    # test: http://library.cgiar.org/handle/10947/2527/browse?type=author
-    # test: http://library.cgiar.org/handle/10947/2527/browse?value=Intellectual%20Assets%20Reports&type=subject
-    location ~ ^/handle/10947/[0-9]+/browse$ {
-        if ($arg_type = "subject") {
-            set $arg_type "systemsubject";
-            # adjust "type" query parameter to account for us moving subject→systemsubject
-            # when we imported all the CGIAR Library's records. Note: it's possible that
-            # $arg_value is not set, but DSpace doesn't care and I don't want to have to
-            # handle yet another corner case just to process these legacy requests.
-            rewrite ^ https://{{ nginx_server_name }}$uri?value=$arg_value&type=$arg_type? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
-        }
-
-        # forward browse request to new domain with existing query parameters
-        # ? in rewrite makes sure nginx doesn't append query string again
-        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
     # Translate bitstream links from library.cgiar.org to {{ nginx_server_name }}
@@ -97,52 +55,10 @@ server {
 
     include /etc/nginx/intermediate-tls.conf;
 
-    # Hardcode an alias for the Google Search Console's verification file
-    # test: https://library.cgiar.org/google31ea257b2e1fdfeb.html
-    location = /google31ea257b2e1fdfeb.html {
-        alias {{ nginx_root }}/themes/CGIARSystem/google31ea257b2e1fdfeb.html;
-    }
-
     # Translate top-level CGIAR Library requests to their community on {{ nginx_server_name }}
     # test: https://library.cgiar.org
     location = / {
         return {{ nginx_redirect_type }} https://{{ nginx_server_name }}/handle/10568/83389;
-    }
-
-    # Translate legacy browse requests at root level
-    # test: https://library.cgiar.org/browse?type=author
-    # test: https://library.cgiar.org/browse?value=Intellectual%20Assets%20Reports&type=subject
-    location = /browse {
-        if ($arg_type = "subject") {
-            set $arg_type "systemsubject";
-            # adjust "type" query parameter to account for us moving subject→systemsubject
-            # when we imported all the CGIAR Library's records. Note: it's possible that
-            # $arg_value is not set, but DSpace doesn't care and I don't want to have to
-            # handle yet another corner case just to process these legacy requests.
-            rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse?value=$arg_value&type=$arg_type? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
-        }
-
-        # rewrite to new URI with existing query parameters
-        rewrite ^ https://{{ nginx_server_name }}/handle/10568/83389/browse {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
-    }
-
-    # Translate legacy browse requests on Library's handle prefix (10947)
-    # test: https://library.cgiar.org/handle/10947/2527/browse?type=author
-    # test: https://library.cgiar.org/handle/10947/2527/browse?value=Intellectual%20Assets%20Reports&type=subject
-    location ~ ^/handle/10947/[0-9]+/browse$ {
-        if ($arg_type = "subject") {
-            set $arg_type "systemsubject";
-            # adjust "type" query parameter to account for us moving subject→systemsubject
-            # when we imported all the CGIAR Library's records. Note: it's possible that
-            # $arg_value is not set, but DSpace doesn't care and I don't want to have to
-            # handle yet another corner case just to process these legacy requests.
-            rewrite ^ https://{{ nginx_server_name }}$uri?value=$arg_value&type=$arg_type? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
-        }
-
-        # forward browse request to new domain with existing query parameters
-        # ? in rewrite makes sure nginx doesn't append query string again
-        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
     }
 
     # Translate bitstream links from library.cgiar.org to {{ nginx_server_name }}

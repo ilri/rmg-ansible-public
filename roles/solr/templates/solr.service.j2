@@ -12,6 +12,9 @@ Environment=SOLR_HOME={{ solr_home_dir }}/data
 Environment=SOLR_LOGS_DIR={{ solr_home_dir }}/logs
 Environment=SOLR_HEAP={{ solr_heap }}
 
+# Don't log the systemd journal, we have a log file!
+StandardOutput=null
+
 PrivateDevices=yes
 PrivateTmp=yes
 # Solr does not need access to /home, /root, or /run/user

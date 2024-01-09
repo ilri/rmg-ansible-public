@@ -10,6 +10,13 @@
     {% include 'nginx/legacy-dspace-domains.conf.j2' %}
 {% endif %}
 
+# Create a new cache for rest requests with space for 80,000 keys (one megabyte
+# can store about eight thousand keys), purges inactive responses after 24 hours
+# regardless of their validity, and has two levels of storage, ie "2c/65".
+#
+# See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html
+proxy_cache_path /var/cache/nginx/rest_cache levels=2:2 keys_zone=rest:10m inactive=24h max_size=1G;
+
 {% if nginx_tls_cert is defined %}
 # Handle {{ nginx_server_name }} http -> https
 #
@@ -162,6 +169,59 @@ server {
         }
 
         access_log /var/log/nginx/rest-access.log;
+
+        # Location for rest requests that we want to cache (see proxy_cache_path
+        # above). Most importantly we only want to match requests that are from
+        # bots or other programmatic clients, not those used by actual users be-
+        # cause we need to make sure Solr registers the statistics hit.
+        #
+        # So for example we want to match these:
+        #
+        #   /rest/handle/10568/27611
+        #   /rest/handle/10568/98424?expand=all
+        #   /rest/items/3f692ddd-7856-4bf0-a587-99fb3df0688a/metadata
+        #   /rest/items/b014e36f-b496-43d8-9148-cc9db8a6efac/bitstreams
+        #   /rest/items?expand=metadata,parentCommunityList,parentCollectionList,bitstreams&limit=10&offset=36270
+        #
+        # But not these:
+        #
+        #   /rest/bitstreams/15412/retrieve
+        #   /rest/rest/bitstreams/28926633-c7c2-49c2-afa8-6d81cadc2316/retrieve
+        #
+        # See: https://regex101.com/r/vPz11y/1
+        location ~ /rest/(handle|items|collections|communities)/? {
+            proxy_cache rest;
+            # How long to cache valid HTTP responses (default 200, 301, 302)
+            proxy_cache_valid 24h;
+            # Allow use of stale entries if the cache is updating
+            proxy_cache_use_stale updating;
+            # Override the default proxy cache key to include the HTTP Accept
+            # header. This makes sure we don't send JSON responses to clients
+            # requesting XML and vice versa.
+            proxy_cache_key $scheme$proxy_host$request_uri$http_accept;
+            # DSpace always sends a cookie and cache control headers, which makes
+            # nginx refuse to cache the response.
+            proxy_ignore_headers "Set-Cookie" "Cache-Control";
+            # Add header with cache status (MISS, HIT, EXPIRED, etc.)
+            add_header X-Cache-Status $upstream_cache_status;
+            # Make sure session cookies are not leaked in cached payloads
+            proxy_hide_header "Set-Cookie";
+
+            # Don't cache when user Shift-refreshes (Cache-Control: no-cache) or
+            # when a client has an active session (see the $cookie_jsessionid map).
+            proxy_cache_bypass $http_cache_control $active_user_session;
+            proxy_no_cache $http_cache_control $active_user_session;
+
+            # Explicitly set proxy headers again because the existing headers from
+            # the global context get cleared when we add new headers with add_header
+            # and proxy_set_header in this block.
+            # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+            include proxy_params;
+
+            proxy_pass http://tomcat-http;
+            # Set user agent string to mapped value (see mapping block)
+            proxy_set_header User-Agent $ua;
+        }
 
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header
@@ -318,6 +378,20 @@ map $http_user_agent $limit_bots_ua {
     # 2023-01-18 python requests or urllib should be treated as bots in the
     # frontend (we already drop their hits from Solr).
     ~python 1;
+}
+
+# Check if the JSESSIONID cookie is present and contains a 32-character hex
+# value, which would mean that a user is actively attempting to re-use their
+# Tomcat session. Then we set the $active_user_session variable and use it
+# to bypass the nginx proxy cache in REST requests. This is safe because any
+# client sending one of these has likely already logged in and is trying to
+# get fresh data.
+map $cookie_jsessionid $active_user_session {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    '~[A-Z0-9]{32}' 1;
 }
 
 # Zone for limiting "bad bot" requests with a hard limit of 1 per minute. Uses

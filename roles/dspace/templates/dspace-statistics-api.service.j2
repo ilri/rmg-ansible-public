@@ -4,8 +4,7 @@ After=network.target
 
 [Service]
 EnvironmentFile=/etc/dspace-statistics-api
-User=nobody
-Group=nogroup
+DynamicUser=yes
 WorkingDirectory={{ dspace_statistics_api_dir }}
 ExecStart={{ dspace_statistics_api_dir}}/venv/bin/gunicorn \
           --bind 127.0.0.1:5000                            \

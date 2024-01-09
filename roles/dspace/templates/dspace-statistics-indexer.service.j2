@@ -4,8 +4,7 @@ After=solr.service
 
 [Service]
 EnvironmentFile=/etc/dspace-statistics-api
-User=nobody
-Group=nogroup
+DynamicUser=yes
 WorkingDirectory={{ dspace_statistics_api_dir }}
 ExecStart={{ dspace_statistics_api_dir}}/venv/bin/python -m dspace_statistics_api.indexer
 

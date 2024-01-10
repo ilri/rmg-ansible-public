@@ -68,6 +68,13 @@ server {
     rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC permanent;
     rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login permanent;
 
+    # Custom JSON response for 429 errors
+    error_page 429 = @429;
+    location @429 {
+        default_type application/json;
+        return 429 '{"status": 429, "message": "Too Many Requests"}';
+    }
+
     # rate limit requests to dynamic pages to protect against bots and malicious
     # users (see the definition for the dynamicpages limit_req_zone later).
     location ~ ^/(browse|search) {
@@ -84,6 +91,9 @@ server {
         # rate limit for poorly behaved bots, see limit_req_zone below
         limit_req zone=badbots_ua;
         limit_req zone=badbots_ip;
+
+        # Set the status code for rate-limited requests
+        limit_req_status 429;
 
         # Never index dynamic pages!
         add_header X-Robots-Tag "none";
@@ -111,6 +121,9 @@ server {
         # rate limit for poorly behaved bots, see limit_req_zone below
         limit_req zone=badbots_ua;
         limit_req zone=badbots_ip;
+
+        # Set the status code for rate-limited requests
+        limit_req_status 429;
 
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header

@@ -79,4 +79,7 @@ tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 # True unless you're in development and using "localhost" + snakeoil certs
 use_letsencrypt: true
 
+# Dummy key
+sherpa_romeo_apikey: 5DHH3N12-1362-11RG-923C-471E3TE2897G
+
 # vim: set sw=2 ts=2:

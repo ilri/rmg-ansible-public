@@ -4,9 +4,11 @@
 # of the same name in any of the DSpace *.cfg files. This includes overriding
 # settings in any of these files:
 #    * [dspace]/config/dspace.cfg
-#    * Or any configuration file that is included in 'dspace.cfg'
+#    * Any configuration file that is included in 'dspace.cfg'
 #     (See "include = [filepath]" settings near the end of dspace.cfg.
 #      By default, it includes all [dspace]/config/modules/*.cfg files)
+#    * Spring Boot's application.properties
+#      ([dspace-src]/dspace-server-webapp/src/main/resources/application.properties)
 #
 # By default, this EXAMPLE file includes a number of commonly overridden configurations.
 # * ADD configurations by simply copying them into this file from any existing *.cfg file.
@@ -30,84 +32,76 @@
 # Windows note: Please remember to use forward slashes for all paths (e.g. C:/dspace)
 dspace.dir={{ dspace_root }}
 
-# DSpace host name - should match base URL.  Do not include port number
-dspace.hostname = {{ nginx_server_name }}
+# Public URL of DSpace backend ('server' webapp). May require a port number if not using standard ports (80 or 443)
+# DO NOT end it with '/'.
+# This is where REST API and all enabled server modules (OAI-PMH, SWORD, SWORDv2, RDF, etc) will respond.
+# NOTE: This URL must be accessible to all DSpace users (should not use 'localhost' in Production)
+# and is usually "synced" with the "rest" section in the DSpace User Interface's config.*.yml.
+# It corresponds to the URL that you would type into your browser to access the REST API.
+dspace.server.url = https://{{ nginx_server_name }}/server
 
-# DSpace base host URL.  Include port number etc.
-dspace.baseUrl = https://${dspace.hostname}
-
-# The user interface you will be using for DSpace. Common usage is either xmlui or jspui
-dspace.ui = xmlui
-
-# Full link your end users will use to access DSpace. In most cases, this will be the baseurl followed by
-# the context path to the UI you are using.
-#
-# Alternatively, you can use a url redirect or deploy the web application under the servlet container root.
-# In this case, make sure to remove the /${dspace.ui} from the dspace.url property.
-dspace.url = ${dspace.baseUrl}
-
-# Internal URL for Tomcat (used by Atmire CUA)
-dspace.internalUrl = http://localhost:8081
+# Public URL of DSpace frontend (Angular UI). May require a port number if not using standard ports (80 or 443)
+# DO NOT end it with '/'.
+# This is used by the backend to provide links in emails, RSS feeds, Sitemaps, etc.
+# NOTE: this URL must be accessible to all DSpace users (should not use 'localhost' in Production).
+# It corresponds to the URL that you would type into your browser to access the User Interface.
+dspace.ui.url = https://{{ nginx_server_name }}
 
 # Name of the site
 dspace.name = CGSpace
 
-# assetstore.dir, look at DSPACE/config/spring/api/bitstore.xml for more options
-# default is ${dspace.dir}/assetstore, uncomment and modify if you need to use a different path
-assetstore.dir = ${dspace.dir}/assetstore
+# Assetstore configurations have moved to config/modules/assetstore.cfg
+# and config/spring/api/bitstore.xml.
+# Additional storage options (e.g. Amazon S3) are available in `assetstore.cfg`
+# assetstore.dir = ${dspace.dir}/assetstore
 
 # Default language for metadata values
-default.language = en_US
+#default.language = en_US
 
 # Solr server/webapp.
-# DSpace uses Solr for all search/browse capability (and for usage statistics by default).
-# The included 'solr' webapp MUST be deployed to Tomcat for DSpace to function.
-# Usually it will be available via port 8080 and the 'solr' context path. But,
-# But, you may need to modify this if you are running DSpace on a custom port, etc.
-solr.server = ${dspace.internalUrl}/solr
+# DSpace uses Solr for all search/browse capability (and for usage statistics).
+# Since DSpace 7, SOLR must be installed as a stand-alone service
+solr.server = {{ dspace_solr_server }}
+
+# Solr core name prefix.
+# If you connect multiple instances of DSpace to a single Solr instance, you
+# can organize them with a common core name prefix.
+#solr.multicorePrefix =
 
 ##########################
 # DATABASE CONFIGURATION #
 ##########################
-# DSpace only supports two database types: PostgreSQL or Oracle
+# DSpace ONLY supports PostgreSQL at this time.
 
 # URL for connecting to database
-#    * Postgres template: jdbc:postgresql://localhost:5432/dspace
-#    * Oracle template: jdbc:oracle:thin:@//localhost:1521/xe
 db.url=jdbc:postgresql://localhost:5432/{{ dspace_db_name }}?ApplicationName=dspaceCli
 
-# JDBC Driver
-#    * For Postgres: org.postgresql.Driver
-#    * For Oracle:   oracle.jdbc.OracleDriver
+# JDBC Driver for PostgreSQL
 db.driver = org.postgresql.Driver
 
-# Database Dialect (for Hibernate)
-#    * For Postgres: org.dspace.storage.rdbms.hibernate.postgres.DSpacePostgreSQL82Dialect
-#    * For Oracle:   org.hibernate.dialect.Oracle10gDialect
-db.dialect = org.dspace.storage.rdbms.hibernate.postgres.DSpacePostgreSQL82Dialect
+# PostgreSQL Database Dialect (for Hibernate)
+db.dialect = org.hibernate.dialect.PostgreSQL94Dialect
 
 # Database username and password
 db.username={{ dspace_db_user }}
 db.password={{ dspace_db_password }}
 
 # Database Schema name
-#    * For Postgres, this is often "public" (default schema)
-#    * For Oracle, schema is equivalent to the username of your database account,
-#      so this may be set to ${db.username} in most scenarios.
+# For PostgreSQL, this is often "public" (default schema)
 db.schema = public
 
 ## Connection pool parameters
 
 # Maximum number of DB connections in pool (default = 30)
-db.maxconnections = 30
+#db.maxconnections = 30
 
 # Maximum time to wait before giving up if all connections in pool are busy (milliseconds)
-# (default = 5000ms or 5 seconds)
-db.maxwait = 10000
+# (default = 10000ms or 10 seconds)
+#db.maxwait = 10000
 
 # Maximum number of idle connections in pool (-1 = unlimited)
 # (default = 10)
-db.maxidle = 10
+#db.maxidle = 10
 
 
 #######################
@@ -130,19 +124,22 @@ mail.from.address = {{ dspace_support_email }}
 
 # When feedback is submitted via the Feedback form, it is sent to this address
 # Currently limited to one recipient!
-mail.feedback.recipient = {{ dspace_support_email }}
+feedback.recipient = {{ dspace_support_email }}
 
 # General site administration (Webmaster) e-mail
 mail.admin = {{ dspace_admin_email }}
 
+# Helpdesk E-mail
+#mail.helpdesk = ${mail.admin}
+#mail.helpdesk.name = Help Desk
+
 # Recipient for server errors and alerts (defaults to mail.admin)
-mail.alert.recipient= ${mail.admin}
+alert.recipient = ${mail.admin}
 
 # Recipient for new user registration emails (defaults to unspecified)
-mail.registration.notify= {{ dspace_support_email }}
+#registration.notify =
 
 mail.server.disabled = {{ dspace_mail_disabled }}
-
 
 ########################
 # HANDLE CONFIGURATION #
@@ -152,22 +149,20 @@ mail.server.disabled = {{ dspace_mail_disabled }}
 #
 # Items in DSpace receive a unique URL, stored in dc.identifier.uri
 # after it is generated during the submission process.
-# 
-# If you register with CNRI's handle service at http://www.handle.net/,
-# these links can be generated as permalinks using http://hdl.handle.net/
+#
+# If you register with CNRI's handle service at https://www.handle.net/,
+# these links can be generated as permalinks using https://hdl.handle.net/
 # as canonical prefix. Please make sure to change handle.canonical.prefix
 # after registering with handle.net by uncommenting one of the following
-# lines, depending if you prefer to use http or https:
-# handle.canonical.prefix = http://hdl.handle.net/
+# lines, depending if you prefer to use https or http:
 handle.canonical.prefix = https://hdl.handle.net/
 #
-# Note that this will not alter dc.identifer.uri metadata for existing
-# items (only for subsequent submissions), but it will alter the URL
-# in JSPUI's 'identifier' message on item record pages for existing items.
+# Note that this will not alter dc.identifier.uri metadata for existing
+# items (only for subsequent submissions).
 
 # CNRI Handle prefix
-# (Defaults to a dummy/fake prefix of 123456789)
-handle.prefix = 10568
+# (Defaults to the reserved dummy/fake prefix of 123456789)
+#handle.prefix = 123456789
 
 # Paths to Ghostscript CMYK/RGB profiles, see DS-3517
 org.dspace.app.mediafilter.ImageMagickThumbnailFilter.cmyk_profile = {{ dspace_ghostscript_prefix }}/default_cmyk.icc
@@ -176,8 +171,9 @@ org.dspace.app.mediafilter.ImageMagickThumbnailFilter.srgb_profile = {{ dspace_g
 #######################
 # PROXY CONFIGURATION #
 #######################
-# uncomment and specify both properties if proxy server required
-# proxy server for external http requests - use regular hostname without port number
+# Uncomment and specify both properties if proxy server is required for external http requests
+# (e.g. requests from DSpace to third party services like Creative Commons use this setting when enabled)
+# Use regular hostname without port number
 #http.proxy.host =
 
 # port number of proxy server
@@ -203,8 +199,15 @@ org.dspace.app.mediafilter.ImageMagickThumbnailFilter.srgb_profile = {{ dspace_g
 # LDAP authentication/authorization. See authentication-ldap.cfg for default configuration.
 #plugin.sequence.org.dspace.authenticate.AuthenticationMethod = org.dspace.authenticate.LDAPAuthentication
 
+# OIDC authentication/authorization. See authenication-oidc.cfg for default configuration.
+#plugin.sequence.org.dspace.authenticate.AuthenticationMethod = org.dspace.authenticate.OidcAuthentication
+
 # Shibboleth authentication/authorization. See authentication-shibboleth.cfg for default configuration.
+# Check also the cors settings below
 #plugin.sequence.org.dspace.authenticate.AuthenticationMethod = org.dspace.authenticate.ShibAuthentication
+
+# ORCID certificate authentication.
+# plugin.sequence.org.dspace.authenticate.AuthenticationMethod = org.dspace.authenticate.OrcidAuthentication
 
 # X.509 certificate authentication. See authentication-x509.cfg for default configuration.
 #plugin.sequence.org.dspace.authenticate.AuthenticationMethod = org.dspace.authenticate.X509Authentication
@@ -213,19 +216,44 @@ org.dspace.app.mediafilter.ImageMagickThumbnailFilter.srgb_profile = {{ dspace_g
 # Enabled by default in authentication.cfg
 #plugin.sequence.org.dspace.authenticate.AuthenticationMethod = org.dspace.authenticate.PasswordAuthentication
 
+#####################
+# REST API SETTINGS #
+#####################
+# Allowed Cross-Origin-Resource-Sharing (CORS) origins (in "Access-Control-Allow-Origin" header).
+# Only these origins (client URLs) can successfully authenticate with your REST API.
+# Defaults to ${dspace.ui.url} if unspecified (as the UI must have access to the REST API).
+# Multiple allowed origin URLs may be comma separated. Wildcard value (*) is NOT SUPPORTED.
+# (Requires reboot of servlet container, e.g. Tomcat, to reload)
+# When an external authentication system is involved like Shibboleth some browsers (i.e. Safari) include
+# in the request the Origin header with the url of the IdP. In such case you need to allow also the IdP to
+# avoid trouble for such browsers (i.e.  rest.cors.allowed-origins = ${dspace.ui.url}, https://samltest.id )
+#rest.cors.allowed-origins = ${dspace.ui.url}
+
+#################################################
+# SPRING BOOT SETTINGS (Used by Server Webapp)  #
+#################################################
+# NOTE: Common Spring Boot application settings may be found at
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+#
+# EXAMPLE OVERRIDE:
+# By uncommenting the below Spring Boot settings, you can increase or decrease the maximum upload size.
+# These defaults are specified in [dspace-src]/dspace-server-webapp/src/main/resources/application.properties
+# but may be overridden in this local.cfg
+#
+# Maximum size of a single uploaded file
+#spring.servlet.multipart.max-file-size = 512MB
+
+# Maximum size of a multipart request (i.e. max total size of all files in one request)
+#spring.servlet.multipart.max-request-size = 512MB
+
 authentication-ldap.provider_url = {{ dspace_ldap_server }}
 authentication-ldap.search.user = {{ dspace_ldap_user }}
 authentication-ldap.search.password = {{ dspace_ldap_pass }}
 
 # Path to GeoLite2-City.mmdb database
+# geoip2-database on Arch Linux
+# geoipupdate on Ubuntu (must add account ID in /etc/GeoIP.conf)
+#   /var/lib/GeoIP/GeoLite2-City.mmdb
 usage-statistics.dbfile = /var/lib/GeoIP/GeoLite2-City.mmdb
 
-# For Atmire modules
-useproxies.enabled = true
-# I think we can use a random string here...
-atmire-dspace-api.cookie.encoding.password = {{ lookup('password', '/dev/null length=20 chars=ascii_letters') }}
-dspace.rest.contextPath = /rest
-# To work around an issue with variable interpolation not working for this part-
-# icular variable (defined in pom.xml and doesn't get substituted at run time).
-cua.version.number=${cua.version.number}
-dev.mode = {{ dspace_dev_mode }}
+sherpa.romeo.apikey = {{ sherpa_romeo_apikey }}

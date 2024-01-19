@@ -10,12 +10,12 @@
     {% include 'nginx/legacy-dspace-domains.conf.j2' %}
 {% endif %}
 
-# Create a new cache for rest requests with space for 2 million keys (which can
-# store ~16,000 keys), purges inactive responses after 24 hours regardless of t-
-# heir validity, and has two levels of storage, ie "2c/65".
+# Create a new cache for rest requests with space for 80,000 keys (one megabyte
+# can store about eight thousand keys), purges inactive responses after 24 hours
+# regardless of their validity, and has two levels of storage, ie "2c/65".
 #
 # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html
-proxy_cache_path /var/cache/nginx/rest_cache levels=2:2 keys_zone=rest:2m inactive=24h max_size=1G;
+proxy_cache_path /var/cache/nginx/rest_cache levels=2:2 keys_zone=rest:10m inactive=24h max_size=1G;
 
 {% if nginx_tls_cert is defined %}
 # Handle {{ nginx_server_name }} http -> https
@@ -25,19 +25,10 @@ server {
     listen [::]:80;
     server_name {{ nginx_server_name }};
 
-    # feedburner doesn't support https :(
-    location ~ /(feed|open-search/discover) {
-        # log access requests for debug / load analysis
-        access_log /var/log/nginx/access.log;
-
-        # Send requests to Tomcat
-        proxy_pass http://tomcat-http;
-    }
-
     # redirect http -> https
     location / {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/access.log;
+        access_log /var/log/nginx/http-access.log;
 
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
@@ -46,7 +37,7 @@ server {
 
     include extra-security.conf;
 }
-{% endif %}{# end: nginx_tls_cert #}
+{% endif %} {# end: nginx_tls_cert #}
 
 # HTTPS server (only for domains we have a cert for)
 #
@@ -61,8 +52,6 @@ server {
 
     server_name {{ nginx_server_name }};
 
-    root {{ nginx_root }};
-
     {% if nginx_forbid_robots == True %}
     # Add header to forbid robots to index
     # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
@@ -74,35 +63,27 @@ server {
 
     include /etc/nginx/intermediate-tls.conf;
 
-    # static assets we can load from the file system directly with nginx
-    location ~ /(themes|aspects/ReportingSuite|aspects/Statistics) {
-        if ($http_user_agent = '') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
+    # permanent some legacy DSpace 6 URLs for user convenience
+    rewrite ^/discover$ https://{{ nginx_server_name }}/search permanent;
+    rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC permanent;
+    rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login permanent;
 
-        # It seems some requests are coming with a literal "-" as the user agent
-        if ($http_user_agent = '-') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
-
-        try_files $uri @tomcat;
-
-        location ~* \.(?:ico|css|js|gif|jpe?g|png|woff|svg)$ {
-            add_header Cache-Control "max-age=604800";
-        }
+    # Custom JSON response for 429 errors
+    error_page 429 = @429;
+    location @429 {
+        default_type application/json;
+        return 429 '{"status": 429, "message": "Too Many Requests"}';
     }
 
     # rate limit requests to dynamic pages to protect against bots and malicious
     # users (see the definition for the dynamicpages limit_req_zone later).
-    location ~ /(browse|discover|search-filter|most-popular) {
+    location ~ ^/(browse|search) {
         if ($http_user_agent = '') {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 
-        # It seems some requests are coming with a literal "-" as the user agent
-        if ($http_user_agent = '-') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/https-access.log;
 
         # rate limit for dynamic pages
         limit_req zone=dynamicpages burst=5;
@@ -111,8 +92,11 @@ server {
         limit_req zone=badbots_ua;
         limit_req zone=badbots_ip;
 
-        # log access requests for debug / load analysis
-        access_log /var/log/nginx/access.log;
+        # Set the status code for rate-limited requests
+        limit_req_status 429;
+
+        # Never index dynamic pages!
+        add_header X-Robots-Tag "none";
 
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header
@@ -120,47 +104,8 @@ server {
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
 
-        # Never index dynamic pages!
-        add_header X-Robots-Tag "none";
-
-        proxy_pass http://tomcat-http;
-        # Set user agent string to mapped value (see mapping block)
-        proxy_set_header User-Agent $ua;
-    }
-
-    # tell robots not to index or follow links on dynamic pages (because we
-    # can't use * in robots.txt!) and rate limit requests.
-    # see: https://jira.duraspace.org/browse/DS-2962
-    location ~ /handle/[0-9]+/[0-9]+/(browse|discover|search-filter|most-popular) {
-        if ($http_user_agent = '') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
-
-        # It seems some requests are coming with a literal "-" as the user agent
-        if ($http_user_agent = '-') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
-
-        # rate limit for dynamic pages
-        limit_req zone=dynamicpages burst=5;
-
-        # rate limit for poorly behaved bots, see limit_req_zone below
-        limit_req zone=badbots_ua;
-        limit_req zone=badbots_ip;
-
-        # log access requests for debug / load analysis
-        access_log /var/log/nginx/access.log;
-
-        # Explicitly set proxy headers again because the existing headers from
-        # the global context get cleared when we add new headers with add_header
-        # and proxy_set_header in this block.
-        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
-        include proxy_params;
-
-        # Never index dynamic pages!
-        add_header X-Robots-Tag "none";
-
-        proxy_pass http://tomcat-http;
+        # Send requests to Express
+        proxy_pass http://express-http;
         # Set user agent string to mapped value (see mapping block)
         proxy_set_header User-Agent $ua;
     }
@@ -170,17 +115,15 @@ server {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
 
-        # It seems some requests are coming with a literal "-" as the user agent
-        if ($http_user_agent = '-') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/https-access.log;
 
         # rate limit for poorly behaved bots, see limit_req_zone below
         limit_req zone=badbots_ua;
         limit_req zone=badbots_ip;
 
-        # log access requests for debug / load analysis
-        access_log /var/log/nginx/access.log;
+        # Set the status code for rate-limited requests
+        limit_req_status 429;
 
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header
@@ -188,16 +131,15 @@ server {
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
 
-        # Send requests to Tomcat
-        proxy_pass http://tomcat-http;
+        # Send requests to Express
+        proxy_pass http://express-http;
         # Set user agent string to mapped value (see mapping block)
         proxy_set_header User-Agent $ua;
     }
 
-    # Explicitly allow anyone to request robots.txt and the sitemap
-    location ~ /(robots\.txt|sitemap) {
-        # log access requests for debug / load analysis
-        access_log /var/log/nginx/access.log;
+    # log API requests
+    location /server {
+        access_log /var/log/nginx/api-access.log;
 
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header
@@ -226,17 +168,11 @@ server {
         proxy_pass https://codeobia_ares/explorer;
     }
 
-    # log rest requests
+    # log legacy rest requests
     location /rest {
         if ($http_user_agent = '') {
             return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
         }
-
-        # It seems some requests are coming with a literal "-" as the user agent
-        if ($http_user_agent = '-') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
-
         # redirect invalid REST retrieveLink values (see DS-3193)
         rewrite ^/rest/rest/(.*)$ https://{{ nginx_server_name }}/rest/$1 redirect;
 
@@ -245,7 +181,7 @@ server {
             proxy_pass http://statistics_api/$1$is_args$args;
         }
 
-        access_log /var/log/nginx/rest.log;
+        access_log /var/log/nginx/rest-access.log;
 
         # Location for rest requests that we want to cache (see proxy_cache_path
         # above). Most importantly we only want to match requests that are from
@@ -264,11 +200,11 @@ server {
         #
         #   /rest/bitstreams/15412/retrieve
         #   /rest/rest/bitstreams/28926633-c7c2-49c2-afa8-6d81cadc2316/retrieve
-        # 
+        #
         # See: https://regex101.com/r/vPz11y/1
         location ~ /rest/(handle|items|collections|communities)/? {
             proxy_cache rest;
-            # HTTP responses to cache (default 200, 301, 302)
+            # How long to cache valid HTTP responses (default 200, 301, 302)
             proxy_cache_valid 24h;
             # Allow use of stale entries if the cache is updating
             proxy_cache_use_stale updating;
@@ -276,8 +212,9 @@ server {
             # header. This makes sure we don't send JSON responses to clients
             # requesting XML and vice versa.
             proxy_cache_key $scheme$proxy_host$request_uri$http_accept;
-            # DSpace always sends a cookie, which makes nginx refuse to cache the response
-            proxy_ignore_headers "Set-Cookie";
+            # DSpace always sends a cookie and cache control headers, which makes
+            # nginx refuse to cache the response.
+            proxy_ignore_headers "Set-Cookie" "Cache-Control";
             # Add header with cache status (MISS, HIT, EXPIRED, etc.)
             add_header X-Cache-Status $upstream_cache_status;
             # Make sure session cookies are not leaked in cached payloads
@@ -310,40 +247,6 @@ server {
         proxy_set_header User-Agent $ua;
     }
 
-    # Hardcode an alias for the Bing Webmaster Tools verification file
-    # test: https://cgspace.cgiar.org/BingSiteAuth.xml
-    location = /BingSiteAuth.xml {
-        alias {{ nginx_root }}/themes/0_CGIAR/BingSiteAuth.xml;
-    }
-
-    # log oai requests
-    location /oai {
-        access_log /var/log/nginx/oai.log;
-        proxy_pass http://tomcat-http;
-    }
-
-    # Only allow Solr access from localhost
-    location /solr {
-        allow 127.0.0.1;
-        allow ::1;
-        deny all;
-    }
-
-    # Only allow access to management contexts from localhost (for Munin tomcat)
-    location ~ /(host-manager|manager) {
-        allow 127.0.0.1;
-        allow ::1;
-        deny all;
-    }
-
-    # named location for above try_files
-    location @tomcat {
-        # log access requests for debug / load analysis
-        access_log /var/log/nginx/access.log;
-
-        proxy_pass http://tomcat-http;
-    }
-
     include extra-security.conf;
 }
 
@@ -353,6 +256,16 @@ upstream tomcat-http {
     {% else %}
     server 127.0.0.1:8001;
     {% endif %}
+
+    # The keepalive parameter sets the maximum number of idle keepalive connections
+    # to upstream servers that are preserved in the cache of each worker process. When
+    # this number is exceeded, the least recently used connections are closed.
+    keepalive 60;
+}
+
+# dspace-angular running via Node.js with Express
+upstream express-http {
+    server 127.0.0.1:4000;
 
     # The keepalive parameter sets the maximum number of idle keepalive connections
     # to upstream servers that are preserved in the cache of each worker process. When
@@ -388,6 +301,12 @@ geo $limit_bots_ip {
     default '';
 
     include /etc/nginx/bot-networks.conf;
+
+    # Unblock ourselves
+    {{ ansible_default_ipv6.address }} '';
+
+    # Unblock AReS harvester
+    157.90.157.100 '';
 }
 
 # Matching networks have the key set to 'bot' by the geo module above, while

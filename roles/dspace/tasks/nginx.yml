@@ -67,7 +67,7 @@
 
 - name: Configure nginx DSpace 7 vhost
   ansible.builtin.template:
-    src: nginx/dspace7.conf.j2
+    src: nginx/dspace.conf.j2
     dest: /etc/nginx/conf.d/dspace.conf
     mode: 0644
     owner: root

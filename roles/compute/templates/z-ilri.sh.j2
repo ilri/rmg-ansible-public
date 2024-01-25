@@ -47,7 +47,9 @@ fi
 
 # Load ILRI-specific scripts and tools
 module load ilri/latest
+{% endif %}
 
+{% if inventory_hostname == 'compute06' %}
 # Configure paths for NVIDIA utilities and libraries.
 # See: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#post-installation-actions
 export PATH=/usr/local/cuda-12.1/bin${PATH:+:${PATH}}

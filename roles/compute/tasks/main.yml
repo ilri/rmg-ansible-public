@@ -2,11 +2,13 @@
 - name: Configure HPC head node
   ansible.builtin.import_tasks: hpc.yml
   when:
+    - slurm_head_node is defined
     - inventory_hostname == slurm_head_node
     - ansible_distribution_major_version is version('8', '==')
 
 - name: Configure SLURM
   ansible.builtin.import_tasks: slurm.yml
+  when: slurm_head_node is defined
   tags: slurm
 
 # 2022-04-21: currently missing from CentOS 8:

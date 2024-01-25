@@ -24,12 +24,6 @@
   ansible.builtin.include_tasks: nftables.yml
   when: ansible_distribution_major_version is version('8', '==')
 
-# need to reload to pick up service/timer/environment changes
-- name: Reload systemd daemon
-  ansible.builtin.systemd: # noqa no-handler
-    daemon_reload: true
-  when: spamhaus_firewalld_systemd_units is changed
-
 # TODO: re-evaluate this later, as no current CentOS versions run fail2ban
 # without pulling in firewalld right now.
 - name: Configure fail2ban

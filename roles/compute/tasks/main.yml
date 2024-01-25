@@ -127,8 +127,8 @@
 
 # TODO: find a way to run this on Addis compute
 - name: Clone environment modules
-  ansible.builtin.git:
   when: "'nairobi_compute' in group_names"
+  ansible.builtin.git:
     repo: https://github.com/ilri/hpc-environment-modules.git
     dest: /etc/modulefiles/ilri
     version: master
@@ -136,8 +136,8 @@
 
 # TODO: find a way to run this on Addis compute
 - name: Copy ilri profile script
-  ansible.builtin.template:
   when: "'nairobi_compute' in group_names"
+  ansible.builtin.template:
     src: z-ilri.sh.j2
     dest: /etc/profile.d/z-ilri.sh
     owner: root

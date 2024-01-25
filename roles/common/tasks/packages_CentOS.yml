@@ -9,7 +9,9 @@
         owner: root
         group: root
         mode: "0644"
-      when: ansible_distribution_release == 'Stream'
+      when:
+        - ansible_distribution_release == 'Stream'
+        - "'addis_compute' not in group_names"
       with_fileglob:
         - CentOS-Stream-*.repo
 
@@ -28,7 +30,9 @@
         owner: root
         group: root
         mode: "0644"
-      when: ansible_distribution_release == 'Stream'
+      when:
+        - ansible_distribution_release == 'Stream'
+        - "'addis_compute' not in group_names"
 
     - name: Add EPEL RPM package signing key
       ansible.builtin.rpm_key:

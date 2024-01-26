@@ -39,7 +39,7 @@
     - reload nginx
   tags: nginx
 
-- name: Copy extra nginx configs
+- name: Copy extra nginx configs (templates)
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -49,6 +49,17 @@
   loop:
     - { src: etc/nginx/intermediate-tls.conf.j2, dest: /etc/nginx/intermediate-tls.conf }
     - { src: etc/nginx/conf.d/blank-vhost.conf.j2, dest: /etc/nginx/conf.d/blank-vhost.conf }
+  notify:
+    - reload nginx
+  tags: nginx
+
+- name: Copy extra nginx configs (files)
+  ansible.builtin.copy:
+    src: etc/nginx/proxy_params
+    dest: /etc/nginx/proxy_params
+    mode: "0644"
+    owner: root
+    group: root
   notify:
     - reload nginx
   tags: nginx

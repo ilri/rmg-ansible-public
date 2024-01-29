@@ -341,6 +341,9 @@ map $limit_bots_ip $ua {
 # to abide by a total rate limit for all client instances regardless of the IP.
 #
 # $limit_bots_ua will be used as the key for the limit_req_zone.
+#
+# Note: nginx will use the first matching pattern, so we should define overrides
+# before including the list of bots.
 map $http_user_agent $limit_bots_ua {
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
@@ -393,9 +396,7 @@ map $cookie_jsessionid $active_user_session {
 # Baidu, but I wanted to explore a solution that could work for other bad user
 # agents in the future with little adjustments.
 #
-# A zone key size of 1 megabyte should be able to store around 16,000 sessions,
-# which should be about 15,999 sessions too many for now as I'm currently only
-# worried about Baidu (see mapping above).
+# A zone key size of 1 megabyte should be able to store around 16,000 sessions.
 limit_req_zone $limit_bots_ua zone=badbots_ua:1m rate=1r/m;
 limit_req_zone $limit_bots_ip zone=badbots_ip:1m rate=1r/m;
 

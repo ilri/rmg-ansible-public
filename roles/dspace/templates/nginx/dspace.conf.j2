@@ -95,6 +95,9 @@ server {
         # Set the status code for rate-limited requests
         limit_req_status 429;
 
+        # Log at WARN level instead of ERROR
+        limit_req_log_level warn;
+
         # Never index dynamic pages!
         add_header X-Robots-Tag "none";
 
@@ -124,6 +127,9 @@ server {
 
         # Set the status code for rate-limited requests
         limit_req_status 429;
+
+        # Log at WARN level instead of ERROR
+        limit_req_log_level warn;
 
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header

@@ -32,6 +32,12 @@ ldap_tls_reqcert = demand
 ldap_user_ssh_public_key = nsSshPublicKey
 {% endif %}
 
+# Default is 5400, adding here to be explicit
+entry_cache_timeout = 5400
+# Opportunistically refresh entries before their timeout in the background
+# Default is 0, but the sssd.conf man page suggests "3/4 * entry_cache_timeout"
+refresh_expired_interval = 4050
+
 # General SSSD heartbeat timeout. After three missed heartbeats SSSD will shut
 # itself down. (default: 10 seconds)
 timeout = 20

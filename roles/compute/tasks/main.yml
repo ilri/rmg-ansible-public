@@ -36,6 +36,7 @@
       - geos-devel.x86_64 # for some R libraries
       - glib2.x86_64 # for wise / Cegma
       - glpk-devel.x86_64 # for shannon_cpp
+      - gmp-devel.x86_64 # for some R libraries
       - gnuplot.x86_64
       - graphviz
       - graphviz-devel.x86_64 # for some Python libraries

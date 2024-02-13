@@ -25,6 +25,8 @@
     regexp: ^TLS_CACERTDIR
     state: absent
 
+# TODO: this fails the first time sometimes. Perhaps I can check the current
+# profile first and then run this with --force if needed?
 - name: Configure sssd on CentOS Stream 8
   when:
     - ansible_distribution == 'CentOS'

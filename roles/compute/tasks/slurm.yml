@@ -119,13 +119,24 @@
   when: inventory_hostname == slurm_head_node
   notify: restart slurmctld
 
+- name: Read munge key (Nairobi)
+  when: "'nairobi_compute' in group_names"
+  ansible.builtin.set_fact:
+    munge_key_content: "{{ lookup('file', 'private/data/compute/nairobi-munge.key') }}"
+
+- name: Read munge key (Addis)
+  when: "'addis_compute' in group_names"
+  ansible.builtin.set_fact:
+    munge_key_content: "{{ lookup('file', 'private/data/compute/addis-munge.key') }}"
+
 - name: Copy munge key
   ansible.builtin.copy:
-    src: munge.key
+    content: "{{ munge_key_content }}"
     dest: /etc/munge/munge.key
-    mode: "0600"
     owner: munge
     group: munge
+    mode: "0600"
+  when: munge_key_content is defined
   notify: restart munge
 
 - name: Start and enable munge

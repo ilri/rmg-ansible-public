@@ -173,7 +173,7 @@ table inet filter {
         ip daddr 239.2.11.71/32 ct state new udp dport {{ ganglia_gmond_port }} counter accept comment "Allow multicast to Ganglia gmond"
 
         {%   for host in groups['nairobi_compute'] %}
-        {%     if host != inventory_hostname and host != 'hpc' %}
+        {%     if host != inventory_hostname and host != slurm_head_node %}
         ip saddr {{ hostvars[host]['ansible_host'] }} ct state new counter accept comment "Allow from {{ host }}"
         {%     endif %}
         {%   endfor %}

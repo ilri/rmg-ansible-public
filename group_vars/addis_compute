@@ -6,6 +6,8 @@ ssh_access:
   - ilri_nbo_corp
   - ilri_nbo_dmz
 
+slurm_head_node: hpc-addis
+
 timezone: 'Africa/Addis_Ababa'
 
 # For now...

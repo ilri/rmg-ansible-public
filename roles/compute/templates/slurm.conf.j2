@@ -2,7 +2,12 @@
 # Put this file on all nodes of your cluster.
 # See the slurm.conf man page for more information.
 #
+{% if 'nairobi_compute' in group_names %}
 ClusterName=ilri_kenya
+{% endif %}
+{% if 'addis_compute' in group_names %}
+ClusterName=ilri_ethiopia
+{% endif %}
 SlurmctldHost={{ slurm_head_node }}
 SlurmctldAddr={{ hostvars[slurm_head_node].ansible_host }}
 #
@@ -12,7 +17,9 @@ SlurmctldAddr={{ hostvars[slurm_head_node].ansible_host }}
 #EpilogSlurmctld=
 #FirstJobId=1
 #MaxJobId=67043328
+{% if 'nairobi_compute' in group_names %}
 GresTypes=gpu,mps
+{% endif %}
 #GroupUpdateForce=0
 #GroupUpdateTime=600
 #JobFileAppend=0
@@ -151,6 +158,7 @@ ResumeTimeout=500
 #
 #
 # COMPUTE NODES (Output based on slurmd -C)
+{% if 'nairobi_compute' in group_names %}
 NodeName=hpc CPUs=8 Boards=1 SocketsPerBoard=1 CoresPerSocket=8 ThreadsPerCore=1 RealMemory=47911 State=UNKNOWN
 NodeName=compute05 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsPerCore=1 RealMemory=386252 State=UNKNOWN Weight=10
 NodeName=compute06 Gres=gpu:v100:1,mps:2000 CPUs=64 Boards=1 SocketsPerBoard=2 CoresPerSocket=32 ThreadsPerCore=1 RealMemory=257218 State=UNKNOWN Weight=05
@@ -159,3 +167,10 @@ NodeName=compute07 CPUs=8 Boards=1 SocketsPerBoard=1 CoresPerSocket=8 ThreadsPer
 PartitionName=debug Nodes=hpc Default=YES MaxTime=5:00 State=UP
 PartitionName=highmem Nodes=compute07 Default=NO MaxTime=UNLIMITED State=UP
 PartitionName=batch Nodes=compute05,compute06 Default=NO MaxTime=UNLIMITED State=UP
+{% endif %}
+
+{% if 'addis_compute' in group_names %}
+NodeName=hpc-addis CPUs=8 Boards=1 SocketsPerBoard=1 CoresPerSocket=8 ThreadsPerCore=1 RealMemory=31499 State=UNKNOWN
+
+PartitionName=debug Nodes=hpc-addis Default=YES MaxTime=5:00 State=UP
+{% endif %}

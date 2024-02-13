@@ -1,12 +1,5 @@
 ---
-# Try to codify the organic growth of HPC as a system into something we can ac-
-# tually manage.
-
-# Need to set SELinux to permissive for Apache httpd only:
-#
-#   semanage permissive -a httpd_t
-#
-# There is no Ansible module for semanage and we need this for DokuWiki.
+# Common setup for Nairobi and Addis HPC head nodes.
 
 - name: Install SELinux utilities
   ansible.builtin.dnf:
@@ -25,12 +18,6 @@
   loop:
     - httpd_can_network_connect
     - httpd_can_network_connect_db
-    - httpd_use_fusefs
-    - samba_enable_home_dirs
-    - samba_share_fusefs
-    - samba_export_all_ro
-    - samba_export_all_rw
-    - httpd_can_network_relay # for RStudio
 
 # HPC runs a web server for the wiki, mirrors, and a few other PHP applications
 - name: Install web packages
@@ -38,43 +25,6 @@
     name:
       - httpd.x86_64
       - mod_ssl.x86_64
-      - php-fpm.x86_64
-      - php-gd.x86_64
-      - php-intl.x86_64
-      - php-json.x86_64
-      - php-mbstring.x86_64
-      - php-mysqlnd.x86_64
-      - php-opcache.x86_64
-      - php-pdo.x86_64
-      - php-xml.x86_64
-    state: present
-  tags: packages
-
-# HPC runs samba to do Windows filesharing for SegoliP
-- name: Install samba packages
-  ansible.builtin.dnf:
-    name: samba.x86_64
-    state: present
-  tags: packages
-
-# HPC runs 389-ds for LDAP. This is ghetto because there's no way to enable a
-# module idempotently from Ansible.
-#
-# See: https://github.com/ansible/ansible/issues/64852
-- name: Enable the 389-ds module
-  ansible.builtin.copy:
-    dest: /etc/dnf/modules.d/389-ds.module
-    content: |
-      [389-ds]
-      name=389-ds
-      stream=1.4
-      profiles=
-      state=enabled
-  tags: packages
-
-- name: Install 389-ds-base
-  ansible.builtin.dnf:
-    name: 389-ds-base.x86_64
     state: present
   tags: packages
 
@@ -95,5 +45,13 @@
     group: root
     mode: "0644"
   tags: limits
+
+- name: Configure Nairobi HPC head node
+  ansible.builtin.import_tasks: hpc_nairobi.yml
+  when:
+    - slurm_head_node is defined
+    - inventory_hostname == slurm_head_node
+    - "'nairobi_compute' in group_names"
+    - ansible_distribution_major_version is version('8', '==')
 
 # vim: set sw=2 ts=2:

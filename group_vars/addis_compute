@@ -7,6 +7,7 @@ ssh_access:
   - ilri_nbo_dmz
 
 slurm_head_node: hpc-addis
+slurm_slurmd_port: 6818
 
 timezone: 'Africa/Addis_Ababa'
 

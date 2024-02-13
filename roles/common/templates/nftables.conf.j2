@@ -179,6 +179,16 @@ table inet filter {
         {%   endfor %}
         {% endif %} {# if 'nairobi_compute' in group_names #}
 
+        {% if 'addis_compute' in group_names %}
+        ip saddr {{ hostvars[slurm_head_node]['ansible_host'] }} ct state new tcp dport {{ slurm_slurmd_port }} counter accept comment "Allow SLURM head node to slurmd"
+
+        {%   for host in groups['addis_compute'] %}
+        {%     if host != inventory_hostname and host != slurm_head_node %}
+        ip saddr {{ hostvars[host]['ansible_host'] }} ct state new counter accept comment "Allow from {{ host }}"
+        {%     endif %}
+        {%   endfor %}
+        {% endif %} {# if 'addis_compute' in group_names #}
+
         {# Mosh ports, we only need these on publicly facing servers #}
         {% if 'compute' not in group_names and 'storage' not in group_names %}
         ip saddr 0.0.0.0/0 ct state new udp dport 60001-60003 counter accept comment "Allow mosh"

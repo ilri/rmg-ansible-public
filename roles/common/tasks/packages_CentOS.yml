@@ -2,7 +2,7 @@
 - name: Configure CentOS packages
   tags: packages
   block:
-    - name: Configure ILRI CentOS Stream mirror
+    - name: Configure ILRI CentOS Stream mirror (Nairobi)
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: /etc/yum.repos.d/{{ item | basename }}
@@ -11,7 +11,21 @@
         mode: "0644"
       when:
         - ansible_distribution_release == 'Stream'
-        - "'addis_compute' not in group_names"
+        - "'nairobi_compute' in group_names"
+      with_fileglob:
+        - CentOS-Stream-*.repo
+
+    # Hack to enable some repos without copying the pre-configured files with
+    # the Nairobi mirror, since the link is not good enough.
+    - name: Enable CentOS Stream repos (Addis)
+      ansible.builtin.lineinfile:
+        path: /etc/yum.repos.d/{{ item | basename }}
+        regexp: ^enabled=0$
+        line: enabled=1
+        state: present
+      when:
+        - ansible_distribution_release == 'Stream'
+        - "'addis_compute' in group_names"
       with_fileglob:
         - CentOS-Stream-*.repo
 

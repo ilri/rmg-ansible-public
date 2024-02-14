@@ -3,9 +3,6 @@
 #
 # Common settings for all compute servers.
 
-ssh_allowed_groups:
-  - ssh
-
 # the CPU/IO profile to activate with tuned-adm
 tuned_profile: hpc-compute
 

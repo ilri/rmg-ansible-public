@@ -14,6 +14,9 @@ ssh_access:
   - ilri_nbo_corp
   - ilri_nbo_dmz
 
+ssh_allowed_groups:
+  - nairobi
+
 #slurm vars
 slurm_head_node: hpc
 slurm_slurmd_port: 6818

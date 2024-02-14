@@ -6,6 +6,9 @@ ssh_access:
   - ilri_nbo_corp
   - ilri_nbo_dmz
 
+ssh_allowed_groups:
+  - addis
+
 slurm_head_node: hpc-addis
 slurm_slurmd_port: 6818
 

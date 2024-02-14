@@ -135,9 +135,7 @@
     version: master
   tags: modules
 
-# TODO: find a way to run this on Addis compute
 - name: Copy ilri profile script
-  when: "'nairobi_compute' in group_names"
   ansible.builtin.template:
     src: z-ilri.sh.j2
     dest: /etc/profile.d/z-ilri.sh

@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
+{% if 'nairobi_compute' in group_names %}
 # Location of ILRI module files
 export MODULEPATH=/etc/modulefiles/ilri
+{% endif %}
+{% if 'addis_compute' in group_names %}
+export MODULEPATH=/etc/modulefiles
+{% endif %}
 
 # Do not load modules without a version. Only works on CentOS Stream 8.
 # See: https://modules.readthedocs.io/en/latest/module.html#envvar-MODULES_IMPLICIT_DEFAULT=
@@ -12,6 +17,7 @@ export SQUEUE_FORMAT="%.7i %.9P %.18j %.8u %.2t %.10M %.6C %R"
 # adjust sacct output to show more information
 export SACCT_FORMAT="JobID,JobName,User,Account,State,CPUTime,AllocCPUs,Partition,NodeList%-30"
 
+{% if 'nairobi_compute' in group_names %}
 # Temporary directory to build the squashfs filesystem (default is /tmp). We
 # don't want users to fill up /tmp and crash SLURM!
 export APPTAINER_TMPDIR=/var/scratch/$USER
@@ -19,8 +25,9 @@ export APPTAINER_TMPDIR=/var/scratch/$USER
 # Signal to programs that support this that we do not want them to use /tmp for
 # temporary data. bcftools sort supports this since v1.15 for example.
 export TMPDIR=/var/scratch
+{% endif %}
 
-{% if inventory_hostname == 'hpc' %}
+{% if inventory_hostname == slurm_head_node %}
 # only run on interactive sessions
 TTY=$(tty -s)
 
@@ -39,10 +46,13 @@ then
     # generate a key automatically, without prompting for a filename/password
     ssh-keygen -t ed25519 -f $HOME/.ssh/id_ed25519 -N ''
 
+    {% if 'nairobi_compute' in group_names %}
     cat $HOME/.ssh/id_ed25519.pub >> $HOME/.ssh/authorized_keys
 
     chmod 600 $HOME/.ssh/authorized_keys
     chmod g-w $HOME
+    {% endif %}
+
 fi
 
 # Load ILRI-specific scripts and tools

@@ -167,7 +167,7 @@ server {
     # AReS explorer
     location /explorer {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/access.log;
+        access_log /var/log/nginx/https-access.log;
 
         # explicitly set the Host header before proxying to upstream nginx
         proxy_set_header Host {{ dspace_explorer_server }};

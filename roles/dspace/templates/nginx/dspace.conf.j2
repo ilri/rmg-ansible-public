@@ -159,6 +159,23 @@ server {
         proxy_set_header User-Agent $ua;
     }
 
+    # Explicitly allow anyone to request robots.txt and the sitemaps
+    location ~ ^/(robots\.txt|sitemap*) {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/https-access.log;
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Send requests to Express
+        proxy_pass http://express-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
     # static alias for weekly IWMI CSV export
     location /iwmi.csv {
         alias {{ dspace_root }}/exports/iwmi.csv;

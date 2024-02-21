@@ -9,6 +9,7 @@ After=tomcat{{ tomcat_version_major }}.service
 User={{ tomcat_user }}
 Group={{ tomcat_group }}
 WorkingDirectory=/tmp
+Environment="JAVA_OPTS=-Xmx1024m -Dfile.encoding=UTF-8"
 
 # Low priority CPU and I/O
 Nice=19

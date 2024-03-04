@@ -58,7 +58,7 @@ victoriametrics_vmagent_data_path: /var/lib/victoriametrics/vmagent-data
 victoriametrics_vmagent_config_path: /etc/victoriametrics/prometheus.yml
 # Amount of data vmagent can store if it can't reach the VictoriaMetrics server.
 # The default is 0, which defeats the purpose of using vmagent entirely!
-victoriametrics_vmagent_buffer: 5MB
+victoriametrics_vmagent_buffer: 536871040
 
 # See: https://github.com/prometheus/node_exporter/releases
 node_exporter_version: 1.7.0

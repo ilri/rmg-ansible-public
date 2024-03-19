@@ -59,6 +59,7 @@
     owner: root
     group: root
   when: ansible_service_mgr == 'systemd'
+  notify: restart solr
   register: solr_systemd_service
 
 # need to reload to pick up service/timer/environment changes

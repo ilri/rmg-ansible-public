@@ -62,6 +62,7 @@
     - nginx.conf
     - proxy_params
     - bot-networks.conf
+    - handle-redirects.conf
   notify:
     - reload nginx
 

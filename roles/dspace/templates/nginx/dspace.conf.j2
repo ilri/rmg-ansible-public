@@ -68,6 +68,11 @@ server {
     rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC permanent;
     rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login permanent;
 
+    # permanent redirects for Handles that have been withdrawn
+    if ($new_uri) {
+        return 301 $new_uri;
+    }
+
     # Custom JSON response for 429 errors
     error_page 429 = @429;
     location @429 {
@@ -403,6 +408,12 @@ map $cookie_jsessionid $active_user_session {
     default '';
 
     '~[A-Z0-9]{32}' 1;
+}
+
+# Map for Handles which have been withdrawn and need to be redirected. For
+# example if they were duplicates of existing items.
+map $request_uri $new_uri {
+    include /etc/nginx/handle-redirects.conf;
 }
 
 # Zone for limiting "bad bot" requests with a hard limit of 1 per minute. Uses

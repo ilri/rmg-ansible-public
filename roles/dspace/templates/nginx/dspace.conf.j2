@@ -43,7 +43,9 @@ server {
 #
 server {
     {% if nginx_tls_cert is defined -%}
+    listen {{ nginx_ssl_port }} quic reuseport;
     listen {{ nginx_ssl_port }} ssl;
+    listen [::]:{{ nginx_ssl_port }} quic reuseport;
     listen [::]:{{ nginx_ssl_port }} ssl;
     http2 on;
     {% else %}
@@ -107,6 +109,9 @@ server {
         # Never index dynamic pages!
         add_header X-Robots-Tag "none";
 
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header
         # and proxy_set_header in this block.
@@ -137,6 +142,9 @@ server {
         # Log at WARN level instead of ERROR
         limit_req_log_level warn;
 
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header
         # and proxy_set_header in this block.
@@ -152,6 +160,9 @@ server {
     # log API requests
     location /server {
         access_log /var/log/nginx/api-access.log;
+
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
 
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header
@@ -169,6 +180,9 @@ server {
     location ~ ^/(robots\.txt|sitemap*) {
         # log access requests for debug / load analysis
         access_log /var/log/nginx/https-access.log;
+
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
 
         # Explicitly set proxy headers again because the existing headers from
         # the global context get cleared when we add new headers with add_header

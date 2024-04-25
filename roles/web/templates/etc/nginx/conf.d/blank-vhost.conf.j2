@@ -13,8 +13,9 @@ server {
 }
 
 server {
-    listen {{ nginx_ssl_port }} ssl http2 default_server;
-    listen [::]:{{ nginx_ssl_port }} ssl http2 default_server;
+    listen {{ nginx_ssl_port }} ssl default_server;
+    listen [::]:{{ nginx_ssl_port }} ssl default_server;
+    http2 on;
     # specify an invalid hostname that will never match
     # see: http://nginx.org/en/docs/http/server_names.html
     server_name _;

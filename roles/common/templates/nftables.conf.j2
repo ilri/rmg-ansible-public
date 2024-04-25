@@ -124,11 +124,13 @@ table inet filter {
         {%         if ghetto_ipsets[network].src is defined -%}
         ip saddr {{ ghetto_ipsets[network].src }} ct state new tcp dport 80 counter accept comment "Allow HTTP"
         ip saddr {{ ghetto_ipsets[network].src }} ct state new tcp dport 443 counter accept comment "Allow HTTPS"
+        ip saddr {{ ghetto_ipsets[network].src }} ct state new udp dport 443 counter accept comment "Allow QUIC"
         {%         endif -%}
 
         {%         if ghetto_ipsets[network].ipv6src is defined -%}
         ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new tcp dport 80 counter accept comment "Allow HTTP"
         ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new tcp dport 443 counter accept comment "Allow HTTPS"
+        ip6 saddr {{ ghetto_ipsets[network].ipv6src }} ct state new udp dport 443 counter accept comment "Allow QUIC"
         {%         endif -%}
         {%     endfor -%}
         {% endif %}

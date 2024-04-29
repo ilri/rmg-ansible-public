@@ -12,7 +12,7 @@
     name: openjdk-8-jre-headless
     state: present
     install_recommends: false
-  when: ansible_distribution_version is version('22.04', '<')
+  when: solr_version is version('7', '<')
   tags:
     - java
     - packages
@@ -22,7 +22,7 @@
     name: openjdk-17-jre-headless
     state: present
     install_recommends: false
-  when: ansible_distribution_version is version('22.04', '>=')
+  when: ansible_distribution_version is version('22.04', '>=') and solr_version is version('8', '>=')
   tags:
     - java
     - packages

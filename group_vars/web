@@ -17,8 +17,6 @@ ssh_access:
 web_access:
   - ilri_nbo_corp
 
-apt_mirror: ubuntu-archive.mirror.liquidtelecom.com
-
 tls_cipher_suite: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
 
 # By default we assume all hosts in the web group are using Apache HTTPD, though

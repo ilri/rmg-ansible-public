@@ -16,8 +16,6 @@ ssh_access:
 web_access:
   - ilri_nbo_corp
 
-apt_mirror: ubuntu-archive.mirror.liquidtelecom.com
-
 ssh_password_authentication: disabled
 
 # vim: set ts=2 sw=2:

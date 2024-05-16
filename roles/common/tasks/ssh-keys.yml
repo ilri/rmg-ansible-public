@@ -1,8 +1,9 @@
 ---
-- name: Zero .ssh/authorized_keys for provisioning user
-  ansible.builtin.file:
-    dest: "{{ provisioning_user.home }}/.ssh/authorized_keys"
-    state: absent
+- name: Configure public keys for provisioning user
+  ansible.posix.authorized_key:
+    user: "{{ provisioning_user.name }}"
+    key: "{{ lookup('file', 'private/data/common/ssh-keys/{{ provisioning_user.name }}') }}"
+    exclusive: true
   tags: ssh-keys
 
 - name: Add public keys to authorized_keys

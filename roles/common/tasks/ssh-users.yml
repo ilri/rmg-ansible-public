@@ -1,0 +1,11 @@
+---
+- name: Create SSH users
+  when: ssh_allowed_users is defined
+  ansible.builtin.user:
+    user: "{{ item }}"
+    shell: /usr/bin/bash
+  with_items:
+    - "{{ ssh_allowed_users }}"
+  tags: ssh-users
+
+# vim: set sw=2 ts=2:

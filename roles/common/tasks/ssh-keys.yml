@@ -1,4 +1,5 @@
 ---
+# Manage these exclusively
 - name: Configure public keys for provisioning user
   ansible.posix.authorized_key:
     user: "{{ provisioning_user.name }}"
@@ -6,13 +7,16 @@
     exclusive: true
   tags: ssh-keys
 
-- name: Add public keys to authorized_keys
+# Do not manage these exclusively
+- name: Configure public keys for SSH users
+  when:
+    - ssh_allowed_users is defined
+    - ssh_password_authentication == 'disabled'
   ansible.posix.authorized_key:
-    user: "{{ provisioning_user.name }}"
-    key: "{{ lookup('file', item) }}"
-  with_fileglob:
-    # use descriptive names for keys, like: aorth-mzito-rsa.pub
-    - ssh-pub-keys/*.pub
+    user: "{{ item }}"
+    key: "{{ lookup('file', 'private/data/common/ssh-keys/{{ item }}') }}"
+  with_items:
+    - "{{ ssh_allowed_users }}"
   tags: ssh-keys
 
 # vim: set sw=2 ts=2:

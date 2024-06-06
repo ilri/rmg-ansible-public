@@ -55,10 +55,10 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # (This task ensures that thumbnails are generated for newly add images,
 # and ensures full text search is available for newly added PDF/Word/PPT/HTML documents)
 # REQUIRED for Thumbnails to be generated & full-text indexing to work.
-0 3 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace filter-media >> $DSPACE/log/cron-filter-media.log.$(date --iso-8601) 2>&1
+0 3 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace filter-media -q >> $DSPACE/log/cron-filter-media.log.$(date --iso-8601) 2>&1
 
 # Filter thumbnails more often, as users expect this
-0 */6 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace filter-media -p "ImageMagick PDF Thumbnail" >> $DSPACE/log/cron-filter-media-thumbnails.log.$(date --iso-8601) 2>&1
+0 */6 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace filter-media -q -p "ImageMagick PDF Thumbnail" >> $DSPACE/log/cron-filter-media-thumbnails.log.$(date --iso-8601) 2>&1
 
 #----------------
 # WEEKLY TASKS

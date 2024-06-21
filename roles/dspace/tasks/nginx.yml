@@ -5,11 +5,6 @@
     state: absent
   tags: packages
 
-- name: Check nginx apt signing key
-  ansible.builtin.stat:
-    path: /usr/share/keyrings/nginx_signing.key
-  register: nginx_signing_key_stat
-
 - name: Download nginx apt signing key
   ansible.builtin.get_url:
     url: https://nginx.org/keys/nginx_signing.key
@@ -17,8 +12,8 @@
     owner: root
     group: root
     mode: "0644"
+    checksum: sha256:55385da31d198fa6a5012d40ae98ecb272a6c4e8fffffba94719ffd3e87de37a
   register: download_nginx_signing_key
-  when: not nginx_signing_key_stat.stat.exists
 
 - name: Add nginx stable repository
   ansible.builtin.apt_repository:

@@ -378,7 +378,7 @@ map $http_user_agent $limit_bots_ua {
 
     # 2020-08-10 Explicitly allow Googlebot and Twitterbot because they don't
     # crawl haphazardly and usually respect robots.txt
-    ~Googlebot '';
+    ~Google '';
     ~Twitterbot '';
 
     # Need to make sure we match: bot, Bot, BOT, etc...

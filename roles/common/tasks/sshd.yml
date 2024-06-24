@@ -60,6 +60,15 @@
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('20', '>=')
   notify: reload sshd
 
+# Unsure which versions this exists on, but I've seen it on Ubuntu 24.04. We
+# don't want this to conflict with our settings.
+- name: Remove sshd cloud config
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+    state: absent
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('24', '==')
+  notify: reload sshd
+
 # See: WeakDH (2015): https://weakdh.org/sysadmin.html
 - name: Remove small Diffie-Hellman SSH moduli
   block:

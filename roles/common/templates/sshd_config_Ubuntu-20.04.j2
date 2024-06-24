@@ -17,34 +17,29 @@ Include /etc/ssh/sshd_config.d/*.conf
 #ListenAddress 0.0.0.0
 #ListenAddress ::
 
-HostKey /etc/ssh/ssh_host_ed25519_key
+#HostKey /etc/ssh/ssh_host_rsa_key
+#HostKey /etc/ssh/ssh_host_ecdsa_key
+#HostKey /etc/ssh/ssh_host_ed25519_key
 
 # Ciphers and keying
 #RekeyLimit default none
 
 # Logging
 #SyslogFacility AUTH
-# LogLevel VERBOSE logs user's key fingerprint on login. Needed to have a clear audit track of which key was using to log in.
-LogLevel VERBOSE
+#LogLevel INFO
 
 # Authentication:
 
 #LoginGraceTime 2m
-PermitRootLogin prohibit-password
+#PermitRootLogin prohibit-password
 #StrictModes yes
-MaxAuthTries 4
+#MaxAuthTries 6
 #MaxSessions 10
 
 #PubkeyAuthentication yes
 
-# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
-# but this is overridden so installations will only check .ssh/authorized_keys
-AuthorizedKeysFile	.ssh/authorized_keys
-
-{# For Ona.io's devops team #}
-{% if inventory_hostname is regex("ilrinrb3[346]") %}
-TrustedUserCAKeys /etc/ssh/ca/authorized
-{% endif %}
+# Expect .ssh/authorized_keys2 to be disregarded by default in future.
+#AuthorizedKeysFile	.ssh/authorized_keys .ssh/authorized_keys2
 
 #AuthorizedPrincipalsFile none
 
@@ -60,11 +55,7 @@ TrustedUserCAKeys /etc/ssh/ca/authorized
 #IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to no here!
-{% if ssh_password_authentication == 'disabled' %}
 PasswordAuthentication no
-{% else %}
-PasswordAuthentication yes
-{% endif %}
 #PermitEmptyPasswords no
 
 # Change to yes to enable challenge-response passwords (beware issues with
@@ -97,7 +88,7 @@ UsePAM yes
 #AllowAgentForwarding yes
 #AllowTcpForwarding yes
 #GatewayPorts no
-X11Forwarding no
+X11Forwarding yes
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PermitTTY yes
@@ -122,7 +113,7 @@ PrintMotd no
 AcceptEnv LANG LC_*
 
 # override default of no subsystems
-Subsystem sftp	/usr/lib/openssh/sftp-server
+Subsystem	sftp	/usr/lib/openssh/sftp-server
 
 # Example of overriding settings on a per-user basis
 #Match User anoncvs
@@ -130,28 +121,3 @@ Subsystem sftp	/usr/lib/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-
-# Based on the ssh-audit profile for OpenSSH 8.2, but with but with all algos
-# with less than 256 bits removed, as NSA's Suite B removed them years ago and
-# the new (2018) CNSA suite is 256 bits and up.
-#
-# See: https://github.com/jtesta/ssh-audit/blob/master/src/ssh_audit/policy.py
-# See: https://en.wikipedia.org/wiki/Commercial_National_Security_Algorithm_Suite
-Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes256-ctr
-MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
-KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512,diffie-hellman-group-exchange-sha256
-
-{% if ssh_allowed_users is defined and ssh_allowed_users %}
-AllowUsers {{ ssh_allowed_users|join(" ") }} {{ provisioning_user.name }}
-{% else %}
-# Always allow the provisioning user
-AllowUsers {{ provisioning_user.name }}
-{% endif %}
-
-{% if ssh_allowed_groups is defined and ssh_allowed_groups %}
-{%   for group in ssh_allowed_groups %}
-# Also allow members of the "{{ group }}" group to login via ssh
-Match group {{ group }}
-    AllowUsers *
-{%   endfor %}
-{% endif %}

@@ -35,10 +35,24 @@
   when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('20', '<')
   notify: reload sshd
 
-# OpenSSH on Ubuntu versions since 20.04 support including extra configuration.
-- name: Reconfigure /etc/ssh/sshd_config
+# For years we directly modified the system sshd_config, but now we can leave
+# it alone and include our own overrides in sshd_config.d.
+- name: Reset /etc/ssh/sshd_config to dist
   ansible.builtin.template:
     src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0600"
+  when: ansible_distribution == 'Ubuntu' and (ansible_distribution_version is version('20.04', '==') or ansible_distribution_version is version('22.04', '=='))
+  notify: reload sshd
+
+# OpenSSH on Ubuntu versions since 20.04 support including extra configuration.
+# The includes happen at the beginning of the file and the first value to be
+# read is used.
+- name: Configure ILRI sshd_config.d overrides
+  ansible.builtin.template:
+    src: etc/ssh/sshd_config.d/01-ilri_{{ ansible_distribution }}-{{ ansible_distribution_version }}.conf.j2
     dest: /etc/ssh/sshd_config.d/01-ilri.conf
     owner: root
     group: root

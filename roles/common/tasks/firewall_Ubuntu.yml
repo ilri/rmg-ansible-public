@@ -1,4 +1,5 @@
 ---
+# Ubuntu 24.04 will use nftables directly, with no firewalld.
 # Ubuntu 22.04 will use nftables directly, with no firewalld.
 # Ubuntu 20.04 will use nftables directly, with no firewalld.
 # Ubuntu 18.04 will use nftables directly, with no firewalld.

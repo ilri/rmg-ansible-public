@@ -15,10 +15,21 @@
         state: directory
       when: ansible_distribution_major_version is version('22.04', '<')
 
-    - name: Configure apt mirror
+    - name: Configure apt mirror in sources.list
+      when: ansible_distribution_version is version('24.04', '<')
       ansible.builtin.template:
         src: sources.list.j2
         dest: /etc/apt/sources.list
+        owner: root
+        group: root
+        mode: "0644"
+      register: ubuntu_apt_mirror
+
+    - name: Configure apt mirror in ubuntu.sources
+      when: ansible_distribution_version is version('24.04', '>=')
+      ansible.builtin.template:
+        src: etc/apt/sources.list.d/ubuntu.sources.j2
+        dest: /etc/apt/sources.list.d/ubuntu.sources
         owner: root
         group: root
         mode: "0644"

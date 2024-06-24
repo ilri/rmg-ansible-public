@@ -1,7 +1,7 @@
 {{ ansible_managed | comment }}
 
 Types: deb
-URIs: http://{{ apt_mirror }/ubuntu/
+URIs: http://{{ apt_mirror }}/ubuntu/
 Suites: {{ ansible_distribution_release }} {{ ansible_distribution_release }}-updates {{ ansible_distribution_release }}-backports
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg

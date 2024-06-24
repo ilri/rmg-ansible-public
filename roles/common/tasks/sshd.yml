@@ -1,5 +1,8 @@
 ---
-# SSH configs don't change in CentOS minor versions
+# Reconfigure OpenSSH's sshd_config.
+
+# The OpenSSH configuration does not change drastically between minor versions
+# of CentOS or Debian, so we can use the major version here.
 - name: Reconfigure /etc/ssh/sshd_config
   ansible.builtin.template:
     src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2
@@ -7,11 +10,11 @@
     owner: root
     group: root
     mode: "0600"
-  when: ansible_distribution == 'CentOS'
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Debian'
   notify: reload sshd
 
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/system_design_guide/securing_networks
-- name: Opt out of system-wide crypto policy
+- name: Opt out of CentOS system-wide crypto policy
   ansible.builtin.lineinfile:
     path: /etc/sysconfig/sshd
     regexp: ^# CRYPTO_POLICY=$
@@ -20,8 +23,8 @@
   when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==')
   notify: reload sshd
 
-# In Debian/Ubuntu the SSH version is very different from 10 to 11, or 14.04
-# to 14.10, ie with new ciphers supported, etc.
+# OpenSSH on Ubuntu versions before 20.04 do not support including extra config-
+# uration, so we overwrite the system configuration.
 - name: Reconfigure /etc/ssh/sshd_config
   ansible.builtin.template:
     src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2
@@ -29,7 +32,18 @@
     owner: root
     group: root
     mode: "0600"
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('20', '<')
+  notify: reload sshd
+
+# OpenSSH on Ubuntu versions since 20.04 support including extra configuration.
+- name: Reconfigure /etc/ssh/sshd_config
+  ansible.builtin.template:
+    src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2
+    dest: /etc/ssh/sshd_config.d/01-ilri.conf
+    owner: root
+    group: root
+    mode: "0600"
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('20', '>=')
   notify: reload sshd
 
 # See: WeakDH (2015): https://weakdh.org/sysadmin.html

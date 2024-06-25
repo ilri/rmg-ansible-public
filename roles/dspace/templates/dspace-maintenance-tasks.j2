@@ -60,6 +60,9 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # Filter thumbnails more often, as users expect this
 0 */6 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace filter-media -q -p "ImageMagick PDF Thumbnail" >> $DSPACE/log/cron-filter-media-thumbnails.log.$(date --iso-8601) 2>&1
 
+# Normalize DOIs in MEL submissions because they bypass the workflow
+20 1 * * * dspace chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace curate -e a.orth@cgiar.org -t normalizedois -i 10568/124956 -s object
+
 #----------------
 # WEEKLY TASKS
 # (Recommended to be run once per week, but can be run more or less frequently, based on your local needs/policies)

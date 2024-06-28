@@ -27,7 +27,7 @@
     group: root
     mode: "0440"
     validate: visudo -cf %s
-  when: (extra_sudo_users is defined or extra_nopasswd_sudo_users is defined) and ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian"
 
 - name: Add extra sudo users
   ansible.builtin.template:
@@ -37,7 +37,7 @@
     group: root
     mode: "0600"
     validate: visudo -cf %s
-  when: (extra_sudo_users is defined or extra_nopasswd_sudo_users is defined) and ansible_os_family != "Debian"
+  when: ansible_os_family != "Debian"
 
 # cloud-init adds sudo users for us, but for now I would prefer to remove that
 # so we can have a consistent sudo on all our hosts (some of which do not use

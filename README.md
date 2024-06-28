@@ -23,7 +23,6 @@ On subsequent runs, after SSH keys and sudo configurations have been deployed, y
 
 - Update: sysctl.conf template for Ubuntu, using CentOS template as a reference
 - Update: make SSH rate limits configurable
-- Migrate from cron-apt to unattended-upgrades
 
 ## License
 Copyright (C) 2015–2022 International Livestock Research Institute (ILRI)

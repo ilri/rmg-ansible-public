@@ -25,7 +25,7 @@ On subsequent runs, after SSH keys and sudo configurations have been deployed, y
 - Update: make SSH rate limits configurable
 
 ## License
-Copyright (C) 2015–2022 International Livestock Research Institute (ILRI)
+Copyright (C) 2015–2024 International Livestock Research Institute (ILRI)
 
 The contents of this repository are free software: you can redistribute
 it and/or modify it under the terms of the GNU General Public License

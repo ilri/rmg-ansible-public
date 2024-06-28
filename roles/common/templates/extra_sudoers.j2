@@ -14,8 +14,4 @@
 {% if 'dspace' in group_names %}
 Cmnd_Alias TOMCAT = /bin/systemctl * tomcat{{ tomcat_version_major }}
 dhmichael ALL=(ALL) TOMCAT
-
-# for Atmire build/deploy scripts
-{{ tomcat_user }} ALL = (root) NOPASSWD: /usr/sbin/service tomcat{{ tomcat_version_major }} s*
-{{ tomcat_user }} ALL = (root) NOPASSWD: /bin/systemctl s* tomcat{{ tomcat_version_major }}
 {% endif %}

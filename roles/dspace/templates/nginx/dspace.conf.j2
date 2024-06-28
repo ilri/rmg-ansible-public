@@ -329,9 +329,6 @@ geo $limit_bots_ip {
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
     default '';
 
-    # Unblock AReS harvester
-    157.90.157.100 '';
-
     include /etc/nginx/bot-networks.conf;
 }
 

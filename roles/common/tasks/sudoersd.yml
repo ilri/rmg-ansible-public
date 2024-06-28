@@ -19,7 +19,7 @@
     validate: visudo -cf %s
   when: ansible_os_family != "Debian"
 
-- name: Add extra sudo users
+- name: Configure extra sudo users
   ansible.builtin.template:
     src: extra_sudoers.j2
     dest: /etc/sudoers.d/extra_sudoers
@@ -29,7 +29,7 @@
     validate: visudo -cf %s
   when: ansible_os_family == "Debian"
 
-- name: Add extra sudo users
+- name: Configure extra sudo users
   ansible.builtin.template:
     src: extra_sudoers.j2
     dest: /etc/sudoers.d/extra_sudoers

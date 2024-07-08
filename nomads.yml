@@ -8,7 +8,6 @@
     - private/vars/ipsets.yml
   roles:
     - common
-    - munin
     - { role: metrics, when: ansible_service_mgr == 'systemd', tags: metrics }
 
 # vim: set sw=2 ts=2:

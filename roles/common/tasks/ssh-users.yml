@@ -3,7 +3,7 @@
   when: ssh_allowed_users is defined
   ansible.builtin.user:
     user: "{{ item }}"
-    shell: /usr/bin/bash
+    shell: /bin/bash
   with_items:
     - "{{ ssh_allowed_users }}"
   tags: ssh-users

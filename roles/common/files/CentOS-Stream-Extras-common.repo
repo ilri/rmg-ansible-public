@@ -1,4 +1,4 @@
-# CentOS-Stream-BaseOS.repo
+# CentOS-Stream-Extras-common.repo
 #
 # The mirrorlist system uses the connecting IP address of the client and the
 # update status of each mirror to pick current mirrors that are geographically
@@ -8,11 +8,10 @@
 # If the mirrorlist does not work for you, you can try the commented out
 # baseurl line instead.
 
-[baseos]
-name=CentOS Stream $releasever - BaseOS
-#mirrorlist=http://mirrorlist.centos.org/?release=$stream&arch=$basearch&repo=BaseOS&infra=$infra
-# note that $stream comes from /etc/dnf/vars/stream and might change ...?
-baseurl=https://vault.centos.org/$stream/BaseOS/$basearch/os/
+[extras-common]
+name=CentOS Stream $releasever - Extras common packages
+mirrorlist=http://mirrorlist.centos.org/?release=$stream&arch=$basearch&repo=extras-extras-common
+baseurl=https://vault.centos.org/$stream/extras/$basearch/extras-common/
 gpgcheck=1
 enabled=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-SIG-Extras

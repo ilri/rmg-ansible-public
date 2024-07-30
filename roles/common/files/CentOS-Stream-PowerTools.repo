@@ -10,9 +10,9 @@
 
 [powertools]
 name=CentOS Stream $releasever - PowerTools
-mirrorlist=http://mirrorlist.centos.org/?release=$stream&arch=$basearch&repo=PowerTools&infra=$infra
+#mirrorlist=http://mirrorlist.centos.org/?release=$stream&arch=$basearch&repo=PowerTools&infra=$infra
 # note that $stream comes from /etc/dnf/vars/stream and might change ...?
-baseurl=https://hpc.ilri.cgiar.org/mirror/centos/$stream/PowerTools/$basearch/os/
+baseurl=https://vault.centos.org/$stream/PowerTools/$basearch/os/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial

@@ -1,7 +1,7 @@
 ---
 # Perform Gluster 9.x -> 10.x upgrade on storage and compute nodes
 
-- hosts: compute:storage
+- hosts: nairobi_compute:storage
   become: true
   tasks:
     - name: Install Gluster 10 release channel
@@ -30,7 +30,7 @@
         name: glusterd
         state: started
 
-- hosts: compute
+- hosts: nairobi_compute
   become: true
   tasks:
     - name: Upgrade glusterfs

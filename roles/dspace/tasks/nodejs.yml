@@ -57,7 +57,7 @@
     global: yes
   loop:
     - {'name': 'yarn', 'version': '1.22.19'}
-    - {'name': 'pm2', 'version': '^5.3.0'}
+    - {'name': 'pm2', 'version': '^5.4.2'}
 
 - name: Add npm packages to PATH
   ansible.builtin.lineinfile:

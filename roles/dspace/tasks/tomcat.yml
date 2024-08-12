@@ -115,7 +115,6 @@
       owner: root
       group: "{{ tomcat_group }}"
       mode: "0640"
-    - { src: tomcat/tomcat-users.xml.j2, dest: "{{ tomcat_path }}/conf/tomcat-users.xml", owner: root, group: "{{ tomcat_group }}", mode: "0640" }
   notify:
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat

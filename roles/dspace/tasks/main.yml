@@ -149,7 +149,7 @@
   register: create_postgres_databases
   tags: postgresql
 
-- name: Enable pgcrypto for DSpace 6
+- name: Enable pgcrypto
   postgresql_query: # noqa no-handler
     db: "{{ dspace_db_name }}"
     query: CREATE EXTENSION IF NOT EXISTS pgcrypto

@@ -82,4 +82,8 @@ use_letsencrypt: true
 # Dummy key
 sherpa_romeo_apikey: 5DHH3N12-1362-11RG-923C-471E3TE2897G
 
+# Dummy keys (override in host_vars)
+google_analytics_key: G-XXXXXXXXXX
+google_analytics_api_secret: XXXXXX-XXXXxxXxXxXXxxX
+
 # vim: set sw=2 ts=2:

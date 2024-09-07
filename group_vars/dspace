@@ -30,18 +30,17 @@ dspace_frontend_git_branch: 7_x-prod
 # mainline is 1.25.x
 nginx_branch: stable
 
-# PostgreSQL connection pool sizes for DSpace web (XMLUI) and API (REST, OAI)
+# PostgreSQL connection pool sizes for DSpace API
 # applications.
-dspace_dbpool_web_max_connections: 250
-dspace_dbpool_api_max_connections: 50
+dspace_dbpool_api_max_connections: 250
 
 dspace_version_major: 7
 
 # postgresql version to deploy
 pg_version: 14
 
-# postgresql default is 100, keep in mind that you need to accomodate the DSpace web application pool, command line pool, and leave a few for the postgres super user
-pg_max_connections: "{{ (dspace_dbpool_web_max_connections + dspace_dbpool_api_max_connections + 33) | int | abs }}"
+# postgresql default is 100, keep in mind that you need to accomodate the DSpace API application pool, command line pool, and leave a few for the postgres super user
+pg_max_connections: "{{ (dspace_dbpool_api_max_connections + 33) | int | abs }}"
 
 # effective_cache_size: not allocated, simply a hint to the PostgreSQL planner
 #                       about how much memory the server can use (combining the

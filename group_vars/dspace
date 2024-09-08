@@ -46,9 +46,9 @@ pg_max_connections: "{{ (dspace_dbpool_api_max_connections + 33) | int | abs }}"
 #                       about how much memory the server can use (combining the
 #                       shared buffers, filesystem cache, work mem, etc). The
 #                       default is 4GB but let's say PostgreSQL can use slightly
-#                       less than half of the system memory (leave room for the
-#                       JVM heap and for Solr's data in fs caches).
-pg_effective_cache_size: '{{ (ansible_memtotal_mb*0.375)|int }}'
+#                       more (leave room for the JVM heap and for Solr's data
+#                       in fs caches).
+pg_effective_cache_size: '6144'
 # shared_buffers: default 128MB, recommended starting point is the size of all
 #                 databases up to 25% of available RAM (not system RAM! See the
 #                 effective_cache_size above). Note we have to cast to int two

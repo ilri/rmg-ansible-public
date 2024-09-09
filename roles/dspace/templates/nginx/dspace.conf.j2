@@ -42,7 +42,7 @@ server {
 # HTTPS server (only for domains we have a cert for)
 #
 server {
-    {% if nginx_tls_cert is defined %}
+    {% if nginx_tls_cert is defined -%}
     listen {{ nginx_ssl_port }} ssl;
     listen [::]:{{ nginx_ssl_port }} ssl;
     http2 on;

@@ -256,7 +256,6 @@
     - dspace-statistics-indexer.timer
     - tomcat{{ tomcat_version_major }}.service
     - dspace-angular.service
-    - cgspace-country-code-tagger.timer
     - dspace-iwmi-exporter.timer
 
 - name: Create DSpace install directory

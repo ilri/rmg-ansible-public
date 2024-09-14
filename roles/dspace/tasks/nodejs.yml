@@ -6,13 +6,13 @@
 
 - name: Check Node.js package signing key
   ansible.builtin.stat:
-    path: /usr/share/keyrings/nodesource.gpg.key
+    path: /usr/share/keyrings/nodesource-repo.gpg.key
   register: nodejs_signing_key_stat
 
 - name: Download Node.js package signing key
   ansible.builtin.get_url:
-    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    dest: /usr/share/keyrings/nodesource.gpg.key
+    url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+    dest: /usr/share/keyrings/nodesource-repo.gpg.key
     owner: root
     group: root
     mode: "0644"
@@ -21,7 +21,7 @@
 
 - name: Add Node.js LTS repository
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource.gpg.key] https://deb.nodesource.com/node_{{ nodejs_version_major }}.x {{ ansible_distribution_release }} main
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource-repo.gpg.key] https://deb.nodesource.com/node_{{ nodejs_version_major }}.x nodistro main
     filename: nodesource
     state: present
   register: add_nodejs_apt_repository

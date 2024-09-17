@@ -63,17 +63,18 @@ victoriametrics_vmagent_config_path: /etc/victoriametrics/prometheus.yml
 victoriametrics_vmagent_buffer: 536871040
 
 # See: https://github.com/prometheus/node_exporter/releases
-node_exporter_version: 1.8.1
+node_exporter_version: 1.8.2
 node_exporter_old_versions:
   - "/usr/local/bin/node_exporter-1.6.0.linux-amd64.tar.gz"
   - "/usr/local/bin/node_exporter-1.6.1.linux-amd64.tar.gz"
   - "/usr/local/bin/node_exporter-1.7.0.linux-amd64.tar.gz"
+  - "/usr/local/bin/node_exporter-1.8.1.linux-amd64.tar.gz"
 
 # URL for node_exporter tarball
 node_exporter_tarball: node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
 node_exporter_url: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/{{ node_exporter_tarball }}
 # sha256sum from sha256sums.txt on GitHub releases page or manually
-node_exporter_url_checksum: fbadb376afa7c883f87f70795700a8a200f7fd45412532cc1938a24d41078011
+node_exporter_url_checksum: 6809dd0b3ec45fd6e992c19071d6b5253aed3ead7bf0686885a51d85c6643c66
 node_exporter_binary_path: /usr/local/bin/node_exporter
 
 # See: https://github.com/prometheus/mysqld_exporter/releases

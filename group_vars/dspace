@@ -94,6 +94,6 @@ webserver: nginx
 
 ssh_password_authentication: disabled
 
-solr_heap: 2g
+solr_heap: 3g
 
 # vim: set ts=2 sw=2:

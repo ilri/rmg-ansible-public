@@ -33,9 +33,17 @@ scrape_configs:
 {%   endif %}
 {% endif %}
 {% if "dspace" in group_names %}
-- job_name: java
+- job_name: jvm_tomcat
   static_configs:
   - targets: ['127.0.0.1:9180']
+  relabel_configs:
+  - source_labels: [instance]
+    regex: '.*'
+    target_label: instance
+    replacement: '{{ inventory_hostname }}'
+- job_name: jvm_solr
+  static_configs:
+  - targets: ['127.0.0.1:9181']
   relabel_configs:
   - source_labels: [instance]
     regex: '.*'

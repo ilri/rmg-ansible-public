@@ -65,7 +65,11 @@ ReadWriteDirectories=-{{ solr_home_dir }}
 User={{ solr_user }}
 Group={{ solr_group }}
 
+{% if "dspace" in group_names %}
+ExecStart={{ solr_install_dir }}/bin/solr start -f -a -javaagent:{{ jmx_exporter_jar_path }}=127.0.0.1:9181:{{ jmx_exporter_config_path }}
+{% else %}
 ExecStart={{ solr_install_dir }}/bin/solr start -f
+{% endif %}
 ExecStop={{ solr_install_dir }}/bin/solr stop
 
 # Recommended system limits

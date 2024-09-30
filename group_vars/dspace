@@ -37,7 +37,7 @@ dspace_dbpool_api_max_connections: 250
 dspace_version_major: 7
 
 # postgresql version to deploy
-pg_version: 14
+pg_version: 15
 
 # postgresql default is 100, keep in mind that you need to accomodate the DSpace API application pool, command line pool, and leave a few for the postgres super user
 pg_max_connections: "{{ (dspace_dbpool_api_max_connections + 33) | int | abs }}"

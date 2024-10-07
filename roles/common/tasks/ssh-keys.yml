@@ -11,6 +11,7 @@
 - name: Configure public keys for SSH users
   when:
     - ssh_allowed_users is defined
+    - "'root' not in ssh_allowed_users"
     - ssh_password_authentication == 'disabled'
   ansible.posix.authorized_key:
     user: "{{ item }}"

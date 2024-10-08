@@ -10,6 +10,7 @@
   roles:
     - common
     - postgres
+    - solr
     - { role: metrics, when: ansible_service_mgr == 'systemd', tags: metrics }
     - { role: dspace, when: ansible_os_family == 'Debian', tags: dspace }
 

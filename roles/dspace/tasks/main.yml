@@ -69,11 +69,6 @@
   ansible.builtin.import_tasks: tomcat.yml
   tags: tomcat
 
-- name: Configure Solr
-  ansible.builtin.import_tasks: solr.yml
-  when: dspace_version_major == 7
-  tags: solr
-
 - name: Copy maven settings
   ansible.builtin.template:
     src: m2/settings.xml.j2

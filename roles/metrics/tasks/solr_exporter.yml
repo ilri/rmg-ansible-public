@@ -1,0 +1,15 @@
+---
+# file: roles/metrics/tasks/solr_exporter.yml
+
+- name: Configure solr-prometheus-exporter systemd service
+  ansible.builtin.template:
+    src: etc/systemd/system/solr-prometheus-exporter.service.j2
+    dest: /etc/systemd/system/solr-prometheus-exporter.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - reload systemd
+    - restart solr-prometheus-exporter
+
+# vim: set sw=2 ts=2:

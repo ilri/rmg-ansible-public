@@ -41,12 +41,18 @@ scrape_configs:
     regex: '.*'
     target_label: instance
     replacement: '{{ inventory_hostname }}'
-- job_name: jvm_solr
+# Since the default Solr Grafana dashboard doesn't use instance, we can abuse
+# the base_url to identify the host because there is only one Solr per host.
+- job_name: 'solr'
   static_configs:
-  - targets: ['127.0.0.1:9181']
+  - targets: ['127.0.0.1:9854']
   relabel_configs:
   - source_labels: [instance]
     regex: '.*'
     target_label: instance
+    replacement: '{{ inventory_hostname }}'
+  - source_labels: [base_url]
+    regex: '.*'
+    target_label: base_url
     replacement: '{{ inventory_hostname }}'
 {% endif %}

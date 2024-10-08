@@ -29,6 +29,12 @@
     state: restarted
     enabled: true
 
+- name: restart solr-prometheus-exporter
+  ansible.builtin.systemd:
+    name: solr-prometheus-exporter.service
+    state: restarted
+    enabled: true
+
 # Restart is used when the service file changes
 - name: restart mysqld-exporter
   ansible.builtin.systemd:

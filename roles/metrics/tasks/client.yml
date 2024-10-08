@@ -27,6 +27,10 @@
   ansible.builtin.include_tasks: jmx_exporter.yml
   when: '"dspace" in group_names'
 
+- name: Configure Solr Prometheus exporter
+  ansible.builtin.include_tasks: solr_exporter.yml
+  when: '"dspace" in group_names'
+
 - name: Configure vmutils
   ansible.builtin.import_tasks: vmutils.yml
 

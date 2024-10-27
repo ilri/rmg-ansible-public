@@ -2,8 +2,8 @@
 
 GCLOG_OPTS=" \
 -verbose:gc \
--Xloggc:{{ tomcat_user_home }}/gc.log \
--XX:+PrintGCDetails \
+-Xlog:gc:{{ tomcat_user_home }}/gc.log \
+-Xlog:gc* \
 "
 
 {# Note: these variables come from the metrics role! #}

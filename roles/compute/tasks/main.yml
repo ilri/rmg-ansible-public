@@ -116,6 +116,30 @@
   when: ansible_distribution_major_version is version('8', '==')
   tags: packages
 
+# We need ruby for the Rapid Identification of Microbes (RIM) software suite in
+# Nairobi. This is ghetto because there is no way to enable a module idempotent-
+# ly from Ansible.
+#
+# See: https://github.com/ansible/ansible/issues/64852
+- name: Enable the ruby/3.1 module stream
+  when: "'nairobi_compute' in group_names"
+  ansible.builtin.copy:
+    dest: /etc/dnf/modules.d/ruby.module
+    content: |
+      [ruby]
+      name=ruby
+      stream=3.1
+      profiles=common
+      state=enabled
+  tags: packages
+
+- name: Install ruby/3.1
+  when: "'nairobi_compute' in group_names"
+  ansible.builtin.package:
+    name: [ruby, ruby-devel, rubygems-irb]
+    state: present
+  tags: packages
+
 # Previously nvtop was not packaged in EPEL so we compiled it as an environment
 # module. As of CentOS Stream 8 it is in EPEL and is more up to date than the
 # one I had compiled manually.

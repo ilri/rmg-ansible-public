@@ -138,6 +138,7 @@
   ansible.builtin.package:
     name: [ruby, ruby-devel, rubygem-irb]
     state: present
+    update_cache: true
   tags: packages
 
 # Previously nvtop was not packaged in EPEL so we compiled it as an environment

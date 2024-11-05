@@ -136,7 +136,7 @@
 - name: Install ruby/3.1
   when: "'nairobi_compute' in group_names"
   ansible.builtin.package:
-    name: [ruby, ruby-devel, rubygems-irb]
+    name: [ruby, ruby-devel, rubygem-irb]
     state: present
   tags: packages
 

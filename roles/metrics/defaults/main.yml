@@ -80,17 +80,18 @@ node_exporter_url_checksum: 6809dd0b3ec45fd6e992c19071d6b5253aed3ead7bf0686885a5
 node_exporter_binary_path: /usr/local/bin/node_exporter
 
 # See: https://github.com/prometheus/mysqld_exporter/releases
-mysqld_exporter_version: 0.15.1
+mysqld_exporter_version: 0.16.0
 mysqld_exporter_old_versions:
   - "/usr/local/bin/mysqld_exporter-0.13.0.linux-amd64.tar.gz"
   - "/usr/local/bin/mysqld_exporter-0.14.0.linux-amd64.tar.gz"
   - "/usr/local/bin/mysqld_exporter-0.15.0.linux-amd64.tar.gz"
+  - "/usr/local/bin/mysqld_exporter-0.15.1.linux-amd64.tar.gz"
 
 # URL for mysqld_exporter tarball
 mysqld_exporter_tarball: mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64.tar.gz
 mysqld_exporter_url: https://github.com/prometheus/mysqld_exporter/releases/download/v{{ mysqld_exporter_version }}/{{ mysqld_exporter_tarball }}
 # sha256sum from sha256sums.txt on GitHub releases page or manually
-mysqld_exporter_url_checksum: 85ea5bc68e1b9f466c1df10ff016652dd210371d42245e012b876265e89ae29d
+mysqld_exporter_url_checksum: 32fe0b59ef3f52624a1958aaf6b8855f27c2b492a7026d62a975bbd251be209d
 mysqld_exporter_binary_path: /usr/local/bin/mysqld_exporter
 mysqld_exporter_config_path: /etc/victoriametrics/mysqld_exporter.cnf
 # Override in host or group vars

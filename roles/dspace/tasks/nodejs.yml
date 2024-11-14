@@ -19,7 +19,13 @@
   register: download_nodejs_signing_key
   when: not nodejs_signing_key_stat.stat.exists
 
-- name: Add Node.js LTS repository
+- name: Remove Node.js v18 repository
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource-repo.gpg.key] https://deb.nodesource.com/node_18.x nodistro main
+    filename: nodesource
+    state: absent
+
+- name: Add Node.js LTS v20 repository
   ansible.builtin.apt_repository:
     repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nodesource-repo.gpg.key] https://deb.nodesource.com/node_{{ nodejs_version_major }}.x nodistro main
     filename: nodesource

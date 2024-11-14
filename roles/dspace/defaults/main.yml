@@ -61,7 +61,7 @@ pyvenv_command: python3.10 -m venv
 java_version_major: 17
 
 # version 18 for DSpace 7
-nodejs_version_major: 18
+nodejs_version_major: 20
 
 tomcat_user: dspace
 tomcat_group: dspace

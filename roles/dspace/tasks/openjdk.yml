@@ -14,13 +14,4 @@
     path: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
   when: java_version_major == 17
 
-# 2021-06-30: Fix slow Tomcat startup due to blocking /dev/random
-# tomcat7[30294]: WARNING: Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [111,733] milliseconds.
-- name: Use /dev/urandom for JVM SecureRandom
-  ansible.builtin.lineinfile:
-    path: /etc/java-{{ java_version_major }}-openjdk/security/java.security
-    regexp: ^securerandom.source=file:/dev/random$
-    line: securerandom.source=file:/dev/urandom
-    state: present
-
 # vim: set sw=2 ts=2:

@@ -337,7 +337,7 @@ upstream statistics_api {
 # In the included file, matching networks have the key set to 'bot', which we
 # map to $limit_bots_ip and use as the key for a limit_req_zone below for bots.
 # Networks that don't match have $limit_bots_ip set to an empty string, which
-# is importing for the limit_req zone and the next mapping block.
+# is important for the limit_req zone and the next mapping block.
 geo $limit_bots_ip {
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html

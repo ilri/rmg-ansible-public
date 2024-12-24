@@ -1,17 +1,9 @@
 {{ ansible_managed | comment }}
 
 {% if ansible_distribution == 'Ubuntu' -%}
-{%   if ansible_product_name is search('.*Gen9.*') or ansible_product_name is search('.*Gen8.*') -%}
-# ILRI mirror of HPE MCP repository for Gen9 and earlier
+{%   if ansible_product_name is search('.*Gen10.*') or ansible_product_name is search('.*Gen9.*') -%}
+# ILRI mirror of HPE MCP repository (currently Gen9 and Gen10)
 # See: https://downloads.linux.hpe.com/SDR/project/mcp/
 deb [arch=amd64 signed-by=/usr/share/keyrings/hpePublicKey2048_key1.pub] https://hpc.ilri.cgiar.org/mirror/mcp {{ ansible_distribution_release }}/current non-free
-{%   elif ansible_product_name is search('.*Gen10.*') -%}
-# ILRI mirror of HPE MCP repository for Gen10
-# See: https://downloads.linux.hpe.com/SDR/project/mcp/
-{%     if ansible_distribution_version is version('22.04', '==') -%}
-deb [arch=amd64 signed-by=/usr/share/keyrings/hpePublicKey2048_key1.pub] https://hpc.ilri.cgiar.org/mirror/mcp {{ ansible_distribution_release }}/current non-free
-{%     else -%}
-deb [arch=amd64 signed-by=/usr/share/keyrings/hpePublicKey2048_key1.pub] https://hpc.ilri.cgiar.org/mirror/mcp {{ ansible_distribution_release }}/current-gen10 non-free
-{%-    endif %}
 {%-  endif %}
 {%- endif %}

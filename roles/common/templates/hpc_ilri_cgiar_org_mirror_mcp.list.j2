@@ -1,9 +1,0 @@
-{{ ansible_managed | comment }}
-
-{% if ansible_distribution == 'Ubuntu' -%}
-{%   if ansible_product_name is search('.*Gen10.*') or ansible_product_name is search('.*Gen9.*') -%}
-# ILRI mirror of HPE MCP repository (currently Gen9 and Gen10)
-# See: https://downloads.linux.hpe.com/SDR/project/mcp/
-deb [arch=amd64 signed-by=/usr/share/keyrings/hpePublicKey2048_key1.pub] https://downloads.linux.hpe.com/SDR/repo/mcp {{ ansible_distribution_release }}/current non-free
-{%-  endif %}
-{%- endif %}

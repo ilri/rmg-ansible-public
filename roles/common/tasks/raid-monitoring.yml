@@ -8,52 +8,74 @@
     state: present
   when: "'hp' in hw_raid_vendor or 'lsi' in hw_raid_vendor"
 
-- name: Add ILRI mirror of Debian-based HPE MCP repository
-  ansible.builtin.template:
-    src: hpc_ilri_cgiar_org_mirror_mcp.list.j2
-    dest: /etc/apt/sources.list.d/hpc_ilri_cgiar_org_mirror_mcp.list
-    mode: "0644"
-    owner: root
-    group: root
-  register: add_hpe_mcp_apt_repository
-  when:
-    - ansible_os_family == 'Debian'
-    - "'hp' in hw_raid_vendor"
-
-- name: Remove HPE-MCP key from apt-key
-  ansible.builtin.apt_key:
-    id: 57446EFDE098E5C934B69C7DC208ADDE26C2B797
+- name: Remove old ILRI mirror of Debian-based HPE MCP repository
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/hpc_ilri_cgiar_org_mirror_mcp.list
     state: absent
   when:
     - ansible_os_family == 'Debian'
     - "'hp' in hw_raid_vendor"
 
-- name: Check HPE MCP package signing key
-  ansible.builtin.stat:
+# 2024-12-24: As of this writing, no repositories use this key.
+- name: Remove old HPE MCP repository signing key
+  ansible.builtin.file:
     path: /usr/share/keyrings/hpePublicKey2048_key1.pub
-  register: hpe_mcp_signing_key_stat
+    state: absent
   when:
     - ansible_os_family == 'Debian'
     - "'hp' in hw_raid_vendor"
 
-- name: Download HPE MCP package signing key
-  ansible.builtin.get_url:
-    url: https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub
-    dest: /usr/share/keyrings/hpePublicKey2048_key1.pub
-    owner: root
-    group: root
-    mode: "0644"
-  register: download_hpe_mcp_signing_key
+# 2024-12-24: As of this writing all HPE MCP repositories use this key. Here we
+# check for the binary version of the key because it seems to work better than
+# the ASCII-armored versions on Ubuntu 22.04.
+- name: Check HPE MCP package signing key
+  ansible.builtin.stat:
+    path: /etc/apt/keyrings/hpePublicKey2048_key2.pub.gpg
+  register: hpe_mcp_binary_signing_key
   when:
     - ansible_os_family == 'Debian'
     - "'hp' in hw_raid_vendor"
-    - not hpe_mcp_signing_key_stat.stat.exists
+
+- name: Download ASCII-armored HPE MCP package signing key
+  ansible.builtin.get_url:
+    url: https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key2.pub
+    dest: /etc/apt/keyrings/hpePublicKey2048_key2.pub
+    owner: root
+    group: root
+    mode: "0644"
+  register: download_armored_hpe_mcp_signing_key
+  when:
+    - ansible_os_family == 'Debian'
+    - "'hp' in hw_raid_vendor"
+    - not hpe_mcp_binary_signing_key.stat.exists
+
+- name: De-armor HPE MCP package signing key
+  ansible.builtin.shell: "gpg --dearmor < /etc/apt/keyrings/hpePublicKey2048_key2.pub > /etc/apt/keyrings/hpePublicKey2048_key2.pub.gpg"
+  args:
+    creates: /etc/apt/keyrings/hpePublicKey2048_key2.pub.gpg
+  register: hpe_mcp_dearmored_signing_key
+  when: download_armored_hpe_mcp_signing_key is changed
+
+- name: Add Debian-based HPE MCP repository
+  ansible.builtin.deb822_repository:
+    name: hpe-mcp
+    types: deb
+    uris: https://downloads.linux.hpe.com/SDR/repo/mcp
+    suites: '{{ ansible_distribution_release }}/current'
+    components: non-free
+    architectures: amd64
+    signed_by: /etc/apt/keyrings/hpePublicKey2048_key2.pub.gpg
+    state: present
+  register: add_hpe_mcp_apt_repository
+  when:
+    - ansible_os_family == 'Debian'
+    - "'hp' in hw_raid_vendor"
 
 - name: Update apt cache
   ansible.builtin.apt: # noqa no-handler
     update_cache: true
   when:
-    - (download_hpe_mcp_signing_key.status_code is defined and download_hpe_mcp_signing_key.status_code == 200) or add_hpe_mcp_apt_repository is changed
+    - (hpe_mcp_dearmored_signing_key is changed or add_hpe_mcp_apt_repository is changed)
     - ansible_os_family == 'Debian'
     - "'hp' in hw_raid_vendor"
 

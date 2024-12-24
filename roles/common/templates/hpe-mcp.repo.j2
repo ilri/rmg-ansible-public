@@ -3,15 +3,14 @@
 [hpe-mcp]
 name=CentOS-$releasever - HPE mcp packages for $basearch
 {% if ansible_product_name is search('.*Gen9.*') or ansible_product_name is search('.*Gen8.*') -%}
-# ILRI mirror of HPE MCP repository for Gen9 and earlier (use 10.xx or earlier)
+# ILRI mirror of HPE MCP repository for Gen9 and earlier
 # See: https://downloads.linux.hpe.com/SDR/project/mcp/
-# Note (2023-03-27): there are currently no 10.xx releases for CentOS 8 on HPE's
-# mirror so I'll use 11.35 for now
-baseurl=https://hpc.ilri.cgiar.org/mirror/mcp/CentOS/$releasever/$basearch/11.35
+# Note (2024-12-24): 12.20 seems to work on Gen8 and Gen9.
+baseurl=https://downloads.linux.hpe.com/SDR/repo/mcp/CentOS/$releasever/$basearch/12.20
 {% elif ansible_product_name is search('.*Gen10.*') -%}
-# ILRI mirror of HPE MCP repository for Gen10 (use 11.xx or "current")
+# ILRI mirror of HPE MCP repository for Gen10
 # See: https://downloads.linux.hpe.com/SDR/project/mcp/
-baseurl=https://hpc.ilri.cgiar.org/mirror/mcp/CentOS/$releasever/$basearch/current
+baseurl=https://downloads.linux.hpe.com/SDR/repo/mcp/CentOS/$releasever/$basearch/current
 {% endif %}
 enabled=1
 gpgcheck=0

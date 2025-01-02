@@ -61,10 +61,8 @@
           - lsof
           - sysstat
           - tmux
-          - unzip
           - pciutils
           - zstd
-          - bzip2
           - mosh
         state: present
 

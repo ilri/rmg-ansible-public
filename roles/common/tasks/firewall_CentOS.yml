@@ -1,8 +1,9 @@
 ---
 # Use nftables on CentOS Stream 8
+# Use nftables on CentOS Stream 9
 
-- name: Install firewall packages (CentOS Stream 8)
-  when: ansible_distribution_major_version is version('8', '==')
+- name: Install firewall packages (CentOS Stream)
+  when: ansible_distribution_major_version is version('8', '>=')
   ansible.builtin.package:
     name:
       - nftables
@@ -12,8 +13,8 @@
   tags: packages
 
 # firewalld seems to be a part of the base distribution, but we don't need it.
-- name: Remove firewalld (CentOS Stream 8)
-  when: ansible_distribution_major_version is version('8', '==')
+- name: Remove firewalld (CentOS Stream)
+  when: ansible_distribution_major_version is version('8', '>=')
   ansible.builtin.package:
     name: firewalld
     state: absent
@@ -21,7 +22,7 @@
 
 - name: Configure nftables
   ansible.builtin.include_tasks: nftables.yml
-  when: ansible_distribution_major_version is version('8', '==')
+  when: ansible_distribution_major_version is version('8', '>=')
 
 # TODO: re-evaluate this later, as no current CentOS versions run fail2ban
 # without pulling in firewalld right now.
@@ -33,6 +34,6 @@
 # on firewalld and we want to use nftables directly.
 - name: Configure sshguard
   ansible.builtin.include_tasks: sshguard.yml
-  when: ansible_distribution_major_version is version('8', '==')
+  when: ansible_distribution_major_version is version('8', '>=')
 
 # vim: set sw=2 ts=2:

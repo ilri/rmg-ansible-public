@@ -17,11 +17,12 @@
         mode: "0644"
       when:
         - ansible_distribution_release == 'Stream'
+        - ansible_distribution_major_version is version('8', '==')
       with_fileglob:
         - CentOS-Stream-*.repo
 
     #   Fedora docs recommends enabling EPEL and EPEL Next on CentOS Stream
-    #   See: https://docs.fedoraproject.org/en-US/epel/#_el8
+    #   See: https://docs.fedoraproject.org/en-US/epel/getting-started/#_el9
     - name: Install EPEL
       ansible.builtin.package:
         name: [epel-release, epel-next-release]
@@ -37,6 +38,7 @@
         mode: "0644"
       when:
         - ansible_distribution_release == 'Stream'
+        - ansible_distribution_major_version is version('8', '==')
         - "'addis_compute' not in group_names"
 
     - name: Add EPEL RPM package signing key
@@ -70,6 +72,6 @@
   ansible.builtin.file:
     path: /etc/motd.d/cockpit
     state: absent
-  when: ansible_distribution_major_version is version('8', '==')
+  when: ansible_distribution_major_version is version('8', '>=')
 
 # vim: set ts=2 sw=2:

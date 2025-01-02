@@ -71,7 +71,7 @@ echo "Reloading nftables"
 
 {{ systemctl_bin }} reload nftables.service
 
-{% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==') %}
+{% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '>=') %}
 echo "Restarting sshguard"
 {{ systemctl_bin }} restart sshguard.service
 {% else %}

@@ -61,7 +61,6 @@
           - lsof
           - sysstat
           - tmux
-          - vim-enhanced
           - unzip
           - pciutils
           - zstd

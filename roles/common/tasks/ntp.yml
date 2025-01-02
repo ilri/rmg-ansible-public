@@ -14,6 +14,9 @@
 # is provided by chrony.
 #
 # See: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/using-chrony-to-configure-ntp
+#
+# CentOS Stream 9 has systemd-timesyncd available, but defaults to chronyd. I
+# think we should use the default for now since Red Hat probably knows best.
 
 - name: Set timezone
   when:

@@ -68,6 +68,12 @@
           - mosh
         state: present
 
+    - name: Remove irqbalance
+      ansible.builtin.package:
+      when: "'compute' in group_names or 'storage' in group_names"
+        name: irqbalance
+        state: absent
+
 - name: Disable annoying cockpit notice in MOTD
   ansible.builtin.file:
     path: /etc/motd.d/cockpit

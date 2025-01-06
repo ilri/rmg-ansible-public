@@ -27,7 +27,7 @@
 
 # TODO: this fails the first time sometimes. Perhaps I can check the current
 # profile first and then run this with --force if needed?
-- name: Configure sssd on CentOS Stream 8
+- name: Configure sssd on CentOS Stream
   when:
     - ansible_distribution == 'CentOS'
     - ansible_distribution_release == 'Stream'

@@ -69,8 +69,8 @@
         state: present
 
     - name: Remove irqbalance
-      ansible.builtin.package:
       when: "'compute' in group_names or 'storage' in group_names"
+      ansible.builtin.package:
         name: irqbalance
         state: absent
 

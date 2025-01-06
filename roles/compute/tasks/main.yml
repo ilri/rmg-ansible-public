@@ -116,13 +116,115 @@
   when: ansible_distribution_major_version is version('8', '==')
   tags: packages
 
+# 2025-01-06: currently missing from CentOS Stream 9:
+      #- graphviz-devel.x86_64 # for some Python libraries
+      #- perl-Math-Round.noarch # for circos
+      #- perl-Readonly.noarch # for circos
+      #- perl-Statistics-Basic.noarch # for circos
+      #- perl-Params-Validate.x86_64 # for circos
+      #- python36.x86_64
+- name: Install extra packages (CentOS Stream 9)
+  ansible.builtin.package:
+    name:
+      - apptainer.x86_64 # from EPEL, for viralrecon pipeline
+      - boost-devel.x86_64 # for augustus
+      - boost-iostreams.x86_64 # for augustus
+      - cairo-devel.x86_64 # for genometools and others
+      - cmake
+      - compat-openssl11.x86_64 # for stuff compiled on CentOS 8
+      - dbus-devel # required for SLURM 22.05.0 cgroup/v2
+      - emacs.x86_64
+      - environment-modules.x86_64
+      - fftw-devel.x86_64 # for gromacs
+      - firefox.x86_64
+      - gcc-c++.x86_64 # for some R libraries
+      - gdal-devel.x86_64 # for some R libraries
+      - gdal.x86_64 # for libgdal.so.1
+      - geos-devel.x86_64 # for some R libraries
+      - glib2.x86_64 # for wise / Cegma
+      - glpk-devel.x86_64 # for shannon_cpp
+      - gmp-devel.x86_64 # for some R libraries
+      - gnuplot.x86_64
+      - graphviz
+      - gsl-devel.x86_64 # needed for some R packages like HiCeekR
+      - gsl.x86_64 # for fastSTRUCTURE
+      - hdf5-devel.x86_64 # for some R libraries
+      - htop.x86_64
+      - java-11-openjdk.x86_64 # for lots of stuff
+      - joe.x86_64 # some users need this
+      - lapack.x86_64 # for presto
+      - libXt-devel.x86_64 # for R/4.2.0 (X11/Intrinsic.h)
+      - libXtst.x86_64 # for some X apps like CLC Genomics
+      - libcurl-devel.x86_64 # for some R libraries
+      - libgfortran.x86_64 # for R
+      - libgomp.x86_64 # for R
+      - libicu.x86_64 # for R
+      - libjpeg-turbo-devel.x86_64 # needed for some R packages like HiCeekR
+      - libnsl.x86_64 # needed by binaries linked against older libc
+      - libpng12.x86_64 # for pre-compiled blat binary
+      - libstdc++.i686 # for 32-bit binaries
+      - libtiff-devel.x86_64 # for some R libraries
+      - libtool-ltdl.x86_64 # for pandaseq/2.7
+      - libwebp-devel.x86_64 # for some R libraries
+      - libxml2-devel.x86_64 # for some R libraries
+      - libzstd-devel.x86_64 # for some R libraries
+      - make.x86_64
+      - mesa-libGLU-devel.x86_64 # for some R libraries
+      - metis-devel.x86_64 # for shannon_cpp
+      - nano.x86_64
+      - ncurses-compat-libs.x86_64 # for some stuff compiled in CentOS 7
+      - netcdf-devel # for some R packages
+      - openblas.x86_64 # for scipy
+      - openmpi.x86_64 # optional for abyss
+      - openssl-devel.x86_64 # for R
+      - pandoc.x86_64
+      - pango-devel.x86_64 # for genometools and others
+      - pcre2-devel.x86_64 # needed as of R/4.0
+      - perl-Clone.x86_64 # for circos, see: https://hpc.ilri.cgiar.org/circos-software
+      - perl-Config-General.noarch # for circos
+      - perl-DBD-MySQL.x86_64 # for vep
+      - perl-DBI.x86_64 # for vep, see: https://hpc.ilri.cgiar.org/vep-software
+      - perl-Env.noarch # for masurca
+      - perl-Font-TTF.noarch # for circos
+      - perl-GD.x86_64 # for circos
+      - perl-JSON.noarch # for vep
+      - perl-LWP-Protocol-https.noarch # so perl can use https
+      - perl-List-MoreUtils.noarch # for abricate
+      - perl-PerlIO-gzip.x86_64 # for vep
+      - perl-Regexp-Common.noarch # for circos
+      - perl-Text-Format.noarch # for circos
+      - perl-Text-Soundex.x86_64 # for RepeatMasker
+      - perl-parent.noarch # for some BioPerl scripts
+      - perl-XML-LibXML # for sratoolkit fastq-dump
+      - pigz.x86_64 # for SeqKit
+      - proj-devel.x86_64 # for some R libraries
+      - proj.x86_64 # for libproj.so.0
+      - python3-numpy.x86_64 # for Trinity as of v2.6.6
+      - python3-setuptools.noarch # needed by some Python scripts to load entrypoint
+      - readline-devel.x86_64 # for R/4.2.0
+      - rsync.x86_64
+      - screen.x86_64
+      - sparsehash-devel.x86_64 # for shannon_cpp
+      - sqlite-devel.x86_64 # for some R libraries
+      - tbb-devel.x86_64 # for flexbar
+      - udunits2-devel.x86_64 # for some R libraries
+      - wget.x86_64
+      - xorg-x11-xauth.x86_64 # or else X11 forwarding doesn't work
+      - reptyr.x86_64 # re-parent a running process
+      - parallel.noarch # needed by roary
+    state: present
+  when: ansible_distribution_major_version is version('9', '==')
+  tags: packages
+
 # We need ruby for the Rapid Identification of Microbes (RIM) software suite in
 # Nairobi. This is ghetto because there is no way to enable a module idempotent-
 # ly from Ansible.
 #
 # See: https://github.com/ansible/ansible/issues/64852
 - name: Enable the ruby/3.1 module stream
-  when: "'nairobi_compute' in group_names"
+  when:
+    - "'nairobi_compute' in group_names"
+    - ansible_distribution_major_version is version('8', '==')
   ansible.builtin.copy:
     dest: /etc/dnf/modules.d/ruby.module
     content: |
@@ -134,7 +236,9 @@
   tags: packages
 
 - name: Install ruby/3.1
-  when: "'nairobi_compute' in group_names"
+  when:
+    - "'nairobi_compute' in group_names"
+    - ansible_distribution_major_version is version('8', '==')
   ansible.builtin.package:
     name: [ruby, ruby-devel, rubygem-irb]
     state: present

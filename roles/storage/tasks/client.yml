@@ -1,11 +1,10 @@
 ---
-- name: Install GlusterFS client packages (CentOS Stream 8)
+- name: Install GlusterFS client packages
   ansible.builtin.package:
     name:
       - glusterfs-fuse
       - python3-libsemanage.x86_64 # required by Ansible's seboolean module
     state: present
-  when: ansible_distribution_major_version is version('8', '==')
   tags: glusterfs-client
 
 - name: Create mount points

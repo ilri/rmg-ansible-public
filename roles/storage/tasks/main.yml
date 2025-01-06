@@ -3,6 +3,7 @@
 #
 # TODO: remove when we migrate to CentOS Stream 9
 - name: Override CentOS Gluster mirror
+  when: ansible_distribution_major_version is version('8', '==')
   ansible.builtin.copy:
     src: CentOS-Gluster-10.repo
     dest: /etc/yum.repos.d/CentOS-Gluster-10.repo

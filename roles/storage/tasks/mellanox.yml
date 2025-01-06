@@ -1,5 +1,5 @@
 ---
-# see: https://www.mellanox.com/support/mlnx-ofed-public-repository
+# see: https://network.nvidia.com/support/mlnx-ofed-public-repository/
 - name: Add Mellanox package signing key
   ansible.builtin.rpm_key:
     key: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
@@ -14,6 +14,16 @@
     gpgkey: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
     gpgcheck: true
   when: ansible_distribution_major_version is version('8', '==')
+  tags: mellanox
+
+- name: Configure Mellanox yum repository (CentOS Stream 9)
+  ansible.builtin.yum_repository:
+    name: mellanox_mlnx_en
+    description: Mellanox Ethernet drivers
+    baseurl: https://linux.mellanox.com/public/repo/mlnx_en/latest/rhel9.5/x86_64
+    gpgkey: https://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox
+    gpgcheck: true
+  when: ansible_distribution_major_version is version('9', '==')
   tags: mellanox
 
 # Install an updated Mellanox Ethernet driver (newer than the upstream kernel

@@ -282,12 +282,6 @@
     mode: "0644"
   tags: limits
 
-- name: Remove irqbalance
-  ansible.builtin.package:
-    name: irqbalance
-    state: absent
-  tags: irqbalance
-
 - name: Configure ILRI ssh_config overrides
   ansible.builtin.template:
     src: etc/ssh/ssh_config.d/01-ilri.conf.j2

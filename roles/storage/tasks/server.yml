@@ -12,13 +12,4 @@
     enabled: true
   tags: glusterfs-server
 
-# belongs in a proper "storage" role, but this will have to do for now
-- name: Remove irqbalance
-  ansible.builtin.package:
-    name: irqbalance
-    state: absent
-  tags:
-    - irqbalance
-    - glusterfs-server
-
 # vim: set sw=2 ts=2:

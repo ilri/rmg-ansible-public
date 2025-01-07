@@ -13,9 +13,6 @@ include "/etc/nftables/spamhaus-ipv6.nft"
 include "/etc/nftables/abuseipdb-ipv4.nft"
 include "/etc/nftables/abuseipdb-ipv6.nft"
 
-# Lists updated daily by update-abusech-nftables.sh
-include "/etc/nftables/abusech-ipv4.nft"
-
 # List of networks belonging to Russian DDoS operator
 include "/etc/nftables/russian-ddos-networks-ipv4.nft"
 include "/etc/nftables/russian-ddos-networks-ipv6.nft"
@@ -39,11 +36,6 @@ table inet filter {
         type ipv6_addr
         flags interval
         elements = $SPAMHAUS_IPV6
-    }
-
-    set abusech-ipv4 {
-        type ipv4_addr
-        elements = $ABUSECH_IPV4
     }
 
     set abuseipdb-ipv4 {
@@ -89,8 +81,6 @@ table inet filter {
 
         ip saddr @spamhaus-ipv4 counter drop comment "Early drop of incoming packets matching spamhaus-ipv4 list"
         ip6 saddr @spamhaus-ipv6 counter drop comment "Early drop of incoming packets matching spamhaus-ipv6 list"
-
-        ip saddr @abusech-ipv4 counter drop comment "Early drop of packets matching abusech-ipv4 list"
 
         ip saddr @abuseipdb-ipv4 counter drop comment "Early drop of incoming packets matching abuseipdb-ipv4 list"
         ip6 saddr @abuseipdb-ipv6 counter drop comment "Early drop of incoming packets matching abuseipdb-ipv6 list"
@@ -219,8 +209,6 @@ table inet filter {
 
         ip daddr @spamhaus-ipv4 counter drop comment "Drop outgoing packets matching spamhaus-ipv4 list"
         ip6 daddr @spamhaus-ipv6 counter drop comment "Drop outgoing packets matching spamhaus-ipv6 list"
-
-        ip daddr @abusech-ipv4 counter drop comment "Drop outgoing packets matching abusech-ipv4 list"
 
         ip daddr @abuseipdb-ipv4 counter drop comment "Drop outgoing packets matching abuseipdb-ipv4 list"
         ip6 daddr @abuseipdb-ipv6 counter drop comment "Drop outgoing packets matching abuseipdb-ipv6 list"

@@ -38,7 +38,6 @@
   loop:
     - { src: spamhaus-ipv4.nft, force: false }
     - { src: spamhaus-ipv6.nft, force: false }
-    - { src: abusech-ipv4.nft, force: false }
     - { src: abuseipdb-ipv4.nft, force: true }
     - { src: abuseipdb-ipv6.nft, force: true }
     - { src: russian-ddos-networks-ipv4.nft, force: true }
@@ -59,7 +58,19 @@
     group: root
   loop:
     - update-spamhaus-nftables.sh.j2
-    - update-abusech-nftables.sh.j2
+
+- name: Remove deprecated Abuse.ch data and scripts
+  ansible.builtin.file:
+    path:
+      - /etc/nftables/abusech-ipv4.nft
+      - /usr/local/bin/update-abusech-nftables.sh
+      - /etc/systemd/system/update-abusech-nftables.service
+      - /etc/systemd/system/update-abusech-nftables.timer
+    state: absent
+  notify:
+    - restart nftables
+    - restart fail2ban
+    - restart sshguard
 
 - name: Copy extra nftables utility
   ansible.builtin.copy:
@@ -79,8 +90,6 @@
   loop:
     - update-spamhaus-nftables.service
     - update-spamhaus-nftables.timer
-    - update-abusech-nftables.service
-    - update-abusech-nftables.timer
   register: nftables_systemd_units
 
 # need to reload to pick up service/timer/environment changes
@@ -96,7 +105,6 @@
     enabled: true
   loop:
     - update-spamhaus-nftables.timer
-    - update-abusech-nftables.timer
 
 - name: Start and enable nftables service
   ansible.builtin.systemd:

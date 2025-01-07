@@ -5,71 +5,18 @@
 
 flush ruleset
 
-# Lists updated daily by update-spamhaus-nftables.sh
-include "/etc/nftables/spamhaus-ipv4.nft"
-include "/etc/nftables/spamhaus-ipv6.nft"
-
-# Lists updated monthly (manually)
-include "/etc/nftables/abuseipdb-ipv4.nft"
-include "/etc/nftables/abuseipdb-ipv6.nft"
-
-# List of networks belonging to Russian DDoS operator
-include "/etc/nftables/russian-ddos-networks-ipv4.nft"
-include "/etc/nftables/russian-ddos-networks-ipv6.nft"
-
-# List of networks belonging to Chinese DDoS operator
-include "/etc/nftables/chinese-ddos-networks-ipv4.nft"
-include "/etc/nftables/chinese-ddos-networks-ipv6.nft"
+# List updated daily by update-firehol-nftables.sh
+include "/etc/nftables/firehol_level1-ipv4.nft"
 
 # Notes:
 #   - tables hold chains, chains hold rules
 #   - inet is for both ipv4 and ipv6
 table inet filter {
-    set spamhaus-ipv4 {
+    set firehol_level1-ipv4 {
         type ipv4_addr
         # if the set contains prefixes we need to use the interval flag
         flags interval
-        elements = $SPAMHAUS_IPV4
-    }
-
-    set spamhaus-ipv6 {
-        type ipv6_addr
-        flags interval
-        elements = $SPAMHAUS_IPV6
-    }
-
-    set abuseipdb-ipv4 {
-        type ipv4_addr
-        elements = $ABUSEIPDB_IPV4
-    }
-
-    set abuseipdb-ipv6 {
-        type ipv6_addr
-        elements = $ABUSEIPDB_IPV6
-    }
-
-    set russian-ddos-ipv4 {
-        type ipv4_addr
-        flags interval
-        elements = $RUSSIAN_DDOS_NETWORKS_IPV4
-    }
-
-    set russian-ddos-ipv6 {
-        type ipv6_addr
-        flags interval
-        elements = $RUSSIAN_DDOS_NETWORKS_IPV6
-    }
-
-    set chinese-ddos-ipv4 {
-        type ipv4_addr
-        flags interval
-        elements = $CHINESE_DDOS_NETWORKS_IPV4
-    }
-
-    set chinese-ddos-ipv6 {
-        type ipv6_addr
-        flags interval
-        elements = $CHINESE_DDOS_NETWORKS_IPV6
+        elements = $FIREHOL_LEVEL1_IPV4
     }
 
     chain input {
@@ -79,17 +26,7 @@ table inet filter {
 
         ct state invalid counter drop comment "Early drop of invalid connections"
 
-        ip saddr @spamhaus-ipv4 counter drop comment "Early drop of incoming packets matching spamhaus-ipv4 list"
-        ip6 saddr @spamhaus-ipv6 counter drop comment "Early drop of incoming packets matching spamhaus-ipv6 list"
-
-        ip saddr @abuseipdb-ipv4 counter drop comment "Early drop of incoming packets matching abuseipdb-ipv4 list"
-        ip6 saddr @abuseipdb-ipv6 counter drop comment "Early drop of incoming packets matching abuseipdb-ipv6 list"
-
-        ip saddr @russian-ddos-ipv4 counter drop comment "Early drop of incoming packets matching russian-ddos-ipv4 list"
-        ip6 saddr @russian-ddos-ipv6 counter drop comment "Early drop of incoming packets matching russian-ddos-ipv6 list"
-
-        ip saddr @chinese-ddos-ipv4 counter drop comment "Early drop of incoming packets matching chinese-ddos-ipv4 list"
-        ip6 saddr @chinese-ddos-ipv6 counter drop comment "Early drop of incoming packets matching chinese-ddos-ipv6 list"
+        ip saddr @firehol_level1-ipv4 counter drop comment "Early drop of incoming packets matching firehol_level1-ipv4 list"
 
         iifname lo accept comment "Allow from loopback"
 
@@ -207,16 +144,6 @@ table inet filter {
     chain output {
         type filter hook output priority 0;
 
-        ip daddr @spamhaus-ipv4 counter drop comment "Drop outgoing packets matching spamhaus-ipv4 list"
-        ip6 daddr @spamhaus-ipv6 counter drop comment "Drop outgoing packets matching spamhaus-ipv6 list"
-
-        ip daddr @abuseipdb-ipv4 counter drop comment "Drop outgoing packets matching abuseipdb-ipv4 list"
-        ip6 daddr @abuseipdb-ipv6 counter drop comment "Drop outgoing packets matching abuseipdb-ipv6 list"
-
-        ip daddr @russian-ddos-ipv4 counter drop comment "Drop outgoing packets matching russian-ddos-ipv4 list"
-        ip6 daddr @russian-ddos-ipv6 counter drop comment "Drop outgoing packets matching russian-ddos-ipv6 list"
-
-        ip daddr @chinese-ddos-ipv4 counter drop comment "Drop outgoing packets matching chinese-ddos-ipv4 list"
-        ip6 daddr @chinese-ddos-ipv6 counter drop comment "Drop outgoing packets matching chinese-ddos-ipv6 list"
+        ip daddr @firehol_level1-ipv4 counter drop comment "Drop outgoing packets matching firehol_level1-ipv4 list"
     }
 }

@@ -7,7 +7,6 @@
     name:
       - nftables
       - sshguard
-      - perl-Net-IP # for aggregate-cidr-addresses.pl
       - wget # for updating blocklists
     state: present
   tags: packages

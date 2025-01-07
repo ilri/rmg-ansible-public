@@ -1,11 +1,11 @@
 [Unit]
-Description=Update Abuse.ch SSL Blacklist IPs
+Description=Update FireHOL lists
 # This service will fail if nftables is not running so we use Requires to make
 # sure that nftables is started.
 Requires=nftables.service
 # Make sure the network is up and nftables is started
 After=network-online.target nftables.service
-Wants=network-online.target update-abusech-nftables.timer
+Wants=network-online.target update-firehol-nftables.timer
 
 [Service]
 # https://www.ctrl.blog/entry/systemd-service-hardening.html
@@ -19,9 +19,9 @@ ReadWriteDirectories=/etc/nftables
 PrivateTmp=true
 WorkingDirectory=/var/tmp
 
-SyslogIdentifier=update-abusech-nftables
-ExecStart=/usr/bin/flock -x update-abusech-nftables.lck \
-          /usr/local/bin/update-abusech-nftables.sh
+SyslogIdentifier=update-firehol-nftables
+ExecStart=/usr/bin/flock -x update-firehol-nftables.lck \
+          /usr/local/bin/update-firehol-nftables.sh
 
 [Install]
 WantedBy=multi-user.target

@@ -24,9 +24,6 @@
     owner: root
     mode: "0755"
 
-# Only overwrite static sets that are updated on the control machine and stored
-# in git. The others are updated daily by systemd timers on the host so we only
-# want to copy them if they don't already exist (ie, the host is new).
 - name: Copy nftables sets
   ansible.builtin.copy:
     src: "{{ item.src }}"
@@ -36,14 +33,7 @@
     mode: "0644"
     force: "{{ item.force }}"
   loop:
-    - { src: spamhaus-ipv4.nft, force: false }
-    - { src: spamhaus-ipv6.nft, force: false }
-    - { src: abuseipdb-ipv4.nft, force: true }
-    - { src: abuseipdb-ipv6.nft, force: true }
-    - { src: russian-ddos-networks-ipv4.nft, force: true }
-    - { src: russian-ddos-networks-ipv6.nft, force: true }
-    - { src: chinese-ddos-networks-ipv4.nft, force: true }
-    - { src: chinese-ddos-networks-ipv6.nft, force: true }
+    - { src: firehol_level1-ipv4.nft, force: false }
   notify:
     - restart nftables
     - restart fail2ban
@@ -57,28 +47,31 @@
     owner: root
     group: root
   loop:
-    - update-spamhaus-nftables.sh.j2
+    - update-firehol-nftables.sh.j2
 
-- name: Remove deprecated Abuse.ch data and scripts
+- name: Remove deprecated data and scripts
   ansible.builtin.file:
-    path:
-      - /etc/nftables/abusech-ipv4.nft
-      - /usr/local/bin/update-abusech-nftables.sh
-      - /etc/systemd/system/update-abusech-nftables.service
-      - /etc/systemd/system/update-abusech-nftables.timer
+    path: "{{ item }}"
     state: absent
+  loop:
+    - /etc/nftables/spamhaus-ipv4.nft
+    - /etc/nftables/spamhaus-ipv6.nft
+    - /etc/nftables/abuseipdb-ipv4.nft
+    - /etc/nftables/abuseipdb-ipv6.nft
+    - /etc/nftables/russian-ddos-networks-ipv4.nft
+    - /etc/nftables/russian-ddos-networks-ipv6.nft
+    - /etc/nftables/chinese-ddos-networks-ipv4.nft
+    - /etc/nftables/chinese-ddos-networks-ipv6.nft
+    - /etc/nftables/abusech-ipv4.nft
+    - /usr/local/bin/update-abusech-nftables.sh
+    - /usr/local/bin/update-spamhaus-nftables.sh
+    - /etc/systemd/system/update-abusech-nftables.service
+    - /etc/systemd/system/update-abusech-nftables.timer
+    - /usr/local/bin/aggregate-cidr-addresses.pl
   notify:
     - restart nftables
     - restart fail2ban
     - restart sshguard
-
-- name: Copy extra nftables utility
-  ansible.builtin.copy:
-    src: aggregate-cidr-addresses.pl
-    dest: /usr/local/bin/aggregate-cidr-addresses.pl
-    mode: "0755"
-    owner: root
-    group: root
 
 - name: Copy nftables systemd units
   ansible.builtin.copy:
@@ -88,8 +81,8 @@
     owner: root
     group: root
   loop:
-    - update-spamhaus-nftables.service
-    - update-spamhaus-nftables.timer
+    - update-firehol-nftables.service
+    - update-firehol-nftables.timer
   register: nftables_systemd_units
 
 # need to reload to pick up service/timer/environment changes
@@ -104,7 +97,7 @@
     state: started
     enabled: true
   loop:
-    - update-spamhaus-nftables.timer
+    - update-firehol-nftables.timer
 
 - name: Start and enable nftables service
   ansible.builtin.systemd:

@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+#
+# update-firehol-nftables.sh v0.0.1
+#
+# Download FireHOL lists and load them into nftables sets.
+# 
+# See: https://iplists.firehol.org/
+#
+# Copyright (C) 2025 Alan Orth
+#
+# SPDX-License-Identifier: GPL-3.0-only
+
+# Exit on first error
+set -o errexit
+
+firehol_level1_ipv4_set_path=/etc/nftables/firehol_level1-ipv4.nft
+
+function download() {
+    echo "Downloading $1"
+    wget -q -O - "https://iplists.firehol.org/files/$1" > "$1"
+}
+
+download firehol_level1.netset
+
+if [[ -f "firehol_level1.netset" ]]; then
+    echo "Processing FireHOL Level 1 list"
+
+    firehol_level1_ipv4_list_temp=$(mktemp)
+    firehol_level1_ipv4_set_temp=$(mktemp)
+
+    # Filter blank lines, comments, and bogons we use inside the LAN, DMZ, and
+    # for local services like systemd-resolved and others on localhost. Ideally
+    # these are blocked already at the WAN side by network administrators.
+    cat firehol_level1.netset \
+        | sed \
+            -e '/^$/d' \
+            -e '/^#.*/d' \
+            -e '/^10\.0\.0\.0\/8/d' \
+            -e '/^127\.0\.0\.0\/8/d' \
+            -e '/^172\.16\.0\.0\/12/d' \
+            -e '/^192\.168\.0\.0\/16/d' \
+            -e '/^224\.0\.0\.0\/3/d' \
+        > "$firehol_level1_ipv4_list_temp"
+
+    echo "Building firehol_level1-ipv4 set"
+    cat << NFT_HEAD > "$firehol_level1_ipv4_set_temp"
+#!/usr/sbin/nft -f
+
+define FIREHOL_LEVEL1_IPV4 = {
+NFT_HEAD
+
+    while read -r network; do
+        # nftables doesn't mind if the last element in the set has a trailing
+        # comma so we don't need to do anything special here.
+        echo "$network," >> "$firehol_level1_ipv4_set_temp"
+    done < $firehol_level1_ipv4_list_temp
+
+    echo "}" >> "$firehol_level1_ipv4_set_temp"
+
+    install -m 0600 "$firehol_level1_ipv4_set_temp" "$firehol_level1_ipv4_set_path"
+
+    rm -f "$firehol_level1_ipv4_list_temp" "$firehol_level1_ipv4_set_temp"
+fi
+
+echo "Reloading nftables"
+{% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=') %}
+{%   set systemctl_bin = '/bin/systemctl' %}
+{% else %}
+{%   set systemctl_bin = '/usr/bin/systemctl' %}
+{% endif -%}
+
+{{ systemctl_bin }} reload nftables.service
+
+{% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==') %}
+echo "Restarting sshguard"
+{{ systemctl_bin }} restart sshguard.service
+{% else %}
+echo "Restarting fail2ban"
+{{ systemctl_bin }} restart fail2ban.service
+{% endif %}
+
+rm -v firehol_level1.netset

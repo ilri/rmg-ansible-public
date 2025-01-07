@@ -9,7 +9,6 @@
   ansible.builtin.package:
     name:
       - fail2ban
-      - libnet-ip-perl # for aggregate-cidr-addresses.pl
       - nftables
       - python3-systemd
       - curl # for nftables update scripts

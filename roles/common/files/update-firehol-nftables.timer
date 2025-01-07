@@ -1,5 +1,5 @@
 [Unit]
-Description=Update Spamhaus lists
+Description=Update FireHOL lists
 
 [Timer]
 # Once a day at midnight

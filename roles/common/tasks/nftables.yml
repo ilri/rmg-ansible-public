@@ -67,6 +67,8 @@
     - /usr/local/bin/update-spamhaus-nftables.sh
     - /etc/systemd/system/update-abusech-nftables.service
     - /etc/systemd/system/update-abusech-nftables.timer
+    - /etc/systemd/system/update-spamhaus-nftables.service
+    - /etc/systemd/system/update-spamhaus-nftables.timer
     - /usr/local/bin/aggregate-cidr-addresses.pl
   notify:
     - restart nftables

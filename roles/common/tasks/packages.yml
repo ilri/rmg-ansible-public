@@ -1,11 +1,4 @@
 ---
-# 2024-02-19: none of our servers support this yet so we can remove it globally
-- name: Uninstall fwupd
-  ansible.builtin.package:
-    name: fwupd
-    state: absent
-  tags: packages
-
 - name: Install common packages on CentOS
   ansible.builtin.include_tasks: packages_CentOS.yml
   when: ansible_distribution == 'CentOS'

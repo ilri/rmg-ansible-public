@@ -8,14 +8,6 @@
     state: present
   when: "'hp' in hw_raid_vendor or 'lsi' in hw_raid_vendor"
 
-- name: Remove old ILRI mirror of Debian-based HPE MCP repository
-  ansible.builtin.file:
-    path: /etc/apt/sources.list.d/hpc_ilri_cgiar_org_mirror_mcp.list
-    state: absent
-  when:
-    - ansible_os_family == 'Debian'
-    - "'hp' in hw_raid_vendor"
-
 # 2024-12-24: As of this writing, no repositories use this key.
 - name: Remove old HPE MCP repository signing key
   ansible.builtin.file:
@@ -60,7 +52,7 @@
   ansible.builtin.deb822_repository:
     name: hpe-mcp
     types: deb
-    uris: https://downloads.linux.hpe.com/SDR/repo/mcp
+    uris: https://hpc.ilri.cgiar.org/mirror/mcp
     suites: '{{ ansible_distribution_release }}/current'
     components: non-free
     architectures: amd64

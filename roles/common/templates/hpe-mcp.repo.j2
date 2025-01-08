@@ -6,11 +6,11 @@ name=CentOS-$releasever - HPE mcp packages for $basearch
 # ILRI mirror of HPE MCP repository for Gen9 and earlier
 # See: https://downloads.linux.hpe.com/SDR/project/mcp/
 # Note (2024-12-24): 12.20 seems to work on Gen8 and Gen9.
-baseurl=https://downloads.linux.hpe.com/SDR/repo/mcp/CentOS/$releasever/$basearch/12.20
+baseurl=https://hpc.ilri.cgiar.org/mirror/mcp/CentOS/$releasever/$basearch/12.20
 {% elif ansible_product_name is search('.*Gen10.*') -%}
 # ILRI mirror of HPE MCP repository for Gen10
 # See: https://downloads.linux.hpe.com/SDR/project/mcp/
-baseurl=https://downloads.linux.hpe.com/SDR/repo/mcp/CentOS/$releasever/$basearch/current
+baseurl=https://hpc.ilri.cgiar.org/mirror/mcp/CentOS/$releasever/$basearch/current
 {% endif %}
 enabled=1
 gpgcheck=0

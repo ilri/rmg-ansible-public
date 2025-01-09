@@ -2,11 +2,11 @@
 - name: Remove cron-apt config
   ansible.builtin.file:
     path: "{{ item }}"
+    state: absent
   loop:
     - /etc/cron-apt/config
     - /etc/cron-apt/action.d/3-download
     - /etc/apt/security.sources.list
-  ignore_errors: true
 
 - name: Remove cron-apt
   ansible.builtin.package:

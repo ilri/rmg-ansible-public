@@ -163,8 +163,9 @@ NodeName=hpc CPUs=8 Boards=1 SocketsPerBoard=1 CoresPerSocket=8 ThreadsPerCore=1
 NodeName=compute05 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsPerCore=1 RealMemory=386252 State=UNKNOWN Weight=10
 NodeName=compute06 Gres=gpu:v100:1,mps:2000 CPUs=64 Boards=1 SocketsPerBoard=2 CoresPerSocket=32 ThreadsPerCore=1 RealMemory=257218 State=UNKNOWN Weight=05
 NodeName=compute07 CPUs=8 Boards=1 SocketsPerBoard=1 CoresPerSocket=8 ThreadsPerCore=1 RealMemory=1019289 State=UNKNOWN Weight=05
+NodeName=centos9 CPUs=1 Boards=1 SocketsPerBoard=1 CoresPerSocket=1 ThreadsPerCore=1 RealMemory=1966 State=UNKNOWN
 
-PartitionName=debug Nodes=hpc Default=YES MaxTime=5:00 State=UP
+PartitionName=debug Nodes=hpc,centos9 Default=YES MaxTime=5:00 State=UP
 PartitionName=highmem Nodes=compute07 Default=NO MaxTime=UNLIMITED State=UP
 PartitionName=batch Nodes=compute05,compute06 Default=NO MaxTime=UNLIMITED State=UP
 {% endif %}

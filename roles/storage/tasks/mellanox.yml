@@ -51,14 +51,19 @@
   notify: Start and enable Mellanox IRQ affinity service
   tags: mellanox
 
-- name: Configure Mellanox rx/tx descriptors service
-  ansible.builtin.template:
-    src: set-mellanox-descriptors.service.j2
-    dest: /etc/systemd/system/set-mellanox-descriptors.service
+- name: Increase network ring buffers
+  ansible.builtin.copy:
+    src: etc/udev/rules.d/71-ethtool.rules
+    dest: /etc/udev/rules.d/71-ethtool.rules
     mode: "0644"
     owner: root
     group: root
-  notify: Start and enable Mellanox rx/tx descriptors service
+  tags: mellanox
+
+- name: Remove deprecated Mellanox rx/tx descriptors service
+  ansible.builtin.file:
+    path: /etc/systemd/system/set-mellanox-descriptors.service
+    state: absent
   tags: mellanox
 
 # vim: set sw=2 ts=2:

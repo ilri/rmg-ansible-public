@@ -1,0 +1,4 @@
+# Broadcom drivers seem to support a max of 2047
+SUBSYSTEM=="net", ACTION=="add|change", KERNEL=="*", DRIVERS=="bnxt_en", RUN+="/sbin/ethtool -G %k rx 2047 tx 2047"
+# Mellanox drivers seem to allow up to the recommended 8192
+SUBSYSTEM=="net", ACTION=="add|change", KERNEL=="*", DRIVERS=="mlx5_core", RUN+="/sbin/ethtool -G %k rx 8192 tx 8192"

@@ -13,8 +13,8 @@
         - ansible_distribution_release == 'Stream'
         - ansible_distribution_major_version is version('9', '==')
 
-    #   Fedora docs recommends enabling EPEL and EPEL Next on CentOS Stream
-    #   See: https://docs.fedoraproject.org/en-US/epel/getting-started/#_el9
+    # Fedora docs recommends enabling EPEL and EPEL Next on CentOS Stream
+    # See: https://docs.fedoraproject.org/en-US/epel/getting-started/#_el9
     - name: Install EPEL
       ansible.builtin.package:
         name: [epel-release, epel-next-release]

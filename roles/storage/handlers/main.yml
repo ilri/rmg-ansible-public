@@ -7,10 +7,4 @@
     state: started
     enabled: true
 
-- name: Start and enable Mellanox rx/tx descriptors service
-  ansible.builtin.systemd:
-    name: set-mellanox-descriptors.service
-    state: started
-    enabled: true
-
 # vim: set sw=2 ts=2:

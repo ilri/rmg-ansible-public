@@ -2,25 +2,6 @@
 - name: Configure CentOS packages
   tags: packages
   block:
-    # These are dead since CentOS Stream 8 EOL in June 2024. We need to override
-    # them by pointing to the vault so yum doesn't error on every operation.
-    #
-    # TODO: remove these once we migrate to CentOS Stream 9
-    #
-    # See: https://lists.centos.org/hyperkitty/list/announce@lists.centos.org/thread/EGOA27SGN7W7ASFFFBNUZJ5BXSFT4NKX/
-    - name: Configure CentOS Stream mirrors (CentOS Stream 8)
-      ansible.builtin.copy:
-        src: "{{ item }}"
-        dest: /etc/yum.repos.d/{{ item | basename }}
-        owner: root
-        group: root
-        mode: "0644"
-      when:
-        - ansible_distribution_release == 'Stream'
-        - ansible_distribution_major_version is version('8', '==')
-      with_fileglob:
-        - CentOS-Stream-*.repo
-
     - name: Configure CentOS Stream mirrors (CentOS Stream 9)
       ansible.builtin.copy:
         src: etc/yum.repos.d/centos.repo

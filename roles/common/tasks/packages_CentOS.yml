@@ -8,7 +8,7 @@
     # TODO: remove these once we migrate to CentOS Stream 9
     #
     # See: https://lists.centos.org/hyperkitty/list/announce@lists.centos.org/thread/EGOA27SGN7W7ASFFFBNUZJ5BXSFT4NKX/
-    - name: Configure CentOS Stream mirrors
+    - name: Configure CentOS Stream mirrors (CentOS Stream 8)
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: /etc/yum.repos.d/{{ item | basename }}
@@ -21,6 +21,17 @@
       with_fileglob:
         - CentOS-Stream-*.repo
 
+    - name: Configure CentOS Stream mirrors (CentOS Stream 9)
+      ansible.builtin.copy:
+        src: etc/yum.repos.d/centos.repo
+        dest: /etc/yum.repos.d/centos.repo
+        owner: root
+        group: root
+        mode: "0644"
+      when:
+        - ansible_distribution_release == 'Stream'
+        - ansible_distribution_major_version is version('9', '==')
+
     #   Fedora docs recommends enabling EPEL and EPEL Next on CentOS Stream
     #   See: https://docs.fedoraproject.org/en-US/epel/getting-started/#_el9
     - name: Install EPEL
@@ -29,17 +40,20 @@
         state: present
       when: ansible_distribution_release == 'Stream'
 
-    - name: Configure ILRI EPEL Next mirror
+    - name: Configure ILRI EPEL mirrors
       ansible.builtin.copy:
-        src: epel-8-next.repo
-        dest: /etc/yum.repos.d/epel-next.repo
+        src: "{{ item }}"
+        dest: /etc/yum.repos.d/{{ item | basename }}
         owner: root
         group: root
         mode: "0644"
       when:
         - ansible_distribution_release == 'Stream'
-        - ansible_distribution_major_version is version('8', '==')
+        - ansible_distribution_major_version is version('9', '==')
         - "'addis_compute' not in group_names"
+      loop:
+        - etc/yum.repos.d/epel.repo
+        - etc/yum.repos.d/epel-next.repo
 
     - name: Add EPEL RPM package signing key
       ansible.builtin.rpm_key:

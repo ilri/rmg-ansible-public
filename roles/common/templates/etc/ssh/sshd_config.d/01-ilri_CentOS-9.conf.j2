@@ -7,6 +7,12 @@ LogLevel VERBOSE
 
 MaxAuthTries 4
 
+{% if 'compute' in group_names %}
+# Attempt to authorize user with public keys stored in LDAP
+AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys
+AuthorizedKeysCommandUser nobody
+{% endif %}
+
 # To disable tunneled clear text passwords, change to no here!
 {% if ssh_password_authentication == 'disabled' %}
 PasswordAuthentication no
@@ -14,7 +20,11 @@ PasswordAuthentication no
 PasswordAuthentication yes
 {% endif %}
 
+{% if 'compute' in group_names %}
+X11Forwarding yes
+{% else %}
 X11Forwarding no
+{% endif %}
 
 # Based on the ssh-audit profile for OpenSSH 8.7, but with but with all algos
 # with less than 256 bits removed, as NSA's Suite B removed them years ago and

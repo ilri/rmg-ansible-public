@@ -18,9 +18,26 @@
     enabled: true
   tags: tuned
 
-- name: Set default tuned profile
-  when: tuned_profile is defined
-  ansible.builtin.command: tuned-adm profile {{ tuned_profile }}
+# See: https://github.com/jamescherti/ansible-tuned
+- name: Get the active tuned profile
   tags: tuned
+  block:
+    - name: Get the current tuned active profile
+      ansible.builtin.command: tuned-adm active
+      register: tuned_active
+      changed_when: false
+      environment:
+        LANG: "C"
+
+    - name: Extract current profile from the output
+      ansible.builtin.set_fact:
+        tuned_current_profile: "{{ (tuned_active.stdout_lines[0] | regex_search('^[^:]+:\\s*(.*)\\s*', '\\1'))[0] }}"
+
+- name: "Change tuned profile to {{ tuned_profile }}"
+  when: tuned_profile != tuned_current_profile
+  tags: tuned
+  ansible.builtin.command: tuned-adm profile "{{ tuned_profile }}"
+  register: result
+  changed_when: result.rc == 0
 
 # vim: set sw=2 ts=2:

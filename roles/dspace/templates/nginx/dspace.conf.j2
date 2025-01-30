@@ -118,6 +118,11 @@ server {
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
 
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
         # Send requests to Express
         proxy_pass http://express-http;
         # Set user agent string to mapped value (see mapping block)
@@ -151,6 +156,11 @@ server {
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
 
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
         # Send requests to Express
         proxy_pass http://express-http;
         # Set user agent string to mapped value (see mapping block)
@@ -169,6 +179,11 @@ server {
         # and proxy_set_header in this block.
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
 
         # Send requests to Tomcat
         proxy_pass http://tomcat-http;
@@ -189,6 +204,11 @@ server {
         # and proxy_set_header in this block.
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
 
         # Send requests to Express
         proxy_pass http://express-http;
@@ -274,6 +294,11 @@ server {
             # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
             include proxy_params;
 
+            # Explicitly set security headers again because any headers inherited at
+            # the previous level are overwritten when we set new ones in this level.
+            # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+            include extra-security.conf;
+
             proxy_pass http://tomcat-http;
             # Set user agent string to mapped value (see mapping block)
             proxy_set_header User-Agent $ua;
@@ -284,6 +309,11 @@ server {
         # and proxy_set_header in this block.
         # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
         include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
 
         proxy_pass http://tomcat-http;
         # Set user agent string to mapped value (see mapping block)

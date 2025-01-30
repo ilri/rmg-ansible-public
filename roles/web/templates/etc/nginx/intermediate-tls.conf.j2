@@ -12,15 +12,6 @@ ssl_stapling on;
 ssl_stapling_verify on;
 resolver {{ nginx_ssl_stapling_resolver }};
 
-# nginx does not auto-rotate session ticket keys: only a HUP / restart will do so and
-# when a restart is performed the previous key is lost, which resets all previous
-# sessions. The fix for this is to setup a manual rotation mechanism:
-# http://trac.nginx.org/nginx/changeset/1356a3b9692441e163b4e78be4e9f5a46c7479e9/nginx
-#
-# Note that you'll have to define and rotate the keys securely by yourself. In absence
-# of such infrastructure, consider turning off session tickets:
-ssl_session_tickets off;
-
 {% if nginx_enable_hsts == True %}
 # Enable this if you want HSTS (recommended, but be careful)
 add_header Strict-Transport-Security max-age=15768000;

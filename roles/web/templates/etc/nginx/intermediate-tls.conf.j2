@@ -5,7 +5,7 @@ ssl_session_cache {{ nginx_ssl_session_cache }};
 ssl_buffer_size {{ nginx_ssl_buffer_size }};
 ssl_dhparam {{ nginx_ssl_dhparam }};
 ssl_protocols {{ nginx_ssl_protocols }};
-ssl_ecdh_curve {{ nginx_ecdh_curve }};
+ssl_ecdh_curve {{ nginx_ssl_ecdh_curve }};
 ssl_ciphers "{{ tls_cipher_suite }}";
 ssl_prefer_server_ciphers off;
 

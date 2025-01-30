@@ -6,7 +6,7 @@ ssl_buffer_size {{ nginx_ssl_buffer_size }};
 ssl_dhparam {{ nginx_ssl_dhparam }};
 ssl_protocols {{ nginx_ssl_protocols }};
 ssl_ciphers "{{ tls_cipher_suite }}";
-ssl_prefer_server_ciphers on;
+ssl_prefer_server_ciphers off;
 
 ssl_stapling on;
 ssl_stapling_verify on;

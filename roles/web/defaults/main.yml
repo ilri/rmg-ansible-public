@@ -6,8 +6,8 @@
 # and "nginx". Eventually I might start using caddy.
 webserver: apache_httpd
 
-# 1 hour timeout
-nginx_ssl_session_timeout: 1h
+# 1 day timeout
+nginx_ssl_session_timeout: 1d
 # 10MB -> 40,000 sessions
 nginx_ssl_session_cache: shared:SSL:10m
 # 1400 bytes to fit in one MTU (default is 16k!)

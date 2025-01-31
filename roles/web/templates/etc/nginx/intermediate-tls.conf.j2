@@ -15,5 +15,5 @@ resolver {{ nginx_ssl_stapling_resolver }};
 
 {% if nginx_enable_hsts == True %}
 # Enable this if you want HSTS (recommended, but be careful)
-add_header Strict-Transport-Security max-age=15768000;
+add_header Strict-Transport-Security max-age=31536000;
 {% endif %} {# end: nginx_enable_hsts #}

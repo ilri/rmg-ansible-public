@@ -26,6 +26,6 @@ nginx_enable_hsts: false
 
 # HTTP Strict-Transport-Security max-age in seconds (one year)
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-hsts_maxage: 31536000;
+hsts_maxage: 31536000
 
 # vim: set sw=2 ts=2:

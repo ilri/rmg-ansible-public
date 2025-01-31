@@ -15,3 +15,8 @@ add_header Referrer-Policy no-referrer-when-downgrade always;
 # CSP can be quite difficult to configure, and cause real issues if you get it wrong
 # There is website that helps you generate a policy here http://cspisawesome.com/
 # add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' https://www.google-analytics.com;" always;
+
+{% if nginx_enable_hsts == True %}
+# Enable this if you want HSTS (recommended, but be careful)
+add_header Strict-Transport-Security max-age={{ hsts_maxage }} always;
+{% endif %} {# end: nginx_enable_hsts #}

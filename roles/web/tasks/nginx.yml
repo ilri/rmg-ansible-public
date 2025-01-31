@@ -49,6 +49,7 @@
   loop:
     - { src: etc/nginx/intermediate-tls.conf.j2, dest: /etc/nginx/intermediate-tls.conf }
     - { src: etc/nginx/conf.d/blank-vhost.conf.j2, dest: /etc/nginx/conf.d/blank-vhost.conf }
+    - { src: etc/nginx/extra-security.conf.j2, dest: /etc/nginx/extra-security.conf }
   notify:
     - reload nginx
   tags: nginx

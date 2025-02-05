@@ -17,8 +17,6 @@ ssh_access:
 web_access:
   - ilri_nbo_corp
 
-tls_cipher_suite: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305"
-
 # By default we assume all hosts in the web group are using Apache HTTPD, though
 # we aren't installing it yet. This is currently only to inform us which scripts
 # we should install for the Let's Encrypt pre/post hooks. A small handful of our

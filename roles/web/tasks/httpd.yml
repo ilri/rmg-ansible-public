@@ -22,7 +22,7 @@
   ansible.builtin.command:
     cmd: a2dissite {{ item }}
     removes: /etc/apache2/sites-enabled/{{ item }}.conf
-  loop: 
+  loop:
     - 000-default
     - default-ssl
   notify:

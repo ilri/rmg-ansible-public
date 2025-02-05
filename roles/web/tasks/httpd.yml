@@ -53,7 +53,7 @@
 
 - name: Copy extra configs (files)
   ansible.builtin.copy:
-    src: etc/apache2/blank-vhost.conf
+    src: etc/apache2/000-blank-vhost.conf
     dest: /etc/apache2/sites-available/000-blank-vhost.conf
     mode: "0644"
     owner: root
@@ -64,8 +64,8 @@
 
 - name: Enable blank vhost
   ansible.builtin.command:
-    cmd: a2ensite blank-vhost
-    creates: /etc/apache2/sites-enabled/blank-vhost.conf
+    cmd: a2ensite 000-blank-vhost
+    creates: /etc/apache2/sites-enabled/000-blank-vhost.conf
   notify:
     - reload apache2
   tags: httpd

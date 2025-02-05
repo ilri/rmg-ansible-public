@@ -1,0 +1,10 @@
+{{ ansible_managed | comment }}
+
+SSLProtocol             {{ httpd_ssl_protocols }}
+SSLOpenSSLConfCmd       {{ httpd_ssl_curves }}
+SSLCipherSuite          {{ tls_cipher_suite }}
+SSLHonorCipherOrder     off
+SSLSessionTickets       off
+
+SSLUseStapling On
+SSLStaplingCache "shmcb:logs/ssl_stapling(32768)"

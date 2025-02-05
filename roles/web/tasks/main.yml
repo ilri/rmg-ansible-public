@@ -1,6 +1,6 @@
 ---
 # This role currently only installs and does basic configuration of the Let's
-# Encrypt certbot client and some auxiliary nginx configuration.
+# Encrypt certbot client and some auxiliary web server configuration.
 
 - name: Configure Let's Encrypt
   ansible.builtin.include_tasks: letsencrypt.yml
@@ -9,6 +9,15 @@
     - ansible_distribution_version is version('20.04', '>=')
     - (webserver is defined and webserver != 'caddy')
   tags: letsencrypt
+
+# Only run httpd plays on Ubuntu for now
+- name: Configure Apache httpd
+  ansible.builtin.include_tasks: httpd.yml
+  when:
+    - webserver is defined
+    - webserver == 'apache_httpd'
+    - ansible_distribution == 'Ubuntu'
+  tags: httpd
 
 - name: Configure nginx
   ansible.builtin.include_tasks: nginx.yml

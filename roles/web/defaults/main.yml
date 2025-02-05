@@ -9,6 +9,9 @@ webserver: apache_httpd
 # Mozilla intermediate SSL cipher suite
 tls_cipher_suite: ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305
 
+httpd_ssl_protocols: '-all +TLSv1.2 +TLSv1.3'
+httpd_ssl_curves: 'Curves X25519:prime256v1:secp384r1'
+
 # 1 day timeout
 nginx_ssl_session_timeout: 1d
 # 10MB -> 40,000 sessions

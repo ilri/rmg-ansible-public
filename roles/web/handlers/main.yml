@@ -1,6 +1,18 @@
 ---
 # file: roles/web/handlers/main.yml
 
+# For module changes
+- name: restart apache2
+  ansible.builtin.systemd:
+    name: apache2
+    state: restarted
+
+# For config changes
+- name: reload apache2
+  ansible.builtin.systemd:
+    name: apache2
+    state: reloaded
+
 # When the nginx binary changes
 - name: restart nginx
   ansible.builtin.systemd:

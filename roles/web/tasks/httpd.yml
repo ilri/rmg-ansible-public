@@ -1,0 +1,73 @@
+---
+# For now this only does some auxiliary configuration of the apache install like
+# SSL ciphers and the default virtual host. This is very Debian/Ubuntu specific
+# for now.
+
+# See: https://docs.ansible.com/ansible/latest/collections/community/crypto/docsite/guide_selfsigned.html
+- name: Create private key (RSA, 4096 bits)
+  community.crypto.openssl_privatekey:
+    path: /etc/ssl/private/snakeoil.key
+  tags: httpd
+
+- name: Generate self-signed TLS cert
+  community.crypto.x509_certificate:
+    path: /etc/ssl/certs/snakeoil.crt
+    privatekey_path: /etc/ssl/private/snakeoil.key
+    provider: selfsigned
+  notify:
+    - reload apache2
+  tags: httpd
+
+- name: Disable default vhosts
+  ansible.builtin.command:
+    cmd: a2dissite {{ item }}
+    removes: /etc/apache2/sites-enabled/{{ item }}.conf
+  loop: 
+    - 000-default
+    - default-ssl
+  notify:
+    - reload apache2
+  tags: httpd
+
+- name: Enable modules
+  ansible.builtin.command:
+    cmd: a2enmod {{ item.module }}
+    creates: "{{ item.creates }}"
+  loop:
+    - { module: rewrite, creates: /etc/apache2/mods-enabled/rewrite.load }
+    - { module: ssl, creates: /etc/apache2/mods-enabled/ssl.conf }
+  notify:
+    - restart apache2
+  tags: httpd
+
+- name: Copy extra configs (templates)
+  ansible.builtin.template:
+    src: etc/apache2/intermediate-tls.conf.j2
+    dest: /etc/apache2/conf-available/intermediate-tls.conf
+    mode: "0644"
+    owner: root
+    group: root
+  notify:
+    - reload apache2
+  tags: httpd
+
+- name: Copy extra configs (files)
+  ansible.builtin.copy:
+    src: etc/apache2/blank-vhost.conf
+    dest: /etc/apache2/sites-available/blank-vhost.conf
+    mode: "0644"
+    owner: root
+    group: root
+  notify:
+    - reload apache2
+  tags: httpd
+
+- name: Enable blank vhost
+  ansible.builtin.command:
+    cmd: a2ensite blank-vhost
+    creates: /etc/apache2/sites-enabled/blank-vhost.conf
+  notify:
+    - reload apache2
+  tags: httpd
+
+# vim: set sw=2 ts=2:

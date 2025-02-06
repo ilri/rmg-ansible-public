@@ -153,6 +153,16 @@
         purge: true
       when: ansible_distribution_version is version('20.04', '>=')
 
+    - name: Remove unneeded packages on VM guests
+      ansible.builtin.package:
+        name:
+          - irqbalance
+          - linux-firmware
+          - thermald
+        state: absent
+        purge: true
+      when: (ansible_virtualization_role == 'guest' or "linode" in inventory_hostname)
+
     - name: Disable annoying Canonical spam in MOTD
       ansible.builtin.file: # noqa ignore-errors
         path: "{{ item }}"

@@ -51,6 +51,14 @@
     - reload apache2
   tags: httpd
 
+- name: Enable intermediate-tls config
+  ansible.builtin.command:
+    cmd: a2enconf intermediate-tls
+    creates: /etc/apache2/conf-enabled/intermediate-tls.conf
+  notify:
+    - reload apache2
+  tags: httpd
+
 - name: Copy extra configs (files)
   ansible.builtin.copy:
     src: etc/apache2/000-blank-vhost.conf

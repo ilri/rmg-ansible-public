@@ -159,6 +159,7 @@
       - libgfortran.x86_64 # for R
       - libgomp.x86_64 # for R
       - libicu.x86_64 # for R
+      - libicu60.x86_64 # for R compiled on CentOS Stream 8
       - libjpeg-turbo-devel.x86_64 # needed for some R packages like HiCeekR
       - libnsl.x86_64 # needed by binaries linked against older libc
       - libpng12.x86_64 # for pre-compiled blat binary
@@ -202,6 +203,7 @@
       - python3-numpy.x86_64 # for Trinity as of v2.6.6
       - python3-setuptools.noarch # needed by some Python scripts to load entrypoint
       - readline-devel.x86_64 # for R/4.2.0
+      - readline7.x86_64 # for R compiled on CentOS Stream 8
       - rsync.x86_64
       - screen.x86_64
       - sparsehash-devel.x86_64 # for shannon_cpp

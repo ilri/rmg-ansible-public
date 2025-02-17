@@ -25,13 +25,6 @@ victoriametrics_tls_key_path: /etc/victoriametrics/victoria-metrics.key
 victoriametrics_version: 1.101.0
 
 victoriametrics_old_versions:
-  - "/usr/local/bin/vmutils-linux-amd64-v1.87.6.tar.gz"
-  - "/usr/local/bin/vmutils-linux-amd64-v1.87.7.tar.gz"
-  - "/usr/local/bin/vmutils-linux-amd64-v1.87.10.tar.gz"
-  - "/usr/local/bin/vmutils-linux-amd64-v1.87.14.tar.gz"
-  - "/usr/local/bin/vmutils-linux-amd64-v1.93.13.tar.gz"
-  - "/usr/local/bin/vmutils-linux-amd64-v1.93.14.tar.gz"
-  - "/usr/local/bin/vmutils-linux-amd64-v1.93.15.tar.gz"
   - "/usr/local/bin/vmutils-linux-amd64-v1.96.0.tar.gz"
   - "/usr/local/bin/vmutils-linux-amd64-v1.98.0.tar.gz"
 
@@ -68,8 +61,6 @@ victoriametrics_vmagent_buffer: 536871040
 # See: https://github.com/prometheus/node_exporter/releases
 node_exporter_version: 1.8.2
 node_exporter_old_versions:
-  - "/usr/local/bin/node_exporter-1.6.0.linux-amd64.tar.gz"
-  - "/usr/local/bin/node_exporter-1.6.1.linux-amd64.tar.gz"
   - "/usr/local/bin/node_exporter-1.7.0.linux-amd64.tar.gz"
   - "/usr/local/bin/node_exporter-1.8.1.linux-amd64.tar.gz"
 
@@ -83,8 +74,6 @@ node_exporter_binary_path: /usr/local/bin/node_exporter
 # See: https://github.com/prometheus/mysqld_exporter/releases
 mysqld_exporter_version: 0.16.0
 mysqld_exporter_old_versions:
-  - "/usr/local/bin/mysqld_exporter-0.13.0.linux-amd64.tar.gz"
-  - "/usr/local/bin/mysqld_exporter-0.14.0.linux-amd64.tar.gz"
   - "/usr/local/bin/mysqld_exporter-0.15.0.linux-amd64.tar.gz"
   - "/usr/local/bin/mysqld_exporter-0.15.1.linux-amd64.tar.gz"
 
@@ -103,7 +92,6 @@ mysqld_exporter_pass: "{{ lookup('file', 'private/vars/metrics/mysqld_exporter_p
 # See: https://github.com/prometheus-community/postgres_exporter/releases
 postgres_exporter_version: 0.15.0
 postgres_exporter_old_versions:
-  - "/usr/local/bin/postgres_exporter-0.13.1.linux-amd64.tar.gz"
   - "/usr/local/bin/postgres_exporter-0.13.2.linux-amd64.tar.gz"
 
 # URL for postgres_exporter tarball
@@ -117,8 +105,6 @@ postgres_exporter_binary_path: /usr/local/bin/postgres_exporter
 # See: https://github.com/prometheus/jmx_exporter/releases
 jmx_exporter_version: 1.0.1
 jmx_exporter_old_versions:
-  - "/etc/victoriametrics/jmx_prometheus_javaagent-0.17.0.jar"
-  - "/etc/victoriametrics/jmx_prometheus_javaagent-0.19.0.jar"
   - "/etc/victoriametrics/jmx_prometheus_javaagent-0.20.0.jar"
 
 # URL for jmx_exporter tarball

@@ -59,16 +59,17 @@ victoriametrics_vmagent_config_path: /etc/victoriametrics/prometheus.yml
 victoriametrics_vmagent_buffer: 536871040
 
 # See: https://github.com/prometheus/node_exporter/releases
-node_exporter_version: 1.8.2
+node_exporter_version: 1.9.0
 node_exporter_old_versions:
   - "/usr/local/bin/node_exporter-1.7.0.linux-amd64.tar.gz"
   - "/usr/local/bin/node_exporter-1.8.1.linux-amd64.tar.gz"
+  - "/usr/local/bin/node_exporter-1.8.2.linux-amd64.tar.gz"
 
 # URL for node_exporter tarball
 node_exporter_tarball: node_exporter-{{ node_exporter_version }}.linux-amd64.tar.gz
 node_exporter_url: https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/{{ node_exporter_tarball }}
 # sha256sum from sha256sums.txt on GitHub releases page or manually
-node_exporter_url_checksum: 6809dd0b3ec45fd6e992c19071d6b5253aed3ead7bf0686885a51d85c6643c66
+node_exporter_url_checksum: e7b65ea30eec77180487d518081d3dcb121b975f6d95f1866dfb9156c5b24075
 node_exporter_binary_path: /usr/local/bin/node_exporter
 
 # See: https://github.com/prometheus/mysqld_exporter/releases
@@ -104,15 +105,16 @@ postgres_exporter_binary_path: /usr/local/bin/postgres_exporter
 
 
 # See: https://github.com/prometheus/jmx_exporter/releases
-jmx_exporter_version: 1.0.1
+jmx_exporter_version: 1.1.0
 jmx_exporter_old_versions:
   - "/etc/victoriametrics/jmx_prometheus_javaagent-0.20.0.jar"
+  - "/etc/victoriametrics/jmx_prometheus_javaagent-1.0.1.jar"
 
 # URL for jmx_exporter tarball
 jmx_exporter_jar: jmx_prometheus_javaagent-{{ jmx_exporter_version }}.jar
-jmx_exporter_url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/{{ jmx_exporter_version }}/{{ jmx_exporter_jar }}
+jmx_exporter_url: https://github.com/prometheus/jmx_exporter/releases/download/{{ jmx_exporter_version }}/{{ jmx_exporter_jar }}
 # sha256sum
-jmx_exporter_url_checksum: 7d61f737fd661610ccc14aea79764faa1ea94a340cbc8f0029b3d2edea3d80c1
+jmx_exporter_url_checksum: 2d158db7a4cd2999f40ca30a2532bc8456ca3ecf37498cbe60a02a588bf3c9f1
 jmx_exporter_jar_path: /etc/victoriametrics/{{ jmx_exporter_jar }}
 jmx_exporter_config_path: /etc/victoriametrics/jmx_exporter.yml
 

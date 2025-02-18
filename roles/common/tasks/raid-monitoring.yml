@@ -122,24 +122,6 @@
     - ansible_distribution == 'CentOS'
     - "'hp' in hw_raid_vendor"
 
-# HPE Array tools were replaced by the Smart Storate Administrator CLI
-- name: Remove HPE Array tools
-  ansible.builtin.package:
-    name: hpacucli
-    state: absent
-  when:
-    - ansible_distribution == 'CentOS'
-    - "'hp' in hw_raid_vendor"
-
-# HPE Array tools were replaced by the Smart Storate Administrator CLI
-- name: Remove HPE Array tools
-  ansible.builtin.package:
-    name: hpssacli
-    state: absent
-  when:
-    - ansible_os_family == 'Debian'
-    - "'hp' in hw_raid_vendor"
-
 - name: Copy LSI RAID monitoring script
   ansible.builtin.template:
     src: scripts/lsi-raid-monitoring.sh.j2

@@ -8,4 +8,8 @@ tuned_profile: hpc-compute
 
 ssh_password_authentication: disabled
 
+# Because wingu2 cannot run the storage role and we need this entry for now
+static_dns_entries:
+  - { name: wingu2, address: 192.168.5.32 }
+
 # vim: set ts=2 sw=2:

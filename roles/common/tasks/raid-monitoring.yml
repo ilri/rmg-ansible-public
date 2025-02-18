@@ -102,6 +102,18 @@
     - ansible_distribution_major_version is version('8', '==')
     - "'hp' in hw_raid_vendor"
 
+- name: Configure HPE SPP repository
+  ansible.builtin.template:
+    src: hpe-spp.repo.j2
+    dest: /etc/yum.repos.d/hpe-spp.repo
+    owner: root
+    group: root
+    mode: "0644"
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_major_version is version('9', '==')
+    - "'hp' in hw_raid_vendor"
+
 - name: Install HPE Smart Storage Administrator CLI
   ansible.builtin.package:
     name: ssacli

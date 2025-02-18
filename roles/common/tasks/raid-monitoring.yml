@@ -99,6 +99,7 @@
     mode: "0644"
   when:
     - ansible_distribution == 'CentOS'
+    - ansible_distribution_major_version is version('8', '==')
     - "'hp' in hw_raid_vendor"
 
 - name: Install HPE Smart Storage Administrator CLI

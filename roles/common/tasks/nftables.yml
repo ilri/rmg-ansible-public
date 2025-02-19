@@ -49,32 +49,6 @@
   loop:
     - update-firehol-nftables.sh.j2
 
-- name: Remove deprecated data and scripts
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - /etc/nftables/spamhaus-ipv4.nft
-    - /etc/nftables/spamhaus-ipv6.nft
-    - /etc/nftables/abuseipdb-ipv4.nft
-    - /etc/nftables/abuseipdb-ipv6.nft
-    - /etc/nftables/russian-ddos-networks-ipv4.nft
-    - /etc/nftables/russian-ddos-networks-ipv6.nft
-    - /etc/nftables/chinese-ddos-networks-ipv4.nft
-    - /etc/nftables/chinese-ddos-networks-ipv6.nft
-    - /etc/nftables/abusech-ipv4.nft
-    - /usr/local/bin/update-abusech-nftables.sh
-    - /usr/local/bin/update-spamhaus-nftables.sh
-    - /etc/systemd/system/update-abusech-nftables.service
-    - /etc/systemd/system/update-abusech-nftables.timer
-    - /etc/systemd/system/update-spamhaus-nftables.service
-    - /etc/systemd/system/update-spamhaus-nftables.timer
-    - /usr/local/bin/aggregate-cidr-addresses.pl
-  notify:
-    - restart nftables
-    - restart fail2ban
-    - restart sshguard
-
 - name: Copy nftables systemd units
   ansible.builtin.copy:
     src: "{{ item }}"

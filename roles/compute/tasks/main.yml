@@ -82,10 +82,11 @@
       - perl-Env.noarch # for masurca
       - perl-Font-TTF.noarch # for circos
       - perl-GD.x86_64 # for circos
-      - perl-JSON.noarch # for vep
+      - perl-JSON.noarch # for vep and mlst
       - perl-LWP-Protocol-https.noarch # so perl can use https
-      - perl-List-MoreUtils.noarch # for abricate
+      - perl-List-MoreUtils.noarch # for abricate and mlst
       - perl-Math-Round.noarch # for circos
+      - perl-Moo.noarch # for mlst
       - perl-PerlIO-gzip.x86_64 # for vep
       - perl-Readonly.noarch # for circos
       - perl-Regexp-Common.noarch # for circos
@@ -95,6 +96,7 @@
       - perl-parent.noarch # for some BioPerl scripts
       - perl-Params-Validate.x86_64 # for circos
       - perl-XML-LibXML # for sratoolkit fastq-dump
+      - perl-Time-Piece.x86_64 # for mlst
       - pigz.x86_64 # for SeqKit
       - proj-devel.x86_64 # for some R libraries
       - proj.x86_64 # for libproj.so.0
@@ -187,17 +189,20 @@
       - perl-DBD-MySQL.x86_64 # for vep
       - perl-DBI.x86_64 # for vep, see: https://hpc.ilri.cgiar.org/vep-software
       - perl-Env.noarch # for masurca
+      - perl-FindBin.noarch # for mlst on CentOS Stream 9
       - perl-Font-TTF.noarch # for circos
       - perl-GD.x86_64 # for circos
-      - perl-JSON.noarch # for vep
+      - perl-JSON.noarch # for vep and mlst
       - perl-LWP-Protocol-https.noarch # so perl can use https
-      - perl-List-MoreUtils.noarch # for abricate
+      - perl-List-MoreUtils.noarch # for abricate and mlst
+      - perl-Moo.noarch # for mlst
       - perl-PerlIO-gzip.x86_64 # for vep
       - perl-Regexp-Common.noarch # for circos
       - perl-Text-Format.noarch # for circos
       - perl-Text-Soundex.x86_64 # for RepeatMasker
-      - perl-parent.noarch # for some BioPerl scripts
+      - perl-Time-Piece.x86_64 # for mlst
       - perl-XML-LibXML # for sratoolkit fastq-dump
+      - perl-parent.noarch # for some BioPerl scripts
       - pigz.x86_64 # for SeqKit
       - proj-devel.x86_64 # for some R libraries
       - proj.x86_64 # for libproj.so.0

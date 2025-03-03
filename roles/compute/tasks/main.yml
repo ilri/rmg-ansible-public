@@ -198,6 +198,7 @@
       - perl-Moo.noarch # for mlst
       - perl-PerlIO-gzip.x86_64 # for vep
       - perl-Regexp-Common.noarch # for circos
+      - perl-Sys-Hostname.x86_64 # for mlst on CentOS Stream 9
       - perl-Text-Format.noarch # for circos
       - perl-Text-Soundex.x86_64 # for RepeatMasker
       - perl-Time-Piece.x86_64 # for mlst

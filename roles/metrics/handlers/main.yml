@@ -14,15 +14,6 @@
     state: restarted
     enabled: true
 
-# Reload is used when the config file changes, and we only want to run this when
-# the configuration has been updated, not when it is newly created (because the
-# restart handler will restart the service anyways).
-- name: reload vmauth
-  ansible.builtin.systemd:
-    name: victoria-metrics-vmauth.service
-    state: reloaded
-  when: configure_vmauth.diff | length > 0
-
 - name: restart node-exporter
   ansible.builtin.systemd:
     name: node-exporter.service
@@ -48,29 +39,11 @@
     state: restarted
     enabled: true
 
-# Reload is used when the config file changes, and we only want to run this when
-# the configuration has been updated, not when it is newly created (because the
-# restart handler will restart the service anyways).
-- name: reload mysqld-exporter
-  ansible.builtin.systemd:
-    name: mysqld-exporter.service
-    state: reloaded
-  when: configure_mysqld_exporter.diff | length > 0
-
 # Restart is used when the service file changes
 - name: restart vmagent
   ansible.builtin.systemd:
     name: victoria-metrics-vmagent.service
     state: restarted
     enabled: true
-
-# Reload is used when the config file changes, and we only want to run this when
-# the configuration has been updated, not when it is newly created (because the
-# restart handler will restart the service anyways).
-- name: reload vmagent
-  ansible.builtin.systemd:
-    name: victoria-metrics-vmagent.service
-    state: reloaded
-  when: configure_vmagent.diff | length > 0
 
 # vim: set sw=2 ts=2:

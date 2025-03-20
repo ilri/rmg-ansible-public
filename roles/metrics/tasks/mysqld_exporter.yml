@@ -45,9 +45,8 @@
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
     mode: "0640"
-  register: configure_mysqld_exporter
   notify:
-    - reload mysqld-exporter
+    - restart mysqld-exporter
 
 - name: Configure mysqld-exporter systemd service
   ansible.builtin.template:

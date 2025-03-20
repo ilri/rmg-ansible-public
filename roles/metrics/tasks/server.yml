@@ -40,9 +40,8 @@
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
     mode: "0600"
-  register: configure_vmauth
   notify:
-    - reload vmauth
+    - restart vmauth
 
 - name: Create VictoriaMetrics data directory
   ansible.builtin.file:

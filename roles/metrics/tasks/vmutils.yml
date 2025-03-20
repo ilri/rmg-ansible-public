@@ -53,9 +53,8 @@
     owner: "{{ victoriametrics_user }}"
     group: "{{ victoriametrics_group }}"
     mode: "0644"
-  register: configure_vmagent
   notify:
-    - reload vmagent
+    - restart vmagent
 
 # Note that anyone on the system can read the service unit via `systemctl show`
 # so we may want to use an environment file for sensitive stuff instead.

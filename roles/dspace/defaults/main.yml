@@ -54,8 +54,8 @@ dspace_mail_disabled: false
 # CMYK/RGB iccprofiles for DSpace 5.6+ PDF thumbnails
 dspace_ghostscript_prefix: /usr/share/color/icc/ghostscript
 
-# command to use for pyvenv (Ubuntu 22.04 is Python 3.10)
-pyvenv_command: python3.10 -m venv
+# command to use for pyvenv (Ubuntu 24.04 is Python 3.12)
+pyvenv_command: python3.12 -m venv
 
 # version 17 for DSpace 7
 java_version_major: 17

@@ -7,10 +7,6 @@ LogLevel VERBOSE
 
 MaxAuthTries 4
 
-{% if inventory_hostname == "linode46" %}
-PubkeyAcceptedAlgorithms +ssh-rsa
-{% endif %}
-
 AuthorizedKeysFile	.ssh/authorized_keys
 
 # To disable tunneled clear text passwords, change to no here!

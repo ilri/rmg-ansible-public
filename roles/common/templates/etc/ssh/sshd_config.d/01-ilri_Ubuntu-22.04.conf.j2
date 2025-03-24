@@ -9,6 +9,11 @@ MaxAuthTries 4
 
 AuthorizedKeysFile	.ssh/authorized_keys
 
+{# For Ona.io's devops team #}
+{% if inventory_hostname is regex("ilrinrb3[346]") %}
+TrustedUserCAKeys /etc/ssh/ca/authorized
+{% endif %}
+
 # To disable tunneled clear text passwords, change to no here!
 {% if ssh_password_authentication == 'disabled' %}
 PasswordAuthentication no

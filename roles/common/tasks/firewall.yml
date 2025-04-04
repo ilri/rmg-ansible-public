@@ -1,7 +1,16 @@
 ---
-# Glaring fucking hack: skip the firewall on linode31 and hetzner02 because they
-# run Docker and Docker doesn't work with nftables. We also ignore holstein be-
-# cause it is running libvirtd, which has a hard depend on iptables.
+# Skip the firewall on hosts where Docker or libvirtd are running because they
+# interfere with the firewall we manage here.
+- name: Check if Docker is running
+  ansible.builtin.systemd:
+    name: docker
+  register: docker_service_status
+
+- name: Check if libvirtd is running
+  ansible.builtin.systemd:
+    name: libvirtd
+  register: libvirtd_service_status
+
 - name: Configure firewall on Ubuntu
   ansible.builtin.include_tasks:
     file: firewall_Ubuntu.yml
@@ -10,9 +19,8 @@
         - firewall
   when:
     - ansible_distribution == 'Ubuntu'
-    - inventory_hostname != 'linode31'
-    - inventory_hostname != 'holstein'
-    - inventory_hostname != 'hetzner02'
+    - docker_service_status.status.ActiveState != 'active'
+    - libvirtd_service_status.status.ActiveState != 'active'
   tags: firewall
 
 - name: Configure firewall on Debian

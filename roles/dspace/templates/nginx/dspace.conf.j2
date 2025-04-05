@@ -452,6 +452,9 @@ map $http_user_agent $limit_bots_ua {
     ~Google '';
     ~Twitterbot '';
 
+    # 2025-04-05 Explicitly allow Archive.org bot
+    ~archive\.org_bot '';
+
     # Need to make sure we match: bot, Bot, BOT, etc...
     ~*bot      1;
     ~[Cc]rawl  1;

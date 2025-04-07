@@ -16,6 +16,7 @@
     mode: "0755"
   with_fileglob:
     - scripts/*.sh
+    - scripts/*.py
 
 - name: Remove mailx
   ansible.builtin.package:

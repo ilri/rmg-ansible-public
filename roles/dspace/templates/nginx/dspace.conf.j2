@@ -71,6 +71,9 @@ server {
     rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC permanent;
     rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login permanent;
 
+    # 2025-02-14: Temporary for IFPRI
+    rewrite ^/server/api/core/bitstreams/2becbc79-b013-4733-874f-e3e228cb6900/content$ /server/api/core/bitstreams/f2af4181-b3ee-477e-84cd-34334ef7b8e1/content;
+
     # permanent redirects for Handles that have been withdrawn
     if ($new_uri) {
         return 301 $new_uri;
@@ -403,7 +406,9 @@ geo $limit_bots_ip {
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
     default '';
 
-    include /etc/nginx/bot-networks.conf;
+    include /etc/nginx/bot-networks-good.conf;
+    include /etc/nginx/bot-networks-bad.conf;
+    include /etc/nginx/datacenter-networks.conf;
 }
 
 # Matching networks have the key set to 'bot' by the geo module above, while
@@ -414,8 +419,7 @@ geo $limit_bots_ip {
 # Note: this seems overly complicated, but is necessary because geo does not
 # support dynamic values. Instead we set an empty string above and then map
 # the host's declared user agent to $ua when we see an empty string. This is
-# also a way for me to use one bot-networks.conf file for both the limiting
-# of requests as well as classifying bots.
+# also a way for me to both limit requests as well as classify bots.
 map $limit_bots_ip $ua {
     # If the geo block above set this to an empty string then we can map the
     # host's declared user agent directly. Otherwise, it's a bot as declared

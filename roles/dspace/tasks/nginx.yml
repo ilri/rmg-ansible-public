@@ -55,7 +55,9 @@
   loop:
     - nginx.conf
     - proxy_params
-    - bot-networks.conf
+    - bot-networks-bad.conf
+    - bot-networks-good.conf
+    - datacenter-networks.conf
     - handle-redirects.conf
   notify:
     - reload nginx

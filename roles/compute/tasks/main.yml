@@ -201,6 +201,7 @@
       - perl-Sys-Hostname.x86_64 # for mlst on CentOS Stream 9
       - perl-Text-Format.noarch # for circos
       - perl-Text-Soundex.x86_64 # for RepeatMasker
+      - perl-Tie-RefHash # for snippy's Fatal dependency
       - perl-Time-Piece.x86_64 # for mlst
       - perl-XML-LibXML # for sratoolkit fastq-dump
       - perl-parent.noarch # for some BioPerl scripts

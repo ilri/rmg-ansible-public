@@ -161,6 +161,7 @@
       - libcurl-devel.x86_64 # for some R libraries
       - libgfortran.x86_64 # for R
       - libgomp.x86_64 # for R
+      - libfaketime # for prokka's tbl2asn
       - libicu.x86_64 # for R
       - libicu60.x86_64 # for R compiled on CentOS Stream 8
       - libjpeg-turbo-devel.x86_64 # needed for some R packages like HiCeekR

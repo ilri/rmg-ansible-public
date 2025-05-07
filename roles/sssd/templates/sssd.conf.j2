@@ -50,6 +50,9 @@ ldap_opt_timeout = 12
 ldap_search_timeout = 12
 ldap_enumeration_search_timeout = 12
 
+# Ignore unreadable LDAP entries referenced in group's member attribute
+ldap_ignore_unreadable_references = True
+
 [nss]
 filter_groups = root
 filter_users = root,provisioning,solr

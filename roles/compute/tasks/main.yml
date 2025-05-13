@@ -152,6 +152,7 @@
       - gsl.x86_64 # for fastSTRUCTURE
       - hdf5-devel.x86_64 # for some R libraries
       - htop.x86_64
+      - isa-l-devel # for fastp/0.24.1
       - java-11-openjdk.x86_64 # for lots of stuff
       - joe.x86_64 # some users need this
       - lapack.x86_64 # for presto
@@ -162,6 +163,7 @@
       - libgfortran.x86_64 # for R
       - libgomp.x86_64 # for R
       - libfaketime # for prokka's tbl2asn
+      - libdeflate-devel # for fastp/0.24.1
       - libicu.x86_64 # for R
       - libicu60.x86_64 # for R compiled on CentOS Stream 8
       - libjpeg-turbo-devel.x86_64 # needed for some R packages like HiCeekR

@@ -456,6 +456,9 @@ map $http_user_agent $limit_bots_ua {
     ~Google '';
     ~Twitterbot '';
 
+    # 2025-05-15 Explicitly allow Kagibot
+    ~Kagibot '';
+
     # 2025-04-05 Explicitly allow Archive.org bot
     ~archive\.org_bot '';
 

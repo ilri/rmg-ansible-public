@@ -464,6 +464,18 @@ map $http_user_agent $limit_bots_ua {
     ~[Cc]rawl  1;
     ~[Sp]ider  1;
 
+    # 2025-05-15: Two-digit Chrome version? Suspicious.
+    # Test: https://regex101.com/r/3RMgXr/1
+    '~Chrome\/\d{2}\.\d+\.\d+\.\d+' 1;
+
+    # 2025-05-15: Old Chrome version? Suspicious.
+    # Test: https://regex101.com/r/dp257p/1
+    '~Chrome\/10\d\.\d+\.\d+\.\d+' 1;
+
+    # 2025-05-15: Chrome version with zeros? Suspicious.
+    # Test: https://regex101.com/r/mt3Rer/1
+    '~Chrome\/\d{2,3}\.0\.0\.0' 1;
+
     # 2021-12-29 dead giveway for a bot that is trying to pretend to be a user
     ~randint 1;
 

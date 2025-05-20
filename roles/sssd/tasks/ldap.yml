@@ -47,7 +47,7 @@
   when:
     - ansible_distribution == 'CentOS'
     - update_cert_bundle is changed
-  ansible.builtin.shell: /usr/bin/update-ca-trust enable && /usr/bin/update-ca-trust extract
+  ansible.builtin.command: /usr/bin/update-ca-trust extract
 
 - name: Install OpenLDAP utils
   ansible.builtin.package:

@@ -66,4 +66,12 @@
     state: present
   tags: packages
 
+- name: Add systemd-tmpfiles config for dirsrv backups
+  ansible.builtin.file:
+    src: etc/tmpfiles.d/dirsrv-backups.conf
+    dest: /etc/tmpfiles.d/dirsrv-backups.conf
+    owner: root
+    group: root
+    mode: "0644"
+
 # vim: set sw=2 ts=2:

@@ -24,6 +24,7 @@
   ansible.builtin.dnf:
     name:
       - httpd.x86_64
+      - caddy.x86_64
     state: present
   tags: packages
 

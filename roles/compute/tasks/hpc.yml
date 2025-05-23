@@ -24,7 +24,6 @@
   ansible.builtin.dnf:
     name:
       - httpd.x86_64
-      - mod_ssl.x86_64
     state: present
   tags: packages
 

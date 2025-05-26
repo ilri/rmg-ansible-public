@@ -100,12 +100,6 @@ server {
         limit_req zone=badbots_ua;
         limit_req zone=badbots_ip;
 
-        # Set the status code for rate-limited requests
-        limit_req_status 429;
-
-        # Log at WARN level instead of ERROR
-        limit_req_log_level warn;
-
         # Never index dynamic pages!
         add_header X-Robots-Tag "none";
 
@@ -140,12 +134,6 @@ server {
         # rate limit for poorly behaved bots, see limit_req_zone below
         limit_req zone=badbots_ua;
         limit_req zone=badbots_ip;
-
-        # Set the status code for rate-limited requests
-        limit_req_status 429;
-
-        # Log at WARN level instead of ERROR
-        limit_req_log_level warn;
 
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';

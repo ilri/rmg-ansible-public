@@ -17,7 +17,7 @@
 # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html
 proxy_cache_path /var/cache/nginx/rest_cache levels=2:2 keys_zone=rest:10m inactive=24h max_size=1G;
 
-{% if nginx_tls_cert is defined %}
+{% if nginx_tls_cert is defined -%}
 # Handle {{ nginx_server_name }} http -> https
 #
 server {
@@ -32,7 +32,7 @@ server {
 
         # ? in rewrite makes sure nginx doesn't append query string again
         # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
-        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 %}permanent{% else %}redirect{% endif %};
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 -%}permanent{% else %}redirect{% endif %};
     }
 
     include extra-security.conf;
@@ -48,14 +48,14 @@ server {
     listen [::]:{{ nginx_ssl_port }} quic reuseport;
     listen [::]:{{ nginx_ssl_port }} ssl;
     http2 on;
-    {% else %}
+    {% else -%}
     listen 80;
     listen [::]:80;
     {% endif %} {# end: nginx_tls_cert #}
 
     server_name {{ nginx_server_name }};
 
-    {% if nginx_forbid_robots == True %}
+    {% if nginx_forbid_robots == True -%}
     # Add header to forbid robots to index
     # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
     add_header X-Robots-Tag "none";
@@ -150,7 +150,7 @@ server {
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';
 
-        {% if nginx_forbid_robots == True %}
+        {% if nginx_forbid_robots == True -%}
         # Add header to forbid robots to index
         # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
         add_header X-Robots-Tag "none";
@@ -180,7 +180,7 @@ server {
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';
 
-        {% if nginx_forbid_robots == True %}
+        {% if nginx_forbid_robots == True -%}
         # Add header to forbid robots to index
         # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
         add_header X-Robots-Tag "none";
@@ -211,7 +211,7 @@ server {
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';
 
-        {% if nginx_forbid_robots == True %}
+        {% if nginx_forbid_robots == True -%}
         # Add header to forbid robots to index
         # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
         add_header X-Robots-Tag "none";
@@ -306,7 +306,7 @@ server {
             proxy_cache_bypass $http_cache_control $active_user_session;
             proxy_no_cache $http_cache_control $active_user_session;
 
-            {% if nginx_forbid_robots == True %}
+            {% if nginx_forbid_robots == True -%}
             # Add header to forbid robots to index
             # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
             add_header X-Robots-Tag "none";
@@ -339,7 +339,7 @@ server {
         # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
         include extra-security.conf;
 
-        {% if nginx_forbid_robots == True %}
+        {% if nginx_forbid_robots == True -%}
         # Add header to forbid robots to index
         # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
         add_header X-Robots-Tag "none";
@@ -354,9 +354,9 @@ server {
 }
 
 upstream tomcat-http {
-    {% if nginx_tls_cert is defined %}
+    {% if nginx_tls_cert is defined -%}
     server 127.0.0.1:8443;
-    {% else %}
+    {% else -%}
     server 127.0.0.1:8001;
     {% endif %}
 

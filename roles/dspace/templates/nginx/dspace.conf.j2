@@ -98,6 +98,7 @@ server {
 
         # rate limit for poorly behaved bots, see limit_req_zone below
         limit_req zone=badbots_ua;
+        limit_req zone=badbots_old_ua;
         limit_req zone=badbots_ip;
 
         # Never index dynamic pages!
@@ -133,6 +134,7 @@ server {
 
         # rate limit for poorly behaved bots, see limit_req_zone below
         limit_req zone=badbots_ua;
+        limit_req zone=badbots_old_ua;
         limit_req zone=badbots_ip;
 
         # required for browsers to direct them to quic port
@@ -164,6 +166,9 @@ server {
     # log API requests
     location /server {
         access_log /var/log/nginx/api-access.log;
+
+        # only rate limit old user agents associated with botnets
+        limit_req zone=badbots_old_ua;
 
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';
@@ -453,20 +458,30 @@ map $http_user_agent $limit_bots_ua {
     ~[Ss]crape 1;
     ~[Sp]ider  1;
 
-    # 2025-05-15: One- and two-digit Chrome version? Suspicious.
-    # Test: https://regex101.com/r/nSJeR4/1
-    '~\bChrome\/\d{1,2}\.\d+\.\d+\.\d+' 1;
-
-    # 2025-05-15: Old Chrome version? Suspicious.
-    # Test: https://regex101.com/r/ZGBzZt/1
-    '~Chrome\/1[012]\d\.\d+\.\d+\.\d+' 1;
-
     # 2021-12-29 dead giveway for a bot that is trying to pretend to be a user
     ~randint 1;
 
     # 2023-01-18 python requests or urllib should be treated as bots in the
     # frontend (we already drop their hits from Solr).
     ~python 1;
+}
+
+map $http_user_agent $limit_bots_old_ua {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    # 2025-05-15: One- and two-digit Chrome version? Suspicious.
+    # Test: https://regex101.com/r/FZX9RM/1
+    '~\bChrome/\d{1,2}\.\d+\.\d+\.\d+' 1;
+
+    # 2025-05-15: Old Chrome version? Suspicious.
+    # Test: https://regex101.com/r/pssB63/1
+    '~\bChrome/1[012]\d\.\d+\.\d+\.\d+' 1;
+
+    # 2025-05-15: Old Firefox (versions x, xx, and 10x/11x). Version 128 ESR was released in 2024-07
+    '~\bFirefox/\d{1,2}\.' 1;
+    '~\bFirefox/1[01]\d\.' 1;
 }
 
 # Check if the JSESSIONID cookie is present and contains a 32-character hex
@@ -508,6 +523,7 @@ real_ip_header X-Forwarded-For;
 #
 # A zone key size of 1 megabyte should be able to store around 16,000 sessions.
 limit_req_zone $limit_bots_ua zone=badbots_ua:1m rate=1r/m;
+limit_req_zone $limit_bots_old_ua zone=badbots_old_ua:1m rate=1r/m;
 limit_req_zone $limit_bots_ip zone=badbots_ip:1m rate=1r/m;
 
 # Zone for limiting requests to dynamic pages like browse and discover that are

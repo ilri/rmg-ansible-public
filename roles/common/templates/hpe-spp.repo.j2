@@ -14,3 +14,5 @@ baseurl=https://downloads.linux.hpe.com/repo/spp-gen8/redhat/$releasever/$basear
 enabled=1
 gpgcheck=1
 gpgkey=https://downloads.linux.hpe.com/repo/spp/GPG-KEY-spp,https://downloads.linux.hpe.com/repo/spp/GPG-KEY2-spp
+# Conflicts with ofed-scripts and others from Mellanox repo
+exclude=mlnx-ofa_kernel

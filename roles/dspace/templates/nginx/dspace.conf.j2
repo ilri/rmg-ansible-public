@@ -479,9 +479,11 @@ map $http_user_agent $limit_bots_old_ua {
     # Test: https://regex101.com/r/pssB63/1
     '~\bChrome/1[012]\d\.\d+\.\d+\.\d+' 1;
 
-    # 2025-05-15: Old Firefox (versions x, xx, and 10x/11x). Version 128 ESR was released in 2024-07
+    # 2025-05-27: Allow Firefox 128 ESR was released in 2024-07
+    '~\bFirefox/128\.' '';
+    # 2025-05-15: Old Firefox (versions x, xx, and 10x/11x/12x)? Suspicious.
     '~\bFirefox/\d{1,2}\.' 1;
-    '~\bFirefox/1[01]\d\.' 1;
+    '~\bFirefox/1[012]\d\.' 1;
 }
 
 # Check if the JSESSIONID cookie is present and contains a 32-character hex

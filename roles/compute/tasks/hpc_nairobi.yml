@@ -29,7 +29,6 @@
       - php-fpm.x86_64
       - php-gd.x86_64
       - php-intl.x86_64
-      - php-json.x86_64
       - php-mbstring.x86_64
       - php-mysqlnd.x86_64
       - php-opcache.x86_64

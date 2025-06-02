@@ -52,6 +52,5 @@
     - slurm_head_node is defined
     - inventory_hostname == slurm_head_node
     - "'nairobi_compute' in group_names"
-    - ansible_distribution_major_version is version('8', '==')
 
 # vim: set sw=2 ts=2:

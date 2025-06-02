@@ -4,7 +4,6 @@
   when:
     - slurm_head_node is defined
     - inventory_hostname == slurm_head_node
-    - ansible_distribution_major_version is version('8', '==')
 
 - name: Configure SLURM
   ansible.builtin.import_tasks: slurm.yml
@@ -228,35 +227,6 @@
       - parallel.noarch # needed by roary
     state: present
   when: ansible_distribution_major_version is version('9', '==')
-  tags: packages
-
-# We need ruby for the Rapid Identification of Microbes (RIM) software suite in
-# Nairobi. This is ghetto because there is no way to enable a module idempotent-
-# ly from Ansible.
-#
-# See: https://github.com/ansible/ansible/issues/64852
-- name: Enable the ruby/3.1 module stream
-  when:
-    - "'nairobi_compute' in group_names"
-    - ansible_distribution_major_version is version('8', '==')
-  ansible.builtin.copy:
-    dest: /etc/dnf/modules.d/ruby.module
-    content: |
-      [ruby]
-      name=ruby
-      stream=3.1
-      profiles=common
-      state=enabled
-  tags: packages
-
-- name: Install ruby/3.1
-  when:
-    - "'nairobi_compute' in group_names"
-    - ansible_distribution_major_version is version('8', '==')
-  ansible.builtin.package:
-    name: [ruby, ruby-devel, rubygem-irb]
-    state: present
-    update_cache: true
   tags: packages
 
 # Previously nvtop was not packaged in EPEL so we compiled it as an environment

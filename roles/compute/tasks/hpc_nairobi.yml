@@ -2,11 +2,16 @@
 # Try to codify the organic growth of HPC as a system into something we can ac-
 # tually manage.
 
-# Need to set SELinux to permissive for Apache httpd only:
+# Set SELinux context for Dokuwiki manually:
 #
-#   semanage permissive -a httpd_t
+#   # semanage fcontext -a -t httpd_sys_content_t '/var/www/html/wiki(/.*)?'
+#   # semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/wiki/data(/.*)?'
+#   # semanage fcontext -a -t httpd_sys_rw_content_t '/var/www/html/wiki/conf(/.*)?'
+#   # restorecon -Rv /var/www/html/wiki
 #
-# There is no Ansible module for semanage and we need this for DokuWiki.
+# See: https://www.dokuwiki.org/install:centos#selinux_note
+#
+# There is no Ansible module for semanage.
 
 # I'm not sure if we also need httpd_unified? In the past we did...
 - name: Set SELinux booleans

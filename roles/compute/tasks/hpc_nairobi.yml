@@ -56,7 +56,7 @@
   tags: packages
 
 - name: Add systemd-tmpfiles config for dirsrv backups
-  ansible.builtin.file:
+  ansible.builtin.copy:
     src: etc/tmpfiles.d/dirsrv-backups.conf
     dest: /etc/tmpfiles.d/dirsrv-backups.conf
     owner: root

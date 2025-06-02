@@ -24,7 +24,7 @@ ldap_access_filter = (objectClass=posixAccount)
 ldap_uri = ldaps://hpc.ilri.cgiar.org
 
 # CACERT should work on both GnuTLS (Ubuntu) and OpenSSL (CentOS)
-ldap_tls_cacert = {{ local_ca_certs_dir }}/hpc-ca-2022.asc
+ldap_tls_cacert = {{ local_ca_certs_dir }}/hpc-ca-2025.asc
 ldap_tls_reqcert = demand
 
 {% if 'compute' in group_names %}

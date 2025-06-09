@@ -107,17 +107,18 @@ postgres_exporter_binary_path: /usr/local/bin/postgres_exporter
 
 
 # See: https://github.com/prometheus/jmx_exporter/releases
-jmx_exporter_version: 1.2.0
+jmx_exporter_version: 1.3.0
 jmx_exporter_old_versions:
   - "/etc/victoriametrics/jmx_prometheus_javaagent-0.20.0.jar"
   - "/etc/victoriametrics/jmx_prometheus_javaagent-1.0.1.jar"
   - "/etc/victoriametrics/jmx_prometheus_javaagent-1.1.0.jar"
+  - "/etc/victoriametrics/jmx_prometheus_javaagent-1.2.0.jar"
 
 # URL for jmx_exporter tarball
 jmx_exporter_jar: jmx_prometheus_javaagent-{{ jmx_exporter_version }}.jar
 jmx_exporter_url: https://github.com/prometheus/jmx_exporter/releases/download/{{ jmx_exporter_version }}/{{ jmx_exporter_jar }}
 # sha256sum
-jmx_exporter_url_checksum: 3a87f7f9df4ff79741d53ccd24aba75176481ececc80f3797dea8413fa3ed2ec
+jmx_exporter_url_checksum: ba74aad73934e59f4ca9c0779b49f1663c1fc7a81d5d99fc665bd5e5039310f5
 jmx_exporter_jar_path: /etc/victoriametrics/{{ jmx_exporter_jar }}
 jmx_exporter_config_path: /etc/victoriametrics/jmx_exporter.yml
 

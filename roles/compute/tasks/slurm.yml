@@ -140,6 +140,20 @@
     - restart slurmctld
     - restart slurmd
 
+- name: Start and enable slurmdbd
+  ansible.builtin.systemd_service:
+    name: slurmdbd
+    state: started
+    enabled: true
+  when: inventory_hostname == slurm_head_node
+
+- name: Start and enable slurmctld
+  ansible.builtin.systemd_service:
+    name: slurmctld
+    state: started
+    enabled: true
+  when: inventory_hostname == slurm_head_node
+
 - name: Start and enable slurmd
   ansible.builtin.systemd_service:
     name: slurmd

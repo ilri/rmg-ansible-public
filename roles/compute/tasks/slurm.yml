@@ -27,7 +27,6 @@
       - slurm-pam_slurm
       - slurm-example-configs
       - slurm-contribs
-      - munge
     state: present
   when: inventory_hostname == slurm_head_node
   tags: packages
@@ -41,7 +40,6 @@
       - slurm-pam_slurm
       - slurm-example-configs
       - slurm-contribs
-      - munge
     state: present
   when: inventory_hostname != slurm_head_node
   tags: packages
@@ -119,31 +117,28 @@
   when: inventory_hostname == slurm_head_node
   notify: restart slurmctld
 
-- name: Read munge key (Nairobi)
+- name: Read slurm key (Nairobi)
   when: "'nairobi_compute' in group_names"
   ansible.builtin.set_fact:
-    munge_key_content: "{{ lookup('file', 'private/data/compute/nairobi-munge.key') }}"
+    slurm_key_content: "{{ lookup('file', 'private/data/compute/nairobi-slurm.key') }}"
 
-- name: Read munge key (Addis)
+- name: Read slurm key (Addis)
   when: "'addis_compute' in group_names"
   ansible.builtin.set_fact:
-    munge_key_content: "{{ lookup('file', 'private/data/compute/addis-munge.key') }}"
+    slurm_key_content: "{{ lookup('file', 'private/data/compute/addis-slurm.key') }}"
 
-- name: Copy munge key
+- name: Copy slurm key
   ansible.builtin.copy:
-    content: "{{ munge_key_content }}"
-    dest: /etc/munge/munge.key
-    owner: munge
-    group: munge
+    content: "{{ slurm_key_content }}"
+    dest: /etc/slurm/slurm.key
+    owner: slurm
+    group: slurm
     mode: "0600"
-  when: munge_key_content is defined
-  notify: restart munge
-
-- name: Start and enable munge
-  ansible.builtin.systemd_service:
-    name: munge
-    state: started
-    enabled: true
+  when: slurm_key_content is defined
+  notify:
+    - restart slurmdbd
+    - restart slurmctld
+    - restart slurmd
 
 - name: Start and enable slurmd
   ansible.builtin.systemd_service:

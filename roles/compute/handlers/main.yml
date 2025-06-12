@@ -23,9 +23,4 @@
     name: slurmd
     state: restarted
 
-- name: restart munge
-  ansible.builtin.systemd_service:
-    name: munge
-    state: restarted
-
 # vim: set sw=2 ts=2:

@@ -10,6 +10,8 @@ ClusterName=ilri_ethiopia
 {% endif %}
 SlurmctldHost={{ slurm_head_node }}
 SlurmctldAddr={{ hostvars[slurm_head_node].ansible_host }}
+AuthType=auth/slurm
+CredType=cred/slurm
 #
 #DisableRootJobs=NO
 #EnforcePartLimits=NO

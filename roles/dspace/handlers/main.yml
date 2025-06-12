@@ -9,17 +9,17 @@
 # So for now I will duplicate it here.
 
 - name: restart tomcat9
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: tomcat9
     state: restarted
 
 - name: restart dspace-statistics-api
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: dspace-statistics-api
     state: restarted
 
 # When configs or TLS certificates change
 - name: reload nginx
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: nginx
     state: reloaded

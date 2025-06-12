@@ -6,7 +6,7 @@
   tags: glusterfs-server
 
 - name: Start and enable glusterd service
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: glusterd
     state: started
     enabled: true

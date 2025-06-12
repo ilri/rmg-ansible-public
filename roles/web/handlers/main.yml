@@ -3,30 +3,30 @@
 
 # For module changes
 - name: restart apache2
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: apache2
     state: restarted
 
 # For config changes
 - name: reload apache2
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: apache2
     state: reloaded
 
 # When the nginx binary changes
 - name: restart nginx
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: nginx
     state: restarted
 
 # When configs or TLS certificates change
 - name: reload nginx
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: nginx
     state: reloaded
 
 - name: reload caddy
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: caddy
     state: reloaded
 

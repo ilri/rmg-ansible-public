@@ -5,24 +5,24 @@
 # at the top because handlers are run in the order they are defined, not in the
 # order they are notified!
 - name: restart slurmdbd
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: slurmdbd
     state: restarted
   delegate_to: "{{ hostvars[slurm_head_node].ansible_host }}"
 
 - name: restart slurmctld
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: slurmctld
     state: restarted
   delegate_to: "{{ hostvars[slurm_head_node].ansible_host }}"
 
 - name: restart slurmd
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: slurmd
     state: restarted
 
 - name: restart munge
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: munge
     state: restarted
 

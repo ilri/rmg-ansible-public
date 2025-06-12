@@ -12,7 +12,7 @@
   when:
     - ansible_distribution == 'CentOS'
     - ansible_distribution_major_version is version('7', '>=')
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: tuned
     state: started
     enabled: true

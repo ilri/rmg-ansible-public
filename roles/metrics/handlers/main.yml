@@ -2,46 +2,46 @@
 # file: roles/metrics/handlers/main.yml
 
 - name: restart victoria-metrics
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: victoria-metrics.service
     state: restarted
     enabled: true
 
 # Restart is used when the service file changes
 - name: restart vmauth
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: victoria-metrics-vmauth.service
     state: restarted
     enabled: true
 
 - name: restart node-exporter
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: node-exporter.service
     state: restarted
     enabled: true
 
 - name: restart solr-prometheus-exporter
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: solr-prometheus-exporter.service
     state: restarted
     enabled: true
 
 # Restart is used when the service file changes
 - name: restart mysqld-exporter
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: mysqld-exporter.service
     state: restarted
     enabled: true
 
 - name: restart postgres-exporter
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: postgres-exporter.service
     state: restarted
     enabled: true
 
 # Restart is used when the service file changes
 - name: restart vmagent
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: victoria-metrics-vmagent.service
     state: restarted
     enabled: true

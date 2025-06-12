@@ -115,14 +115,14 @@
 
     # need to reload to pick up service/timer/environment changes
     - name: Reload systemd daemon
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         daemon_reload: true
       when: restic_systemd_service is changed
             or restic_systemd_timer is changed
             or restic_systemd_environment is changed
 
     - name: Start and enable restic systemd timer
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: restic-backup.timer
         state: started
         enabled: true

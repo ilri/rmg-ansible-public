@@ -35,7 +35,7 @@
       register: upgrade_slurm_packages
 
     - name: Reload systemd
-      ansible.builtin.systemd: # noqa no-handler
+      ansible.builtin.systemd_service: # noqa no-handler
         daemon_reload: true
       when: upgrade_slurm_packages is changed
 
@@ -64,7 +64,7 @@
       register: upgrade_slurm_packages
 
     - name: Reload systemd
-      ansible.builtin.systemd: # noqa no-handler
+      ansible.builtin.systemd_service: # noqa no-handler
         daemon_reload: true
       when: upgrade_slurm_packages is changed
 

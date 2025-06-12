@@ -2,7 +2,7 @@
 # file: roles/storage/handlers/main.yml
 
 - name: Start and enable Mellanox IRQ affinity service
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: set-mellanox-irq-affinity.service
     state: started
     enabled: true

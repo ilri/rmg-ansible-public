@@ -81,7 +81,7 @@
   tags: letsencrypt
 
 - name: Start and enable nginx service
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: nginx
     state: started
     enabled: true

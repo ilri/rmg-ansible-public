@@ -4,7 +4,7 @@
 # Remember, Ansible handlers are run in the order they are defined globally, not
 # the order they are listed in the task's notify.
 - name: reload systemd
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     daemon_reload: true
 
 - name: restart iptables
@@ -23,12 +23,12 @@
     state: reloaded
 
 - name: reload sysctl
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: systemd-sysctl
     state: restarted
 
 - name: restart nftables
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: nftables
     state: restarted
 
@@ -38,7 +38,7 @@
 # 2022-06-08: do not run fail2ban handlers on CentOS because we currently
 # do not use fail2ban there (due to its hard dependency on firewalld).
 - name: restart fail2ban
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: fail2ban
     state: restarted
   when: ansible_distribution != 'CentOS'
@@ -46,7 +46,7 @@
 # 2023-02-08: only run sshguard handlers on CentOS 8 because we run that
 # instead of fail2ban because of fail2ban's hard dependency on firewalld.
 - name: restart sshguard
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: sshguard.service
     state: restarted
   when:

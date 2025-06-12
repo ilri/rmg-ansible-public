@@ -11,7 +11,7 @@
   notify: restart sshguard
 
 - name: Start and enable sshguard service
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: sshguard.service
     state: started
     enabled: true

@@ -64,7 +64,7 @@
 
 # need to reload to pick up service/timer/environment changes
 - name: Reload systemd daemon
-  ansible.builtin.systemd: # noqa no-handler
+  ansible.builtin.systemd_service: # noqa no-handler
     daemon_reload: true
   when: solr_systemd_service is changed
 

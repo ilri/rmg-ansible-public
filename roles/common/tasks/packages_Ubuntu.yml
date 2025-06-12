@@ -177,7 +177,7 @@
       ignore_errors: true
 
     - name: Disable annoying Canonical spam in MOTD
-      ansible.builtin.systemd:
+      ansible.builtin.systemd_service:
         name: "{{ item }}"
         state: stopped
         enabled: false

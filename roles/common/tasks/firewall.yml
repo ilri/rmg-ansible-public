@@ -2,12 +2,12 @@
 # Skip the firewall on hosts where Docker or libvirtd are running because they
 # interfere with the firewall we manage here.
 - name: Check if Docker is running
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: docker
   register: docker_service_status
 
 - name: Check if libvirtd is running
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: libvirtd
   register: libvirtd_service_status
 

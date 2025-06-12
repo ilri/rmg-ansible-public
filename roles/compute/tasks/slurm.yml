@@ -140,13 +140,13 @@
   notify: restart munge
 
 - name: Start and enable munge
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: munge
     state: started
     enabled: true
 
 - name: Start and enable slurmd
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: slurmd
     state: started
     enabled: true

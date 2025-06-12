@@ -2,13 +2,13 @@
 # file: roles/ganglia/handlers/main.yml
 
 - name: restart gmond
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: gmond
     state: restarted
     enabled: true
 
 - name: restart gmetad
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: gmetad
     state: restarted
     enabled: true

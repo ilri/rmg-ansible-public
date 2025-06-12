@@ -99,7 +99,7 @@
   tags: postgresql
 
 - name: Start and enable PostgreSQL
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: postgresql
     state: started
     enabled: true

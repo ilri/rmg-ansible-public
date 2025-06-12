@@ -85,7 +85,7 @@
     enabled: true
 
 - name: Start and enable oddjobd service
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: oddjobd
     state: started
     enabled: true

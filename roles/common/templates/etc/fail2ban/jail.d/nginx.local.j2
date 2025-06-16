@@ -18,7 +18,7 @@ banaction=nftables-allports
 # Integrate with firewalld and ipsets
 banaction = firewallcmd-ipset
 {% endif %}
-logpath   = /var/log/nginx/*access.log
+logpath   = %(nginx_access_log)s
 # Try to find a non-existent wp-login.php once and get banned. Tough luck.
 maxretry  = 1
 findtime  = {{ fail2ban_findtime }}

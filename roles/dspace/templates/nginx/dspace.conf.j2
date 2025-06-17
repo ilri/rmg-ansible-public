@@ -471,6 +471,9 @@ map $http_user_agent $limit_bots_old_ua {
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
     default '';
 
+    # 2025-06-17: FAO AGRIS harvester uses the following user agent
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3' '';
+
     # 2025-05-15: One- and two-digit Chrome version? Suspicious.
     # Test: https://regex101.com/r/FZX9RM/1
     '~\bChrome/\d{1,2}\.\d+\.\d+\.\d+' 1;

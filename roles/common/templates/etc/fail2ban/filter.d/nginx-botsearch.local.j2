@@ -1,0 +1,30 @@
+{{ ansible_managed | comment }}
+
+# Fail2Ban filter to match web requests for selected URLs that don't exist
+#
+
+[INCLUDES]
+
+# Load regexes for filtering
+before = botsearch-common.local
+
+[Definition]
+
+failregex = ^<HOST> \- \S+ \[\] \"(GET|POST|HEAD) \/<block> \S+\" 404 .+$
+
+ignoreregex = 
+
+datepattern = ^[^\[]*\[({DATE})
+
+journalmatch = _SYSTEMD_UNIT=nginx.service + _COMM=nginx
+
+# DEV Notes:
+# Based on apache-botsearch filter
+# 
+# Author: Frantisek Sumsal
+#
+# Modifications from the default nginx-botsearch.conf by Alan Orth:
+#   - use our modified botsearch-common.local
+#   - simplify failregex to use a single pattern that matches access logs
+#     instead of the default that attempts to match error logs as well
+#   - limit datepattern for performance

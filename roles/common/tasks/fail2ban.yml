@@ -21,6 +21,7 @@
   loop:
     - { src: etc/fail2ban/jail.d/nginx.local.j2, dest: /etc/fail2ban/jail.d/nginx.local }
     - { src: etc/fail2ban/filter.d/botsearch-common.local.j2, dest: /etc/fail2ban/filter.d/botsearch-common.local }
+    - { src: etc/fail2ban/filter.d/nginx-botsearch.local.j2, dest: /etc/fail2ban/filter.d/nginx-botsearch.local }
   notify: restart fail2ban
 
 # Check if we have any Apache filters enabled (using a clever trick to convert

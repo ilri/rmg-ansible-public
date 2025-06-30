@@ -14,10 +14,13 @@
     - extra_fail2ban_filters is defined
     - "'nginx' in ''.join(extra_fail2ban_filters)"
   ansible.builtin.template:
-    src: etc/fail2ban/jail.d/nginx.local.j2
-    dest: /etc/fail2ban/jail.d/nginx.local
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
     owner: root
     mode: "0644"
+  loop:
+    - { src: etc/fail2ban/jail.d/nginx.local.j2, dest: /etc/fail2ban/jail.d/nginx.local }
+    - { src: etc/fail2ban/filter.d/botsearch-common.local.j2, dest: /etc/fail2ban/filter.d/botsearch-common.local }
   notify: restart fail2ban
 
 # Check if we have any Apache filters enabled (using a clever trick to convert

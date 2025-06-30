@@ -1,3 +1,7 @@
+[Unit]
+# If nftables is stopped or restarted, propagate to fail2ban as well
+PartOf=nftables.service
+
 [Service]
 PrivateDevices=yes
 PrivateTmp=yes

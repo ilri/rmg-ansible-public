@@ -19,6 +19,8 @@ banaction=nftables-allports
 banaction = firewallcmd-ipset
 {% endif %}
 logpath   = %(nginx_access_log)s
+# Override systemd backend implied due to `journalmatch` in the default nginx-botsearch.conf
+backend   = auto
 # Try to find a non-existent wp-login.php once and get banned. Tough luck.
 maxretry  = 1
 findtime  = {{ fail2ban_findtime }}

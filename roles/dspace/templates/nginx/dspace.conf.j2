@@ -86,10 +86,6 @@ server {
     # rate limit requests to dynamic pages to protect against bots and malicious
     # users (see the definition for the dynamicpages limit_req_zone later).
     location ~ ^/(browse|search) {
-        if ($http_user_agent = '') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
-
         # log access requests for debug / load analysis
         access_log /var/log/nginx/https-access.log;
 
@@ -125,10 +121,6 @@ server {
     }
 
     location / {
-        if ($http_user_agent = '') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
-
         # log access requests for debug / load analysis
         access_log /var/log/nginx/https-access.log;
 
@@ -244,9 +236,6 @@ server {
 
     # log legacy rest requests
     location /rest {
-        if ($http_user_agent = '') {
-            return 403 "Due to abuse we no longer permit requests without a user agent. Please specify a descriptive user agent, for example containing the word 'bot', if you are accessing the site programmatically. For more information see here: https://$server_name/page/about.";
-        }
         # redirect invalid REST retrieveLink values (see DS-3193)
         rewrite ^/rest/rest/(.*)$ https://{{ nginx_server_name }}/rest/$1 redirect;
 
@@ -433,6 +422,9 @@ map $http_user_agent $limit_bots_ua {
     # requests with an empty key are not evaluated by limit_req
     # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
     default '';
+
+    # 2025-06-30: treat requests with no user agent as bots
+    '' 1;
 
     # 2020-03-10 Explicitly allow UptimeRobot
     ~UptimeRobot '';

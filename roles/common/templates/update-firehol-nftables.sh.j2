@@ -74,9 +74,6 @@ echo "Reloading nftables"
 {% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '>=') %}
 echo "Restarting sshguard"
 {{ systemctl_bin }} restart sshguard.service
-{% else %}
-echo "Restarting fail2ban"
-{{ systemctl_bin }} restart fail2ban.service
-{% endif %}
+{% endif -%}
 
 rm -v firehol_level1.netset

@@ -37,6 +37,8 @@ repo_gpgcheck=0
 metadata_expire=6h
 countme=1
 enabled=1
+# 2025-07-01: appstream's proj conflicts with epel's, and epel's provides proj-devel so let's use theirs
+exclude=proj
 
 [appstream-debuginfo]
 name=CentOS Stream $releasever - AppStream - Debug

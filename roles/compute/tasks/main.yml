@@ -37,10 +37,8 @@
       - glpk-devel.x86_64 # for shannon_cpp
       - gmp-devel.x86_64 # for some R libraries
       - gnuplot.x86_64
-      - graphviz
       - graphviz-devel.x86_64 # for some Python libraries
       - gsl-devel.x86_64 # needed for some R packages like HiCeekR
-      - gsl.x86_64 # for fastSTRUCTURE
       - hdf5-devel.x86_64 # for some R libraries
       - htop.x86_64
       - java-11-openjdk.x86_64 # for lots of stuff
@@ -117,7 +115,6 @@
   tags: packages
 
 # 2025-01-06: currently missing from CentOS Stream 9:
-      #- graphviz-devel.x86_64 # for some Python libraries
       #- perl-Math-Round.noarch # for circos
       #- perl-Readonly.noarch # for circos
       #- perl-Statistics-Basic.noarch # for circos
@@ -145,9 +142,8 @@
       - glpk-devel.x86_64 # for shannon_cpp
       - gmp-devel.x86_64 # for some R libraries
       - gnuplot.x86_64
-      - graphviz
+      - graphviz-devel.x86_64 # for some Python libraries
       - gsl-devel.x86_64 # needed for some R packages like HiCeekR
-      - gsl.x86_64 # for fastSTRUCTURE
       - hdf5-devel.x86_64 # for some R libraries
       - htop.x86_64
       - isa-l-devel # for fastp/0.24.1

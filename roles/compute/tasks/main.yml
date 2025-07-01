@@ -98,7 +98,6 @@
       - perl-Time-Piece.x86_64 # for mlst
       - pigz.x86_64 # for SeqKit
       - proj-devel.x86_64 # for some R libraries
-      - proj.x86_64 # for libproj.so.0
       - python3-numpy.x86_64 # for Trinity as of v2.6.6
       - python3-setuptools.noarch # needed by some Python scripts to load entrypoint
       - python36.x86_64
@@ -210,7 +209,6 @@
       - perl-version # for snippy/4.6.0
       - pigz.x86_64 # for SeqKit
       - proj-devel.x86_64 # for some R libraries
-      - proj.x86_64 # for libproj.so.0
       - python3-numpy.x86_64 # for Trinity as of v2.6.6
       - python3-setuptools.noarch # needed by some Python scripts to load entrypoint
       - readline-devel.x86_64 # for R/4.2.0

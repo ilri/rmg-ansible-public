@@ -69,7 +69,7 @@ echo "Reloading nftables"
 {%   set systemctl_bin = '/usr/bin/systemctl' %}
 {% endif -%}
 
-{{ systemctl_bin }} reload nftables.service
+{{ systemctl_bin }} restart nftables.service
 
 {% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '>=') %}
 echo "Restarting sshguard"

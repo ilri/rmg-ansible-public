@@ -62,13 +62,13 @@ NFT_HEAD
     rm -f "$firehol_level1_ipv4_list_temp" "$firehol_level1_ipv4_set_temp"
 fi
 
-echo "Reloading nftables"
 {% if ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('20.04', '<=') %}
 {%   set systemctl_bin = '/bin/systemctl' %}
 {% else %}
 {%   set systemctl_bin = '/usr/bin/systemctl' %}
 {% endif -%}
 
+echo "Restarting nftables"
 {{ systemctl_bin }} restart nftables.service
 
 {% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '>=') %}

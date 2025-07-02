@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 # TODO:
-#   - use dateutil.tz, see: https://blog.ganssle.io/articles/2018/03/pytz-fastest-footgun.html
 #   - ignore private address ranges
 #   - support ipv6
 
@@ -11,7 +10,7 @@ import argparse
 import re
 import csv
 from datetime import datetime, timezone
-import pytz
+from zoneinfo import ZoneInfo
 
 
 def main(arguments):
@@ -74,7 +73,7 @@ def main(arguments):
             # Assume year is the current year.
             attack_datetime = attack_datetime.replace(datetime.now().year)
             # !! Set tzinfo to your system timezone using timezone.
-            my_tz = pytz.timezone("{{ timezone }}")
+            my_tz = ZoneInfo("{{ timezone }}")
             attack_datetime = attack_datetime.replace(tzinfo=my_tz)
             # Human readable attack time for the log
             attack_datetime_human = attack_datetime.strftime('%b %d %H:%M:%S')

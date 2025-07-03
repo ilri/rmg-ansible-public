@@ -88,6 +88,34 @@ server {
         return 429 '{"status": 429, "message": "Too Many Requests"}';
     }
 
+    # static assets we can load from the file system directly with nginx
+    location ~* \.(css|js|png|svg|webp|woff2)$ {
+        root {{ tomcat_user_home }}/src/git/dspace-angular/dist/browser;
+
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+
+        try_files $uri @express_http;
+    }
+
+    location @express_http {
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
+        # Send requests to Express
+        proxy_pass http://express-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
     # rate limit requests to dynamic pages to protect against bots and malicious
     # users (see the definition for the dynamicpages limit_req_zone later).
     location ~ ^/(browse|search) {

@@ -1,10 +1,7 @@
 [Unit]
 Description=Update FireHOL lists
-# This service will fail if nftables is not running so we use Requires to make
-# sure that nftables is started.
-Requires=nftables.service
-# Make sure the network is up and nftables is started
-After=network-online.target nftables.service
+# Make sure the network is up
+After=network-online.target
 Wants=network-online.target update-firehol-nftables.timer
 
 [Service]

@@ -618,8 +618,8 @@ map $http_accept_language $mapped_language {
 map $http_accept_encoding $mapped_encoding {
     default ''; # plaintext
 
-    '~br'   'br';
     '~gzip' 'gzip';
+    '~br'   'br';
 }
 
 # Map for Handles which have been withdrawn and need to be redirected. For

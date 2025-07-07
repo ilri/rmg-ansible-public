@@ -20,7 +20,7 @@ proxy_cache_path /var/cache/nginx/rest_cache levels=2:2 keys_zone=rest:10m inact
 # Create a new cache for unauthenticated frontend requests. Entries remain in
 # the cache for 30 days after their last access. Note: this is different than
 # proxy_cache_valid).
-proxy_cache_path /var/cache/nginx/frontend_cache levels=2:2 keys_zone=frontend:10m inactive=30d max_size=10G;
+proxy_cache_path /var/cache/nginx/frontend_cache levels=2:2 keys_zone=frontend:30m inactive=30d max_size=10G;
 
 {% if nginx_tls_cert is defined -%}
 # Handle {{ nginx_server_name }} http -> https

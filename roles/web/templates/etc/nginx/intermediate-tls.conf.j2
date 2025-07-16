@@ -11,7 +11,7 @@ ssl_prefer_server_ciphers off;
 
 ssl_stapling on;
 ssl_stapling_verify on;
-resolver {{ nginx_ssl_stapling_resolver }};
+resolver {{ nginx_resolver }};
 
 {% if nginx_enable_hsts == True %}
 # Enable this if you want HSTS (recommended, but be careful)

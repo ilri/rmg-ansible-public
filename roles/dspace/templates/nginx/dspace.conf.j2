@@ -120,7 +120,7 @@ server {
     # users (see the definition for the dynamicpages limit_req_zone later).
     location ~ ^/(browse|search) {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log;
+        access_log /var/log/nginx/https-access.log cache;
 
         # rate limit for dynamic pages
         limit_req zone=dynamicpages burst=5;
@@ -155,7 +155,7 @@ server {
 
     location / {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log;
+        access_log /var/log/nginx/https-access.log cache;
 
         # rate limit for poorly behaved bots, see limit_req_zone below
         limit_req zone=badbots_ua;
@@ -191,7 +191,7 @@ server {
     # See: https://regex101.com/r/3Wa9AJ/2
     location ~ '^/(collections|communities|entities/[a-z]+|items)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(/full)?$' {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log;
+        access_log /var/log/nginx/https-access.log cache;
 
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';
@@ -283,7 +283,7 @@ server {
     # Explicitly allow anyone to request robots.txt and the sitemaps
     location ~ ^/(robots\.txt|sitemap*) {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log;
+        access_log /var/log/nginx/https-access.log cache;
 
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';
@@ -319,7 +319,7 @@ server {
     # AReS explorer
     location /explorer {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log;
+        access_log /var/log/nginx/https-access.log cache;
 
         # explicitly set the Host header before proxying to upstream nginx
         proxy_set_header Host {{ dspace_explorer_server }};

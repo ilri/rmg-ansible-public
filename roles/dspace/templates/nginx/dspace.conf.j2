@@ -90,7 +90,7 @@ server {
 
     # static assets we can load from the file system directly with nginx. We do
     # not want to match explorer assets because they are not here!
-    # See: https://regex101.com/r/KzZe7v/1
+    # See: https://regex101.com/r/xkKQnq/1
     location ~* ^\/(?!explorer).+\.(css|js|png|svg|webp|woff2)$ {
         root {{ tomcat_user_home }}/src/git/dspace-angular/dist/browser;
 

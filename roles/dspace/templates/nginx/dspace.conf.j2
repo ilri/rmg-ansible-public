@@ -208,7 +208,7 @@ server {
         # browsers set to other languages, and vice versa.
         proxy_cache_key $request_uri$mapped_language$mapped_encoding;
         # Add header with cache status (MISS, HIT, EXPIRED, etc.)
-        add_header X-Cache-Status $upstream_cache_status;
+        #add_header X-Cache-Status $upstream_cache_status;
         # Ignore "Vary" header in upstream response because nginx uses it when
         # constructing the cache key. As far as I know Angular only sends Vary
         # headers for encoding, so this should be fine because we normalize it

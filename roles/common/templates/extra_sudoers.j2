@@ -10,8 +10,3 @@
 {{ user }}   ALL=(ALL)  NOPASSWD:ALL
 {%   endfor %}
 {% endif %}
-
-{% if 'dspace' in group_names %}
-Cmnd_Alias TOMCAT = /bin/systemctl * tomcat{{ tomcat_version_major }}
-dhmichael ALL=(ALL) TOMCAT
-{% endif %}

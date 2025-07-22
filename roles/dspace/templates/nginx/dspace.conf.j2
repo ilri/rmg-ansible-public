@@ -89,7 +89,8 @@ server {
     }
 
     # static assets we can load from the file system directly with nginx
-    location ~* \.(css|js|png|svg|webp|woff2)$ {
+    # See: https://regex101.com/r/KzZe7v/1
+    location ~* ^\/(.+\.js|assets\/.+\.(css|js|png|svg|webp|woff2))$ {
         root {{ tomcat_user_home }}/src/git/dspace-angular/dist/browser;
 
         # required for browsers to direct them to quic port

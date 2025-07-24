@@ -190,8 +190,8 @@ server {
     }
 
     # Cache requests to simple DSpace objects that don't change often
-    # See: https://regex101.com/r/3Wa9AJ/2
-    location ~ '^/(collections|communities|entities/[a-z]+|items)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(/full)?$' {
+    # See: https://regex101.com/r/U2bcEm/1
+    location ~ '^/(entities/[a-z]+|items)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(/full)?$' {
         # log access requests for debug / load analysis
         access_log /var/log/nginx/https-access.log cache;
 

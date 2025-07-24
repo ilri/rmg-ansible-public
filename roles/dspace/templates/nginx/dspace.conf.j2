@@ -220,10 +220,10 @@ server {
         proxy_hide_header X-RateLimit-Remaining;
         proxy_hide_header X-RateLimit-Reset;
 
-        # Don't cache when user Shift-refreshes (Cache-Control: no-cache), when
-        # a request has query parameters, or when a client has an active session
-        proxy_cache_bypass $http_cache_control $is_args $cookie_dsauthinfo;
-        proxy_no_cache $http_cache_control $is_args $cookie_dsauthinfo;
+        # Don't cache when user Shift-refreshes (Cache-Control: no-cache) or
+        # or when a client has an active session.
+        proxy_cache_bypass $http_cache_control $cookie_dsauthinfo;
+        proxy_no_cache $http_cache_control $cookie_dsauthinfo;
 
         {% if nginx_forbid_robots == True -%}
         # Add header to forbid robots to index

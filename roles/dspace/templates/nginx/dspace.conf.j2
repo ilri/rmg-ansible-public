@@ -187,6 +187,7 @@ server {
         # Send requests to Express
         proxy_pass http://express-http;
         # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
     }
 
     # Cache requests to simple DSpace objects that don't change often

@@ -17,11 +17,6 @@
 # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html
 proxy_cache_path /var/cache/nginx/rest_cache levels=2:2 keys_zone=rest:10m inactive=24h max_size=1G;
 
-# Create a new cache for unauthenticated frontend requests. Entries remain in
-# the cache for 30 days after their last access. Note: this is different than
-# proxy_cache_valid).
-proxy_cache_path /var/cache/nginx/frontend_cache levels=2:2 keys_zone=frontend:30m inactive=30d max_size=10G;
-
 {% if nginx_tls_cert is defined -%}
 # Handle {{ nginx_server_name }} http -> https
 #
@@ -122,7 +117,7 @@ server {
     # users (see the definition for the dynamicpages limit_req_zone later).
     location ~ ^/(browse|search) {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log cache;
+        access_log /var/log/nginx/https-access.log;
 
         # rate limit for dynamic pages
         limit_req zone=dynamicpages burst=5;
@@ -157,7 +152,7 @@ server {
 
     location / {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log cache;
+        access_log /var/log/nginx/https-access.log;
 
         # rate limit for poorly behaved bots, see limit_req_zone below
         limit_req zone=badbots_ua;
@@ -188,66 +183,6 @@ server {
         proxy_pass http://express-http;
         # Set user agent string to mapped value (see mapping block)
         proxy_set_header User-Agent $ua;
-    }
-
-    # Cache requests to simple DSpace objects that don't change often
-    # See: https://regex101.com/r/U2bcEm/1
-    location ~ '^/(entities/[a-z]+|items)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(/full)?$' {
-        # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log cache;
-
-        # required for browsers to direct them to quic port
-        add_header Alt-Svc 'h3=":443"; ma=86400';
-
-        proxy_cache frontend;
-        # How long cached HTTP responses (default: 200, 301, 302) are considered
-        # valid, after which time they are considered stale.
-        proxy_cache_valid 14d;
-        # Allow use of stale entries if the cache is updating
-        proxy_cache_use_stale updating;
-        # Override the default proxy cache key to include the client's language.
-        # We want to make sure we don't serve English pages to users with their
-        # browsers set to other languages, and vice versa.
-        proxy_cache_key $request_uri$mapped_language$mapped_encoding;
-        # Add header with cache status (MISS, HIT, EXPIRED, etc.)
-        #add_header X-Cache-Status $upstream_cache_status;
-        # Ignore "Vary" header in upstream response because nginx uses it when
-        # constructing the cache key. As far as I know Angular only sends Vary
-        # headers for encoding, so this should be fine because we normalize it
-        # anyway.
-        proxy_ignore_headers Vary;
-        # Don't send cached Express rate limit headers to client
-        proxy_hide_header X-RateLimit-Limit;
-        proxy_hide_header X-RateLimit-Remaining;
-        proxy_hide_header X-RateLimit-Reset;
-
-        # Don't cache when user Shift-refreshes (Cache-Control: no-cache) or
-        # or when a client has an active session.
-        proxy_cache_bypass $http_cache_control $cookie_dsauthinfo;
-        proxy_no_cache $http_cache_control $cookie_dsauthinfo;
-
-        {% if nginx_forbid_robots == True -%}
-        # Add header to forbid robots to index
-        # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
-        add_header X-Robots-Tag "none";
-        {% endif %}
-
-        # Explicitly set proxy headers again because the existing headers from
-        # the global context get cleared when we add new headers with add_header
-        # and proxy_set_header in this block.
-        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
-        include proxy_params;
-
-        # Explicitly set security headers again because any headers inherited at
-        # the previous level are overwritten when we set new ones in this level.
-        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
-        include extra-security.conf;
-
-        proxy_pass http://express-http;
-        # Set user agent string to mapped value (see mapping block)
-        proxy_set_header User-Agent $ua;
-        # Set normalized encoding for upstream request
-        proxy_set_header Accept-Encoding $mapped_encoding;
     }
 
     # log API requests
@@ -286,7 +221,7 @@ server {
     # Explicitly allow anyone to request robots.txt and the sitemaps
     location ~ ^/(robots\.txt|sitemap*) {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log cache;
+        access_log /var/log/nginx/https-access.log;
 
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';
@@ -322,7 +257,7 @@ server {
     # AReS explorer
     location /explorer {
         # log access requests for debug / load analysis
-        access_log /var/log/nginx/https-access.log cache;
+        access_log /var/log/nginx/https-access.log;
 
         # explicitly set the Host header before proxying to upstream nginx
         proxy_set_header Host {{ dspace_explorer_server }};
@@ -592,37 +527,6 @@ map $cookie_jsessionid $active_user_session {
     default '';
 
     '~[A-Z0-9]{32}' 1;
-}
-
-# Normalize client's Accept-Language header for use in our cache key to optimize
-# cache population and hit rate. Since English is the default language in DSpace
-# we treat that as a special case, otherwise we only worry about major languages
-# that DSpace has a translation for.
-map $http_accept_language $mapped_language {
-    default '';
-
-    # All English locales can use an empty language mapping so we don't get
-    # cache entries for en, en-US, etc, and we increase the chance that bots
-    # will hit this since most of them don't set Accept-Language.
-    '~^en.*' '';
-
-    # Other major languages DSpace has a translation for
-    '~^ar.*' 'ar';
-    '~^de.*' 'de';
-    '~^es.*' 'es';
-    '~^fr.*' 'fr';
-    '~^it.*' 'it';
-}
-
-# Normalize encoding by selecting the best compression and using that for the
-# cache key and upstream request. As of 2025 many clients support brotli and
-# most (all?) support gzip. A surprising number support zstd, but as of this
-# writing the NPM compression package (v1.8.0) used by DSpace doesn't.
-map $http_accept_encoding $mapped_encoding {
-    default ''; # plaintext
-
-    '~gzip' 'gzip';
-    '~br'   'br';
 }
 
 # Map for Handles which have been withdrawn and need to be redirected. For

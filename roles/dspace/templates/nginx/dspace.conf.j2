@@ -84,9 +84,9 @@ server {
     }
 
     # static assets we can load from the file system directly with nginx. We do
-    # not want to match explorer assets because they are not here!
-    # See: https://regex101.com/r/xkKQnq/1
-    location ~* ^\/(?!explorer).+\.(css|js|png|svg|webp|woff2)$ {
+    # not want to match explorer or OAI-PMH assets because they are not here!
+    # See: https://regex101.com/r/xkKQnq/2
+    location ~* ^\/(?!(explorer|server\/webjar)).+\.(css|js|png|svg|webp|woff2)$ {
         root {{ tomcat_user_home }}/src/git/dspace-angular/dist/browser;
 
         # required for browsers to direct them to quic port

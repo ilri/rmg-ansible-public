@@ -147,6 +147,7 @@
       - hdf5-devel.x86_64 # for some R libraries
       - htop.x86_64
       - isa-l-devel # for fastp/0.24.1
+      - ImageMagick-c++-devel.x86_64 # for some R libraries
       - java-11-openjdk.x86_64 # for lots of stuff
       - joe.x86_64 # some users need this
       - lapack.x86_64 # for presto

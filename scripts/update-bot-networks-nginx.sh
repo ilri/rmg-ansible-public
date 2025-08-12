@@ -12,9 +12,22 @@ cut -f1 scripts/datacenter-networks.tsv \
     | roles/common/files/scripts/asn2ip.py \
     > "$PREFIXES_TEMP"
 
+IPV4_TEMP=$(mktemp)
+IPV6_TEMP=$(mktemp)
+
+# Filter IPv4 networks of /24 or higher
+grep -v ":" "$PREFIXES_TEMP" \
+    | awk -F "/" '$2 >= 24 && $2 <= 32' \
+    > "$IPV4_TEMP"
+
+# Filter IPv6 networks of /56 or higher
+grep ":" "$PREFIXES_TEMP" \
+    | awk -F "/" '$2 >= 56' \
+    > "$IPV6_TEMP"
+
 echo "# Last update: $(date)" >> "$OUTPUT_FILE"
 
-roles/common/files/scripts/cidr-merge.py < "$PREFIXES_TEMP" \
+cat "$IPV4_TEMP" "$IPV6_TEMP" \
     | xargs -P0 -I% echo "% 'bot';" \
     | sort >> "$OUTPUT_FILE"
 

@@ -27,7 +27,8 @@ grep ":" "$PREFIXES_TEMP" \
 
 echo "# Last update: $(date)" >> "$OUTPUT_FILE"
 
-cat "$IPV4_TEMP" "$IPV6_TEMP" \
+# Sort unique so nginx doesn't complain about duplicate networks
+sort -u "$IPV4_TEMP" "$IPV6_TEMP" \
     | xargs -P0 -I% echo "% 'bot';" \
     | sort >> "$OUTPUT_FILE"
 

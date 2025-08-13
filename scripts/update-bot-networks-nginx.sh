@@ -28,8 +28,10 @@ grep ":" "$PREFIXES_TEMP" \
 echo "# Last update: $(date)" >> "$OUTPUT_FILE"
 
 # Sort unique so nginx doesn't complain about duplicate networks
-sort -u "$IPV4_TEMP" "$IPV6_TEMP" \
+# Sort with "V" to make sure IPv4 addresses at least are in ascending order
+# to load more efficiently in nginx (see ngx_http_geo_module docs)
+sort -uV "$IPV4_TEMP" "$IPV6_TEMP" \
     | xargs -P0 -I% echo "% 'bot';" \
-    | sort >> "$OUTPUT_FILE"
+    >> "$OUTPUT_FILE"
 
 echo "Wrote $OUTPUT_FILE"

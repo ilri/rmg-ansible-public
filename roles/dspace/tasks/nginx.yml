@@ -23,14 +23,25 @@
   notify:
     - reload nginx
 
-- name: Configure nginx DSpace 7 vhost
+- name: Configure nginx DSpace vhost
+  when: dspace_version_major is version('7', '==')
   ansible.builtin.template:
     src: nginx/dspace.conf.j2
     dest: /etc/nginx/conf.d/dspace.conf
     mode: 0644
     owner: root
     group: root
-  when: dspace_version_major is version('7', '==')
+  notify:
+    - reload nginx
+
+- name: Configure nginx DSpace vhost
+  when: dspace_version_major is version('8', '==')
+  ansible.builtin.template:
+    src: nginx/dspace8.conf.j2
+    dest: /etc/nginx/conf.d/dspace.conf
+    mode: 0644
+    owner: root
+    group: root
   notify:
     - reload nginx
 

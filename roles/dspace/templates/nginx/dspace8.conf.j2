@@ -1,0 +1,499 @@
+{# just in case the host doesn't have this defined, can't go in role defaults because it messes up inheritance for some playbooks #}
+{% set nginx_server_name    = nginx_server_name | default("localhost") %}
+{% set nginx_vhosts         = nginx_vhosts | default(nginx_server_name) %}
+
+{% if 'library.cgiar.org' in nginx_vhosts -%}
+    {% include 'nginx/library.cgiar.org.conf.j2' %}
+{% endif %}
+
+{% if 'mahider.ilri.org' in nginx_vhosts and 'dspace.ilri.org' in nginx_vhosts -%}
+    {% include 'nginx/legacy-dspace-domains.conf.j2' %}
+{% endif %}
+
+{% if nginx_tls_cert is defined -%}
+# Handle {{ nginx_server_name }} http -> https
+#
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ nginx_server_name }};
+
+    # redirect http -> https
+    location / {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/http-access.log;
+
+        # ? in rewrite makes sure nginx doesn't append query string again
+        # see: http://wiki.nginx.org/NginxHttpRewriteModule#rewrite
+        rewrite ^ https://{{ nginx_server_name }}$request_uri? {% if nginx_redirect_type == 301 -%}permanent{% else %}redirect{% endif %};
+    }
+
+    include extra-security.conf;
+}
+{% endif %} {# end: nginx_tls_cert #}
+
+# HTTPS server (only for domains we have a cert for)
+#
+server {
+    {% if nginx_tls_cert is defined -%}
+    listen {{ nginx_ssl_port }} quic reuseport;
+    listen {{ nginx_ssl_port }} ssl;
+    listen [::]:{{ nginx_ssl_port }} quic reuseport;
+    listen [::]:{{ nginx_ssl_port }} ssl;
+    http2 on;
+    {% else -%}
+    listen 80;
+    listen [::]:80;
+    {% endif %} {# end: nginx_tls_cert #}
+
+    server_name {{ nginx_server_name }};
+
+    {% if nginx_forbid_robots == True -%}
+    # Add header to forbid robots to index
+    # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+    add_header X-Robots-Tag "none";
+    {% endif %}
+
+    ssl_certificate {{ nginx_tls_cert }};
+    ssl_certificate_key {{ nginx_tls_key }};
+
+    include /etc/nginx/intermediate-tls.conf;
+
+    # permanent some legacy DSpace 6 URLs for user convenience
+    rewrite ^/discover$ https://{{ nginx_server_name }}/search permanent;
+    rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC permanent;
+    rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login permanent;
+
+    # permanent redirects for Handles that have been withdrawn
+    if ($new_uri) {
+        return 301 $new_uri;
+    }
+
+    # Custom JSON response for 429 errors
+    error_page 429 = @429;
+    location @429 {
+        default_type application/json;
+        return 429 '{"status": 429, "message": "Too Many Requests"}';
+    }
+
+    # static assets we can load from the file system directly with nginx. We do
+    # not want to match explorer or server assets because they are not here!
+    # See: https://regex101.com/r/638tFT/2
+    location ~* ^\/(?!(explorer|server)\/).+\.(css|js|png|svg|ttf|webp|woff2)$ {
+        root {{ tomcat_user_home }}/src/git/dspace-angular/dist/browser;
+
+        # Prepare for DSpace 8 migration: lower cache time for static assets
+        expires 1h;
+
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+
+        try_files $uri @express_http;
+    }
+
+    location @express_http {
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
+        # Send requests to Express
+        proxy_pass http://express-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
+    # rate limit requests to dynamic pages to protect against bots and malicious
+    # users (see the definition for the dynamicpages limit_req_zone later).
+    location ~ ^/(browse|search) {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/https-access.log;
+
+        # rate limit for dynamic pages
+        limit_req zone=dynamicpages burst=5;
+
+        # rate limit for poorly behaved bots, see limit_req_zone below
+        limit_req zone=badbots_ua;
+        limit_req zone=badbots_old_ua;
+        limit_req zone=badbots_ip;
+
+        # Never index dynamic pages!
+        add_header X-Robots-Tag "none";
+
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
+        # Send requests to Express
+        proxy_pass http://express-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
+    location / {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/https-access.log;
+
+        # rate limit for poorly behaved bots, see limit_req_zone below
+        limit_req zone=badbots_ua;
+        limit_req zone=badbots_old_ua;
+        limit_req zone=badbots_ip;
+
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+
+        {% if nginx_forbid_robots == True -%}
+        # Add header to forbid robots to index
+        # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+        add_header X-Robots-Tag "none";
+        {% endif %}
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
+        # Send requests to Express
+        proxy_pass http://express-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
+    # log API requests
+    location /server {
+        access_log /var/log/nginx/api-access.log;
+
+        # only rate limit old user agents associated with botnets
+        limit_req zone=badbots_ip;
+        limit_req zone=badbots_old_ua;
+
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+
+        {% if nginx_forbid_robots == True -%}
+        # Add header to forbid robots to index
+        # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+        add_header X-Robots-Tag "none";
+        {% endif %}
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
+        # Send requests to Tomcat
+        proxy_pass http://tomcat-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
+    # Explicitly allow anyone to request robots.txt and the sitemaps
+    location ~ ^/(robots\.txt|sitemap*) {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/https-access.log;
+
+        # required for browsers to direct them to quic port
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+
+        {% if nginx_forbid_robots == True -%}
+        # Add header to forbid robots to index
+        # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+        add_header X-Robots-Tag "none";
+        {% endif %}
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
+        # Send requests to Express
+        proxy_pass http://express-http;
+        # Set user agent string to mapped value (see mapping block)
+        proxy_set_header User-Agent $ua;
+    }
+
+    # static alias for weekly IWMI CSV export
+    location /iwmi.csv {
+        alias {{ dspace_root }}/exports/iwmi.csv;
+    }
+
+    # AReS explorer
+    location /explorer {
+        # log access requests for debug / load analysis
+        access_log /var/log/nginx/https-access.log;
+
+        # explicitly set the Host header before proxying to upstream nginx
+        proxy_set_header Host {{ dspace_explorer_server }};
+        proxy_pass https://codeobia_ares/explorer;
+    }
+
+    # log legacy rest requests
+    location /rest {
+        location ~ /rest/statistics/?(.*) {
+            access_log /var/log/nginx/statistics.log;
+            proxy_pass http://statistics_api/$1$is_args$args;
+        }
+
+        return 200 'This API was deprecated in January, 2024. Please use the DSpace 7+ API: https://{{ nginx_server_name }}/server/api';
+        add_header Content-Type text/plain;
+
+        access_log /var/log/nginx/rest-access.log;
+
+        # Explicitly set proxy headers again because the existing headers from
+        # the global context get cleared when we add new headers with add_header
+        # and proxy_set_header in this block.
+        # See: https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header
+        include proxy_params;
+
+        # Explicitly set security headers again because any headers inherited at
+        # the previous level are overwritten when we set new ones in this level.
+        # See: http://nginx.org/en/docs/http/ngx_http_headers_module.html#add_header
+        include extra-security.conf;
+
+        {% if nginx_forbid_robots == True -%}
+        # Add header to forbid robots to index
+        # See: https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag
+        add_header X-Robots-Tag "none";
+        {% endif %}
+    }
+
+    include extra-security.conf;
+}
+
+# Set resolver to use for upstream servers. Important because nginx attempts to
+# resolve these at startup and will fail if it cannot.
+resolver {{ nginx_resolver }};
+
+upstream tomcat-http {
+    {% if nginx_tls_cert is defined -%}
+    server 127.0.0.1:8443;
+    {% else -%}
+    server 127.0.0.1:8001;
+    {% endif %}
+
+    # The keepalive parameter sets the maximum number of idle keepalive connections
+    # to upstream servers that are preserved in the cache of each worker process. When
+    # this number is exceeded, the least recently used connections are closed.
+    keepalive 60;
+}
+
+# dspace-angular running via Node.js with Express
+upstream express-http {
+    server 127.0.0.1:4000;
+
+    # The keepalive parameter sets the maximum number of idle keepalive connections
+    # to upstream servers that are preserved in the cache of each worker process. When
+    # this number is exceeded, the least recently used connections are closed.
+    keepalive 60;
+}
+
+upstream codeobia_ares {
+    server {{ dspace_explorer_server }}:443;
+
+    # The keepalive parameter sets the maximum number of idle keepalive connections
+    # to upstream servers that are preserved in the cache of each worker process. When
+    # this number is exceeded, the least recently used connections are closed.
+    keepalive 60;
+}
+
+upstream statistics_api {
+    server 127.0.0.1:5000;
+}
+
+# List of networks to mark as bots. Hosts on these networks are behaving like
+# bots but not declaring a bot user agent. We then rely on Tomcat's Crawler
+# Session Manager Valve to assign one single session to all these users in
+# order to reduce resource usage.
+#
+# In the included file, matching networks have the key set to 'bot', which we
+# map to $limit_bots_ip and use as the key for a limit_req_zone below for bots.
+# Networks that don't match have $limit_bots_ip set to an empty string, which
+# is important for the limit_req zone and the next mapping block.
+geo $limit_bots_ip {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    include /etc/nginx/bot-networks-good.conf;
+    include /etc/nginx/bot-networks-bad.conf;
+    include /etc/nginx/datacenter-networks.conf;
+}
+
+# Matching networks have the key set to 'bot' by the geo module above, while
+# those not matching are set to an empty string. We re-use this below by map-
+# ping $limit_bots_ip to $ua, which we then pass to Tomcat via proxy_set_header
+# in location blocks above.
+#
+# Note: this seems overly complicated, but is necessary because geo does not
+# support dynamic values. Instead we set an empty string above and then map
+# the host's declared user agent to $ua when we see an empty string. This is
+# also a way for me to both limit requests as well as classify bots.
+map $limit_bots_ip $ua {
+    # If the geo block above set this to an empty string then we can map the
+    # host's declared user agent directly. Otherwise, it's a bot as declared
+    # by the geo block.
+    ''      $http_user_agent;
+
+    default 'bot';
+}
+
+# Use a mapping to identify certain search bots with many IP addresses and force
+# them to obey a global request rate limit. For example, Baidu actually has over
+# 160 IP addresses and often crawls the site with fifty or so concurrently! This
+# maps all Baidu requests to the same $limit_bots value, allowing us to force it
+# to abide by a total rate limit for all client instances regardless of the IP.
+#
+# $limit_bots_ua will be used as the key for the limit_req_zone.
+#
+# Note: nginx will use the first matching pattern, so we should define overrides
+# before including the list of bots.
+map $http_user_agent $limit_bots_ua {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    # 2025-06-30: treat requests with no user agent as bots
+    '' 1;
+
+    # 2020-03-10 Explicitly allow UptimeRobot
+    ~UptimeRobot '';
+
+    # 2020-06-08 Explicitly allow Altmetric
+    ~Altmetribot '';
+    ~Postgenomic '';
+
+    # 2020-08-10 Explicitly allow Googlebot and Twitterbot because they don't
+    # crawl haphazardly and usually respect robots.txt
+    ~Google '';
+    ~Twitterbot '';
+
+    # 2025-05-15 Explicitly allow Kagibot
+    ~Kagibot '';
+
+    # 2025-04-05 Explicitly allow Archive.org bot
+    ~archive\.org_bot '';
+
+    # Need to make sure we match: bot, Bot, BOT, etc...
+    ~*bot      1;
+    ~[Cc]rawl  1;
+    ~[Ss]crape 1;
+    ~[Sp]ider  1;
+
+    # 2021-12-29 dead giveway for a bot that is trying to pretend to be a user
+    ~randint 1;
+
+    # 2023-01-18 python requests or urllib should be treated as bots in the
+    # frontend (we already drop their hits from Solr).
+    ~python 1;
+}
+
+map $http_user_agent $limit_bots_old_ua {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    # 2025-06-17: FAO AGRIS harvester uses the following user agent
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3' '';
+
+    # 2025-05-15: One- and two-digit Chrome version? Suspicious.
+    # Test: https://regex101.com/r/FZX9RM/1
+    '~\bChrome/\d{1,2}\.\d+\.\d+\.\d+' 1;
+
+    # 2025-05-15: Old Chrome version? Suspicious.
+    # Test: https://regex101.com/r/pssB63/1
+    '~\bChrome/1[012]\d\.\d+\.\d+\.\d+' 1;
+
+    # 2025-05-27: Allow Firefox 128 ESR was released in 2024-07
+    '~\bFirefox/128\.' '';
+    # 2025-05-15: Old Firefox (versions x, xx, and 10x/11x/12x)? Suspicious.
+    '~\bFirefox/\d{1,2}\.' 1;
+    '~\bFirefox/1[012]\d\.' 1;
+}
+
+# Check if the JSESSIONID cookie is present and contains a 32-character hex
+# value, which would mean that a user is actively attempting to re-use their
+# Tomcat session. Then we set the $active_user_session variable and use it
+# to bypass the nginx proxy cache in REST requests. This is safe because any
+# client sending one of these has likely already logged in and is trying to
+# get fresh data.
+map $cookie_jsessionid $active_user_session {
+    # requests with an empty key are not evaluated by limit_req
+    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
+    default '';
+
+    '~[A-Z0-9]{32}' 1;
+}
+
+# Map for Handles which have been withdrawn and need to be redirected. For
+# example if they were duplicates of existing items.
+map $request_uri $new_uri {
+    include /etc/nginx/handle-redirects.conf;
+}
+
+# For requests that come from the DSpace Angular frontend, replace nginx's
+# $remote_addr with the one sent in the `X-Forwarded-For` header. Otherwise,
+# use the default $remote_addr, for example if the request was directly to
+# the DSpace API. The benefit of this approach is we can continue using the
+# default nginx logging without conditionals.
+set_real_ip_from {{ ansible_default_ipv6.address }};
+set_real_ip_from {{ ansible_default_ipv4.address }};
+real_ip_header X-Forwarded-For;
+
+# Zone for limiting "bad bot" requests with a hard limit of 1 per minute. Uses
+# the variable $limit_bots as a key, which is controlled by the mapping above.
+# I am using 1 requests per minute because Baidu currently does about 20 or 30,
+# but I don't feel like prioritizing their requests because they don't respect
+# the instructions in robots.txt. This is probably overkill for just punishing
+# Baidu, but I wanted to explore a solution that could work for other bad user
+# agents in the future with little adjustments.
+#
+# A zone key size of 1 megabyte should be able to store around 16,000 sessions.
+limit_req_zone $limit_bots_ua zone=badbots_ua:1m rate=1r/m;
+limit_req_zone $limit_bots_old_ua zone=badbots_old_ua:1m rate=1r/m;
+limit_req_zone $limit_bots_ip zone=badbots_ip:1m rate=1r/m;
+
+# Zone for limiting requests to dynamic pages like browse and discover that are
+# of no use to bots and cause a high load on the server. For now I think I will
+# use a limit of 12, because I imagine a human user could legitimately click a
+# link every five seconds, but bots like Facebook are requesting 300/minute.
+#
+# The user's IP address is used as the key.
+#
+# See: https://www.nginx.com/blog/rate-limiting-nginx/
+limit_req_zone $binary_remote_addr zone=dynamicpages:1m rate=12r/m;
+
+# vim: set ts=4 sw=4:

@@ -23,8 +23,8 @@ dspace_git_branch: 7_x-prod
 dspace_frontend_git_repo: https://github.com/ilri/dspace-angular.git
 dspace_frontend_git_branch: 7_x-prod
 
-# stable is 1.26.x
-# mainline is 1.27.x
+# stable is 1.28.x
+# mainline is 1.29.x
 nginx_branch: stable
 
 # PostgreSQL connection pool sizes for DSpace API

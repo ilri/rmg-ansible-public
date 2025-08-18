@@ -71,7 +71,7 @@
   when:
     - tomcat_unzip.extract_results is defined
     - tomcat_unzip.extract_results.rc == 0
-    - tomcat_version_major == 9
+    - tomcat_version_major is version('9', '==')
   tags: tomcat
 
 # See: https://gitlab.inf.unibz.it/commul/docker/clarin-dspace/-/issues/44

@@ -55,7 +55,7 @@
     mode: "0640"
 
 - name: Install DSpace Angular Node.js build dependencies
-  when: dspace_version_major == 7
+  when: dspace_version_major is version('7', '==')
   become_user: "{{ tomcat_user }}"
   npm:
     name: "{{ item.name }}"
@@ -74,7 +74,7 @@
   become_user: "{{ tomcat_user }}"
 
 - name: Clone DSpace frontend repository
-  when: dspace_version_major == 7
+  when: dspace_version_major is version('7', '==')
   ansible.builtin.git:
     repo: "{{ dspace_frontend_git_repo }}"
     dest: "{{ tomcat_user_home }}/src/git/dspace-angular"

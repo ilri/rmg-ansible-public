@@ -69,7 +69,7 @@
     mode: 0644
     owner: root
     group: root
-  when: dspace_version_major == 7
+  when: dspace_version_major is version('7', '==')
   notify:
     - reload nginx
 

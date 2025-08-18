@@ -12,6 +12,6 @@
   community.general.alternatives:
     name: java
     path: /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-  when: java_version_major == 17
+  when: java_version_major is version('17', '==')
 
 # vim: set sw=2 ts=2:

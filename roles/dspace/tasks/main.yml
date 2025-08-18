@@ -66,7 +66,13 @@
   tags: nginx
 
 - name: Configure Tomcat
+  when: dspace_version_major is version('7', '==')
   ansible.builtin.import_tasks: tomcat.yml
+  tags: tomcat
+
+- name: Configure Tomcat
+  when: dspace_version_major is version('8', '==')
+  ansible.builtin.import_tasks: tomcat10.yml
   tags: tomcat
 
 - name: Clone DSpace backend repository

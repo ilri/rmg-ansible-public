@@ -13,6 +13,11 @@
     name: tomcat9
     state: restarted
 
+- name: restart tomcat10
+  ansible.builtin.systemd_service:
+    name: tomcat10
+    state: restarted
+
 - name: restart dspace-statistics-api
   ansible.builtin.systemd_service:
     name: dspace-statistics-api

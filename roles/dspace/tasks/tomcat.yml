@@ -58,20 +58,10 @@
     - { path: "{{ tomcat_path }}/conf/context.xml", mode: "0640" }
     - { path: "{{ tomcat_path }}/conf/tomcat-users.xml", mode: "0640" }
     - { path: "{{ tomcat_path }}/conf/web.xml", mode: "0640" }
+    - { path: "{{ tomcat_path }}/conf/jaspic-providers.xml", mode: "0640" }
   when:
     - tomcat_unzip.extract_results is defined
     - tomcat_unzip.extract_results.rc == 0
-  tags: tomcat
-
-# Tomcat 9 has one extra xml file it needs to read
-- name: Fix Tomcat permissions
-  ansible.builtin.file:
-    path: "{{ tomcat_path }}/conf/jaspic-providers.xml"
-    mode: 0640
-  when:
-    - tomcat_unzip.extract_results is defined
-    - tomcat_unzip.extract_results.rc == 0
-    - tomcat_version_major is version('9', '==')
   tags: tomcat
 
 # See: https://gitlab.inf.unibz.it/commul/docker/clarin-dspace/-/issues/44

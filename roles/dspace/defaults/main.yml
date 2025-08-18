@@ -67,11 +67,11 @@ tomcat_user: dspace
 tomcat_group: dspace
 tomcat_user_home: /home/dspace
 # See: https://tomcat.apache.org/download-90.cgi
-tomcat_version: 9.0.105
+tomcat_version: 9.0.108
 tomcat_version_major: 9
 tomcat_url: https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_version_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
 # sha512
-tomcat_url_checksum: 904f10378ee2c7c68529edfefcba50c77eb677aa4586cfac0603e44703b0278f71f683b0295774f3cdcb027229d146490ef2c8868d8c2b5a631cf3db61ff9956
+tomcat_url_checksum: 243474cd54d8589c97f2db964b13b36920500a298b190370a8c58306db786bb30101c33d9ca85eddd8014c5d7f53fec1685beeb4fb7f3037ffcc2f4124c6c6b7
 tomcat_path_prefix: /usr/local
 tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 

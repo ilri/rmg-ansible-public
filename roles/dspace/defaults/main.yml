@@ -20,9 +20,6 @@ nginx_redirect_type: 301
 # where to install DSpace
 dspace_root: /home/dspace-install
 
-# document root
-nginx_root: '{{ dspace_root }}/webapps/xmlui'
-
 # default dspace webapps
 dspace_webapps:
   - { name: 'server', app_path: '{{ dspace_root }}/webapps/server', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/server.xml', db_pool_name: 'jdbc/dspaceApi' }

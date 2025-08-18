@@ -187,6 +187,13 @@
     - { src: dspace-iwmi-exporter.service.j2, name: dspace-iwmi-exporter.service }
   register: dspace_systemd_services
 
+# Temp until we migrate fully to DSpace 8 / Tomcat 10
+- name: Remove Tomcat 9 service file
+  when: dspace_version_major is version('8', '==')
+  ansible.builtin.file:
+    path: /etc/systemd/system/tomcat9.service
+    state: absent
+
 - name: Copy systemd timer units
   ansible.builtin.copy:
     src: "{{ item.src }}"

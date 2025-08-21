@@ -190,6 +190,7 @@ server {
         access_log /var/log/nginx/api-access.log;
 
         # only rate limit old user agents associated with botnets
+        limit_req zone=badbots_ip;
         limit_req zone=badbots_old_ua;
 
         # required for browsers to direct them to quic port

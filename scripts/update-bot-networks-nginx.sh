@@ -15,9 +15,9 @@ cut -f1 scripts/datacenter-networks.tsv \
 IPV4_TEMP=$(mktemp)
 IPV6_TEMP=$(mktemp)
 
-# Filter IPv4 networks of /24 or higher
+# Filter IPv4 networks of /23 or higher
 grep -v ":" "$PREFIXES_TEMP" \
-    | awk -F "/" '$2 >= 24 && $2 <= 32' \
+    | awk -F "/" '$2 >= 23 && $2 <= 32' \
     > "$IPV4_TEMP"
 
 # Filter IPv6 networks of /56 or higher

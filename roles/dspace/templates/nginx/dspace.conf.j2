@@ -89,6 +89,9 @@ server {
     location ~* ^\/(?!(explorer|server\/webjar)).+\.(css|js|png|svg|webp|woff2)$ {
         root {{ tomcat_user_home }}/src/git/dspace-angular/dist/browser;
 
+        # Prepare for DSpace 8 migration: lower cache time for static assets
+        expires 1h;
+
         # required for browsers to direct them to quic port
         add_header Alt-Svc 'h3=":443"; ma=86400';
 

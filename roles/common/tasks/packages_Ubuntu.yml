@@ -174,6 +174,7 @@
         - /etc/update-motd.d/80-esm # Ubuntu 16.04+
         - /etc/update-motd.d/88-esm-announce # Ubuntu 18.04+
         - /etc/update-motd.d/80-livepatch # Ubuntu 18.04+
+        - /etc/update-motd.d/91-release-upgrade # Ubuntu 14.04+
       ignore_errors: true
 
     - name: Disable annoying Canonical spam in MOTD

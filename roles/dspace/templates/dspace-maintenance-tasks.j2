@@ -29,14 +29,14 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 # (Recommended to be run once per day. Feel free to tweak the scheduled times below.)
 #----------------
 
-# Update the OAI-PMH index with the newest content at midnight every day
+# Update the OAI-PMH index with the newest content at 12:15am every day
 # REQUIRED to update content available in OAI-PMH (However, it can be removed if you do not enable OAI-PMH)
-0 0 * * * {{ tomcat_user }} $DSPACE/bin/dspace oai import > /dev/null
+15 0 * * * $DSPACE/bin/dspace oai import > /dev/null
 
-# Clean and Update the Discovery indexes at midnight every day
+# Clean and Update the Discovery indexes at 12:15am every day
 # (This ensures that any deleted documents are cleaned from the Discovery search/browse index)
 # RECOMMENDED to ensure your search/browse index stays fresh.
-0 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-discovery > /dev/null
+15 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-discovery > /dev/null
 
 # run the index-authority script once a day at 12:45 to ensure the Solr Authority cache is up to date
 #45 0 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace index-authority > /dev/null

@@ -71,9 +71,4 @@ fi
 echo "Restarting nftables"
 {{ systemctl_bin }} restart nftables.service
 
-{% if ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '>=') %}
-echo "Restarting sshguard"
-{{ systemctl_bin }} restart sshguard.service
-{% endif -%}
-
 rm -v firehol_level1.netset

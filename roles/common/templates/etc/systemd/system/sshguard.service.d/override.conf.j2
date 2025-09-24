@@ -1,0 +1,24 @@
+[Unit]
+# sshguard needs nftables to be active so it can create its tables
+After=nftables.service
+# If nftables is stopped or restarted, propagate to sshguard as well
+PartOf=nftables.service
+
+[Service]
+PrivateDevices=yes
+PrivateTmp=yes
+# sshguard does not need access to /home, /root, or /run/user
+ProtectHome=true
+# sshguard can live with read-only access to the entire file system hierarchy
+ProtectSystem=strict
+
+# The service process and all its children can never gain new privileges
+NoNewPrivileges=true
+
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+# Do not allow process or its children to create SUID/SGID files/directories
+RestrictSUIDSGID=true
+
+CapabilityBoundingSet=CAP_AUDIT_READ CAP_DAC_READ_SEARCH CAP_NET_ADMIN CAP_NET_RAW

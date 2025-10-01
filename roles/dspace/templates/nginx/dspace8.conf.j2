@@ -256,9 +256,11 @@ server {
         # log access requests for debug / load analysis
         access_log /var/log/nginx/https-access.log;
 
-        # explicitly set the Host header before proxying to upstream nginx
+        # explicitly set the Host header before proxying. Note, we do not use
+        # the host name in the proxy_pass to avoid nginx "host not found" errors
+        # during unattended upgrades that cause network to be briefly unavailable.
         proxy_set_header Host {{ dspace_explorer_server }};
-        proxy_pass https://codeobia_ares/explorer;
+        proxy_pass https://157.90.157.100/explorer;
     }
 
     # log legacy rest requests
@@ -314,15 +316,6 @@ upstream tomcat-http {
 # dspace-angular running via Node.js with Express
 upstream express-http {
     server 127.0.0.1:4000;
-
-    # The keepalive parameter sets the maximum number of idle keepalive connections
-    # to upstream servers that are preserved in the cache of each worker process. When
-    # this number is exceeded, the least recently used connections are closed.
-    keepalive 60;
-}
-
-upstream codeobia_ares {
-    server {{ dspace_explorer_server }}:443;
 
     # The keepalive parameter sets the maximum number of idle keepalive connections
     # to upstream servers that are preserved in the cache of each worker process. When

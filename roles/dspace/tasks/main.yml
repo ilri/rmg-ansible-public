@@ -69,17 +69,6 @@
   ansible.builtin.import_tasks: tomcat.yml
   tags: tomcat
 
-- name: Copy maven settings
-  ansible.builtin.template:
-    src: m2/settings.xml.j2
-    dest: "{{ tomcat_user_home }}/.m2/settings.xml"
-    owner: "{{ tomcat_user }}"
-    group: "{{ tomcat_group }}"
-    mode: "0640"
-  when:
-    - maven_username is defined
-    - maven_password is defined
-
 - name: Clone DSpace backend repository
   ansible.builtin.git:
     repo: "{{ dspace_git_repo }}"

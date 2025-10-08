@@ -188,6 +188,14 @@
         - motd-news.service
         - motd-news.timer
 
+    # We do not subscribe to ESM updates so these sources cause HTTP 401 errors.
+    # I have seen it on Ubuntu 20.04 and Ubuntu 22.04 in the past month.
+    - name: Remove Ubuntu ESM apt sources
+      when: ansible_distribution_version is version('22.04', '<=')
+      ansible.builtin.file: # noqa ignore-errors
+        path: /etc/apt/sources.list.d/ubuntu-esm-infra.list
+        state: absent
+
     - name: Configure unattended-upgrades
       ansible.builtin.import_tasks: unattended-upgrades.yml
 

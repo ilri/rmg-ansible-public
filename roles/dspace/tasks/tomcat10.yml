@@ -1,0 +1,168 @@
+---
+- name: Check installed Tomcat version
+  ansible.builtin.stat:
+    path: "{{ tomcat_path }}"
+  register: tomcat_stat
+  tags: tomcat
+
+- name: Download Tomcat
+  ansible.builtin.get_url:
+    url: "{{ tomcat_url }}"
+    dest: "{{ tomcat_path }}.tar.gz"
+    checksum: sha512:{{ tomcat_url_checksum }}
+    mode: "0640"
+  register: tomcat_download
+  when: not tomcat_stat.stat.exists
+  tags: tomcat
+
+- name: Unzip Tomcat
+  ansible.builtin.unarchive:
+    src: "{{ tomcat_path }}.tar.gz"
+    dest: "{{ tomcat_path_prefix }}"
+    remote_src: true
+  when:
+    - tomcat_download.status_code is defined
+    - tomcat_download.status_code == 200
+  register: tomcat_unzip
+  tags: tomcat
+
+# The Tomcat user only needs to read its configuration and write logs / work
+- name: Fix Tomcat ownership
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    recurse: true
+  loop:
+    - { path: "{{ tomcat_path }}/conf", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/logs", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/temp", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/work", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/bin", owner: root, group: "{{ tomcat_group }}" }
+    - { path: "{{ tomcat_path }}/lib", owner: root, group: "{{ tomcat_group }}" }
+  when:
+    - tomcat_unzip.extract_results is defined
+    - tomcat_unzip.extract_results.rc == 0
+  tags: tomcat
+
+# The Tomcat user only needs to read its configuration and write logs/temp/work
+- name: Fix Tomcat permissions
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: "{{ tomcat_path }}/logs", mode: "0770" }
+    - { path: "{{ tomcat_path }}/temp", mode: "0770" }
+    - { path: "{{ tomcat_path }}/work", mode: "0770" }
+    - { path: "{{ tomcat_path }}/conf", mode: "0750" }
+    - { path: "{{ tomcat_path }}/conf/context.xml", mode: "0640" }
+    - { path: "{{ tomcat_path }}/conf/tomcat-users.xml", mode: "0640" }
+    - { path: "{{ tomcat_path }}/conf/web.xml", mode: "0640" }
+    - { path: "{{ tomcat_path }}/conf/jaspic-providers.xml", mode: "0640" }
+  when:
+    - tomcat_unzip.extract_results is defined
+    - tomcat_unzip.extract_results.rc == 0
+  tags: tomcat
+
+# See: https://gitlab.inf.unibz.it/commul/docker/clarin-dspace/-/issues/44
+- name: Increase Tomcat session timeout
+  ansible.builtin.lineinfile:
+    path: "{{ tomcat_path }}/conf/web.xml"
+    regexp: ^\s+<session-timeout>30</session-timeout>
+    line: "        <session-timeout>60</session-timeout>"
+    state: present
+  tags: tomcat
+
+- name: Remove old Tomcat versions
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /usr/local/apache-tomcat-9.0.105.tar.gz
+    - /usr/local/apache-tomcat-9.0.105
+    - /usr/local/apache-tomcat-9.0.108.tar.gz
+    - /usr/local/apache-tomcat-9.0.108
+  tags: tomcat
+
+- name: Copy Tomcat server configs
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  loop:
+    - src: tomcat/server-tomcat{{ tomcat_version_major }}.xml.j2
+      dest: "{{ tomcat_path }}/conf/server.xml"
+      owner: root
+      group: "{{ tomcat_group }}"
+      mode: "0640"
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
+  tags: tomcat
+
+- name: Create Tomcat context directory
+  ansible.builtin.file:
+    path: "{{ tomcat_path }}/conf/Catalina/localhost"
+    state: directory
+    owner: root
+    group: "{{ tomcat_group }}"
+    mode: "0770"
+  tags: tomcat
+
+- name: Prepare Tomcat web application contexts
+  ansible.builtin.template:
+    src: tomcat/context.xml.j2
+    dest: "{{ item.context_path }}"
+    owner: root
+    group: "{{ tomcat_group }}"
+    mode: "0640"
+  loop: "{{ dspace_webapps }}"
+  when: dspace_webapps is defined
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
+  tags: tomcat
+
+- name: Remove unneccessary default Tomcat web applications
+  ansible.builtin.file:
+    path: "{{ tomcat_path }}/webapps/{{ item }}"
+    state: absent
+  loop:
+    - docs
+    - examples
+    - ROOT
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
+  tags: tomcat
+
+- name: Prepare tomcat user's home folder
+  ansible.builtin.file:
+    dest: "{{ item.dest }}"
+    state: "{{ item.state }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  loop:
+    - { dest: "{{ tomcat_user_home }}/.m2", state: directory, owner: "{{ tomcat_user }}", group: "{{ tomcat_group }}", mode: "750" }
+    - { dest: "{{ tomcat_user_home }}/src/git/DSpace", state: directory, owner: "{{ tomcat_user }}", group: "{{ tomcat_group }}", mode: "755" }
+  tags: tomcat
+
+- name: Configure rotation for Tomcat server's access logs
+  ansible.builtin.template:
+    src: tomcat/logrotate-access_logs.j2
+    dest: /etc/logrotate.d/tomcat-access_logs
+    owner: root
+    group: root
+    mode: "0644"
+  tags: tomcat
+
+- name: Set open file limits for tomcat user
+  ansible.builtin.template:
+    src: tomcat/limits.conf.j2
+    dest: /etc/security/limits.d/90-tomcat.conf
+    owner: root
+    group: root
+    mode: "0644"
+  tags: tomcat
+
+# vim: set sw=2 ts=2:

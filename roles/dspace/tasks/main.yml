@@ -188,18 +188,14 @@
   register: dspace_systemd_services
 
 # Temp until we migrate fully to DSpace 8 / Tomcat 10
-- name: Remove Tomcat 9 service file
+- name: Remove unused Tomcat 9 service files
   when: dspace_version_major is version('8', '==')
   ansible.builtin.file:
-    path: /etc/systemd/system/tomcat9.service
+    path: "{{ item }}"
     state: absent
-
-# Temp until we migrate fully to DSpace 8 / Tomcat 10
-- name: Remove Tomcat 9 defaults file
-  when: dspace_version_major is version('8', '==')
-  ansible.builtin.file:
-    path: /etc/default/tomcat9
-    state: absent
+  loop:
+    - /etc/default/tomcat9
+    - /etc/systemd/system/tomcat9.service
 
 - name: Copy systemd timer units
   ansible.builtin.copy:

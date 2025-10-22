@@ -43,7 +43,7 @@
 
     - name: Configure repository of ILRI CentOS packages
       ansible.builtin.copy:
-        src: ilri.repo
+        src: etc/yum.repos.d/ilri.repo
         dest: /etc/yum.repos.d/ilri.repo
         owner: root
         group: root

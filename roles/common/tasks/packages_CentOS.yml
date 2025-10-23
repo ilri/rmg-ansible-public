@@ -50,6 +50,20 @@
         mode: "0644"
       when: "'compute' in group_names or 'storage' in group_names"
 
+    # Intel Math Kernel Library (for some HPC applications)
+    # See: https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-download.html
+    - name: Configure repository of Intel CentOS packages
+      ansible.builtin.copy:
+        src: etc/yum.repos.d/oneAPI.repo
+        dest: /etc/yum.repos.d/oneAPI.repo
+        owner: root
+        group: root
+        mode: "0644"
+      when:
+        - ansible_distribution_release == 'Stream'
+        - ansible_distribution_major_version is version('9', '==')
+        - "'compute' in group_names"
+
     - name: Install base packages
       ansible.builtin.package:
         name:

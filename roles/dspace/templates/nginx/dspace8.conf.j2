@@ -437,20 +437,6 @@ map $http_user_agent $limit_bots_old_ua {
     '~\bFirefox/1[012]\d\.' 1;
 }
 
-# Check if the JSESSIONID cookie is present and contains a 32-character hex
-# value, which would mean that a user is actively attempting to re-use their
-# Tomcat session. Then we set the $active_user_session variable and use it
-# to bypass the nginx proxy cache in REST requests. This is safe because any
-# client sending one of these has likely already logged in and is trying to
-# get fresh data.
-map $cookie_jsessionid $active_user_session {
-    # requests with an empty key are not evaluated by limit_req
-    # see: http://nginx.org/en/docs/http/ngx_http_limit_req_module.html
-    default '';
-
-    '~[A-Z0-9]{32}' 1;
-}
-
 # Map for Handles which have been withdrawn and need to be redirected. For
 # example if they were duplicates of existing items.
 map $request_uri $new_uri {

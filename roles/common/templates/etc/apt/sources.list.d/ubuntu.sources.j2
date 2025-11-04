@@ -1,5 +1,5 @@
 {{ ansible_managed | comment }}
-{% set apt_mirror = apt_mirror | default("ke.archive.ubuntu.com") %}
+{% set apt_mirror = apt_mirror | default("uk.archive.ubuntu.com") %}
 
 Types: deb
 URIs: http://{{ apt_mirror }}/ubuntu/

@@ -1,8 +1,8 @@
 ---
 # Reconfigure OpenSSH's sshd_config.
 
-# The OpenSSH configuration does not change drastically between minor versions
-# of CentOS or Debian, so we can use the major version here.
+# OpenSSH on CentOS Stream 8 doesn't support configuration overrides, so we need
+# to overwrite the system configuration.
 - name: Reconfigure /etc/ssh/sshd_config
   ansible.builtin.template:
     src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2
@@ -10,7 +10,7 @@
     owner: root
     group: root
     mode: "0600"
-  when: (ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==')) or ansible_distribution == 'Debian'
+  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==')
   notify: reload sshd
 
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/system_design_guide/securing_networks
@@ -23,8 +23,8 @@
   when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==')
   notify: reload sshd
 
-# OpenSSH on Ubuntu versions before 20.04 and CentOS Stream 9 do not support in-
-# cluding extra configuration, so we overwrite the system configuration.
+# OpenSSH on Ubuntu versions before 20.04 don't support configuration overrides,
+# so we overwrite the system configuration.
 - name: Reconfigure /etc/ssh/sshd_config
   ansible.builtin.template:
     src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2
@@ -37,6 +37,7 @@
 
 # For years we directly modified the system sshd_config, but now we can leave
 # it alone and include our own overrides in sshd_config.d.
+# TODO: remove this after all Ubuntu 20.04 and 22.04 hosts have been reset
 - name: Reset /etc/ssh/sshd_config to dist
   ansible.builtin.template:
     src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_version }}.j2
@@ -47,9 +48,9 @@
   when: ansible_distribution == 'Ubuntu' and (ansible_distribution_version is version('20.04', '==') or ansible_distribution_version is version('22.04', '=='))
   notify: reload sshd
 
-# OpenSSH on Ubuntu versions since 20.04 and CentOS Stream 9 support including
-# extra configuration. The includes happen at the beginning of the file and the
-# first value to be read is used.
+# OpenSSH on Ubuntu 20.04+ and CentOS Stream 9+ support including configuration
+# snippets. The includes happen at the beginning of the file and the first value
+# to be read is used.
 - name: Configure ILRI sshd_config.d overrides
   ansible.builtin.template:
     src: etc/ssh/sshd_config.d/01-ilri_{{ ansible_distribution }}-{{ ansible_distribution_version }}.conf.j2
@@ -59,6 +60,20 @@
     mode: "0600"
   when: (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version is version('20', '>=')) or
         (ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('9', '=='))
+  notify: reload sshd
+
+# OpenSSH on Debian 11+ supports including configuration snippets similar to the
+# above, but we need to use the distribution major version (ie 12) rather than
+# the distribution version (ie 12.12) because the OpenSSH version doesn't change
+# in Debian point releases.
+- name: Configure ILRI sshd_config.d overrides
+  ansible.builtin.template:
+    src: etc/ssh/sshd_config.d/01-ilri_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.conf.j2
+    dest: /etc/ssh/sshd_config.d/01-ilri.conf
+    owner: root
+    group: root
+    mode: "0600"
+  when: (ansible_distribution == 'Debian' and ansible_distribution_major_version is version('11', '>='))
   notify: reload sshd
 
 # Unsure which versions this exists on, but I've seen it on Ubuntu 24.04. We

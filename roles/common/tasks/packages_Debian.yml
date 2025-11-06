@@ -22,14 +22,13 @@
         owner: root
         group: root
         mode: "0644"
-      register: apt_mirror
+      register: debian_apt_mirror
 
     - name: Update apt cache
       ansible.builtin.package:
         update_cache: true
       when:
-        - apt_mirror is defined
-        - apt_mirror is changed
+        - debian_apt_mirror is changed
 
     - name: Upgrade base OS
       ansible.builtin.package:

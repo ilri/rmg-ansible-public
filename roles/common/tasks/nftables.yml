@@ -10,8 +10,6 @@
     mode: "0644"
   notify:
     - restart nftables
-    - restart fail2ban
-    - restart sshguard
 
 # Debian/Ubuntu do not have /etc/nftables directory by default
 - name: Create /etc/nftables extra config directory
@@ -36,8 +34,6 @@
     - { src: firehol_level1-ipv4.nft, force: false }
   notify:
     - restart nftables
-    - restart fail2ban
-    - restart sshguard
 
 - name: Copy nftables update scripts
   ansible.builtin.template:

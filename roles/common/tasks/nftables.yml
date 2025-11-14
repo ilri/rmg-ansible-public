@@ -24,26 +24,22 @@
 
 - name: Copy nftables sets
   ansible.builtin.copy:
-    src: "{{ item.src }}"
-    dest: /etc/nftables/{{ item.src }}
+    src: firehol_level1-ipv4.nft
+    dest: /etc/nftables/firehol_level1-ipv4.nft
     owner: root
     group: root
     mode: "0644"
-    force: "{{ item.force }}"
-  loop:
-    - { src: firehol_level1-ipv4.nft, force: false }
+    force: false
   notify:
     - restart nftables
 
 - name: Copy nftables update scripts
   ansible.builtin.template:
-    src: "{{ item }}"
-    dest: /usr/local/bin/{{ item | split('.j2') | first }}
+    src: update-firehol-nftables.sh.j2
+    dest: /usr/local/bin/update-firehol-nftables.sh
     mode: "0755"
     owner: root
     group: root
-  loop:
-    - update-firehol-nftables.sh.j2
 
 - name: Copy nftables systemd units
   ansible.builtin.copy:
@@ -63,13 +59,11 @@
     daemon_reload: true
   when: nftables_systemd_units is changed
 
-- name: Start and enable nftables update timers
+- name: Start and enable nftables update timer
   ansible.builtin.systemd_service:
-    name: "{{ item }}"
+    name: update-firehol-nftables.timer
     state: started
     enabled: true
-  loop:
-    - update-firehol-nftables.timer
 
 - name: Start and enable nftables service
   ansible.builtin.systemd_service:

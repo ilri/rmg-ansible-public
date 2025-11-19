@@ -78,6 +78,11 @@ server {
     #
     # Test: https://{{ nginx_server_name }}/handle/10568/25102/browse?type=dateissued
     rewrite ^/handle/(\d+)/(\d+)/browse$ https://{{ nginx_server_name }}/handle/$1/$2? permanent;
+    # Bitstream links from the legacy REST API (note: I can't figure out how to
+    # match a UUID in nginx's rewrite regex, so we just check for anything.
+    #
+    # Test: https://{{ nginx_server_name }}/rest/bitstreams/0304ece4-7867-45c3-a695-aa6fe3bd3021/retrieve
+    rewrite ^/rest/bitstreams/(.+)/retrieve$ /server/api/core/bitstreams/$1/content permanent;
 
     # permanent redirects for Handles that have been withdrawn
     if ($new_uri) {

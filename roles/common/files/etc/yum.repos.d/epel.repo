@@ -2,8 +2,8 @@
 name=Extra Packages for Enterprise Linux $releasever - $basearch
 # It is much more secure to use the metalink, but if you wish to use a local mirror
 # place its address here.
-baseurl=https://hpc.ilri.cgiar.org/mirror/epel/$releasever/Everything/$basearch/
-#metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-$releasever&arch=$basearch&infra=$infra&content=$contentdir
+#baseurl=https://hpc.ilri.cgiar.org/mirror/epel/$releasever/Everything/$basearch/
+metalink=https://mirrors.fedoraproject.org/metalink?repo=epel-$releasever&arch=$basearch&infra=$infra&content=$contentdir
 enabled=1
 gpgcheck=1
 countme=1

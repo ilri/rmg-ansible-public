@@ -80,15 +80,16 @@
     - ansible_os_family == 'Debian'
     - "'hp' in hw_raid_vendor"
 
+# TODO: replace this with perccli
 # In ILRI CentOS repo, from:
 # http://sarepos.cpanel.net/centos
-- name: Install LSI MegaCLI tools
-  ansible.builtin.package:
-    name: MegaCli
-    state: present
-  when:
-    - ansible_distribution == 'CentOS'
-    - "'lsi' in hw_raid_vendor"
+#- name: Install LSI MegaCLI tools
+#  ansible.builtin.package:
+#    name: MegaCli
+#    state: present
+#  when:
+#    - ansible_distribution == 'CentOS'
+#    - "'lsi' in hw_raid_vendor"
 
 - name: Configure ILRI mirror of HPE MCP repository
   ansible.builtin.template:

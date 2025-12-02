@@ -146,9 +146,6 @@
       - gsl-devel.x86_64 # needed for some R packages like HiCeekR
       - hdf5-devel.x86_64 # for some R libraries
       - htop.x86_64
-      - intel-oneapi-mkl-core.x86_64 # provides libmkl_intel_lp64.so.2 for BLUPF90
-      - intel-oneapi-runtime-mkl-2024.x86_64 # provides libmkl_intel_lp64.so.2 for BLUPF90
-      - intel-oneapi-runtime-openmp-2024.x86_64 # provides libiomp5.so for BLUPF90
       - isa-l-devel # for fastp/0.24.1
       - ImageMagick-c++-devel.x86_64 # for some R libraries
       - java-11-openjdk.x86_64 # for lots of stuff

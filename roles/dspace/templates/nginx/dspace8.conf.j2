@@ -63,6 +63,19 @@ server {
     rewrite ^/discover$ https://{{ nginx_server_name }}/search permanent;
     rewrite ^/recent-submissions$ https://{{ nginx_server_name }}/search?spc.sf=dc.date.accessioned&spc.sd=DESC permanent;
     rewrite ^/(ldap|password)-login$ https://{{ nginx_server_name }}/login permanent;
+    # As of 2025-11-19 we have 414 browse links in Google's index causing 404s.
+    # Redirect to the community or collection since that is the best we can do
+    # without knowing the UUID to direct to the relevant DSpace 7+ browse page.
+    # Note: the "?" in the rewrite pattern makes sure nginx doesn't append the
+    # query string again.
+    #
+    # Test: https://{{ nginx_server_name }}/handle/10568/25102/browse?type=dateissued
+    rewrite ^/handle/(\d+)/(\d+)/browse$ https://{{ nginx_server_name }}/handle/$1/$2? permanent;
+    # Bitstream links from the legacy REST API (note: I can't figure out how to
+    # match a UUID in nginx's rewrite regex, so we just check for anything.
+    #
+    # Test: https://{{ nginx_server_name }}/rest/bitstreams/0304ece4-7867-45c3-a695-aa6fe3bd3021/retrieve
+    rewrite ^/rest/bitstreams/(.+)/retrieve$ /server/api/core/bitstreams/$1/content permanent;
 
     # permanent redirects for Handles that have been withdrawn
     if ($new_uri) {
@@ -186,7 +199,6 @@ server {
         access_log /var/log/nginx/api-access.log;
 
         # only rate limit old user agents associated with botnets
-        limit_req zone=badbots_ip;
         limit_req zone=badbots_old_ua;
 
         # required for browsers to direct them to quic port

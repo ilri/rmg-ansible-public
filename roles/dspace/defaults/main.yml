@@ -5,10 +5,6 @@
 # False on production, True on development!
 nginx_forbid_robots: false
 
-# default assumes letsencrypt on primary domain, override in hostvars if using
-# self-signed certificates, etc.
-nginx_tls_cert: /etc/letsencrypt/live/{{ nginx_server_name }}/fullchain.pem
-nginx_tls_key: /etc/letsencrypt/live/{{ nginx_server_name }}/privkey.pem
 # Note: this is also defined in the web role, but we define it here also becau-
 # se we use it in some tasks before we run the web role.
 nginx_ssl_port: 443

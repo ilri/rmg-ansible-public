@@ -1,0 +1,9 @@
+{{ ansible_managed | comment }}
+
+acme_issuer letsencrypt {
+    uri         https://acme-v02.api.letsencrypt.org/directory;
+    contact     {{ letsencrypt_contact }};
+    challenge   tls-alpn;
+    state_path  /var/cache/nginx/acme-letsencrypt;
+    accept_terms_of_service;
+}

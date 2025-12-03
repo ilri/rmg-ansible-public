@@ -22,6 +22,9 @@ nginx_ssl_protocols: 'TLSv1.2 TLSv1.3'
 nginx_ssl_ecdh_curve: X25519:prime256v1:secp384r1
 nginx_ssl_port: 443
 
+# Contact email for Let's Encrypt certificates
+letsencrypt_contact: admin@example.com
+
 # DNS resolvers for OCSP stapling and upstream resolution (default Cloudflare)
 # See: https://nginx.org/en/docs/http/ngx_http_ssl_module.html#ssl_stapling
 nginx_resolver: '1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001]'

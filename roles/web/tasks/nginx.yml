@@ -1,7 +1,16 @@
 ---
 # Install and configure nginx from the upstream package repository. For now this
 # only configures common settings that we use everywhere, but not site-specific
-# things like vhosts.
+# things like vhosts. We do enable support for Let's Encrypt certificates, though
+# it must be configured in each vhost's server block with:
+#
+#    acme_certificate letsencrypt;
+#
+#    ssl_certificate       $acme_certificate;
+#    ssl_certificate_key   $acme_certificate_key;
+#
+#    # do not parse the certificate on each request
+#    ssl_certificate_cache max=2;
 #
 # See: https://nginx.org/en/download.html
 
@@ -40,7 +49,7 @@
 
 - name: Install nginx
   ansible.builtin.apt:
-    pkg: nginx
+    pkg: [nginx, nginx-module-acme]
     cache_valid_time: 3600
     state: present
   tags: packages
@@ -68,7 +77,18 @@
     group: root
   notify:
     - reload nginx
-  tags: nginx
+
+# This load_module line must be present before the events block
+- name: Enable nginx acme module
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: ^load_module\s+modules\/ngx_http_acme_module\.so;$
+    insertbefore: ^events
+    firstmatch: yes
+    line: load_module modules/ngx_http_acme_module.so;
+    state: present
+  notify:
+    - reload nginx
 
 - name: Remove default nginx vhost
   ansible.builtin.file:
@@ -88,6 +108,7 @@
     - { src: etc/nginx/intermediate-tls.conf.j2, dest: /etc/nginx/intermediate-tls.conf }
     - { src: etc/nginx/conf.d/blank-vhost.conf.j2, dest: /etc/nginx/conf.d/blank-vhost.conf }
     - { src: etc/nginx/extra-security.conf.j2, dest: /etc/nginx/extra-security.conf }
+    - { src: etc/nginx/conf.d/01-acme.conf.j2, dest: /etc/nginx/conf.d/01-acme.conf }
   notify:
     - reload nginx
 
@@ -106,5 +127,10 @@
     name: nginx
     state: started
     enabled: true
+
+- name: Remove certbot
+  ansible.builtin.apt:
+    name: certbot
+    state: absent
 
 # vim: set sw=2 ts=2:

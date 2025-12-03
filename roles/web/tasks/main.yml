@@ -8,6 +8,7 @@
     - ansible_distribution == 'Ubuntu'
     - ansible_distribution_version is version('20.04', '>=')
     - (webserver is defined and webserver != 'caddy')
+    - (webserver is defined and webserver != 'nginx')
   tags: letsencrypt
 
 # Only run httpd plays on Ubuntu for now

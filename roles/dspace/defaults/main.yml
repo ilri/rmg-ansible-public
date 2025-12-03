@@ -72,10 +72,6 @@ tomcat_url_checksum: 243474cd54d8589c97f2db964b13b36920500a298b190370a8c58306db7
 tomcat_path_prefix: /usr/local
 tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 
-# install certbot + dependencies?
-# True unless you're in development and using "localhost" + snakeoil certs
-use_letsencrypt: true
-
 # Dummy key
 sherpa_romeo_apikey: 5DHH3N12-1362-11RG-923C-471E3TE2897G
 

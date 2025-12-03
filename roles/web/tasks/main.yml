@@ -19,11 +19,13 @@
     - ansible_distribution == 'Ubuntu'
   tags: httpd
 
+# Only run nginx plays on Ubuntu for now
 - name: Configure nginx
   ansible.builtin.include_tasks: nginx.yml
   when:
     - webserver is defined
     - webserver == 'nginx'
+    - ansible_distribution == 'Ubuntu'
   tags: nginx
 
 - name: Configure caddy

@@ -1,8 +1,49 @@
 ---
-# For now this only does some auxiliary configuration of the nginx install. It
-# could eventually handle more dynamic things like vhosts, but then we'd have
-# to worry about a lot more specifics. At the very least we are now able to m-
-# anage some of the basic SSL settings and the default vhost.
+# Install and configure nginx from the upstream package repository. For now this
+# only configures common settings that we use everywhere, but not site-specific
+# things like vhosts.
+#
+# See: https://nginx.org/en/download.html
+
+- name: Download nginx apt signing key
+  ansible.builtin.get_url:
+    url: https://nginx.org/keys/nginx_signing.key
+    dest: /usr/share/keyrings/nginx_signing.key
+    owner: root
+    group: root
+    mode: "0644"
+    checksum: sha256:55385da31d198fa6a5012d40ae98ecb272a6c4e8fffffba94719ffd3e87de37a
+  register: download_nginx_signing_key
+
+- name: Add nginx stable repository
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nginx_signing.key] https://nginx.org/packages/ubuntu/ {{ ansible_distribution_release }} nginx
+    filename: nginx_org_packages_ubuntu
+    state: present
+  register: add_nginx_apt_repository
+  when: nginx_version == "stable"
+
+- name: Add nginx mainline repository
+  ansible.builtin.apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/nginx_signing.key] https://nginx.org/packages/mainline/ubuntu/ {{ ansible_distribution_release }} nginx
+    filename: nginx_org_packages_ubuntu
+    state: present
+  register: add_nginx_apt_repository
+  when: nginx_version == "mainline"
+
+- name: Update apt cache
+  ansible.builtin.apt: # noqa no-handler
+    update_cache: true
+  when:
+    (download_nginx_signing_key.status_code is defined and download_nginx_signing_key.status_code == 200) or
+    add_nginx_apt_repository is changed
+
+- name: Install nginx
+  ansible.builtin.apt:
+    pkg: nginx
+    cache_valid_time: 3600
+    state: present
+  tags: packages
 
 # See: https://docs.ansible.com/ansible/latest/collections/community/crypto/docsite/guide_selfsigned.html
 - name: Create private key (RSA, 4096 bits)
@@ -64,5 +105,11 @@
   notify:
     - reload nginx
   tags: nginx
+
+- name: Start and enable nginx service
+  ansible.builtin.systemd_service:
+    name: nginx
+    state: started
+    enabled: true
 
 # vim: set sw=2 ts=2:

@@ -30,6 +30,10 @@ nginx_resolver: '1.1.1.1 1.0.0.1 [2606:4700:4700::1111] [2606:4700:4700::1001]'
 # since the price of undoing this is so high let's keep it off for now.
 nginx_enable_hsts: false
 
+# stable is 1.28.x
+# mainline is 1.29.x
+nginx_version: stable
+
 # HTTP Strict-Transport-Security max-age in seconds (one year)
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 hsts_maxage: 31536000

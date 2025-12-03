@@ -25,7 +25,7 @@ dspace_frontend_git_branch: 7_x-prod
 
 # stable is 1.28.x
 # mainline is 1.29.x
-nginx_branch: stable
+nginx_version: stable
 
 # PostgreSQL connection pool sizes for DSpace API
 # applications.

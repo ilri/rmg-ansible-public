@@ -15,7 +15,7 @@
     filename: nginx_org_packages_ubuntu
     state: present
   register: add_nginx_apt_repository
-  when: nginx_branch == "stable"
+  when: nginx_version == "stable"
 
 - name: Add nginx mainline repository
   ansible.builtin.apt_repository:
@@ -23,7 +23,7 @@
     filename: nginx_org_packages_ubuntu
     state: present
   register: add_nginx_apt_repository
-  when: nginx_branch == "mainline"
+  when: nginx_version == "mainline"
 
 - name: Update apt cache
   ansible.builtin.apt: # noqa no-handler

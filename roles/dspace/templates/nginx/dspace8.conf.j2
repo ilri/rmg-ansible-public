@@ -10,7 +10,6 @@
     {% include 'nginx/legacy-dspace-domains.conf.j2' %}
 {% endif %}
 
-{% if nginx_tls_cert is defined -%}
 # Handle {{ nginx_server_name }} http -> https
 #
 server {
@@ -30,21 +29,15 @@ server {
 
     include extra-security.conf;
 }
-{% endif %} {# end: nginx_tls_cert #}
 
 # HTTPS server (only for domains we have a cert for)
 #
 server {
-    {% if nginx_tls_cert is defined -%}
     listen {{ nginx_ssl_port }} quic reuseport;
     listen {{ nginx_ssl_port }} ssl;
     listen [::]:{{ nginx_ssl_port }} quic reuseport;
     listen [::]:{{ nginx_ssl_port }} ssl;
     http2 on;
-    {% else -%}
-    listen 80;
-    listen [::]:80;
-    {% endif %} {# end: nginx_tls_cert #}
 
     server_name {{ nginx_server_name }};
 
@@ -54,8 +47,13 @@ server {
     add_header X-Robots-Tag "none";
     {% endif %}
 
-    ssl_certificate {{ nginx_tls_cert }};
-    ssl_certificate_key {{ nginx_tls_key }};
+    acme_certificate letsencrypt;
+
+    ssl_certificate       $acme_certificate;
+    ssl_certificate_key   $acme_certificate_key;
+
+    # do not parse the certificate on each request
+    ssl_certificate_cache max=2;
 
     include /etc/nginx/intermediate-tls.conf;
 
@@ -313,11 +311,7 @@ server {
 resolver {{ nginx_resolver }};
 
 upstream tomcat-http {
-    {% if nginx_tls_cert is defined -%}
     server 127.0.0.1:8443;
-    {% else -%}
-    server 127.0.0.1:8001;
-    {% endif %}
 
     # The keepalive parameter sets the maximum number of idle keepalive connections
     # to upstream servers that are preserved in the cache of each worker process. When

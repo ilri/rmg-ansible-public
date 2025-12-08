@@ -1,5 +1,10 @@
 {{ ansible_managed | comment }}
 
+# Setting the resolver is important because nginx uses it for upstream servers
+# and ACME requests. nginx attempts to resolve these at startup and will fail
+# if it cannot.
+resolver {{ nginx_resolver }};
+
 acme_issuer letsencrypt {
     uri         https://acme-v02.api.letsencrypt.org/directory;
     contact     {{ letsencrypt_contact }};

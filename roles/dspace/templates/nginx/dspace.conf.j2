@@ -381,10 +381,6 @@ server {
     include extra-security.conf;
 }
 
-# Set resolver to use for upstream servers. Important because nginx attempts to
-# resolve these at startup and will fail if it cannot.
-resolver {{ nginx_resolver }};
-
 upstream tomcat-http {
     server 127.0.0.1:8443;
 

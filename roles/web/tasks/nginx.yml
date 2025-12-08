@@ -58,6 +58,7 @@
 - name: Create private key (RSA, 4096 bits)
   community.crypto.openssl_privatekey:
     path: /etc/ssl/private/nginx-snakeoil.key
+  tags: nginx
 
 - name: Generate self-signed TLS cert
   community.crypto.x509_certificate:
@@ -66,6 +67,7 @@
     provider: selfsigned
   notify:
     - reload nginx
+  tags: nginx
 
 - name: Download 4096-bit RFC 7919 dhparams
   ansible.builtin.get_url:
@@ -96,6 +98,7 @@
     state: absent
   notify:
     - reload nginx
+  tags: nginx
 
 - name: Copy extra nginx configs (templates)
   ansible.builtin.template:
@@ -111,6 +114,7 @@
     - { src: etc/nginx/conf.d/01-acme.conf.j2, dest: /etc/nginx/conf.d/01-acme.conf }
   notify:
     - reload nginx
+  tags: nginx
 
 - name: Copy extra nginx configs (files)
   ansible.builtin.copy:
@@ -121,6 +125,7 @@
     group: root
   notify:
     - reload nginx
+  tags: nginx
 
 - name: Start and enable nginx service
   ansible.builtin.systemd_service:

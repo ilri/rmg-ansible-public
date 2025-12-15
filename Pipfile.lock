@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2ed22820ef744800012960d95ec7f07a8a2e2ec7f4ef4af1cd4c7e000f5feda8"
+            "sha256": "624b536f9ff185994a29cedf3514deef09f18b1715f071c69ab294961e757370"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.12"
+            "python_version": "3.13"
         },
         "sources": [
             {
@@ -35,11 +35,11 @@
         },
         "ansible-core": {
             "hashes": [
-                "sha256:80279fffd98686badfaa32e1ec785d98a6df1b2fc1e4097dec0597640d746415",
-                "sha256:b7b6df2fb0cf065b091d0332e98afbe4b028f2ffe58078e7dcf83f09e35cc8ad"
+                "sha256:f0d85c2ac8df8c2377cf2dae34dc022b47ec02e3c9975090fe49fa11bf2fb097",
+                "sha256:fd2992583d129ebd8c9585ec309ffcc61b6b9e1bac4df9daa08fb4015f16694b"
             ],
             "markers": "python_version >= '3.10'",
-            "version": "==2.16.14"
+            "version": "==2.16.15"
         },
         "ansible-lint": {
             "hashes": [
@@ -271,14 +271,6 @@
             ],
             "markers": "python_version >= '3.10'",
             "version": "==3.20.0"
-        },
-        "importlib-metadata": {
-            "hashes": [
-                "sha256:d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000",
-                "sha256:e5dd1551894c77868a30651cef00984d50e1002d06942a7101d34870c5f02afd"
-            ],
-            "markers": "python_version >= '3.9'",
-            "version": "==8.7.0"
         },
         "jinja2": {
             "hashes": [
@@ -768,14 +760,6 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==1.37.1"
-        },
-        "zipp": {
-            "hashes": [
-                "sha256:071652d6115ed432f5ce1d34c336c0adfd6a884660d1e9712a256d3d3bd4b14e",
-                "sha256:a07157588a12518c9d4034df3fbbee09c814741a33ff63c05fa29d26a2404166"
-            ],
-            "markers": "python_version >= '3.9'",
-            "version": "==3.23.0"
         }
     },
     "develop": {

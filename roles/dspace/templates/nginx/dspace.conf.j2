@@ -94,6 +94,12 @@ server {
         return 429 '{"status": 429, "message": "Too Many Requests"}';
     }
 
+    # Reduce logspam for missing old favicon
+    location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
     # static assets we can load from the file system directly with nginx. We do
     # not want to match explorer or server assets because they are not here!
     # See: https://regex101.com/r/638tFT/2

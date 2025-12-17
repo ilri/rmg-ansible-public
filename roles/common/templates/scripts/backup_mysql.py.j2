@@ -90,7 +90,7 @@ def get_databases(mysql_user, mysql_pass, mysql_host):
     process = sb.run(args, stdout=sb.PIPE, stderr=sb.PIPE, universal_newlines=True)
 
     if process.returncode != 0:
-        send_mail(process.stderr.decode("utf-8"))
+        send_mail(process.stderr)
 
         sys.exit()
 
@@ -122,7 +122,7 @@ def backup_databases(
         dump_process = sb.run(args, stdout=sql_file, stderr=sb.PIPE)
 
     if dump_process.returncode != 0:
-        send_mail(dump_process.stderr.decode("utf-8"))
+        send_mail(dump_process.stderr)
 
         sys.exit()
     else:
@@ -137,7 +137,7 @@ def backup_databases(
     compress_process = sb.run(args, stderr=sb.PIPE)
 
     if compress_process.returncode != 0:
-        send_mail(compress_process.stderr.decode("utf-8"))
+        send_mail(compress_process.stderr)
 
         sys.exit()
     else:

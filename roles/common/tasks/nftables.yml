@@ -22,7 +22,7 @@
     owner: root
     mode: "0755"
 
-- name: Copy nftables sets
+- name: Copy nftables sets (FireHOL)
   ansible.builtin.copy:
     src: firehol_level1-ipv4.nft
     dest: /etc/nftables/firehol_level1-ipv4.nft
@@ -30,6 +30,19 @@
     group: root
     mode: "0644"
     force: false
+  notify:
+    - restart nftables
+
+- name: Copy nftables sets (Chinese)
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - { src: chinese_networks-ipv4.nft, dest: /etc/nftables/chinese_networks-ipv4.nft }
+    - { src: chinese_networks-ipv6.nft, dest: /etc/nftables/chinese_networks-ipv6.nft }
   notify:
     - restart nftables
 

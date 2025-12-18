@@ -8,6 +8,10 @@ flush ruleset
 # List updated daily by update-firehol-nftables.sh
 include "/etc/nftables/firehol_level1-ipv4.nft"
 
+# Manually curated list of abusive Chinese networks
+include "/etc/nftables/chinese_networks-ipv4.nft"
+include "/etc/nftables/chinese_networks-ipv6.nft"
+
 # Notes:
 #   - tables hold chains, chains hold rules
 #   - inet is for both ipv4 and ipv6
@@ -19,6 +23,18 @@ table inet filter {
         elements = $FIREHOL_LEVEL1_IPV4
     }
 
+    set chinese_networks-ipv4 {
+        type ipv4_addr
+        flags interval
+        elements = $CHINESE_IPV4
+    }
+
+    set chinese_networks-ipv6 {
+        type ipv6_addr
+        flags interval
+        elements = $CHINESE_IPV6
+    }
+
     chain input {
         type filter hook input priority 0;
 
@@ -27,6 +43,8 @@ table inet filter {
         ct state invalid counter drop comment "Early drop of invalid connections"
 
         ip saddr @firehol_level1-ipv4 counter drop comment "Early drop of incoming packets matching firehol_level1-ipv4 list"
+        ip saddr @chinese_networks-ipv4 counter drop comment "Early drop of incoming packets matching chinese_networks-ipv4 list"
+        ip6 saddr @chinese_networks-ipv6 counter drop comment "Early drop of incoming packets matching chinese_networks-ipv6 list"
 
         iifname lo accept comment "Allow from loopback"
 

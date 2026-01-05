@@ -1,0 +1,11 @@
+[project]
+name = "rmg-ansible-public"
+version = "0.1.0"
+description = "Ansible playbooks for ILRI research-computing infrastructure"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "ansible==9.*",
+    "ansible-lint>=25.12.2",
+    "passlib>=1.7.4",
+]

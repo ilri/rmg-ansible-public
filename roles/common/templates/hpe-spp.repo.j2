@@ -6,10 +6,6 @@ name=Service Pack for ProLiant
 baseurl=https://downloads.linux.hpe.com/repo/spp-gen11/redhat/$releasever/$basearch/current
 {% elif ansible_product_name is search('.*Gen10.*') -%}
 baseurl=https://downloads.linux.hpe.com/repo/spp-gen10/redhat/$releasever/$basearch/current
-{% elif ansible_product_name is search('.*Gen9.*') -%}
-baseurl=https://downloads.linux.hpe.com/repo/spp-gen9/redhat/$releasever/$basearch/current
-{% elif ansible_product_name is search('.*Gen8.*') -%}
-baseurl=https://downloads.linux.hpe.com/repo/spp-gen8/redhat/$releasever/$basearch/current
 {% endif %}
 enabled=1
 gpgcheck=1

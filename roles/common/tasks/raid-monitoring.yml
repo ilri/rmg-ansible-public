@@ -103,6 +103,9 @@
     - ansible_distribution_major_version is version('8', '==')
     - "'hp' in hw_raid_vendor"
 
+# 2026-01-08: after upgrading our storage to CentOS Stream 9 I see there are no
+# packages for Gen8 and Gen9 anymore. We only need this for ssacli and it seems
+# we can use an old RPM (from ilri repo).
 - name: Configure HPE SPP repository
   ansible.builtin.template:
     src: hpe-spp.repo.j2
@@ -113,6 +116,8 @@
   when:
     - ansible_distribution == 'CentOS'
     - ansible_distribution_major_version is version('9', '==')
+    - ansible_product_name is not search('.*Gen8.*')
+    - ansible_product_name is not search('.*Gen9.*')
     - "'hp' in hw_raid_vendor"
 
 - name: Install HPE Smart Storage Administrator CLI

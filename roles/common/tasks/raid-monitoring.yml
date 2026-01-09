@@ -91,18 +91,6 @@
 #    - ansible_distribution == 'CentOS'
 #    - "'lsi' in hw_raid_vendor"
 
-- name: Configure ILRI mirror of HPE MCP repository
-  ansible.builtin.template:
-    src: hpe-mcp.repo.j2
-    dest: /etc/yum.repos.d/hpe-mcp.repo
-    owner: root
-    group: root
-    mode: "0644"
-  when:
-    - ansible_distribution == 'CentOS'
-    - ansible_distribution_major_version is version('8', '==')
-    - "'hp' in hw_raid_vendor"
-
 # 2026-01-08: after upgrading our storage to CentOS Stream 9 I see there are no
 # packages for Gen8 and Gen9 anymore. We only need this for ssacli and it seems
 # we can use an old RPM (from ilri repo).

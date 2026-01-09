@@ -1,28 +1,6 @@
 ---
 # Reconfigure OpenSSH's sshd_config.
 
-# OpenSSH on CentOS Stream 8 doesn't support configuration overrides, so we need
-# to overwrite the system configuration.
-- name: Reconfigure /etc/ssh/sshd_config
-  ansible.builtin.template:
-    src: sshd_config_{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.j2
-    dest: /etc/ssh/sshd_config
-    owner: root
-    group: root
-    mode: "0600"
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==')
-  notify: reload sshd
-
-# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/system_design_guide/securing_networks
-- name: Opt out of CentOS system-wide crypto policy
-  ansible.builtin.lineinfile:
-    path: /etc/sysconfig/sshd
-    regexp: ^# CRYPTO_POLICY=$
-    line: CRYPTO_POLICY=
-    state: present
-  when: ansible_distribution == 'CentOS' and ansible_distribution_major_version is version('8', '==')
-  notify: reload sshd
-
 # OpenSSH on Ubuntu versions before 20.04 don't support configuration overrides,
 # so we overwrite the system configuration.
 - name: Reconfigure /etc/ssh/sshd_config

@@ -43,7 +43,7 @@
     state: restarted
   when: ansible_distribution != 'CentOS'
 
-# 2023-02-08: only run sshguard handlers on CentOS 8 because we run that
+# 2023-02-08: only run sshguard handlers on CentOS 8+ because we run that
 # instead of fail2ban because of fail2ban's hard dependency on firewalld.
 - name: restart sshguard
   ansible.builtin.systemd_service:
@@ -51,7 +51,7 @@
     state: restarted
   when:
     - ansible_distribution == 'CentOS'
-    - ansible_distribution_major_version is version('8', '==')
+    - ansible_distribution_major_version is version('8', '>=')
 
 - name: start tuned
   ansible.builtin.service:

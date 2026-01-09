@@ -7,4 +7,4 @@ This role does the following:
 - Installs the `environment-modules` package and adds modulefiles from the [HPC environment modules repository](https://github.com/ilri/hpc-environment-modules)
 
 ## OS Families Supported
-Developed for CentOS Stream 8.
+Developed for CentOS Stream 9.

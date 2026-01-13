@@ -3,7 +3,7 @@
 - name: Configure public keys for provisioning user
   ansible.posix.authorized_key:
     user: "{{ provisioning_user.name }}"
-    key: "{{ lookup('file', 'private/data/common/ssh-keys/{{ provisioning_user.name }}') }}"
+    key: "{{ lookup('file', 'private/data/common/ssh-keys/' ~ provisioning_user.name) }}"
     exclusive: true
   tags: ssh-keys
 
@@ -15,7 +15,7 @@
     - ssh_password_authentication == 'disabled'
   ansible.posix.authorized_key:
     user: "{{ item }}"
-    key: "{{ lookup('file', 'private/data/common/ssh-keys/{{ item }}') }}"
+    key: "{{ lookup('file', 'private/data/common/ssh-keys/' ~ item) }}"
   with_items:
     - "{{ ssh_allowed_users }}"
   tags: ssh-keys

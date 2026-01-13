@@ -1,0 +1,12 @@
+---
+# file: group_vars/all
+
+ansible_managed: |-
+  This file is managed by Ansible.
+
+  {{ 'template: ' + template_path }}
+  {{ 'date: ' + (template_mtime | string) }}
+  {{ 'user: ' + template_uid }}
+  {{ 'host: ' + template_host }}
+
+# vim: set ts=2 sw=2:

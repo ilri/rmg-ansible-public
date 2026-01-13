@@ -1,5 +1,5 @@
 # https://grafana.com/grafana/dashboards/8704-tomcat-dashboard/
----   
+---
 lowercaseOutputLabelNames: true
 lowercaseOutputName: true
 whitelistObjectNames: ["java.lang:type=OperatingSystem", "Catalina:*"]
@@ -38,4 +38,4 @@ rules:
       context: "$2"
       host: "$1"
     help: Tomcat session $3 total
-    type: COUNTER   
+    type: COUNTER

@@ -60,7 +60,7 @@
   npm:
     name: "{{ item.name }}"
     version: "{{ item.version }}"
-    global: yes
+    global: true
   loop:
     - {'name': 'yarn', 'version': '^1.22.19'}
     - {'name': 'pm2', 'version': '^5.4.2'}

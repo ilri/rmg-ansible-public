@@ -86,7 +86,7 @@
     path: /etc/nginx/nginx.conf
     regexp: ^load_module\s+modules\/ngx_http_acme_module\.so;$
     insertbefore: ^events
-    firstmatch: yes
+    firstmatch: true
     line: load_module modules/ngx_http_acme_module.so;
     state: present
   notify:

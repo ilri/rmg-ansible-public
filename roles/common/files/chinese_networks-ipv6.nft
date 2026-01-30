@@ -9,8 +9,8 @@
 # 56047	(China 4)
 # 24445	(China 5)
 # 24444	(China 6)
-# 56046	(China 8)
 # 24547	(China 7)
+# 56046	(China 8)
 # 56041	(China 9)
 # 56044	(China 10)
 # 56045	(China 11)
@@ -57,7 +57,7 @@
 # 17622	(China 52)
 # 17623	(China 53)
 # 140061	(China 54)
-# Last update: Sun Jan 25 16:26:29 EAT 2026
+# Last update: Fri Jan 30 08:17:36 EAT 2026
 define CHINESE_IPV6 = {
 2400:3200::/32,
 2400:5280:f803::/48,

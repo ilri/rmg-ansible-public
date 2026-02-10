@@ -41,4 +41,7 @@ nginx_version: stable
 # See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
 hsts_maxage: 31536000
 
+# Note that this only installs go-away.
+enable_go_away: false
+
 # vim: set sw=2 ts=2:

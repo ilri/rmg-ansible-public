@@ -11,6 +11,15 @@
     - (webserver is defined and webserver != 'nginx')
   tags: letsencrypt
 
+# For now only run this on Ubuntu + nginx.
+- name: Configure go-away
+  ansible.builtin.include_tasks: go-away.yml
+  when:
+    - webserver is defined and webserver == 'nginx'
+    - enable_go_away is defined and enable_go_away == 'true'
+    - ansible_distribution == 'Ubuntu'
+  tags: go-away
+
 # Only run httpd plays on Ubuntu for now
 - name: Configure Apache httpd
   ansible.builtin.include_tasks: httpd.yml

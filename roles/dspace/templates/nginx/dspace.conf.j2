@@ -495,6 +495,9 @@ map $http_user_agent $limit_bots_ua {
     # 2023-01-18 python requests or urllib should be treated as bots in the
     # frontend (we already drop their hits from Solr).
     ~python 1;
+
+    # 2026-02-11: lots of people using Scrapy lately
+    ~Scrapy 1;
 }
 
 map $http_user_agent $limit_bots_old_ua {

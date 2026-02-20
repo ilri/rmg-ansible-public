@@ -135,7 +135,7 @@
 
 - name: Enable pgcrypto
   postgresql_query: # noqa no-handler
-    db: "{{ dspace_db_name }}"
+    name: "{{ dspace_db_name }}"
     query: CREATE EXTENSION IF NOT EXISTS pgcrypto
   become_user: postgres
   when: create_postgres_databases is changed

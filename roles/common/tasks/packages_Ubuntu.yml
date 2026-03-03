@@ -55,7 +55,6 @@
           - iotop
           - htop
           - strace
-          - s3cmd
           - safe-rm
           - debian-goodies
           - mosh

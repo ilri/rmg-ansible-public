@@ -14,8 +14,8 @@
 # 56041	(China 9)
 # 56044	(China 10)
 # 56045	(China 11)
-# 132525	(China 12)
 # 56040	(China 13)
+# 132525	(China 12)
 # 138169	(China 14)
 # 4812	(China 15)
 # 134810	(China 16)
@@ -57,7 +57,7 @@
 # 17622	(China 52)
 # 17623	(China 53)
 # 140061	(China 54)
-# Last update: Wed Mar  4 15:13:29 EAT 2026
+# Last update: Mon Mar  9 09:32:41 EAT 2026
 define CHINESE_IPV6 = {
 2001:4510:1480::/41,
 2001:4511:1480::/41,

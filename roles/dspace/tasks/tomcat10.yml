@@ -123,6 +123,14 @@
     - restart tomcat{{ tomcat_version_major }}
   tags: tomcat
 
+- name: Remove legacy DSpace REST API web application context
+  ansible.builtin.file:
+    path: "{{ tomcat_path }}/conf/Catalina/localhost/rest.xml"
+    state: absent
+  notify:
+    - restart tomcat{{ tomcat_version_major }}
+  tags: tomcat
+
 - name: Remove unneccessary default Tomcat web applications
   ansible.builtin.file:
     path: "{{ tomcat_path }}/webapps/{{ item }}"

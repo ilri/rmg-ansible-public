@@ -19,7 +19,6 @@ dspace_root: /home/dspace-install
 # default dspace webapps
 dspace_webapps:
   - { name: 'server', app_path: '{{ dspace_root }}/webapps/server', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/server.xml', db_pool_name: 'jdbc/dspaceApi' }
-  - { name: 'rest', app_path: '{{ dspace_root }}/webapps/rest', context_path: '{{ tomcat_path }}/conf/Catalina/localhost/rest.xml', db_pool_name: 'jdbc/dspaceApi' }
 
 # default postgresql dspace db credentials
 dspace_db_name: dspace

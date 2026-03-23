@@ -18,16 +18,16 @@ web_access:
   - ilri_nbo_corp
 
 dspace_git_repo: https://github.com/ilri/DSpace.git
-dspace_git_branch: 7_x-prod
+dspace_git_branch: 8_x-prod
 
 dspace_frontend_git_repo: https://github.com/ilri/dspace-angular.git
-dspace_frontend_git_branch: 7_x-prod
+dspace_frontend_git_branch: 8_x-prod
 
 # PostgreSQL connection pool sizes for DSpace API
 # applications.
 dspace_dbpool_api_max_connections: 250
 
-dspace_version_major: 7
+dspace_version_major: 8
 
 # postgresql version to deploy
 pg_version: 15

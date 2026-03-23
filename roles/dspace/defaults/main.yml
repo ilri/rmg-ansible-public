@@ -52,8 +52,8 @@ pyvenv_command: python3.12 -m venv
 # version 17 for DSpace 8
 java_version_major: 17
 
-# version 20 for DSpace 8
-nodejs_version_major: 20
+# version 22 for DSpace 8
+nodejs_version_major: 22
 
 tomcat_user: dspace
 tomcat_group: dspace

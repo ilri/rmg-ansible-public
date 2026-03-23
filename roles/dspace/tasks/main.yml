@@ -109,7 +109,7 @@
     mode: "0640"
 
 - name: Create postgres users
-  postgresql_user:
+  community.postgresql.postgresql_user:
     name: "{{ item.name }}"
     password: "{{ item.password }}"
   loop:
@@ -121,7 +121,7 @@
     PGOPTIONS: -c password_encryption=scram-sha-256
 
 - name: Create postgres databases
-  postgresql_db:
+  community.postgresql.postgresql_db:
     name: "{{ item.name }}"
     encoding: UTF-8
     template: template0
@@ -134,7 +134,7 @@
   tags: postgresql
 
 - name: Enable pgcrypto
-  postgresql_query: # noqa no-handler
+  community.postgresql.postgresql_query: # noqa no-handler
     login_db: "{{ dspace_db_name }}"
     query: CREATE EXTENSION IF NOT EXISTS pgcrypto
   become_user: postgres

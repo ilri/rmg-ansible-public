@@ -58,12 +58,12 @@ nodejs_version_major: 20
 tomcat_user: dspace
 tomcat_group: dspace
 tomcat_user_home: /home/dspace
-# See: https://tomcat.apache.org/download-90.cgi
-tomcat_version: 9.0.108
-tomcat_version_major: 9
+# See: https://tomcat.apache.org/download-10.cgi
+tomcat_version: 10.1.52
+tomcat_version_major: 10
 tomcat_url: https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_version_major }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz
 # sha512
-tomcat_url_checksum: 243474cd54d8589c97f2db964b13b36920500a298b190370a8c58306db786bb30101c33d9ca85eddd8014c5d7f53fec1685beeb4fb7f3037ffcc2f4124c6c6b7
+tomcat_url_checksum: 241183fe5dec15936205ec495b65e04218117affc10e90c5fbc56bce0b4f031ee944d468c128f0ae484fd1d5bd9bec22b65a95a8cfd94cb7fc1f12c7ef434d99
 tomcat_path_prefix: /usr/local
 tomcat_path: '{{ tomcat_path_prefix }}/apache-tomcat-{{ tomcat_version }}'
 

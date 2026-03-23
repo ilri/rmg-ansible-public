@@ -2,3 +2,6 @@
 
 # Add DSpace bin to PATH
 export PATH=$PATH:{{ dspace_root }}/bin
+
+# Set DSpace Java options to force UTF-8 and increase memory for CLI operations
+export JAVA_OPTS="-Dfile.encoding=UTF-8 -Xmx5172m"

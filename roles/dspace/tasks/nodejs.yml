@@ -79,8 +79,8 @@
     version: "{{ item.version }}"
     global: true
   loop:
-    - {'name': 'yarn', 'version': '^1.22.19'}
-    - {'name': 'pm2', 'version': '^5.4.2'}
+    - {'name': 'yarn', 'version': '^1.22.22'}
+    - {'name': 'pm2', 'version': '^6.0.14'}
 
 - name: Add npm packages to PATH
   ansible.builtin.lineinfile:

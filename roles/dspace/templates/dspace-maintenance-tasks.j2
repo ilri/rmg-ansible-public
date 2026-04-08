@@ -22,7 +22,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 
 # Send information about new and changed DOIs to the DOI registration agency
 # NOTE: ONLY NECESSARY IF YOU REGISTER DOIS USING DATACITE AS REGISTRATION AGENCY (Disabled by default)
-# 0 4,12,20 * * *  $DSPACE/bin/dspace doi-organiser -u -q ; [dspace]/bin/dspace doi-organiser -s -q ; [dspace]/bin/dspace doi-organiser -r -q ; [dspace]/bin/dspace doi-organiser -d -q
+# 0 4,12,20 * * * {{ tomcat_user }} $DSPACE/bin/dspace doi-organiser -u -q ; [dspace]/bin/dspace doi-organiser -s -q ; [dspace]/bin/dspace doi-organiser -r -q ; [dspace]/bin/dspace doi-organiser -d -q
 
 #----------------
 # DAILY TASKS
@@ -31,7 +31,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 
 # Update the OAI-PMH index with the newest content at 12:15am every day
 # REQUIRED to update content available in OAI-PMH (However, it can be removed if you do not enable OAI-PMH)
-15 0 * * * $DSPACE/bin/dspace oai import > /dev/null
+15 0 * * * {{ tomcat_user }} $DSPACE/bin/dspace oai import > /dev/null
 
 # Clean and Update the Discovery indexes at 12:15am every day
 # (This ensures that any deleted documents are cleaned from the Discovery search/browse index)
@@ -61,7 +61,7 @@ JAVA_OPTS="-Xmx1024M -Dfile.encoding=UTF-8"
 0 */6 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace filter-media -q -p "ImageMagick PDF Thumbnail" >> $DSPACE/log/cron-filter-media-thumbnails.log.$(date --iso-8601) 2>&1
 
 # Normalize DOIs in MEL submissions because they bypass the workflow
-20 1 * * * dspace chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace curate -e a.orth@cgiar.org -t normalizedois -i 10568/124956 -s object
+20 1 * * * {{ tomcat_user }} chrt -b 0 ionice -c2 -n7 $DSPACE/bin/dspace curate -e a.orth@cgiar.org -t normalizedois -i 10568/124956 -s object
 
 #----------------
 # WEEKLY TASKS

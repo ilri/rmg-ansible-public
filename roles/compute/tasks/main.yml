@@ -31,8 +31,8 @@
       - fftw-devel.x86_64 # for gromacs
       - firefox.x86_64
       - gcc-c++.x86_64 # for some R libraries
-      - gdal-devel.x86_64 # for some R libraries
-      - gdal.x86_64 # for libgdal.so.1 (for some reason not a dependency of gdal-devel)
+      - gdal3.4-devel.x86_64  # for some R libraries like terra
+      - gdal3.4.x86_64 # for utilities like gdal3.4-gdalinfo
       - geos-devel.x86_64 # for some R libraries
       - glib2.x86_64 # for wise / Cegma
       - glpk-devel.x86_64 # for shannon_cpp

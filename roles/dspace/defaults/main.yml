@@ -39,7 +39,7 @@ dspace_solr_server: http://localhost:8983/solr
 dspace_explorer_server: prod.ares.codeobia.com
 
 dspace_mail_server: smtp.office365.com
-dspace_ldap_server: ldaps://AZCGNEROOT3.cgiarad.org:636/
+dspace_ldap_server: ldaps://azcgccroot1.cgiarad.org:636/
 # development hosts should override this to true in host_vars
 dspace_mail_disabled: false
 

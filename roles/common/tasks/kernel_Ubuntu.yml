@@ -17,7 +17,7 @@
     cache_valid_time: 3600
   when:
     - ansible_distribution_version is version('20.04', '==')
-    - ansible_virtualization_role == 'host'
+    - (ansible_virtualization_role == 'host' or ansible_virtualization_role == 'NA')
 
 - name: Install linux-virtual-hwe-22.04
   ansible.builtin.package:
@@ -35,7 +35,7 @@
     cache_valid_time: 3600
   when:
     - ansible_distribution_version is version('22.04', '==')
-    - ansible_virtualization_role == 'host'
+    - (ansible_virtualization_role == 'host' or ansible_virtualization_role == 'NA')
 
 - name: Install linux-virtual-hwe-24.04
   ansible.builtin.package:
@@ -53,6 +53,6 @@
     cache_valid_time: 3600
   when:
     - ansible_distribution_version is version('24.04', '==')
-    - ansible_virtualization_role == 'host'
+    - (ansible_virtualization_role == 'host' or ansible_virtualization_role == 'NA')
 
 # vim: set ts=2 sw=2:

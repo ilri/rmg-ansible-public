@@ -7,11 +7,12 @@
       - centos-release-gluster7
       - centos-release-gluster8
       - centos-release-gluster9
+      - centos-release-gluster10
     state: absent
 
 - name: Enable GlusterFS packages from CentOS SIG
   ansible.builtin.package:
-    name: centos-release-gluster10
+    name: centos-release-gluster11
     state: present
 
 - name: Configure Mellanox network cards

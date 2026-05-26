@@ -74,7 +74,7 @@
 - name: Install DSpace Angular Node.js build dependencies
   when: dspace_version_major is version('7', '>=')
   become_user: "{{ tomcat_user }}"
-  npm:
+  community.general.npm:
     name: "{{ item.name }}"
     version: "{{ item.version }}"
     global: true

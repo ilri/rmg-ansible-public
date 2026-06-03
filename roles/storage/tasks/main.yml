@@ -15,10 +15,6 @@
     name: centos-release-gluster11
     state: present
 
-- name: Configure Mellanox network cards
-  ansible.builtin.include_tasks: mellanox.yml
-  tags: mellanox
-
 - name: Configure GlusterFS client
   ansible.builtin.include_tasks: client.yml
   when: glusterfs_role == 'client'
@@ -28,5 +24,13 @@
   ansible.builtin.include_tasks: server.yml
   when: glusterfs_role == 'server'
   tags: glusterfs-server
+
+- name: Increase network ring buffers
+  ansible.builtin.copy:
+    src: etc/udev/rules.d/71-ethtool.rules
+    dest: /etc/udev/rules.d/71-ethtool.rules
+    mode: "0644"
+    owner: root
+    group: root
 
 # vim: set sw=2 ts=2:

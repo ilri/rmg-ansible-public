@@ -24,5 +24,5 @@ pg_db_connections:
 ## OS Family Supported
 Tested and working on the following OS versions:
 
-- Ubuntu 20.04
 - Ubuntu 22.04
+- Ubuntu 24.04

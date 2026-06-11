@@ -2,7 +2,7 @@
 In order for these playbooks to work, your host must:
 
 - have finished installation, have working networking, have an SSH daemon running
-- have added a `provisioning` user via kickstart, preseed, or cloud-init
+- have added a `provisioning` user manually or via cloud-init
 - have an entry in the `private/hosts`
 - have a vars file in `host_vars/` which defines _at least_ an `ansible_host` variable
 

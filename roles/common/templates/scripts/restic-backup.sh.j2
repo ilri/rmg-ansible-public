@@ -12,5 +12,3 @@ echo 'Starting restic check'
 
 echo 'Starting restic backup of {{ restic_backup_paths|join(" ") }}'
 {{ restic_binary_path }} backup {{ restic_backup_paths|join(" ") }}
-
-exit 0

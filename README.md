@@ -8,16 +8,30 @@ In order for these playbooks to work, your host must:
 
 Assuming the above are true, you should be able to run these playbooks successfully.
 
-## Post-install Ansible Invocation
+## Setup
+This project uses [uv](https://docs.astral.sh/uv/) to manage dependencies in the Python virtual environment (see `pyproject.toml` and `uv.lock`).
+
+Assuming you have uv installed, you can set up the project and activate the virtual environment:
+
+```console
+$ uv sync # automatically creates the Python virtual environment in `.venv`
+$ source .venv/bin/activate
+```
+
+## Running the Playbooks
 Take note that the first-ever invocation after the clean installation of a machine is different than subsequent invocations due to the way SSH public keys are copied to the host.
 
 On the first run, you need to use `-k --ask-become-pass` to prompt for the SSH/sudo password of the provisioning user:
 
-    $ ansible-playbook site.yml --limit=ilrinrb10 -k --ask-become-pass -t sshd,ssh-keys,sudoers
+```console
+$ ansible-playbook site.yml --limit=ilrinrb10 -k --ask-become-pass -t sshd,ssh-keys,sudoers
+```
 
 On subsequent runs, after SSH keys and sudo configurations have been deployed, you should be able to run like this:
 
-    $ ansible-playbook site.yml --limit=ilrinrb10
+```console
+$ ansible-playbook site.yml --limit=ilrinrb10
+```
 
 ## TODO
 

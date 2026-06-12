@@ -20,5 +20,5 @@ echo 'Removing stale locks'
 echo 'Starting restic check'
 {{ restic_binary_path }} check
 
-echo 'Starting restic backup of {{ restic_backup_paths|join(" ") }}'
-{{ restic_binary_path }} backup {{ restic_backup_paths|join(" ") }}
+echo 'Starting restic backup of {{ restic_backup_paths| join(" ") }}'
+{{ restic_binary_path }} backup {{ restic_backup_paths| join(" ") }}

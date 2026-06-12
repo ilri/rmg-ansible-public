@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 {{ ansible_managed | comment }}
 
-# set -e: exit on first error
-# set -u: treat unset variables as an error
-set -eu
-
 {{ restic_binary_path }} version
+
+# Check if the repository is already initialized by checking its config
+# See: https://restic.readthedocs.io/en/latest/075_scripting.html
+{{ restic_binary_path }} cat config
+
+if [[ $? -eq 1 ]]; then
+    {{ restic_binary_path }} init
+fi
+
+# exit on first error
+set -e
+
+echo 'Removing stale locks'
+{{ restic_binary_path }} unlock
 
 echo 'Starting restic check'
 {{ restic_binary_path }} check
